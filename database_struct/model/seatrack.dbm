@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,1067" last-zoom="0.85"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="351,1322" last-zoom="1"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -42,9 +42,12 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logger_info">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="88"/>
+	<position x="980" y="80"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="varchar" length="80"/>
 	</column>
 	<column name="producer" not-null="true">
 		<type name="text" length="0"/>
@@ -61,12 +64,15 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="logger_info_pk" type="pk-constr" table="loggers.logger_info">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+	<constraint name="logger_id_unique" type="uq-constr" table="loggers.logger_info">
+		<columns names="logger_id" ref-type="src-columns"/>
+	</constraint>
 </table>
 
 <table name="logger_producers">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="88"/>
+	<position x="80" y="80"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -84,7 +90,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logger_models">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="208"/>
+	<position x="80" y="200"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -110,7 +116,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="bigint" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
-		<type name="uuid" length="0"/>
+		<type name="varchar" length="80"/>
 	</column>
 	<column name="startdate_gmt" not-null="true">
 		<type name="date" length="0"/>
@@ -147,7 +153,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logging_modes">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="348"/>
+	<position x="80" y="340"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -165,7 +171,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="people">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="468"/>
+	<position x="80" y="460"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -183,7 +189,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="allocation">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="748"/>
+	<position x="980" y="740"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -255,7 +261,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="species">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="608"/>
+	<position x="80" y="600"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -312,7 +318,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="location">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="1008"/>
+	<position x="80" y="1000"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -349,6 +355,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
+	<column name="deployment_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
 	<column name="logger_id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -370,11 +379,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="dep_location">
 		<type name="text" length="0"/>
 	</column>
-	<column name="deployment_id" not-null="true">
-		<type name="bigint" length="0"/>
-	</column>
 	<constraint name="deployment_pk" type="pk-constr" table="loggers.deployment">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="deployment_id_unique" type="uq-constr" table="loggers.deployment">
+		<columns names="deployment_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -439,7 +448,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="sex">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="1388"/>
+	<position x="80" y="1380"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -457,7 +466,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="sexing_method">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="340" y="1408"/>
+	<position x="340" y="1400"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -613,7 +622,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="file_archive">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1340" y="1740"/>
+	<position x="1480" y="1780"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -623,20 +632,14 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="session_id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
-	<column name="logger_id" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="logger_model" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="logging_mode" not-null="true">
-		<type name="text" length="0"/>
-	</column>
 	<column name="filename">
 		<type name="text" length="0"/>
 	</column>
 	<constraint name="file_archive_pk" type="pk-constr" table="loggers.file_archive">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="file_archive_session_id_unique" type="uq-constr" table="loggers.file_archive">
+		<columns names="session_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -669,7 +672,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 </table>
 
 <textbox name="Questions" font-size="9">
-	<position x="1020" y="2140"/>
+	<position x="1000" y="2200"/>
 	<comment><![CDATA[What's the difference between retrieval_id and event_id?
 
 Foreign key logic between startup, allocation and logging_session not understood! And probably wrongly coded.
@@ -682,7 +685,7 @@ Colonies to locations are one to many relationship?]]></comment>
 <table name="subspecies">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="520" y="620"/>
+	<position x="540" y="820"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -701,8 +704,32 @@ Colonies to locations are one to many relationship?]]></comment>
 	</constraint>
 </table>
 
+<table name="files">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="1460" y="2000"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="file_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="filename" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="file_id_unique" type="uq-constr" table="loggers.files">
+		<columns names="file_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="filename_unique" type="uq-constr" table="loggers.files">
+		<columns names="filename" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="files_pk" type="pk-constr" table="loggers.files">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="CASCADE" ref-table="metadata.logger_producers" table="loggers.logger_info">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_producers" table="loggers.logger_info">
 	<columns names="producer" ref-type="src-columns"/>
 	<columns names="producer" ref-type="dst-columns"/>
 </constraint>
@@ -723,6 +750,12 @@ Colonies to locations are one to many relationship?]]></comment>
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.people" table="loggers.startup">
 	<columns names="started_by" ref-type="src-columns"/>
 	<columns names="name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="startup_logger_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="loggers.startup">
+	<columns names="logger_id" ref-type="src-columns"/>
+	<columns names="logger_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="startup_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -857,6 +890,18 @@ Colonies to locations are one to many relationship?]]></comment>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="file_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.files" table="loggers.file_archive">
+	<columns names="file_id" ref-type="src-columns"/>
+	<columns names="file_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="filename_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.files" table="loggers.file_archive">
+	<columns names="filename" ref-type="src-columns"/>
+	<columns names="filename" ref-type="dst-columns"/>
+</constraint>
+
 <constraint name="species_latin_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.species" table="metadata.subspecies">
 	<columns names="species_name_latin" ref-type="src-columns"/>
@@ -930,7 +975,12 @@ Colonies to locations are one to many relationship?]]></comment>
 <relationship name="rel_file_archive_shutdown" type="relfk"
 	 src-table="loggers.file_archive"
 	 dst-table="loggers.shutdown"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1440.5" y="1850.6"/>
+	<position x="1440.5" y="1412.6"/>
+	</line>
+</relationship>
 
 <relationship name="rel_individ_status_retrieval" type="relfk"
 	 src-table="individuals.individ_status"
@@ -995,6 +1045,16 @@ Colonies to locations are one to many relationship?]]></comment>
 <relationship name="rel_location_colony" type="relfk"
 	 src-table="metadata.location"
 	 dst-table="metadata.colony"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_startup_logger_info" type="relfk"
+	 src-table="loggers.startup"
+	 dst-table="loggers.logger_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_file_archive_files" type="relfk"
+	 src-table="loggers.file_archive"
+	 dst-table="loggers.files"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
