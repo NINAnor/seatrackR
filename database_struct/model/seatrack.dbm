@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,1067" last-zoom="0.85"
+	 default-schema="public" default-owner="seatrack_admin">
+<role name="seatrack_admin"
+      superuser="true"
+      createrole="true"
+      login="true">
+</role>
+
+<role name="seatrack_reader">
+</role>
+
+<role name="seatrack_insert">
+</role>
+
+<database name="seatrack" prepend-at-bod="true">
+	<role name="seatrack_admin"/>
+	<prepended-sql><![CDATA[CREATE EXTENSION postgis;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+ ]]></prepended-sql>
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="config" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<schema name="metadata" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<schema name="loggers" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<table name="logger_info">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="980" y="88"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="producer" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="production_year" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="logger_model" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="project">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logger_info_pk" type="pk-constr" table="loggers.logger_info">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="logger_producers">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="80" y="88"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="producer" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logger_producers_pk" type="pk-constr" table="metadata.logger_producers">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="producer_unique_constraint" type="uq-constr" table="metadata.logger_producers">
+		<columns names="producer" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="logger_models">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="80" y="208"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="model" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logger_models_pk" type="pk-constr" table="metadata.logger_models">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="model_unique" type="uq-constr" table="metadata.logger_models">
+		<columns names="model" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="startup">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="980" y="340"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="session_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="startdate_gmt" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="startime_gmt" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="logging_mode" not-null="true">
+		<type name="varchar" length="15"/>
+	</column>
+	<column name="started_by" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="started_where" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="days_delayed">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="programmed_gmt_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="programmed_gmt_time">
+		<type name="timestamp" length="0"/>
+	</column>
+	<constraint name="startup_pk" type="pk-constr" table="loggers.startup">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="session_id_unique" type="uq-constr" table="loggers.startup">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="logging_modes">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="80" y="348"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="mode" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logging_modes_pk" type="pk-constr" table="metadata.logging_modes">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="logging_modes_unique" type="uq-constr" table="metadata.logging_modes">
+		<columns names="mode" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="people">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="80" y="468"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="people_pk" type="pk-constr" table="metadata.people">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="names_unique" type="uq-constr" table="metadata.people">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="allocation">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="980" y="748"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="session_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="intended_species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="intended_location">
+		<type name="text" length="0"/>
+	</column>
+	<column name="intended_deployer">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="allocation_pk" type="pk-constr" table="loggers.allocation">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="allocation_session_id_unique" type="uq-constr" table="loggers.allocation">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="logging_session">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="1020" y="1020"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="session_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="logger_id">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="deployment_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="retrieval_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="logger_end_status">
+		<type name="text" length="0"/>
+	</column>
+	<column name="colony">
+		<type name="text" length="0"/>
+	</column>
+	<column name="species">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logging_session_pk" type="pk-constr" table="loggers.logging_session">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="logging_session_session_id_unique" type="uq-constr" table="loggers.logging_session">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="retrieval_id" type="uq-constr" table="loggers.logging_session">
+		<columns names="retrieval_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="deployment_id" type="uq-constr" table="loggers.logging_session">
+		<columns names="deployment_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="species">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="80" y="608"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="species_name_eng" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="species_name_latin" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="species_pk" type="pk-constr" table="metadata.species">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="species_name_unique" type="uq-constr" table="metadata.species">
+		<columns names="species_name_eng" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="species_name_latin_unique" type="uq-constr" table="metadata.species">
+		<columns names="species_name_latin" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="colony">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="80" y="760"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="lat" not-null="true">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="lon" not-null="true">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="colony_int_name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="colony_nat_name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="geom" not-null="true">
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<constraint name="colony_pk" type="pk-constr" table="metadata.colony">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="name_unique" type="uq-constr" table="metadata.colony">
+		<columns names="colony_nat_name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="colony_nat_unique" type="uq-constr" table="metadata.colony">
+		<columns names="colony_nat_name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="location">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="80" y="1008"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="location_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="colony_nat_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="location_lat" not-null="true">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="location_lon" not-null="true">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="geom" not-null="true">
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<constraint name="location_pk" type="pk-constr" table="metadata.location">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="location_unique" type="uq-constr" table="metadata.location">
+		<columns names="location_name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="location_nat_unique" type="uq-constr" table="metadata.location">
+		<columns names="colony_nat_name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="deployment">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="1000" y="1320"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="metalring_id">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_fate">
+		<type name="text" length="0"/>
+	</column>
+	<column name="dep_species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="dep_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="dep_colony">
+		<type name="text" length="0"/>
+	</column>
+	<column name="dep_location">
+		<type name="text" length="0"/>
+	</column>
+	<column name="deployment_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<constraint name="deployment_pk" type="pk-constr" table="loggers.deployment">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="logger_fate">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="60" y="1280"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="logger_fate" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logger_fate_pk" type="pk-constr" table="metadata.logger_fate">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="fate_unique" type="uq-constr" table="metadata.logger_fate">
+		<columns names="logger_fate" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<schema name="individuals" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<table name="individ_info">
+	<schema name="individuals"/>
+	<role name="seatrack_admin"/>
+	<position x="40" y="1840"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="metalring_id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="morph">
+		<type name="text" length="0"/>
+	</column>
+	<column name="subspecies">
+		<type name="text" length="0"/>
+	</column>
+	<column name="age">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="sex">
+		<type name="text" length="0"/>
+	</column>
+	<column name="sexing_method">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="individ_info_pk" type="pk-constr" table="individuals.individ_info">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="metalring_id_unique" type="uq-constr" table="individuals.individ_info">
+		<columns names="metalring_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="sex">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="80" y="1388"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="sex" not-null="true">
+		<type name="varchar" length="10"/>
+	</column>
+	<constraint name="sex_pk" type="pk-constr" table="metadata.sex">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="sex_unique" type="uq-constr" table="metadata.sex">
+		<columns names="sex" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="sexing_method">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="340" y="1408"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="method">
+		<type name="varchar" length="40"/>
+	</column>
+	<constraint name="sexing_method_pk" type="pk-constr" table="metadata.sexing_method">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="sexing_method_unique" type="uq-constr" table="metadata.sexing_method">
+		<columns names="method" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="individ_status">
+	<schema name="individuals"/>
+	<role name="seatrack_admin"/>
+	<position x="460" y="1940"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="event_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="metalring_id">
+		<type name="text" length="0"/>
+	</column>
+	<column name="weight">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="scull">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="tarsus">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="wing">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="breeding_stage">
+		<type name="text" length="0"/>
+	</column>
+	<column name="eggs">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="chicks">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="hatching_success">
+		<type name="bit" length="0"/>
+	</column>
+	<column name="breeding_success">
+		<type name="bit" length="0"/>
+	</column>
+	<column name="breeding_success_criterion">
+		<type name="varchar" length="20"/>
+	</column>
+	<column name="data_responsible" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="back_on_nest">
+		<type name="date" length="0"/>
+	</column>
+	<column name="comment">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_mount_method">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="individ_status_pk" type="pk-constr" table="individuals.individ_status">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="retrieval">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="1040" y="1740"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="retrieval_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="attribute_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="metalring_id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="retrieval_type" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="retrieval_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="event_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="retrieval_location">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="retrieval_pk" type="pk-constr" table="loggers.retrieval">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="retrieval_id_unique" type="uq-constr" table="loggers.retrieval">
+		<columns names="retrieval_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="event_id_unique" type="uq-constr" table="loggers.retrieval">
+		<columns names="event_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="shutdown">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="1420" y="1360"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="session_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="download_type" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="file_available" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="stop_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="stop_time" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="ready_for_deployment" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="logger_returned_to_bt" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<constraint name="shutdown_pk" type="pk-constr" table="loggers.shutdown">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="shutdown_session_id_unique" type="uq-constr" table="loggers.shutdown">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="file_archive">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="1340" y="1740"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="file_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="session_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_model" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logging_mode" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="filename">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="file_archive_pk" type="pk-constr" table="loggers.file_archive">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<schema name="positions" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<table name="postable">
+	<schema name="positions"/>
+	<role name="seatrack_admin"/>
+	<position x="1660" y="420"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="postable_pk" type="pk-constr" table="positions.postable">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="processing">
+	<schema name="positions"/>
+	<role name="seatrack_admin"/>
+	<position x="1920" y="420"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="processing_pk" type="pk-constr" table="positions.processing">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<textbox name="Questions" font-size="9">
+	<position x="1020" y="2140"/>
+	<comment><![CDATA[What's the difference between retrieval_id and event_id?
+
+Foreign key logic between startup, allocation and logging_session not understood! And probably wrongly coded.
+
+When to use nat name and when to use int name for colony?
+
+Colonies to locations are one to many relationship?]]></comment>
+</textbox>
+
+<table name="subspecies">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="520" y="620"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="species_name_latin" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="sub_species" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="subspecies_pk" type="pk-constr" table="metadata.subspecies">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="subspecies_unique" type="uq-constr" table="metadata.subspecies">
+		<columns names="sub_species" ref-type="src-columns"/>
+		<comment><![CDATA[Might not be necessarily unique?]]></comment>
+	</constraint>
+</table>
+
+<constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="metadata.logger_producers" table="loggers.logger_info">
+	<columns names="producer" ref-type="src-columns"/>
+	<columns names="producer" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="metadata.logger_models" table="loggers.logger_info">
+	<columns names="logger_model" ref-type="src-columns"/>
+	<columns names="model" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logging_modes_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="metadata.logging_modes" table="loggers.startup">
+	<columns names="logging_mode" ref-type="src-columns"/>
+	<columns names="mode" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="people_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.people" table="loggers.startup">
+	<columns names="started_by" ref-type="src-columns"/>
+	<columns names="name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="startup_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="loggers.startup" table="loggers.allocation">
+	<columns names="session_id" ref-type="src-columns"/>
+	<columns names="session_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="species_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.species" table="loggers.allocation">
+	<columns names="intended_species" ref-type="src-columns"/>
+	<columns names="species_name_eng" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="allocation_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.allocation" table="loggers.logging_session">
+	<columns names="session_id" ref-type="src-columns"/>
+	<columns names="session_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="colony_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.colony" table="metadata.location">
+	<columns names="colony_nat_name" ref-type="src-columns"/>
+	<columns names="colony_nat_name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="loggers.deployment">
+	<columns names="deployment_id" ref-type="src-columns"/>
+	<columns names="deployment_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="species_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.species" table="loggers.deployment">
+	<columns names="dep_species" ref-type="src-columns"/>
+	<columns names="species_name_eng" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="colony_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.colony" table="loggers.deployment">
+	<columns names="dep_colony" ref-type="src-columns"/>
+	<columns names="colony_nat_name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="location_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.location" table="loggers.deployment">
+	<columns names="dep_location" ref-type="src-columns"/>
+	<columns names="location_name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logger_fate_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_fate" table="loggers.deployment">
+	<columns names="logger_fate" ref-type="src-columns"/>
+	<columns names="logger_fate" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="individ_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="loggers.deployment">
+	<columns names="metalring_id" ref-type="src-columns"/>
+	<columns names="metalring_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="sexing_method_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.sexing_method" table="individuals.individ_info">
+	<columns names="sexing_method" ref-type="src-columns"/>
+	<columns names="method" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="sex_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.sex" table="individuals.individ_info">
+	<columns names="sex" ref-type="src-columns"/>
+	<columns names="sex" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="species_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.species" table="individuals.individ_info">
+	<columns names="species" ref-type="src-columns"/>
+	<columns names="species_name_eng" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="subspecies_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.subspecies" table="individuals.individ_info">
+	<columns names="subspecies" ref-type="src-columns"/>
+	<columns names="sub_species" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="retrieval_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.retrieval" table="individuals.individ_status">
+	<columns names="event_id" ref-type="src-columns"/>
+	<columns names="event_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="individ_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="individuals.individ_status">
+	<columns names="metalring_id" ref-type="src-columns"/>
+	<columns names="metalring_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="metalring_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="individuals.individ_info" table="loggers.retrieval">
+	<columns names="metalring_id" ref-type="src-columns"/>
+	<columns names="metalring_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="loggers.retrieval">
+	<columns names="retrieval_id" ref-type="src-columns"/>
+	<columns names="retrieval_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="individ_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="loggers.retrieval">
+	<columns names="metalring_id" ref-type="src-columns"/>
+	<columns names="metalring_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="location_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.location" table="loggers.retrieval">
+	<columns names="retrieval_location" ref-type="src-columns"/>
+	<columns names="location_name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="loggers.shutdown">
+	<columns names="session_id" ref-type="src-columns"/>
+	<columns names="session_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="shutdown_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.shutdown" table="loggers.file_archive">
+	<columns names="session_id" ref-type="src-columns"/>
+	<columns names="session_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="species_latin_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.species" table="metadata.subspecies">
+	<columns names="species_name_latin" ref-type="src-columns"/>
+	<columns names="species_name_latin" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_logger_info_logger_producers" type="relfk"
+	 src-table="loggers.logger_info"
+	 dst-table="metadata.logger_producers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logger_info_logger_models" type="relfk"
+	 src-table="loggers.logger_info"
+	 dst-table="metadata.logger_models"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_startup_logging_modes" type="relfk"
+	 src-table="loggers.startup"
+	 dst-table="metadata.logging_modes"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_startup_people" type="relfk"
+	 src-table="loggers.startup"
+	 dst-table="metadata.people"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_allocation_startup" type="relfk"
+	 src-table="loggers.allocation"
+	 dst-table="loggers.startup"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="rel_allocation_species" type="relfk"
+	 src-table="loggers.allocation"
+	 dst-table="metadata.species"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_logging_session" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="loggers.logging_session"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_species" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="metadata.species"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_colony" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="metadata.colony"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_location" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="metadata.location"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_logger_fate" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="metadata.logger_fate"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_shutdown_logging_session" type="relfk"
+	 src-table="loggers.shutdown"
+	 dst-table="loggers.logging_session"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_file_archive_shutdown" type="relfk"
+	 src-table="loggers.file_archive"
+	 dst-table="loggers.shutdown"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_retrieval" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="loggers.retrieval"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_retrieval_logging_session" type="relfk"
+	 src-table="loggers.retrieval"
+	 dst-table="loggers.logging_session"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_retrieval_individ_info" type="relfk"
+	 src-table="loggers.retrieval"
+	 dst-table="individuals.individ_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_retrieval_location" type="relfk"
+	 src-table="loggers.retrieval"
+	 dst-table="metadata.location"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_info_sexing_method" type="relfk"
+	 src-table="individuals.individ_info"
+	 dst-table="metadata.sexing_method"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_info_sex" type="relfk"
+	 src-table="individuals.individ_info"
+	 dst-table="metadata.sex"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_individ_info" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="individuals.individ_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_allocation" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.allocation"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_subspecies_species" type="relfk"
+	 src-table="metadata.subspecies"
+	 dst-table="metadata.species"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_info_species" type="relfk"
+	 src-table="individuals.individ_info"
+	 dst-table="metadata.species"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_info_subspecies" type="relfk"
+	 src-table="individuals.individ_info"
+	 dst-table="metadata.subspecies"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_individ_info" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="individuals.individ_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_location_colony" type="relfk"
+	 src-table="metadata.location"
+	 dst-table="metadata.colony"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>

@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="304,1122" last-zoom="1"
+	 default-schema="public" default-owner="seatrack_admin">
+<role name="seatrack_admin"
+      superuser="true"
+      createrole="true"
+      login="true">
+</role>
+
+<role name="seatrack_reader">
+</role>
+
+<role name="seatrack_insert">
+</role>
+
+<database name="seatrack" prepend-at-bod="true">
+	<role name="seatrack_admin"/>
+	<prepended-sql><![CDATA[CREATE EXTENSION postgis;]]></prepended-sql>
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="config" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<schema name="metadata" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<schema name="loggers" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<table name="logger_info">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="920" y="520"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="producer" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="production_year" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="logger_model" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="project">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="new_table_pk" type="pk-constr" table="loggers.logger_info">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="logger_producers">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="260" y="540"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="producer" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logger_producers_pk" type="pk-constr" table="metadata.logger_producers">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="producer_unique_constraint" type="uq-constr" table="metadata.logger_producers">
+		<columns names="producer" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="logger_models">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="260" y="660"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="model" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logger_models_pk" type="pk-constr" table="metadata.logger_models">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="model_unique" type="uq-constr" table="metadata.logger_models">
+		<columns names="model" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="startup">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="920" y="760"/>
+	<column name="session_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="startdate_gmt" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="startime_gmt" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="logging_mode" not-null="true">
+		<type name="varchar" length="15"/>
+	</column>
+	<column name="started_by" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="started_where" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="days_delayed">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="programmed_gmt_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="programmed_gmt_time">
+		<type name="timestamp" length="0"/>
+	</column>
+	<constraint name="startup_pk" type="pk-constr" table="loggers.startup">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_logging_modes" index="11"/>
+		<object name="id_people" index="10"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="logging_modes_fk" index="2"/>
+		<object name="people_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="logging_modes">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="260" y="800"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="mode" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logging_modes_pk" type="pk-constr" table="metadata.logging_modes">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="logging_modes_unique" type="uq-constr" table="metadata.logging_modes">
+		<columns names="mode" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="people">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="260" y="920"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="people_pk" type="pk-constr" table="metadata.people">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="names_unique" type="uq-constr" table="metadata.people">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="people_has_many_startup" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.people"
+	 dst-table="loggers.startup"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="logging_modes_has_many_startup" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.logging_modes"
+	 dst-table="loggers.startup"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="logger_producers_has_many_logger_info" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.logger_producers"
+	 dst-table="loggers.logger_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="logger_models_has_many_logger_info" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.logger_models"
+	 dst-table="loggers.logger_info"
+	 src-required="false" dst-required="false"/>
+
+<table name="allocation">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="920" y="1180"/>
+	<column name="session_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="intended_species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="intended_location">
+		<type name="text" length="0"/>
+	</column>
+	<column name="intended_deployer">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="allocation_pk" type="pk-constr" table="loggers.allocation">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="startup_has_one_allocation" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="loggers.allocation"
+	 dst-table="loggers.startup"
+	 src-required="false" dst-required="false"/>
+
+<table name="logging_session">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="920" y="1440"/>
+	<column name="session_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="logger_id">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="deployment_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="retrieval_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="logger_end_status">
+		<type name="text" length="0"/>
+	</column>
+	<column name="colony">
+		<type name="text" length="0"/>
+	</column>
+	<column name="species">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logging_session_pk" type="pk-constr" table="loggers.logging_session">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="allocation_has_one_logging_session" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.allocation"
+	 src-required="false" dst-required="false"/>
+
+<table name="species">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="260" y="1060"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="species_name_eng" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="species_name_latin" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="subspecies_latin">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="species_pk" type="pk-constr" table="metadata.species">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="species_has_many_allocation" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.species"
+	 dst-table="loggers.allocation"
+	 src-required="false" dst-required="false"/>
+
+<table name="colony">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="260" y="1220"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="lat" not-null="true">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="lon" not-null="true">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="colony_int_name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="colony_nat_name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="geom" not-null="true">
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<constraint name="colony_pk" type="pk-constr" table="metadata.colony">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="name_unique" type="uq-constr" table="metadata.colony">
+		<columns names="colony_nat_name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="colony_nat_unique" type="uq-constr" table="metadata.colony">
+		<columns names="colony_nat_name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="location">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="260" y="1460"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="location_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="colony_nat_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="location_lat" not-null="true">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="location_lon" not-null="true">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="geom" not-null="true">
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<constraint name="location_pk" type="pk-constr" table="metadata.location">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="location_unique" type="uq-constr" table="metadata.location">
+		<columns names="location_name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="location_nat_unique" type="uq-constr" table="metadata.location">
+		<columns names="colony_nat_name" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_colony" index="5"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="colony_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="colony_has_many_location" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.colony"
+	 dst-table="metadata.location"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<table name="deployment">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="920" y="1680"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="metalring_id">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="logger_fate">
+		<type name="text" length="0"/>
+	</column>
+	<column name="dep_species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="dep_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="dep_colony">
+		<type name="text" length="0"/>
+	</column>
+	<column name="dep_location">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="deployment_pk" type="pk-constr" table="loggers.deployment">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="deployment_has_one_logging_session" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.deployment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="species_has_many_deployment" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.species"
+	 dst-table="loggers.deployment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="colony_has_many_deployment" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.colony"
+	 dst-table="loggers.deployment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="location_has_many_deployment" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.location"
+	 dst-table="loggers.deployment"
+	 src-required="false" dst-required="false"/>
+
+<table name="logger_fate">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="260" y="1700"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="logger_fate" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="logger_fate_pk" type="pk-constr" table="metadata.logger_fate">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="fate_unique" type="uq-constr" table="metadata.logger_fate">
+		<columns names="logger_fate" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="logger_fate_has_many_deployment" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.logger_fate"
+	 dst-table="loggers.deployment"
+	 src-required="false" dst-required="false"/>
+
+<schema name="individuals" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<table name="individ_info">
+	<schema name="individuals"/>
+	<role name="seatrack_admin"/>
+	<position x="1360" y="1640"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="metalring_id">
+		<type name="text" length="0"/>
+	</column>
+	<column name="species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="morph">
+		<type name="text" length="0"/>
+	</column>
+	<column name="subspecies">
+		<type name="text" length="0"/>
+	</column>
+	<column name="age">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="sex">
+		<type name="text" length="0"/>
+	</column>
+	<column name="sexing_method">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="individ_info_pk" type="pk-constr" table="individuals.individ_info">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="individ_info_has_one_deployment" type="rel11"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="loggers.deployment"
+	 dst-table="individuals.individ_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="species_has_many_individ_info" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#83af1f"
+	 src-table="metadata.species"
+	 dst-table="individuals.individ_info"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>
