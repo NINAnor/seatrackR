@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="351,1322" last-zoom="1"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,219" last-zoom="0.5"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -42,7 +42,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logger_info">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="80"/>
+	<position x="980" y="88"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -108,7 +108,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="startup">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="340"/>
+	<position x="980" y="348"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -189,7 +189,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="allocation">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="740"/>
+	<position x="980" y="748"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -219,7 +219,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logging_session">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1020" y="1020"/>
+	<position x="980" y="1008"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -242,6 +242,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="text" length="0"/>
 	</column>
 	<column name="species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="year_tracked">
 		<type name="text" length="0"/>
 	</column>
 	<constraint name="logging_session_pk" type="pk-constr" table="loggers.logging_session">
@@ -351,11 +354,14 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="deployment">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1000" y="1320"/>
+	<position x="980" y="1360"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="deployment_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="session_id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
@@ -379,11 +385,17 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="dep_location">
 		<type name="text" length="0"/>
 	</column>
+	<column name="event_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
 	<constraint name="deployment_pk" type="pk-constr" table="loggers.deployment">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="deployment_id_unique" type="uq-constr" table="loggers.deployment">
 		<columns names="deployment_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="deployment_session_id_uq" type="uq-constr" table="loggers.deployment">
+		<columns names="session_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -448,7 +460,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="sex">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="1380"/>
+	<position x="60" y="1420"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -466,7 +478,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="sexing_method">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="340" y="1400"/>
+	<position x="340" y="1420"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -544,11 +556,14 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="retrieval">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1040" y="1740"/>
+	<position x="980" y="1800"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="retrieval_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="session_id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
 	<column name="attribute_name" not-null="true">
@@ -572,6 +587,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="retrieval_location">
 		<type name="text" length="0"/>
 	</column>
+	<constraint name="retrieval_session_id_uq" type="uq-constr" table="loggers.retrieval">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
 	<constraint name="retrieval_pk" type="pk-constr" table="loggers.retrieval">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
@@ -586,7 +604,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="shutdown">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1420" y="1360"/>
+	<position x="1560" y="1200"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -622,7 +640,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="file_archive">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1480" y="1780"/>
+	<position x="1560" y="1480"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -650,7 +668,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="postable">
 	<schema name="positions"/>
 	<role name="seatrack_admin"/>
-	<position x="1660" y="420"/>
+	<position x="2040" y="208"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -662,9 +680,96 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="processing">
 	<schema name="positions"/>
 	<role name="seatrack_admin"/>
-	<position x="1920" y="420"/>
+	<position x="2300" y="208"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
+	</column>
+	<column name="logger_yertracked" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="session_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="firstdate_light">
+		<type name="date" length="0"/>
+	</column>
+	<column name="lastdate_light">
+		<type name="date" length="0"/>
+	</column>
+	<column name="first_aut_eq">
+		<type name="date" length="0"/>
+	</column>
+	<column name="last_aut_eq">
+		<type name="date" length="0"/>
+	</column>
+	<column name="first_spring_eq">
+		<type name="date" length="0"/>
+	</column>
+	<column name="last_spring_eq">
+		<type name="date" length="0"/>
+	</column>
+	<column name="software">
+		<type name="text" length="0"/>
+	</column>
+	<column name="light_threshold">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="tm_file">
+		<type name="text" length="0"/>
+	</column>
+	<column name="processing_file">
+		<type name="text" length="0"/>
+	</column>
+	<column name="posdata_file">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_download_success">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="logger_data_failed">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="analyzer">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_id_retrieved">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="year_tracked">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="year_retrieved">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="logger_model_retrieved">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_producer">
+		<type name="text" length="0"/>
+	</column>
+	<column name="ring_number">
+		<type name="text" length="0"/>
+	</column>
+	<column name="euring_code">
+		<type name="text" length="0"/>
+	</column>
+	<column name="species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="sex">
+		<type name="text" length="0"/>
+	</column>
+	<column name="morph">
+		<type name="text" length="0"/>
+	</column>
+	<column name="subspecies">
+		<type name="text" length="0"/>
+	</column>
+	<column name="age">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="colony">
+		<type name="text" length="0"/>
 	</column>
 	<constraint name="processing_pk" type="pk-constr" table="positions.processing">
 		<columns names="id" ref-type="src-columns"/>
@@ -679,13 +784,17 @@ Foreign key logic between startup, allocation and logging_session not understood
 
 When to use nat name and when to use int name for colony?
 
-Colonies to locations are one to many relationship?]]></comment>
+Colonies to locations are one to many relationship? 
+
+Add trigger logic, e.g. between logging_session, deployment, retrieval, and events. Also to logger_year
+
+]]></comment>
 </textbox>
 
 <table name="subspecies">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="540" y="820"/>
+	<position x="520" y="560"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -707,7 +816,7 @@ Colonies to locations are one to many relationship?]]></comment>
 <table name="files">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1460" y="2000"/>
+	<position x="1560" y="1760"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -724,6 +833,69 @@ Colonies to locations are one to many relationship?]]></comment>
 		<columns names="filename" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="files_pk" type="pk-constr" table="loggers.files">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="events">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="1560" y="900"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="event_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="session_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="deployment_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="retrieval_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<constraint name="event_id" type="uq-constr" table="loggers.events">
+		<columns names="event_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="events_pk" type="pk-constr" table="loggers.events">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="event_id_deployment_id_uq" type="uq-constr" table="loggers.events">
+		<columns names="event_id,deployment_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="event_id_retrieval_uq" type="uq-constr" table="loggers.events">
+		<columns names="event_id,retrieval_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="logger_year_tracked">
+	<schema name="positions"/>
+	<role name="seatrack_admin"/>
+	<position x="2260" y="840"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="session_id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="logger" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_year_tracked" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="session_id_uq" type="uq-constr" table="positions.logger_year_tracked">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="logger_year_tracked_uq" type="uq-constr" table="positions.logger_year_tracked">
+		<columns names="logger_year_tracked" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="logger_year_tracked_pk" type="pk-constr" table="positions.logger_year_tracked">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
@@ -770,8 +942,20 @@ Colonies to locations are one to many relationship?]]></comment>
 	<columns names="species_name_eng" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="allocation_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.allocation" table="loggers.logging_session">
+<constraint name="deployment_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.deployment" table="loggers.logging_session">
+	<columns names="deployment_id" ref-type="src-columns"/>
+	<columns names="deployment_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="retrieval_loggin_session_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.retrieval" table="loggers.logging_session">
+	<columns names="retrieval_id" ref-type="src-columns"/>
+	<columns names="retrieval_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logging_session_allocation_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.allocation" table="loggers.logging_session">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -780,12 +964,6 @@ Colonies to locations are one to many relationship?]]></comment>
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.colony" table="metadata.location">
 	<columns names="colony_nat_name" ref-type="src-columns"/>
 	<columns names="colony_nat_name" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="loggers.deployment">
-	<columns names="deployment_id" ref-type="src-columns"/>
-	<columns names="deployment_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="species_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -816,6 +994,12 @@ Colonies to locations are one to many relationship?]]></comment>
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="loggers.deployment">
 	<columns names="metalring_id" ref-type="src-columns"/>
 	<columns names="metalring_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="deployment_events_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.events" table="loggers.deployment">
+	<columns names="event_id" ref-type="src-columns"/>
+	<columns names="event_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="sexing_method_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -860,12 +1044,6 @@ Colonies to locations are one to many relationship?]]></comment>
 	<columns names="metalring_id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="loggers.retrieval">
-	<columns names="retrieval_id" ref-type="src-columns"/>
-	<columns names="retrieval_id" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="individ_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="loggers.retrieval">
 	<columns names="metalring_id" ref-type="src-columns"/>
@@ -878,8 +1056,14 @@ Colonies to locations are one to many relationship?]]></comment>
 	<columns names="location_name" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="loggers.shutdown">
+<constraint name="retrieval_events_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.events" table="loggers.retrieval">
+	<columns names="event_id" ref-type="src-columns"/>
+	<columns names="event_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="shutdown_retrieval_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.retrieval" table="loggers.shutdown">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -906,6 +1090,18 @@ Colonies to locations are one to many relationship?]]></comment>
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.species" table="metadata.subspecies">
 	<columns names="species_name_latin" ref-type="src-columns"/>
 	<columns names="species_name_latin" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="event_session_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.allocation" table="loggers.events">
+	<columns names="session_id" ref-type="src-columns"/>
+	<columns names="session_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logger_year_tracked_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="positions.logger_year_tracked">
+	<columns names="session_id" ref-type="src-columns"/>
+	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
 
 <relationship name="rel_logger_info_logger_producers" type="relfk"
@@ -942,11 +1138,6 @@ Colonies to locations are one to many relationship?]]></comment>
 	 dst-table="metadata.species"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_deployment_logging_session" type="relfk"
-	 src-table="loggers.deployment"
-	 dst-table="loggers.logging_session"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_deployment_species" type="relfk"
 	 src-table="loggers.deployment"
 	 dst-table="metadata.species"
@@ -967,29 +1158,14 @@ Colonies to locations are one to many relationship?]]></comment>
 	 dst-table="metadata.logger_fate"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_shutdown_logging_session" type="relfk"
-	 src-table="loggers.shutdown"
-	 dst-table="loggers.logging_session"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_file_archive_shutdown" type="relfk"
 	 src-table="loggers.file_archive"
 	 dst-table="loggers.shutdown"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="1440.5" y="1850.6"/>
-	<position x="1440.5" y="1412.6"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_status_retrieval" type="relfk"
 	 src-table="individuals.individ_status"
 	 dst-table="loggers.retrieval"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_retrieval_logging_session" type="relfk"
-	 src-table="loggers.retrieval"
-	 dst-table="loggers.logging_session"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_retrieval_individ_info" type="relfk"
@@ -1015,11 +1191,6 @@ Colonies to locations are one to many relationship?]]></comment>
 <relationship name="rel_individ_status_individ_info" type="relfk"
 	 src-table="individuals.individ_status"
 	 dst-table="individuals.individ_info"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_logging_session_allocation" type="relfk"
-	 src-table="loggers.logging_session"
-	 dst-table="loggers.allocation"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_subspecies_species" type="relfk"
@@ -1055,6 +1226,46 @@ Colonies to locations are one to many relationship?]]></comment>
 <relationship name="rel_file_archive_files" type="relfk"
 	 src-table="loggers.file_archive"
 	 dst-table="loggers.files"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_events_allocation" type="relfk"
+	 src-table="loggers.events"
+	 dst-table="loggers.allocation"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_events" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="loggers.events"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_retrieval_events" type="relfk"
+	 src-table="loggers.retrieval"
+	 dst-table="loggers.events"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_deployment" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.deployment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_retrieval" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.retrieval"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_allocation" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.allocation"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logger_year_tracked_logging_session" type="relfk"
+	 src-table="positions.logger_year_tracked"
+	 dst-table="loggers.logging_session"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_shutdown_retrieval" type="relfk"
+	 src-table="loggers.shutdown"
+	 dst-table="loggers.retrieval"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
