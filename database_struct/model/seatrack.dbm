@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,219" last-zoom="0.5"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="578,266" last-zoom="1"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -42,7 +42,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logger_info">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="88"/>
+	<position x="980" y="80"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -108,7 +108,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="startup">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="348"/>
+	<position x="980" y="340"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -189,7 +189,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="allocation">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="748"/>
+	<position x="980" y="740"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -216,10 +216,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	</constraint>
 </table>
 
-<table name="logging_session">
+<table name="active_logging_session">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="1008"/>
+	<position x="980" y="1000"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -229,14 +229,14 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="logger_id">
 		<type name="uuid" length="0"/>
 	</column>
-	<column name="deployment_id">
+	<column name="deployment_id" default-value="NULL">
 		<type name="bigint" length="0"/>
 	</column>
-	<column name="retrieval_id">
+	<column name="retrieval_id" default-value="NULL">
 		<type name="bigint" length="0"/>
 	</column>
-	<column name="logger_end_status">
-		<type name="text" length="0"/>
+	<column name="active" default-value="TRUE">
+		<type name="boolean" length="0"/>
 	</column>
 	<column name="colony">
 		<type name="text" length="0"/>
@@ -247,16 +247,16 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="year_tracked">
 		<type name="text" length="0"/>
 	</column>
-	<constraint name="logging_session_pk" type="pk-constr" table="loggers.logging_session">
+	<constraint name="logging_session_pk" type="pk-constr" table="loggers.active_logging_session">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="logging_session_session_id_unique" type="uq-constr" table="loggers.logging_session">
+	<constraint name="logging_session_session_id_unique" type="uq-constr" table="loggers.active_logging_session">
 		<columns names="session_id" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="retrieval_id" type="uq-constr" table="loggers.logging_session">
+	<constraint name="retrieval_id" type="uq-constr" table="loggers.active_logging_session">
 		<columns names="retrieval_id" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="deployment_id" type="uq-constr" table="loggers.logging_session">
+	<constraint name="deployment_id" type="uq-constr" table="loggers.active_logging_session">
 		<columns names="deployment_id" ref-type="src-columns"/>
 	</constraint>
 </table>
@@ -668,7 +668,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="postable">
 	<schema name="positions"/>
 	<role name="seatrack_admin"/>
-	<position x="2040" y="208"/>
+	<position x="2040" y="200"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -680,7 +680,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="processing">
 	<schema name="positions"/>
 	<role name="seatrack_admin"/>
-	<position x="2300" y="208"/>
+	<position x="2300" y="200"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -900,6 +900,51 @@ Add trigger logic, e.g. between logging_session, deployment, retrieval, and even
 	</constraint>
 </table>
 
+<table name="completed_logging_sessions">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="1600" y="500"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="session_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="logger_id">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="deployment_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="retrieval_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="active" default-value="TRUE">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="colony">
+		<type name="text" length="0"/>
+	</column>
+	<column name="species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="year_tracked">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="compl_logging_session_pk" type="pk-constr" table="loggers.completed_logging_sessions">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="compl_logging_session_session_id_unique" type="uq-constr" table="loggers.completed_logging_sessions">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="compl_retrieval_id" type="uq-constr" table="loggers.completed_logging_sessions">
+		<columns names="retrieval_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="compl_deployment_id" type="uq-constr" table="loggers.completed_logging_sessions">
+		<columns names="deployment_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_producers" table="loggers.logger_info">
 	<columns names="producer" ref-type="src-columns"/>
@@ -943,19 +988,19 @@ Add trigger logic, e.g. between logging_session, deployment, retrieval, and even
 </constraint>
 
 <constraint name="deployment_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.deployment" table="loggers.logging_session">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.deployment" table="loggers.active_logging_session">
 	<columns names="deployment_id" ref-type="src-columns"/>
 	<columns names="deployment_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="retrieval_loggin_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.retrieval" table="loggers.logging_session">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.retrieval" table="loggers.active_logging_session">
 	<columns names="retrieval_id" ref-type="src-columns"/>
 	<columns names="retrieval_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="logging_session_allocation_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.allocation" table="loggers.logging_session">
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.allocation" table="loggers.active_logging_session">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -1099,7 +1144,25 @@ Add trigger logic, e.g. between logging_session, deployment, retrieval, and even
 </constraint>
 
 <constraint name="logger_year_tracked_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="positions.logger_year_tracked">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.active_logging_session" table="positions.logger_year_tracked">
+	<columns names="session_id" ref-type="src-columns"/>
+	<columns names="session_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="ompl_deployment_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.deployment" table="loggers.completed_logging_sessions">
+	<columns names="deployment_id" ref-type="src-columns"/>
+	<columns names="deployment_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="compl_retrieval_loggin_session_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.retrieval" table="loggers.completed_logging_sessions">
+	<columns names="retrieval_id" ref-type="src-columns"/>
+	<columns names="retrieval_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="compl_logging_session_allocation_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.allocation" table="loggers.completed_logging_sessions">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -1244,28 +1307,43 @@ Add trigger logic, e.g. between logging_session, deployment, retrieval, and even
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logging_session_deployment" type="relfk"
-	 src-table="loggers.logging_session"
+	 src-table="loggers.active_logging_session"
 	 dst-table="loggers.deployment"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logging_session_retrieval" type="relfk"
-	 src-table="loggers.logging_session"
+	 src-table="loggers.active_logging_session"
 	 dst-table="loggers.retrieval"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logging_session_allocation" type="relfk"
-	 src-table="loggers.logging_session"
+	 src-table="loggers.active_logging_session"
 	 dst-table="loggers.allocation"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logger_year_tracked_logging_session" type="relfk"
 	 src-table="positions.logger_year_tracked"
-	 dst-table="loggers.logging_session"
+	 dst-table="loggers.active_logging_session"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_shutdown_retrieval" type="relfk"
 	 src-table="loggers.shutdown"
 	 dst-table="loggers.retrieval"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_cp_deployment" type="relfk"
+	 src-table="loggers.completed_logging_sessions"
+	 dst-table="loggers.deployment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_cp_retrieval" type="relfk"
+	 src-table="loggers.completed_logging_sessions"
+	 dst-table="loggers.retrieval"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_cp_allocation" type="relfk"
+	 src-table="loggers.completed_logging_sessions"
+	 dst-table="loggers.allocation"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
