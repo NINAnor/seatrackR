@@ -74,7 +74,21 @@ CREATE SCHEMA positions;
 ALTER SCHEMA positions OWNER TO seatrack_admin;
 -- ddl-end --
 
-SET search_path TO pg_catalog,public,config,metadata,loggers,individuals,positions;
+-- object: activity | type: SCHEMA --
+-- DROP SCHEMA IF EXISTS activity CASCADE;
+CREATE SCHEMA activity;
+-- ddl-end --
+ALTER SCHEMA activity OWNER TO seatrack_admin;
+-- ddl-end --
+
+-- object: views | type: SCHEMA --
+-- DROP SCHEMA IF EXISTS views CASCADE;
+CREATE SCHEMA views;
+-- ddl-end --
+ALTER SCHEMA views OWNER TO seatrack_admin;
+-- ddl-end --
+
+SET search_path TO pg_catalog,public,config,metadata,loggers,individuals,positions,activity,views;
 -- ddl-end --
 
 -- object: loggers.logger_info | type: TABLE --
@@ -191,11 +205,12 @@ CREATE TABLE loggers.logging_session(
 	id uuid NOT NULL,
 	session_id bigint,
 	logger_id uuid,
-	deployment_id bigint,
-	retrieval_id bigint,
-	logger_end_status text,
+	deployment_id bigint DEFAULT NULL,
+	retrieval_id bigint DEFAULT NULL,
+	active boolean DEFAULT TRUE,
 	colony text,
 	species text,
+	year_tracked text,
 	CONSTRAINT logging_session_pk PRIMARY KEY (id),
 	CONSTRAINT logging_session_session_id_unique UNIQUE (session_id),
 	CONSTRAINT retrieval_id UNIQUE (retrieval_id),
@@ -231,7 +246,7 @@ CREATE TABLE metadata.colony(
 	colony_nat_name text,
 	geom geometry(POINT, 4326) NOT NULL,
 	CONSTRAINT colony_pk PRIMARY KEY (id),
-	CONSTRAINT name_unique UNIQUE (colony_nat_name),
+	CONSTRAINT colony_int_name_unique UNIQUE (colony_int_name),
 	CONSTRAINT colony_nat_unique UNIQUE (colony_nat_name)
 
 );
@@ -244,6 +259,7 @@ ALTER TABLE metadata.colony OWNER TO seatrack_admin;
 CREATE TABLE metadata.location(
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
 	location_name text NOT NULL,
+	colony_int_name text NOT NULL,
 	colony_nat_name text NOT NULL,
 	location_lat double precision NOT NULL,
 	location_lon double precision NOT NULL,
@@ -261,16 +277,17 @@ ALTER TABLE metadata.location OWNER TO seatrack_admin;
 -- DROP TABLE IF EXISTS loggers.deployment CASCADE;
 CREATE TABLE loggers.deployment(
 	id uuid NOT NULL,
+	session_id bigint NOT NULL,
 	deployment_id bigint NOT NULL,
 	logger_id uuid NOT NULL,
-	metalring_id text,
+	individ_id smallint NOT NULL,
 	logger_fate text,
 	dep_species text,
-	dep_date date NOT NULL,
-	dep_colony text,
-	dep_location text,
+	deployment_location text NOT NULL,
+	deployment_date date NOT NULL,
 	CONSTRAINT deployment_pk PRIMARY KEY (id),
-	CONSTRAINT deployment_id_unique UNIQUE (deployment_id)
+	CONSTRAINT deployment_id_unique UNIQUE (deployment_id),
+	CONSTRAINT deployment_session_id_uq UNIQUE (session_id)
 
 );
 -- ddl-end --
@@ -294,6 +311,7 @@ ALTER TABLE metadata.logger_fate OWNER TO seatrack_admin;
 -- DROP TABLE IF EXISTS individuals.individ_info CASCADE;
 CREATE TABLE individuals.individ_info(
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	individ_id smallint NOT NULL,
 	metalring_id text NOT NULL,
 	species text,
 	morph text,
@@ -302,7 +320,8 @@ CREATE TABLE individuals.individ_info(
 	sex text,
 	sexing_method text,
 	CONSTRAINT individ_info_pk PRIMARY KEY (id),
-	CONSTRAINT metalring_id_unique UNIQUE (metalring_id)
+	CONSTRAINT metalring_id_unique UNIQUE (metalring_id),
+	CONSTRAINT individ_id_uq UNIQUE (individ_id)
 
 );
 -- ddl-end --
@@ -340,7 +359,7 @@ ALTER TABLE metadata.sexing_method OWNER TO seatrack_admin;
 CREATE TABLE individuals.individ_status(
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
 	event_id bigint NOT NULL,
-	metalring_id text,
+	individ_id smallint NOT NULL,
 	weight double precision,
 	scull double precision,
 	tarsus double precision,
@@ -366,17 +385,17 @@ ALTER TABLE individuals.individ_status OWNER TO seatrack_admin;
 -- DROP TABLE IF EXISTS loggers.retrieval CASCADE;
 CREATE TABLE loggers.retrieval(
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	session_id bigint NOT NULL,
 	retrieval_id bigint NOT NULL,
 	attribute_name text NOT NULL,
 	logger_id text NOT NULL,
-	metalring_id text NOT NULL,
+	individ_id smallint NOT NULL,
 	retrieval_type text NOT NULL,
-	retrieval_date date NOT NULL,
-	event_id bigint NOT NULL,
 	retrieval_location text,
+	retrieval_date date NOT NULL,
 	CONSTRAINT retrieval_pk PRIMARY KEY (id),
 	CONSTRAINT retrieval_id_unique UNIQUE (retrieval_id),
-	CONSTRAINT event_id_unique UNIQUE (event_id)
+	CONSTRAINT retrieval_session_id_uq UNIQUE (session_id)
 
 );
 -- ddl-end --
@@ -409,8 +428,7 @@ CREATE TABLE loggers.file_archive(
 	file_id bigint NOT NULL,
 	session_id bigint NOT NULL,
 	filename text,
-	CONSTRAINT file_archive_pk PRIMARY KEY (id),
-	CONSTRAINT file_archive_session_id_unique UNIQUE (session_id)
+	CONSTRAINT file_archive_pk PRIMARY KEY (id)
 
 );
 -- ddl-end --
@@ -432,6 +450,35 @@ ALTER TABLE positions.postable OWNER TO seatrack_admin;
 -- DROP TABLE IF EXISTS positions.processing CASCADE;
 CREATE TABLE positions.processing(
 	id uuid NOT NULL,
+	logger_yertracked text NOT NULL,
+	session_id bigint NOT NULL,
+	firstdate_light date,
+	lastdate_light date,
+	first_aut_eq date,
+	last_aut_eq date,
+	first_spring_eq date,
+	last_spring_eq date,
+	software text,
+	light_threshold double precision,
+	tm_file text,
+	processing_file text,
+	posdata_file text,
+	logger_download_success boolean,
+	logger_data_failed boolean,
+	analyzer text,
+	logger_id_retrieved bigint,
+	year_tracked smallint,
+	year_retrieved smallint,
+	logger_model_retrieved text,
+	logger_producer text,
+	ring_number text,
+	euring_code text,
+	species text,
+	sex text,
+	morph text,
+	subspecies text,
+	age smallint,
+	colony text,
 	CONSTRAINT processing_pk PRIMARY KEY (id)
 
 );
@@ -468,6 +515,88 @@ CREATE TABLE loggers.files(
 );
 -- ddl-end --
 ALTER TABLE loggers.files OWNER TO seatrack_admin;
+-- ddl-end --
+
+-- object: loggers.events | type: TABLE --
+-- DROP TABLE IF EXISTS loggers.events CASCADE;
+CREATE TABLE loggers.events(
+	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	logger_id bigint NOT NULL,
+	event_date date NOT NULL,
+	event_id bigint NOT NULL,
+	deployment_id bigint,
+	retrieval_id bigint,
+	CONSTRAINT event_id UNIQUE (event_id),
+	CONSTRAINT events_pk PRIMARY KEY (id),
+	CONSTRAINT event_id_deployment_id_uq UNIQUE (event_id,deployment_id),
+	CONSTRAINT event_id_retrieval_uq UNIQUE (event_id,retrieval_id),
+	CONSTRAINT logger_date_uq UNIQUE (logger_id,event_date)
+
+);
+-- ddl-end --
+ALTER TABLE loggers.events OWNER TO seatrack_admin;
+-- ddl-end --
+
+-- object: positions.logger_year_tracked | type: TABLE --
+-- DROP TABLE IF EXISTS positions.logger_year_tracked CASCADE;
+CREATE TABLE positions.logger_year_tracked(
+	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	session_id bigint NOT NULL,
+	logger text NOT NULL,
+	logger_year_tracked text NOT NULL,
+	CONSTRAINT session_id_uq UNIQUE (session_id),
+	CONSTRAINT logger_year_tracked_pk PRIMARY KEY (id)
+
+);
+-- ddl-end --
+ALTER TABLE positions.logger_year_tracked OWNER TO seatrack_admin;
+-- ddl-end --
+
+-- object: activity.temperature | type: TABLE --
+-- DROP TABLE IF EXISTS activity.temperature CASCADE;
+CREATE TABLE activity.temperature(
+	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	session_id bigint NOT NULL,
+	CONSTRAINT temperature_pk PRIMARY KEY (id)
+
+);
+-- ddl-end --
+ALTER TABLE activity.temperature OWNER TO seatrack_admin;
+-- ddl-end --
+
+-- object: activity.salinity | type: TABLE --
+-- DROP TABLE IF EXISTS activity.salinity CASCADE;
+CREATE TABLE activity.salinity(
+	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	session_id bigint NOT NULL,
+	CONSTRAINT salinity_pk PRIMARY KEY (id)
+
+);
+-- ddl-end --
+ALTER TABLE activity.salinity OWNER TO seatrack_admin;
+-- ddl-end --
+
+-- object: views.postable | type: VIEW --
+-- DROP VIEW IF EXISTS views.postable CASCADE;
+CREATE VIEW views.postable
+AS 
+
+SELECT p.* 
+FROM positions.postable p;
+-- ddl-end --
+ALTER VIEW views.postable OWNER TO seatrack_admin;
+-- ddl-end --
+
+-- object: views.active_logging_sessions | type: VIEW --
+-- DROP VIEW IF EXISTS views.active_logging_sessions CASCADE;
+CREATE VIEW views.active_logging_sessions
+AS 
+
+SELECT *
+FROM loggers.logging_session
+WHERE active = TRUE;
+-- ddl-end --
+ALTER VIEW views.active_logging_sessions OWNER TO seatrack_admin;
 -- ddl-end --
 
 -- object: logger_producer_fk | type: CONSTRAINT --
@@ -519,11 +648,25 @@ REFERENCES metadata.species (species_name_eng) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: allocation_fk | type: CONSTRAINT --
--- ALTER TABLE loggers.logging_session DROP CONSTRAINT IF EXISTS allocation_fk CASCADE;
-ALTER TABLE loggers.logging_session ADD CONSTRAINT allocation_fk FOREIGN KEY (session_id)
-REFERENCES loggers.allocation (session_id) MATCH FULL
+-- object: deployment_logging_session_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.logging_session DROP CONSTRAINT IF EXISTS deployment_logging_session_fk CASCADE;
+ALTER TABLE loggers.logging_session ADD CONSTRAINT deployment_logging_session_fk FOREIGN KEY (deployment_id)
+REFERENCES loggers.deployment (deployment_id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: retrieval_logging_session_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.logging_session DROP CONSTRAINT IF EXISTS retrieval_logging_session_fk CASCADE;
+ALTER TABLE loggers.logging_session ADD CONSTRAINT retrieval_logging_session_fk FOREIGN KEY (retrieval_id)
+REFERENCES loggers.retrieval (retrieval_id) MATCH FULL
+ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: logging_session_startup_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.logging_session DROP CONSTRAINT IF EXISTS logging_session_startup_fk CASCADE;
+ALTER TABLE loggers.logging_session ADD CONSTRAINT logging_session_startup_fk FOREIGN KEY (session_id)
+REFERENCES loggers.startup (session_id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 -- object: colony_fk | type: CONSTRAINT --
@@ -533,11 +676,11 @@ REFERENCES metadata.colony (colony_nat_name) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: logging_session_fk | type: CONSTRAINT --
--- ALTER TABLE loggers.deployment DROP CONSTRAINT IF EXISTS logging_session_fk CASCADE;
-ALTER TABLE loggers.deployment ADD CONSTRAINT logging_session_fk FOREIGN KEY (deployment_id)
-REFERENCES loggers.logging_session (deployment_id) MATCH FULL
-ON DELETE RESTRICT ON UPDATE CASCADE;
+-- object: location_colony_int_name_fk | type: CONSTRAINT --
+-- ALTER TABLE metadata.location DROP CONSTRAINT IF EXISTS location_colony_int_name_fk CASCADE;
+ALTER TABLE metadata.location ADD CONSTRAINT location_colony_int_name_fk FOREIGN KEY (colony_int_name)
+REFERENCES metadata.colony (colony_int_name) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 -- object: species_fk | type: CONSTRAINT --
@@ -547,16 +690,9 @@ REFERENCES metadata.species (species_name_eng) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: colony_fk | type: CONSTRAINT --
--- ALTER TABLE loggers.deployment DROP CONSTRAINT IF EXISTS colony_fk CASCADE;
-ALTER TABLE loggers.deployment ADD CONSTRAINT colony_fk FOREIGN KEY (dep_colony)
-REFERENCES metadata.colony (colony_nat_name) MATCH FULL
-ON DELETE RESTRICT ON UPDATE CASCADE;
--- ddl-end --
-
 -- object: location_fk | type: CONSTRAINT --
 -- ALTER TABLE loggers.deployment DROP CONSTRAINT IF EXISTS location_fk CASCADE;
-ALTER TABLE loggers.deployment ADD CONSTRAINT location_fk FOREIGN KEY (dep_location)
+ALTER TABLE loggers.deployment ADD CONSTRAINT location_fk FOREIGN KEY (deployment_location)
 REFERENCES metadata.location (location_name) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
@@ -570,9 +706,23 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- object: individ_fk | type: CONSTRAINT --
 -- ALTER TABLE loggers.deployment DROP CONSTRAINT IF EXISTS individ_fk CASCADE;
-ALTER TABLE loggers.deployment ADD CONSTRAINT individ_fk FOREIGN KEY (metalring_id)
-REFERENCES individuals.individ_info (metalring_id) MATCH FULL
+ALTER TABLE loggers.deployment ADD CONSTRAINT individ_fk FOREIGN KEY (individ_id)
+REFERENCES individuals.individ_info (individ_id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: deployment_location_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.deployment DROP CONSTRAINT IF EXISTS deployment_location_fk CASCADE;
+ALTER TABLE loggers.deployment ADD CONSTRAINT deployment_location_fk FOREIGN KEY (deployment_location)
+REFERENCES metadata.location (location_name) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ddl-end --
+
+-- object: deployment_logging_session_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.deployment DROP CONSTRAINT IF EXISTS deployment_logging_session_fk CASCADE;
+ALTER TABLE loggers.deployment ADD CONSTRAINT deployment_logging_session_fk FOREIGN KEY (session_id)
+REFERENCES loggers.logging_session (session_id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 -- object: sexing_method_fk | type: CONSTRAINT --
@@ -606,35 +756,21 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- object: retrieval_fk | type: CONSTRAINT --
 -- ALTER TABLE individuals.individ_status DROP CONSTRAINT IF EXISTS retrieval_fk CASCADE;
 ALTER TABLE individuals.individ_status ADD CONSTRAINT retrieval_fk FOREIGN KEY (event_id)
-REFERENCES loggers.retrieval (event_id) MATCH FULL
+REFERENCES loggers.events (event_id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: individ_fk | type: CONSTRAINT --
 -- ALTER TABLE individuals.individ_status DROP CONSTRAINT IF EXISTS individ_fk CASCADE;
-ALTER TABLE individuals.individ_status ADD CONSTRAINT individ_fk FOREIGN KEY (metalring_id)
-REFERENCES individuals.individ_info (metalring_id) MATCH FULL
-ON DELETE RESTRICT ON UPDATE CASCADE;
--- ddl-end --
-
--- object: metalring_fk | type: CONSTRAINT --
--- ALTER TABLE loggers.retrieval DROP CONSTRAINT IF EXISTS metalring_fk CASCADE;
-ALTER TABLE loggers.retrieval ADD CONSTRAINT metalring_fk FOREIGN KEY (metalring_id)
-REFERENCES individuals.individ_info (metalring_id) MATCH FULL
-ON DELETE NO ACTION ON UPDATE NO ACTION;
--- ddl-end --
-
--- object: logging_session_fk | type: CONSTRAINT --
--- ALTER TABLE loggers.retrieval DROP CONSTRAINT IF EXISTS logging_session_fk CASCADE;
-ALTER TABLE loggers.retrieval ADD CONSTRAINT logging_session_fk FOREIGN KEY (retrieval_id)
-REFERENCES loggers.logging_session (retrieval_id) MATCH FULL
+ALTER TABLE individuals.individ_status ADD CONSTRAINT individ_fk FOREIGN KEY (individ_id)
+REFERENCES individuals.individ_info (individ_id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: individ_fk | type: CONSTRAINT --
 -- ALTER TABLE loggers.retrieval DROP CONSTRAINT IF EXISTS individ_fk CASCADE;
-ALTER TABLE loggers.retrieval ADD CONSTRAINT individ_fk FOREIGN KEY (metalring_id)
-REFERENCES individuals.individ_info (metalring_id) MATCH FULL
+ALTER TABLE loggers.retrieval ADD CONSTRAINT individ_fk FOREIGN KEY (individ_id)
+REFERENCES individuals.individ_info (individ_id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
@@ -645,10 +781,17 @@ REFERENCES metadata.location (location_name) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: logging_session_fk | type: CONSTRAINT --
--- ALTER TABLE loggers.shutdown DROP CONSTRAINT IF EXISTS logging_session_fk CASCADE;
-ALTER TABLE loggers.shutdown ADD CONSTRAINT logging_session_fk FOREIGN KEY (session_id)
+-- object: retrieval_logging_session_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.retrieval DROP CONSTRAINT IF EXISTS retrieval_logging_session_fk CASCADE;
+ALTER TABLE loggers.retrieval ADD CONSTRAINT retrieval_logging_session_fk FOREIGN KEY (session_id)
 REFERENCES loggers.logging_session (session_id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ddl-end --
+
+-- object: shutdown_startup_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.shutdown DROP CONSTRAINT IF EXISTS shutdown_startup_fk CASCADE;
+ALTER TABLE loggers.shutdown ADD CONSTRAINT shutdown_startup_fk FOREIGN KEY (session_id)
+REFERENCES loggers.startup (session_id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
@@ -678,6 +821,41 @@ ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE metadata.subspecies ADD CONSTRAINT species_latin_fk FOREIGN KEY (species_name_latin)
 REFERENCES metadata.species (species_name_latin) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: events_deployment_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.events DROP CONSTRAINT IF EXISTS events_deployment_fk CASCADE;
+ALTER TABLE loggers.events ADD CONSTRAINT events_deployment_fk FOREIGN KEY (deployment_id)
+REFERENCES loggers.deployment (deployment_id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ddl-end --
+
+-- object: events_retrieval_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.events DROP CONSTRAINT IF EXISTS events_retrieval_fk CASCADE;
+ALTER TABLE loggers.events ADD CONSTRAINT events_retrieval_fk FOREIGN KEY (retrieval_id)
+REFERENCES loggers.retrieval (retrieval_id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ddl-end --
+
+-- object: logger_year_tracked_logging_session_fk | type: CONSTRAINT --
+-- ALTER TABLE positions.logger_year_tracked DROP CONSTRAINT IF EXISTS logger_year_tracked_logging_session_fk CASCADE;
+ALTER TABLE positions.logger_year_tracked ADD CONSTRAINT logger_year_tracked_logging_session_fk FOREIGN KEY (session_id)
+REFERENCES loggers.logging_session (session_id) MATCH FULL
+ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: temp_session_id_fk | type: CONSTRAINT --
+-- ALTER TABLE activity.temperature DROP CONSTRAINT IF EXISTS temp_session_id_fk CASCADE;
+ALTER TABLE activity.temperature ADD CONSTRAINT temp_session_id_fk FOREIGN KEY (session_id)
+REFERENCES loggers.startup (session_id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ddl-end --
+
+-- object: salinity_session_id_fk | type: CONSTRAINT --
+-- ALTER TABLE activity.salinity DROP CONSTRAINT IF EXISTS salinity_session_id_fk CASCADE;
+ALTER TABLE activity.salinity ADD CONSTRAINT salinity_session_id_fk FOREIGN KEY (session_id)
+REFERENCES loggers.startup (session_id) MATCH FULL
+ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 
