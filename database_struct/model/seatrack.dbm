@@ -3,12 +3,14 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="361,687" last-zoom="1"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,540" last-zoom="0.8"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
       createrole="true"
       login="true">
+	<prepended-sql><![CDATA[
+]]></prepended-sql>
 </role>
 
 <role name="seatrack_reader">
@@ -85,6 +87,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="producer_unique_constraint" type="uq-constr" table="metadata.logger_producers">
 		<columns names="producer" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•producer⸣
+•testproducer]]>
+	</initial-data>
 </table>
 
 <table name="logger_models">
@@ -103,51 +109,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="model_unique" type="uq-constr" table="metadata.logger_models">
 		<columns names="model" ref-type="src-columns"/>
 	</constraint>
-</table>
-
-<table name="startup">
-	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
-	<position x="980" y="340"/>
-	<column name="id" not-null="true" default-value="uuid_generate_v1()">
-		<type name="uuid" length="0"/>
-	</column>
-	<column name="session_id">
-		<type name="bigint" length="0"/>
-	</column>
-	<column name="logger_id" not-null="true">
-		<type name="varchar" length="80"/>
-	</column>
-	<column name="startdate_gmt" not-null="true">
-		<type name="date" length="0"/>
-	</column>
-	<column name="startime_gmt" not-null="true">
-		<type name="timestamp" length="0"/>
-	</column>
-	<column name="logging_mode" not-null="true">
-		<type name="varchar" length="15"/>
-	</column>
-	<column name="started_by" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="started_where" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="days_delayed">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="programmed_gmt_date">
-		<type name="date" length="0"/>
-	</column>
-	<column name="programmed_gmt_time">
-		<type name="timestamp" length="0"/>
-	</column>
-	<constraint name="startup_pk" type="pk-constr" table="loggers.startup">
-		<columns names="id" ref-type="src-columns"/>
-	</constraint>
-	<constraint name="session_id_unique" type="uq-constr" table="loggers.startup">
-		<columns names="session_id" ref-type="src-columns"/>
-	</constraint>
+	<initial-data>
+<![CDATA[id•model⸣
+•testmodel]]>
+	</initial-data>
 </table>
 
 <table name="logging_modes">
@@ -166,17 +131,24 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="logging_modes_unique" type="uq-constr" table="metadata.logging_modes">
 		<columns names="mode" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•mode⸣
+•testmode]]>
+	</initial-data>
 </table>
 
 <table name="people">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
 	<position x="80" y="460"/>
-	<column name="id" not-null="true">
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="name" not-null="true">
 		<type name="text" length="0"/>
+	</column>
+	<column name="person_id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<constraint name="people_pk" type="pk-constr" table="metadata.people">
 		<columns names="id" ref-type="src-columns"/>
@@ -184,17 +156,24 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="names_unique" type="uq-constr" table="metadata.people">
 		<columns names="name" ref-type="src-columns"/>
 	</constraint>
+	<constraint name="person_id_uq" type="uq-constr" table="metadata.people">
+		<columns names="person_id" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[id•name•person_id⸣
+•Jens Åström•]]>
+	</initial-data>
 </table>
 
 <table name="allocation">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="740"/>
+	<position x="940" y="740"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
 		<type name="uuid" length="0"/>
@@ -219,21 +198,21 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logging_session">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1000" y="1000"/>
-	<column name="id" not-null="true">
+	<position x="940" y="980"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="logger_id">
-		<type name="uuid" length="0"/>
+		<type name="varchar" length="40"/>
 	</column>
 	<column name="deployment_id" default-value="NULL">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="retrieval_id" default-value="NULL">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="active" default-value="TRUE">
 		<type name="boolean" length="0"/>
@@ -292,10 +271,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
-	<column name="lat" not-null="true">
+	<column name="lat">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="lon" not-null="true">
+	<column name="lon">
 		<type name="double precision" length="0"/>
 	</column>
 	<column name="colony_int_name">
@@ -304,7 +283,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="colony_nat_name">
 		<type name="text" length="0"/>
 	</column>
-	<column name="geom" not-null="true">
+	<column name="geom">
 		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
 	</column>
 	<constraint name="colony_pk" type="pk-constr" table="metadata.colony">
@@ -316,6 +295,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="colony_nat_unique" type="uq-constr" table="metadata.colony">
 		<columns names="colony_nat_name" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•lat•lon•colony_int_name•colony_nat_name•geom⸣
+•73.1•15.2•testcolony•testcolonü•]]>
+	</initial-data>
 </table>
 
 <table name="location">
@@ -334,13 +317,13 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="colony_nat_name" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="location_lat" not-null="true">
+	<column name="lat">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="location_lon" not-null="true">
+	<column name="lon">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="geom" not-null="true">
+	<column name="geom">
 		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
 	</column>
 	<constraint name="location_pk" type="pk-constr" table="metadata.location">
@@ -362,16 +345,16 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="deployment_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="individ_id" not-null="true">
-		<type name="smallint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="logger_fate">
 		<type name="text" length="0"/>
@@ -421,12 +404,12 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="individ_info">
 	<schema name="individuals"/>
 	<role name="seatrack_admin"/>
-	<position x="40" y="1840"/>
+	<position x="40" y="1860"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="individ_id" not-null="true">
-		<type name="smallint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="metalring_id" not-null="true">
 		<type name="text" length="0"/>
@@ -468,7 +451,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="sex" not-null="true">
-		<type name="varchar" length="10"/>
+		<type name="varchar" length="20"/>
 	</column>
 	<constraint name="sex_pk" type="pk-constr" table="metadata.sex">
 		<columns names="id" ref-type="src-columns"/>
@@ -504,10 +487,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="event_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="individ_id" not-null="true">
-		<type name="smallint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="weight">
 		<type name="double precision" length="0"/>
@@ -537,7 +520,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="bit" length="0"/>
 	</column>
 	<column name="breeding_success_criterion">
-		<type name="varchar" length="20"/>
+		<type name="text" length="20"/>
 	</column>
 	<column name="data_responsible" not-null="true">
 		<type name="text" length="0"/>
@@ -564,10 +547,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="retrieval_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="attribute_name" not-null="true">
 		<type name="text" length="0"/>
@@ -576,7 +559,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="text" length="0"/>
 	</column>
 	<column name="individ_id" not-null="true">
-		<type name="smallint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="retrieval_type" not-null="true">
 		<type name="text" length="0"/>
@@ -606,7 +589,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="download_type" not-null="true">
 		<type name="text" length="0"/>
@@ -642,10 +625,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="file_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="filename">
 		<type name="text" length="0"/>
@@ -682,7 +665,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="text" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="firstdate_light">
 		<type name="date" length="0"/>
@@ -811,12 +794,12 @@ Lägg till views schema.
 <table name="files">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1560" y="1760"/>
+	<position x="1560" y="1780"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="file_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="filename" not-null="true">
 		<type name="text" length="0"/>
@@ -840,19 +823,19 @@ Lägg till views schema.
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="event_date" not-null="true">
 		<type name="date" length="0"/>
 	</column>
 	<column name="event_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="deployment_id">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="retrieval_id">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<constraint name="event_id" type="uq-constr" table="loggers.events">
 		<columns names="event_id" ref-type="src-columns"/>
@@ -879,7 +862,7 @@ Lägg till views schema.
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="logger" not-null="true">
 		<type name="text" length="0"/>
@@ -902,12 +885,12 @@ Lägg till views schema.
 <table name="temperature">
 	<schema name="activity"/>
 	<role name="seatrack_admin"/>
-	<position x="2080" y="1100"/>
+	<position x="2100" y="1120"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<constraint name="temperature_pk" type="pk-constr" table="activity.temperature">
 		<columns names="id" ref-type="src-columns"/>
@@ -922,7 +905,7 @@ Lägg till views schema.
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
-		<type name="bigint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<constraint name="salinity_pk" type="pk-constr" table="activity.salinity">
 		<columns names="id" ref-type="src-columns"/>
@@ -953,6 +936,157 @@ FROM loggers.logging_session
 WHERE active = TRUE]]></expression>
 	</reference>
 </view>
+
+<table name="startup">
+	<schema name="loggers"/>
+	<role name="seatrack_admin"/>
+	<position x="980" y="340"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="session_id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="varchar" length="80"/>
+	</column>
+	<column name="startdate_gmt" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="startime_gmt" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="logging_mode" not-null="true">
+		<type name="varchar" length="15"/>
+	</column>
+	<column name="started_by" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="started_where" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="days_delayed">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="programmed_gmt_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="programmed_gmt_time">
+		<type name="timestamp" length="0"/>
+	</column>
+	<constraint name="startup_pk" type="pk-constr" table="loggers.startup">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="session_id_unique" type="uq-constr" table="loggers.startup">
+		<columns names="session_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<schema name="aaa_functions" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<function name="fn_update_location_geom"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="aaa_functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN	
+-- as this is an after trigger, NEW contains all the information we need even for INSERT
+	UPDATE metadata.location SET 
+	geom = ST_SetSRID(ST_MakePoint(NEW.lon,NEW.lat), 4326)
+	WHERE id=NEW.id;
+
+	--RAISE NOTICE 'UPDATING geo data for %, [%,%]' , NEW.id, NEW.lat, NEW.lon;	
+    RETURN NULL; -- result is ignored since this is an AFTER trigger
+  END;
+
+]]></definition>
+</function>
+
+<trigger name="tr_insert_location_geom" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="metadata.location">
+		<function signature="aaa_functions.fn_update_location_geom()"/>
+</trigger>
+
+<trigger name="fn_update_location_geom" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
+	 table="metadata.location">
+		<function signature="aaa_functions.fn_update_location_geom()"/>
+		<columns names="lat,lon"/>
+</trigger>
+
+<function name="fn_update_colony_geom"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="aaa_functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN	
+-- as this is an after trigger, NEW contains all the information we need even for INSERT
+	UPDATE metadata.colony SET 
+	geom = ST_SetSRID(ST_MakePoint(NEW.lon,NEW.lat), 4326)
+	WHERE id=NEW.id;
+
+	--RAISE NOTICE 'UPDATING geo data for %, [%,%]' , NEW.id, NEW.lat, NEW.lon;	
+    RETURN NULL; -- result is ignored since this is an AFTER trigger
+  END;]]></definition>
+</function>
+
+<function name="create_logging_session"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="aaa_functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+    INSERT INTO
+        loggers.logging_session(session_id, logger_id, active)
+        VALUES(new.session_id,new.logger_id, 'TRUE');
+
+           RETURN new;
+END;
+]]></definition>
+</function>
+
+<trigger name="tr_insert_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="metadata.colony">
+		<function signature="aaa_functions.fn_update_colony_geom()"/>
+</trigger>
+
+<trigger name="tr_update_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
+	 table="metadata.colony">
+		<function signature="aaa_functions.fn_update_colony_geom()"/>
+		<columns names="lat,lon"/>
+</trigger>
 
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_producers" table="loggers.logger_info">
