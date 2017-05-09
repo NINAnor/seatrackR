@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,540" last-zoom="0.8"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="101,970" last-zoom="0.8"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -755,18 +755,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 <textbox name="Questions" font-size="9">
 	<position x="1000" y="2200"/>
-	<comment><![CDATA[When to use nat name and when to use int name for colony? use international names!
+	<comment><![CDATA[Add trigger logic, e.g. between logging_session, deployment, retrieval, and events. Also to logger_year
 
-Colonies to locations are one to many relationship? yes
+Autogenerate file names at shutdown depending on logger model. Need reference table of logger models and files to create trigger.
 
-Add trigger logic, e.g. between logging_session, deployment, retrieval, and events. Also to logger_year
-
-Autogenerer filnavn basers på loggermodell. Behöver tabell över de olika standarderna för loggers.
-
-Lägg till activity schema. Varje logger_yeartracked har en massa rader med värden.
-
-Lägg till views schema.
-]]></comment>
+Sort out logic of events. Events can be of either deployment, retrieval or observation type. Fill events table or fill three separate tables?]]></comment>
 </textbox>
 
 <table name="subspecies">
@@ -982,7 +975,7 @@ WHERE active = TRUE]]></expression>
 	</constraint>
 </table>
 
-<schema name="aaa_functions" rect-visible="true" fill-color="#e1e1e1">
+<schema name="functions" rect-visible="true" fill-color="#e1e1e1">
 	<role name="seatrack_admin"/>
 </schema>
 
@@ -994,7 +987,7 @@ WHERE active = TRUE]]></expression>
 		security-type="SECURITY INVOKER"
 		execution-cost="1"
 		row-amount="0">
-	<schema name="aaa_functions"/>
+	<schema name="functions"/>
 	<role name="seatrack_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
@@ -1016,13 +1009,13 @@ WHERE active = TRUE]]></expression>
 <trigger name="tr_insert_location_geom" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
 	 table="metadata.location">
-		<function signature="aaa_functions.fn_update_location_geom()"/>
+		<function signature="functions.fn_update_location_geom()"/>
 </trigger>
 
 <trigger name="fn_update_location_geom" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
 	 table="metadata.location">
-		<function signature="aaa_functions.fn_update_location_geom()"/>
+		<function signature="functions.fn_update_location_geom()"/>
 		<columns names="lat,lon"/>
 </trigger>
 
@@ -1034,7 +1027,7 @@ WHERE active = TRUE]]></expression>
 		security-type="SECURITY INVOKER"
 		execution-cost="1"
 		row-amount="0">
-	<schema name="aaa_functions"/>
+	<schema name="functions"/>
 	<role name="seatrack_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
@@ -1059,7 +1052,7 @@ WHERE active = TRUE]]></expression>
 		security-type="SECURITY INVOKER"
 		execution-cost="1"
 		row-amount="0">
-	<schema name="aaa_functions"/>
+	<schema name="functions"/>
 	<role name="seatrack_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
@@ -1078,13 +1071,13 @@ END;
 <trigger name="tr_insert_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
 	 table="metadata.colony">
-		<function signature="aaa_functions.fn_update_colony_geom()"/>
+		<function signature="functions.fn_update_colony_geom()"/>
 </trigger>
 
 <trigger name="tr_update_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
 	 table="metadata.colony">
-		<function signature="aaa_functions.fn_update_colony_geom()"/>
+		<function signature="functions.fn_update_colony_geom()"/>
 		<columns names="lat,lon"/>
 </trigger>
 
@@ -1098,24 +1091,6 @@ END;
 	 upd-action="CASCADE" del-action="CASCADE" ref-table="metadata.logger_models" table="loggers.logger_info">
 	<columns names="logger_model" ref-type="src-columns"/>
 	<columns names="model" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="logging_modes_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="metadata.logging_modes" table="loggers.startup">
-	<columns names="logging_mode" ref-type="src-columns"/>
-	<columns names="mode" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="people_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.people" table="loggers.startup">
-	<columns names="started_by" ref-type="src-columns"/>
-	<columns names="name" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="startup_logger_id_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="loggers.startup">
-	<columns names="logger_id" ref-type="src-columns"/>
-	<columns names="logger_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="startup_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -1308,6 +1283,24 @@ END;
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.startup" table="activity.salinity">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logging_modes_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="metadata.logging_modes" table="loggers.startup">
+	<columns names="logging_mode" ref-type="src-columns"/>
+	<columns names="mode" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="people_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.people" table="loggers.startup">
+	<columns names="started_by" ref-type="src-columns"/>
+	<columns names="name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="startup_logger_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="loggers.startup">
+	<columns names="logger_id" ref-type="src-columns"/>
+	<columns names="logger_id" ref-type="dst-columns"/>
 </constraint>
 
 <relationship name="rel_logger_info_logger_producers" type="relfk"
