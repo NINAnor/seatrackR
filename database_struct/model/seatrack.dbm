@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="101,970" last-zoom="0.8"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="96,852" last-zoom="0.8"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -359,7 +359,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="logger_fate">
 		<type name="text" length="0"/>
 	</column>
-	<column name="dep_species">
+	<column name="deployment_species">
 		<type name="text" length="0"/>
 	</column>
 	<column name="deployment_location" not-null="true">
@@ -1081,6 +1081,106 @@ END;
 		<columns names="lat,lon"/>
 </trigger>
 
+<schema name="imports" rect-visible="true" fill-color="#e1e1e1">
+	<role name="seatrack_admin"/>
+</schema>
+
+<table name="logger_import">
+	<schema name="imports"/>
+	<role name="seatrack_admin"/>
+	<position x="2180" y="1500"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="import_time" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="import_type" not-null="true">
+		<type name="varchar" length="20"/>
+	</column>
+	<column name="logger_id" not-null="true">
+		<type name="varchar" length="80"/>
+	</column>
+	<column name="startdate_gmt">
+		<type name="date" length="0"/>
+	</column>
+	<column name="starttime_gmt">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="logging_mode">
+		<type name="varchar" length="15"/>
+	</column>
+	<column name="started_by">
+		<type name="text" length="0"/>
+	</column>
+	<column name="started_where">
+		<type name="text" length="0"/>
+	</column>
+	<column name="days_delayed">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="programmed_gmt_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="programmed_gmt_time">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="intended_species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="intended_location">
+		<type name="text" length="0"/>
+	</column>
+	<column name="intended_deployer">
+		<type name="text" length="0"/>
+	</column>
+	<column name="individ_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="logger_fate">
+		<type name="text" length="0"/>
+	</column>
+	<column name="deployement_species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="deployment_location">
+		<type name="text" length="0"/>
+	</column>
+	<column name="deployment_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="attribute_name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="retrieval_type">
+		<type name="text" length="0"/>
+	</column>
+	<column name="retrieval_location">
+		<type name="text" length="0"/>
+	</column>
+	<column name="retrieval_date">
+		<type name="date" length="0"/>
+	</column>
+</table>
+
+<table name="import_types">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="480" y="1560"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="import_type" not-null="true">
+		<type name="varchar" length="20"/>
+	</column>
+	<constraint name="import_types_pk" type="pk-constr" table="metadata.import_types">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="import_types_uq" type="uq-constr" table="metadata.import_types">
+		<columns names="import_type" ref-type="src-columns"/>
+	</constraint>
+</table>
+
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_producers" table="loggers.logger_info">
 	<columns names="producer" ref-type="src-columns"/>
@@ -1137,7 +1237,7 @@ END;
 
 <constraint name="species_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.species" table="loggers.deployment">
-	<columns names="dep_species" ref-type="src-columns"/>
+	<columns names="deployment_species" ref-type="src-columns"/>
 	<columns names="species_name_eng" ref-type="dst-columns"/>
 </constraint>
 
@@ -1301,6 +1401,12 @@ END;
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="loggers.startup">
 	<columns names="logger_id" ref-type="src-columns"/>
 	<columns names="logger_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="import_type_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.import_types" table="imports.logger_import">
+	<columns names="import_type" ref-type="src-columns"/>
+	<columns names="import_type" ref-type="dst-columns"/>
 </constraint>
 
 <relationship name="rel_logger_info_logger_producers" type="relfk"
@@ -1469,6 +1575,11 @@ END;
 <relationship name="rel_events_retrieval" type="relfk"
 	 src-table="loggers.events"
 	 dst-table="loggers.retrieval"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logger_import_import_types" type="relfk"
+	 src-table="imports.logger_import"
+	 dst-table="metadata.import_types"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
