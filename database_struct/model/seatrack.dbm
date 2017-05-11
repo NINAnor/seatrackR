@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="907,899" last-zoom="1.05"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,1167" last-zoom="0.85"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -270,6 +270,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="species_name_latin_unique" type="uq-constr" table="metadata.species">
 		<columns names="species_name_latin" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•species_name_eng•species_name_latin⸣
+•testspecies•testus specius]]>
+	</initial-data>
 </table>
 
 <table name="colony">
@@ -343,6 +347,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="location_nat_unique" type="uq-constr" table="metadata.location">
 		<columns names="colony_nat_name" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•location_name•colony_int_name•colony_nat_name•lat•lon•geom⸣
+•testlocation•testcolony•testcolonü•72.1•10.22•]]>
+	</initial-data>
 </table>
 
 <table name="deployment">
@@ -403,6 +411,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="fate_unique" type="uq-constr" table="metadata.logger_fate">
 		<columns names="logger_fate" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•logger_fate⸣
+•testfate]]>
+	</initial-data>
 </table>
 
 <schema name="individuals" rect-visible="true" fill-color="#e1e1e1">
@@ -449,6 +461,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="individ_id_uq" type="uq-constr" table="individuals.individ_info">
 		<columns names="individ_id" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•individ_id•metalring_id•species•morph•subspecies•age•sex•sexing_method⸣
+•1•1•testspecies•testmorph•testus•12•m•testmethod]]>
+	</initial-data>
 </table>
 
 <table name="sex">
@@ -467,6 +483,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="sex_unique" type="uq-constr" table="metadata.sex">
 		<columns names="sex" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•sex⸣
+•m⸣
+•f]]>
+	</initial-data>
 </table>
 
 <table name="sexing_method">
@@ -485,6 +506,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<constraint name="sexing_method_unique" type="uq-constr" table="metadata.sexing_method">
 		<columns names="method" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•method⸣
+•testmethod]]>
+	</initial-data>
 </table>
 
 <table name="individ_status">
@@ -802,6 +827,11 @@ Shouldn't logger_mount_method be in the deployment table instead of the individ_
 		<columns names="sub_species" ref-type="src-columns"/>
 		<comment><![CDATA[Might not be necessarily unique?]]></comment>
 	</constraint>
+	<initial-data>
+<![CDATA[id•species_name_latin•sub_species⸣
+•testus specius•testus⸣
+•testus specius•specius]]>
+	</initial-data>
 </table>
 
 <table name="files">
@@ -1217,6 +1247,10 @@ WHERE active = TRUE]]></expression>
 	<constraint name="import_types_uq" type="uq-constr" table="metadata.import_types">
 		<columns names="import_type" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•import_type⸣
+•testtype]]>
+	</initial-data>
 </table>
 
 <table name="mounting_types">
@@ -1235,6 +1269,10 @@ WHERE active = TRUE]]></expression>
 	<constraint name="mounting_types_uq" type="uq-constr" table="metadata.mounting_types">
 		<columns names="logger_mount_method" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•logger_mount_method⸣
+•testmethod]]>
+	</initial-data>
 </table>
 
 <table name="observations">
@@ -1379,6 +1417,10 @@ END;]]></definition>
 		THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 	END IF;
+	NEW.session_id := logging_session.session_id
+	FROM loggers.logging_session
+	WHERE NEW.logger_id = logging_session.logger_id
+	AND logging_session.active = TRUE;
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -1387,6 +1429,42 @@ END;]]></definition>
 	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
 	 table="loggers.deployment">
 		<function signature="functions.fn_check_open_session_on_deployment()"/>
+</trigger>
+
+<function name="fn_update_session_on_deployment"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	WITH col as (SELECT session_id, colony_int_name
+		FROM loggers.deployment d, metadata.location l
+		WHERE d.deployment_location = l.location_name
+		AND d.session_id = NEW.session_id)
+		UPDATE loggers.logging_session update SET
+		deployment_id = NEW.deployment_id,
+		colony = col.colony_int_name, 
+		species = NEW.deployment_species
+		FROM col
+		WHERE update.session_id = NEW.session_id
+		AND col.session_id = NEW.session_id;
+	RETURN NULL;
+END;]]></definition>
+</function>
+
+<trigger name="tr_update_session_on_deployment" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="loggers.deployment">
+		<function signature="functions.fn_update_session_on_deployment()"/>
 </trigger>
 
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
