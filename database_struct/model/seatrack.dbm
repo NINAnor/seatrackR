@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="524,611" last-zoom="1.05"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="907,899" last-zoom="1.05"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -13,10 +13,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 ]]></prepended-sql>
 </role>
 
-<role name="seatrack_reader">
+<role name="seatrack_reader"
+      inherit="true"
+      login="true">
 </role>
 
-<role name="seatrack_insert">
+<role name="seatrack_writer"
+      inherit="true"
+      login="true">
 </role>
 
 <database name="seatrack" prepend-at-bod="true">
@@ -173,7 +177,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
 	<position x="940" y="740"/>
-	<column name="id" not-null="true">
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id">
@@ -345,7 +349,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
 	<position x="1000" y="1360"/>
-	<column name="id" not-null="true">
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
@@ -355,7 +359,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="serial" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
-		<type name="uuid" length="0"/>
+		<type name="character" length="80"/>
 	</column>
 	<column name="individ_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -408,7 +412,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="individ_info">
 	<schema name="individuals"/>
 	<role name="seatrack_admin"/>
-	<position x="20" y="1848"/>
+	<position x="20" y="1840"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -486,7 +490,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="individ_status">
 	<schema name="individuals"/>
 	<role name="seatrack_admin"/>
-	<position x="440" y="1928"/>
+	<position x="440" y="1920"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -598,7 +602,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
 	<position x="1560" y="1240"/>
-	<column name="id" not-null="true">
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
@@ -634,7 +638,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
 	<position x="1560" y="1540"/>
-	<column name="id" not-null="true">
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="file_id" not-null="true">
@@ -1060,29 +1064,6 @@ WHERE active = TRUE]]></expression>
   END;]]></definition>
 </function>
 
-<function name="create_logging_session"
-		window-func="false"
-		returns-setof="false"
-		behavior-type="CALLED ON NULL INPUT"
-		function-type="VOLATILE"
-		security-type="SECURITY INVOKER"
-		execution-cost="1"
-		row-amount="0">
-	<schema name="functions"/>
-	<role name="seatrack_admin"/>
-	<language name="plpgsql" sql-disabled="true"/>
-	<return-type>
-	<type name="trigger" length="0"/>
-	</return-type>
-	<definition><![CDATA[BEGIN
-    INSERT INTO
-        loggers.logging_session(session_id, logger_id, active)
-        VALUES(new.session_id,new.logger_id, 'TRUE');
-           RETURN NULL;
-END;
-]]></definition>
-</function>
-
 <trigger name="tr_insert_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
 	 table="metadata.colony">
@@ -1365,9 +1346,9 @@ END;]]></definition>
 	</return-type>
 	<definition><![CDATA[BEGIN
     INSERT INTO
-       logging_session(session_id,logger_id)
+       loggers.logging_session(session_id,logger_id)
         VALUES(new.session_id,new.logger_id);
-           RETURN new;
+           RETURN NULL;
 END;]]></definition>
 </function>
 
@@ -1375,6 +1356,37 @@ END;]]></definition>
 	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
 	 table="loggers.startup">
 		<function signature="functions.fn_start_new_logging_session()"/>
+</trigger>
+
+<function name="fn_check_open_session_on_deployment"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+		IF  bool_and(logging_session.active = FALSE)
+				FROM loggers.logging_session
+				WHERE logging_session.logger_id = NEW.logger_id
+		THEN
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+	END IF;
+RETURN NEW;
+END;]]></definition>
+</function>
+
+<trigger name="tr_check_open_session_on_deployment" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="loggers.deployment">
+		<function signature="functions.fn_check_open_session_on_deployment()"/>
 </trigger>
 
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
