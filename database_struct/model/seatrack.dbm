@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,1167" last-zoom="0.85"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="555,1169" last-zoom="0.85"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -804,7 +804,8 @@ Autogenerate file names at shutdown depending on logger model. Need reference ta
 Sort out logic of events. Events can be of either deployment, retrieval or observation type. Fill events table or fill three separate tables?
 
 Shouldn't logger_mount_method be in the deployment table instead of the individ_status?
-]]></comment>
+
+retrievals need trigger to check if that logger_id is in logging_session, probably deployment as well. Now, insert of "new" logger_id in retrieval table just creates error related to foreign key.]]></comment>
 </textbox>
 
 <table name="subspecies">
@@ -1023,6 +1024,10 @@ WHERE active = TRUE]]></expression>
 	<constraint name="session_id_unique" type="uq-constr" table="loggers.startup">
 		<columns names="session_id" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•session_id•logger_id•startdate_gmt•startime_gmt•logging_mode•started_by•started_where•days_delayed•programmed_gmt_date•programmed_gmt_time⸣
+••1•2017-05-01•2017-05-01 10:00:00•testmode•Jens Åström•Buvika•12•2017-05-02•2017-05-02 11:00:00]]>
+	</initial-data>
 </table>
 
 <schema name="functions" rect-visible="true" fill-color="#e1e1e1">
@@ -1465,6 +1470,85 @@ END;]]></definition>
 	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="loggers.deployment">
 		<function signature="functions.fn_update_session_on_deployment()"/>
+</trigger>
+
+<function name="fn_check_open_session_on_retrieval"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	IF  bool_and(logging_session.active = FALSE) 			
+			FROM loggers.logging_session
+			WHERE logging_session.logger_id = NEW.logger_id
+	THEN
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+	END IF;
+   
+	IF bool_or(logging_session.deployment_id IS NULL)
+			FROM loggers.logging_session
+			WHERE logging_session.logger_id = NEW.logger_id
+	THEN
+		RAISE EXCEPTION 'Logger % not deployed. Logger must be deployed before retrieved.', NEW.logger_id;
+	END IF;
+		
+	NEW.session_id := logging_session.session_id
+	FROM loggers.logging_session
+	WHERE NEW.logger_id = logging_session.logger_id
+	AND logging_session.active = TRUE;
+RETURN NEW;
+END;]]></definition>
+</function>
+
+<trigger name="tr_check_session_on_retrieval" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="loggers.retrieval">
+		<function signature="functions.fn_check_open_session_on_retrieval()"/>
+</trigger>
+
+<function name="fn_update_session_on_retrieval"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+		WITH dep as (SELECT r.session_id, deployment_date, retrieval_date
+		FROM loggers.retrieval r, loggers.deployment d
+		WHERE r.session_id = d.session_id
+		AND r.session_id = NEW.session_id)
+		UPDATE loggers.logging_session update SET
+		retrieval_id = NEW.retrieval_id,
+		active = FALSE,
+		year_tracked = date_part('year', dep.deployment_date) || '-' || date_part('year', dep.retrieval_date)
+		FROM dep
+		WHERE update.session_id = NEW.session_id
+		AND NEW.session_id = dep.session_id;
+	RETURN NULL;
+END;]]></definition>
+</function>
+
+<trigger name="tr_update_session_on_retrieval" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="loggers.retrieval">
+		<function signature="functions.fn_update_session_on_retrieval()"/>
 </trigger>
 
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
