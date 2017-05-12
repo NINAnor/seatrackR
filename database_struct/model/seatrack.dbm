@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="555,1169" last-zoom="0.85"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="10,1210" last-zoom="0.85"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -53,7 +53,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
-		<type name="varchar" length="80"/>
+		<type name="serial" length="80"/>
+	</column>
+	<column name="logger_serial_no" not-null="true">
+		<type name="text" length="0"/>
 	</column>
 	<column name="producer" not-null="true">
 		<type name="text" length="0"/>
@@ -74,8 +77,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<columns names="logger_id" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•logger_id•producer•production_year•logger_model•project⸣
-•1•testproducer•2017•testmodel•seatrack]]>
+<![CDATA[id•logger_id•logger_serial_no•producer•production_year•logger_model•project⸣
+•1•test_1234•testproducer•2013•testmodel•seatrack]]>
 	</initial-data>
 </table>
 
@@ -176,7 +179,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="allocation">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="940" y="740"/>
+	<position x="960" y="720"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -184,7 +187,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="integer" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
-		<type name="uuid" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="intended_species">
 		<type name="text" length="0"/>
@@ -206,7 +209,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logging_session">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="940" y="980"/>
+	<position x="940" y="1020"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -214,7 +217,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="integer" length="0"/>
 	</column>
 	<column name="logger_id">
-		<type name="varchar" length="40"/>
+		<type name="integer" length="40"/>
 	</column>
 	<column name="deployment_id" default-value="NULL">
 		<type name="integer" length="0"/>
@@ -233,6 +236,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	</column>
 	<column name="year_tracked">
 		<type name="text" length="0"/>
+	</column>
+	<column name="individ_id">
+		<type name="integer" length="0"/>
 	</column>
 	<constraint name="logging_session_pk" type="pk-constr" table="loggers.logging_session">
 		<columns names="id" ref-type="src-columns"/>
@@ -356,7 +362,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="deployment">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1000" y="1360"/>
+	<position x="960" y="1400"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -367,7 +373,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="serial" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
-		<type name="character" length="80"/>
+		<type name="integer" length="80"/>
 	</column>
 	<column name="individ_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -383,6 +389,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	</column>
 	<column name="deployment_date" not-null="true">
 		<type name="date" length="0"/>
+	</column>
+	<column name="logger_mount_method" not-null="true">
+		<type name="text" length="0"/>
 	</column>
 	<constraint name="deployment_pk" type="pk-constr" table="loggers.deployment">
 		<columns names="id" ref-type="src-columns"/>
@@ -519,10 +528,13 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
+	<column name="logger_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
 	<column name="status_id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="individ_id" not-null="true">
+	<column name="session_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="weight">
@@ -564,14 +576,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="comment">
 		<type name="text" length="0"/>
 	</column>
-	<column name="logger_mount_method">
-		<type name="text" length="0"/>
-	</column>
 	<column name="location" not-null="true">
 		<type name="text" length="0"/>
-	</column>
-	<column name="session_id" not-null="true">
-		<type name="integer" length="0"/>
 	</column>
 	<constraint name="individ_status_pk" type="pk-constr" table="individuals.individ_status">
 		<columns names="id" ref-type="src-columns"/>
@@ -584,7 +590,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="retrieval">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="1800"/>
+	<position x="980" y="1840"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -598,7 +604,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="text" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
-		<type name="text" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="individ_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -801,11 +807,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 Autogenerate file names at shutdown depending on logger model. Need reference table of logger models and files to create trigger.
 
-Sort out logic of events. Events can be of either deployment, retrieval or observation type. Fill events table or fill three separate tables?
 
 Shouldn't logger_mount_method be in the deployment table instead of the individ_status?
 
-retrievals need trigger to check if that logger_id is in logging_session, probably deployment as well. Now, insert of "new" logger_id in retrieval table just creates error related to foreign key.]]></comment>
+Create some support to get the correct logger_id. Could be done manually using the logger_info table. Logger type and serial number should do to identify the logger_id.]]></comment>
 </textbox>
 
 <table name="subspecies">
@@ -992,7 +997,7 @@ WHERE active = TRUE]]></expression>
 		<type name="serial" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
-		<type name="varchar" length="80"/>
+		<type name="integer" length="80"/>
 	</column>
 	<column name="startdate_gmt" not-null="true">
 		<type name="date" length="0"/>
@@ -1254,7 +1259,11 @@ WHERE active = TRUE]]></expression>
 	</constraint>
 	<initial-data>
 <![CDATA[id•import_type⸣
-•testtype]]>
+•startup⸣
+•allocation⸣
+•deployment⸣
+•retrieval⸣
+•status]]>
 	</initial-data>
 </table>
 
@@ -1283,7 +1292,7 @@ WHERE active = TRUE]]></expression>
 <table name="observations">
 	<schema name="individuals"/>
 	<role name="seatrack_admin"/>
-	<position x="0" y="2300"/>
+	<position x="0" y="2400"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1368,7 +1377,7 @@ END;]]></definition>
 </function>
 
 <trigger name="tr_check_open_logging_session" firing-type="BEFORE" per-line="true" constraint="false"
-	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="loggers.startup">
 		<function signature="functions.fn_check_logging_session_not_open()"/>
 </trigger>
@@ -1396,7 +1405,7 @@ END;]]></definition>
 </function>
 
 <trigger name="tr_insert_new_logging_session" firing-type="AFTER" per-line="true" constraint="false"
-	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="loggers.startup">
 		<function signature="functions.fn_start_new_logging_session()"/>
 </trigger>
@@ -1416,12 +1425,19 @@ END;]]></definition>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-		IF  bool_and(logging_session.active = FALSE)
-				FROM loggers.logging_session
-				WHERE logging_session.logger_id = NEW.logger_id
+		IF bool_and(logging_session.logger_id != NEW.logger_id) 
+			FROM loggers.logging_session
+			THEN
+			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+		END IF;
+
+		IF bool_and(logging_session.active = FALSE)
+			FROM loggers.logging_session
+			WHERE logging_session.logger_id = NEW.logger_id
 		THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 	END IF;
+
 	NEW.session_id := logging_session.session_id
 	FROM loggers.logging_session
 	WHERE NEW.logger_id = logging_session.logger_id
@@ -1431,7 +1447,7 @@ END;]]></definition>
 </function>
 
 <trigger name="tr_check_open_session_on_deployment" firing-type="BEFORE" per-line="true" constraint="false"
-	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="loggers.deployment">
 		<function signature="functions.fn_check_open_session_on_deployment()"/>
 </trigger>
@@ -1459,6 +1475,7 @@ END;]]></definition>
 		deployment_id = NEW.deployment_id,
 		colony = col.colony_int_name, 
 		species = NEW.deployment_species
+		individ_id = NEW.individ_id
 		FROM col
 		WHERE update.session_id = NEW.session_id
 		AND col.session_id = NEW.session_id;
@@ -1487,9 +1504,15 @@ END;]]></definition>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-	IF  bool_and(logging_session.active = FALSE) 			
-			FROM loggers.logging_session
-			WHERE logging_session.logger_id = NEW.logger_id
+	IF  bool_and(logging_session.logger_id != NEW.logger_id)
+		FROM loggers.logging_session
+	THEN 
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+	END IF;
+   
+	IF bool_and(logging_session.active = FALSE) 			
+		FROM loggers.logging_session
+		WHERE logging_session.logger_id = NEW.logger_id
 	THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 	END IF;
@@ -1551,6 +1574,121 @@ END;]]></definition>
 		<function signature="functions.fn_update_session_on_retrieval()"/>
 </trigger>
 
+<function name="fn_distribute_from_logger_import_table"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	IF NEW.import_type = 'startup' THEN
+	UPDATE loggers.startup 
+	VALUES(NEW.logger_id, 
+					NEW.startdate_gmt, 
+					NEW.starttime_gmt, 
+					NEW.logging_mode, 
+					NEW.started_by, 
+					NEW.started_where, 
+					NEW.days_delayed, 
+					NEW.programmed_gmt_date, 
+					NEW.programmed_gmt_time);
+	END IF;
+
+END;]]></definition>
+</function>
+
+<function name="fn_check_open_session_on_allocation"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+		IF bool_and(logging_session.logger_id != NEW.logger_id) 
+			FROM loggers.logging_session
+			THEN
+			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding allocation data', NEW.logger_id;
+		END IF;
+
+		IF bool_and(logging_session.active = FALSE)
+			FROM loggers.logging_session
+			WHERE logging_session.logger_id = NEW.logger_id
+		THEN
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding allocation data', NEW.logger_id;
+	END IF;
+
+	NEW.session_id := logging_session.session_id
+	FROM loggers.logging_session
+	WHERE NEW.logger_id = logging_session.logger_id
+	AND logging_session.active = TRUE;
+RETURN NEW;
+END;]]></definition>
+</function>
+
+<trigger name="tr_check_open_session_on_allocation" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="loggers.allocation">
+		<function signature="functions.fn_check_open_session_on_allocation()"/>
+</trigger>
+
+<function name="fn_check_open_session_on_status"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+		IF bool_and(logging_session.logger_id != NEW.logger_id) 
+			FROM loggers.logging_session
+			THEN
+			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding status data', NEW.logger_id;
+		END IF;
+
+		IF bool_and(logging_session.active = FALSE)
+			FROM loggers.logging_session
+			WHERE logging_session.logger_id = NEW.logger_id
+		THEN
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding status data', NEW.logger_id;
+	END IF;
+
+	NEW.session_id := logging_session.session_id
+	FROM loggers.logging_session
+	WHERE NEW.logger_id = logging_session.logger_id
+	AND logging_session.active = TRUE;
+RETURN NEW;
+END;]]></definition>
+</function>
+
+<trigger name="tr_check_open_session_on_status" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="individuals.individ_status">
+		<function signature="functions.fn_check_open_session_on_status()"/>
+</trigger>
+
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_producers" table="loggers.logger_info">
 	<columns names="producer" ref-type="src-columns"/>
@@ -1575,6 +1713,18 @@ END;]]></definition>
 	<columns names="species_name_eng" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="allocation_people_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.people" table="loggers.allocation">
+	<columns names="intended_deployer" ref-type="src-columns"/>
+	<columns names="name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="allocation_logger_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="loggers.allocation">
+	<columns names="logger_id" ref-type="src-columns"/>
+	<columns names="logger_id" ref-type="dst-columns"/>
+</constraint>
+
 <constraint name="deployment_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.deployment" table="loggers.logging_session">
 	<columns names="deployment_id" ref-type="src-columns"/>
@@ -1591,6 +1741,12 @@ END;]]></definition>
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.startup" table="loggers.logging_session">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logging_session_individ_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="loggers.logging_session">
+	<columns names="individ_id" ref-type="src-columns"/>
+	<columns names="individ_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="colony_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -1641,6 +1797,12 @@ END;]]></definition>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="deployment_logger_mount_method_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.mounting_types" table="loggers.deployment">
+	<columns names="logger_mount_method" ref-type="src-columns"/>
+	<columns names="logger_mount_method" ref-type="dst-columns"/>
+</constraint>
+
 <constraint name="sexing_method_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.sexing_method" table="individuals.individ_info">
 	<columns names="sexing_method" ref-type="src-columns"/>
@@ -1665,22 +1827,16 @@ END;]]></definition>
 	<columns names="sub_species" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="individ_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="individuals.individ_status">
-	<columns names="individ_id" ref-type="src-columns"/>
-	<columns names="individ_id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="logger_mount_method_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.mounting_types" table="individuals.individ_status">
-	<columns names="logger_mount_method" ref-type="src-columns"/>
-	<columns names="logger_mount_method" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="status_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.startup" table="individuals.individ_status">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="status_logger_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logger_info" table="individuals.individ_status">
+	<columns names="logger_id" ref-type="src-columns"/>
+	<columns names="logger_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="individ_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -1869,11 +2025,6 @@ END;]]></definition>
 	 dst-table="metadata.sex"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_individ_status_individ_info" type="relfk"
-	 src-table="individuals.individ_status"
-	 dst-table="individuals.individ_info"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_subspecies_species" type="relfk"
 	 src-table="metadata.subspecies"
 	 dst-table="metadata.species"
@@ -1892,7 +2043,11 @@ END;]]></definition>
 <relationship name="rel_deployment_individ_info" type="relfk"
 	 src-table="loggers.deployment"
 	 dst-table="individuals.individ_info"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="-2.50711" y="4.55147"/>
+	</label>
+</relationship>
 
 <relationship name="rel_location_colony" type="relfk"
 	 src-table="metadata.location"
@@ -1963,11 +2118,6 @@ END;]]></definition>
 	 dst-table="metadata.import_types"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_individ_status_mounting_types" type="relfk"
-	 src-table="individuals.individ_status"
-	 dst-table="metadata.mounting_types"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_observations_individ_info" type="relfk"
 	 src-table="individuals.observations"
 	 dst-table="individuals.individ_info"
@@ -1976,6 +2126,31 @@ END;]]></definition>
 <relationship name="rel_individ_status_startup" type="relfk"
 	 src-table="individuals.individ_status"
 	 dst-table="loggers.startup"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_allocation_people" type="relfk"
+	 src-table="loggers.allocation"
+	 dst-table="metadata.people"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_allocation_logger_info" type="relfk"
+	 src-table="loggers.allocation"
+	 dst-table="loggers.logger_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_logger_info" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="loggers.logger_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_mounting_types" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="metadata.mounting_types"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_individ_info" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="individuals.individ_info"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
