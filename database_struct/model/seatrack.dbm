@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="10,1210" last-zoom="0.85"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,1189" last-zoom="0.85"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -524,7 +524,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="individ_status">
 	<schema name="individuals"/>
 	<role name="seatrack_admin"/>
-	<position x="440" y="1920"/>
+	<position x="380" y="1900"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1002,7 +1002,7 @@ WHERE active = TRUE]]></expression>
 	<column name="startdate_gmt" not-null="true">
 		<type name="date" length="0"/>
 	</column>
-	<column name="startime_gmt" not-null="true">
+	<column name="starttime_gmt" not-null="true">
 		<type name="timestamp" length="0"/>
 	</column>
 	<column name="logging_mode" not-null="true">
@@ -1030,8 +1030,8 @@ WHERE active = TRUE]]></expression>
 		<columns names="session_id" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•session_id•logger_id•startdate_gmt•startime_gmt•logging_mode•started_by•started_where•days_delayed•programmed_gmt_date•programmed_gmt_time⸣
-••1•2017-05-01•2017-05-01 10:00:00•testmode•Jens Åström•Buvika•12•2017-05-02•2017-05-02 11:00:00]]>
+<![CDATA[id•session_id•logger_id•startdate_gmt•starttime_gmt•logging_mode•started_by•started_where•days_delayed•programmed_gmt_date•programmed_gmt_time⸣
+••1•2017-05-01•2017-05-01 10:00:00•testmode•Jens Åström•NINA•2•2017-05-01•2017-05-01 10:00:00]]>
 	</initial-data>
 </table>
 
@@ -1135,7 +1135,7 @@ WHERE active = TRUE]]></expression>
 		<type name="varchar" length="20"/>
 	</column>
 	<column name="logger_id" not-null="true">
-		<type name="varchar" length="80"/>
+		<type name="integer" length="80"/>
 	</column>
 	<column name="startdate_gmt">
 		<type name="date" length="0"/>
@@ -1176,7 +1176,7 @@ WHERE active = TRUE]]></expression>
 	<column name="logger_fate">
 		<type name="text" length="0"/>
 	</column>
-	<column name="deployement_species">
+	<column name="deployment_species">
 		<type name="text" length="0"/>
 	</column>
 	<column name="deployment_location">
@@ -1184,6 +1184,9 @@ WHERE active = TRUE]]></expression>
 	</column>
 	<column name="deployment_date">
 		<type name="date" length="0"/>
+	</column>
+	<column name="logger_mount_method">
+		<type name="text" length="0"/>
 	</column>
 	<column name="attribute_name">
 		<type name="text" length="0"/>
@@ -1236,9 +1239,12 @@ WHERE active = TRUE]]></expression>
 	<column name="comment">
 		<type name="text" length="0"/>
 	</column>
-	<column name="logger_mount_method">
+	<column name="observation_location">
 		<type name="text" length="0"/>
 	</column>
+	<constraint name="logger_import_pk" type="pk-constr" table="imports.logger_import">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
 </table>
 
 <table name="import_types">
@@ -1474,7 +1480,7 @@ END;]]></definition>
 		UPDATE loggers.logging_session update SET
 		deployment_id = NEW.deployment_id,
 		colony = col.colony_int_name, 
-		species = NEW.deployment_species
+		species = NEW.deployment_species,
 		individ_id = NEW.individ_id
 		FROM col
 		WHERE update.session_id = NEW.session_id
@@ -1590,8 +1596,17 @@ END;]]></definition>
 	</return-type>
 	<definition><![CDATA[BEGIN
 	IF NEW.import_type = 'startup' THEN
-	UPDATE loggers.startup 
-	VALUES(NEW.logger_id, 
+	INSERT INTO loggers.startup 
+					(logger_id,  
+					startdate_gmt, 
+					starttime_gmt, 
+					logging_mode, 
+					started_by, 
+					started_where, 
+					days_delayed, 
+					programmed_gmt_date, 
+					programmed_gmt_time)
+	VALUES (NEW.logger_id,  
 					NEW.startdate_gmt, 
 					NEW.starttime_gmt, 
 					NEW.logging_mode, 
@@ -1601,7 +1616,83 @@ END;]]></definition>
 					NEW.programmed_gmt_date, 
 					NEW.programmed_gmt_time);
 	END IF;
-
+	IF NEW.import_type = 'allocation' THEN
+	INSERT INTO loggers.allocation 
+					(logger_id,
+					intended_species,
+					intended_location,
+					intended_deployer)
+	VALUES (NEW.logger_id,
+					NEW.intended_species,
+					NEW.intended_location,
+					NEW.intended_deployer);
+	END IF;
+	IF NEW.import_type = 'deployment' THEN
+	INSERT INTO loggers.deployment
+				(logger_id,
+				individ_id,
+				logger_fate,
+				deployment_species,
+				deployment_location,
+				deployment_date,
+				logger_mount_method)
+	VALUES (NEW.logger_id,
+				NEW.individ_id,
+				NEW.logger_fate,
+				NEW.deployment_species,
+				NEW.deployment_location,
+				NEW.deployment_date,
+				NEW.logger_mount_method);
+	END IF;
+	IF NEW.import_type = 'retrieval' THEN
+		INSERT INTO loggers.retrieval
+					(attribute_name,
+					logger_id,
+					individ_id,
+					retrieval_type,
+					retrieval_location,
+					retrieval_date)
+		VALUES (NEW.attribute_name,
+					NEW.logger_id,
+					NEW.individ_id,
+					NEW.retrieval_type,
+					NEW.retrieval_location,
+					NEW.retrieval_date);
+		END IF;
+	IF NEW.import_type = 'status' THEN
+		INSERT INTO individuals.individ_status
+					(logger_id,
+					weight,
+					scull,
+					tarsus,
+					wing,
+					breeding_stage,
+					eggs,
+					chicks,
+					hatching_success,
+					breeding_success,
+					breeding_success_criterion,
+					data_responsible,
+					back_on_nest,
+					"comment",
+					"location")
+	VALUES (NEW.logger_id,
+					NEW.weight,
+					NEW.scull,
+					NEW.tarsus,
+					NEW.wing,
+					NEW.breeding_stage,
+					NEW.eggs,
+					NEW.chicks,
+					NEW.hatching_success,
+					NEW.breeding_success,
+					NEW.breeding_success_criterion,
+					NEW.data_responsible,
+					NEW.back_on_nest_date,
+					NEW."comment",
+					NEW.observation_location);
+	END IF;
+RETURN NEW;
 END;]]></definition>
 </function>
 
@@ -1688,6 +1779,51 @@ END;]]></definition>
 	 table="individuals.individ_status">
 		<function signature="functions.fn_check_open_session_on_status()"/>
 </trigger>
+
+<table name="breeding_stages">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<position x="560" y="1700"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="breeding_stage" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="breeding_stage_uq" type="uq-constr" table="metadata.breeding_stages">
+		<columns names="breeding_stage" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="breeding_stages_pk" type="pk-constr" table="metadata.breeding_stages">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="tr_distribute_import" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="imports.logger_import">
+		<function signature="functions.fn_distribute_from_logger_import_table()"/>
+</trigger>
+
+<function name="fn_delete_rows_from_import"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	DELETE FROM imports.logger_import 
+	WHERE imports.id = NEW.id;
+	RETURN NULL;
+END;]]></definition>
+</function>
 
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_producers" table="loggers.logger_info">
@@ -1839,6 +1975,12 @@ END;]]></definition>
 	<columns names="logger_id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="status_breeding_stage_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.breeding_stages" table="individuals.individ_status">
+	<columns names="breeding_stage" ref-type="src-columns"/>
+	<columns names="breeding_stage" ref-type="dst-columns"/>
+</constraint>
+
 <constraint name="individ_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="loggers.retrieval">
 	<columns names="individ_id" ref-type="src-columns"/>
@@ -1939,6 +2081,12 @@ END;]]></definition>
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.import_types" table="imports.logger_import">
 	<columns names="import_type" ref-type="src-columns"/>
 	<columns names="import_type" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="status_location_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.location" table="imports.logger_import">
+	<columns names="observation_location" ref-type="src-columns"/>
+	<columns names="location_name" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="observation_metalring_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -2151,6 +2299,16 @@ END;]]></definition>
 <relationship name="rel_logging_session_individ_info" type="relfk"
 	 src-table="loggers.logging_session"
 	 dst-table="individuals.individ_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logger_import_location" type="relfk"
+	 src-table="imports.logger_import"
+	 dst-table="metadata.location"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_breeding_stages" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="metadata.breeding_stages"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
