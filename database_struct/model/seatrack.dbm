@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,1189" last-zoom="0.85"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="504,826" last-zoom="0.85"
 	 default-schema="public" default-owner="seatrack_admin">
 <role name="seatrack_admin"
       superuser="true"
@@ -673,7 +673,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="file_id" not-null="true">
-		<type name="integer" length="0"/>
+		<type name="serial" length="0"/>
 	</column>
 	<column name="session_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -838,30 +838,6 @@ Create some support to get the correct logger_id. Could be done manually using t
 •testus specius•testus⸣
 •testus specius•specius]]>
 	</initial-data>
-</table>
-
-<table name="files">
-	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
-	<position x="1560" y="1780"/>
-	<column name="id" not-null="true" default-value="uuid_generate_v1()">
-		<type name="uuid" length="0"/>
-	</column>
-	<column name="file_id" not-null="true">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="filename" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<constraint name="file_id_unique" type="uq-constr" table="loggers.files">
-		<columns names="file_id" ref-type="src-columns"/>
-	</constraint>
-	<constraint name="filename_unique" type="uq-constr" table="loggers.files">
-		<columns names="filename" ref-type="src-columns"/>
-	</constraint>
-	<constraint name="files_pk" type="pk-constr" table="loggers.files">
-		<columns names="id" ref-type="src-columns"/>
-	</constraint>
 </table>
 
 <table name="events">
@@ -1825,6 +1801,91 @@ END;]]></definition>
 END;]]></definition>
 </function>
 
+<view name="closed_sessions_not_shutdown">
+	<schema name="views"/>
+	<role name="seatrack_admin"/>
+	<position x="2120" y="1420"/>
+	<reference>
+		<expression><![CDATA[SELECT l.session_id, l.logger_id, l.year_tracked
+FROM loggers.logging_session l left join loggers.shutdown s
+ON l.session_id = s.session_id
+WHERE s.session_id IS NULL ]]></expression>
+	</reference>
+</view>
+
+<table name="logger_files">
+	<schema name="metadata"/>
+	<role name="seatrack_admin"/>
+	<comment><![CDATA[Reference table that specifies what files are created by which logger model]]></comment>
+	<position x="520" y="80"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="logger_model" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="file_basename" not-null="true">
+		<type name="text" length="0"/>
+		<comment><![CDATA[base of filetype to be used as appendix on filename]]></comment>
+	</column>
+	<constraint name="logger_files_pk" type="pk-constr" table="metadata.logger_files">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[id•logger_model•file_basename⸣
+•testmodel•result1.txt⸣
+•testmodel•result2.csv]]>
+	</initial-data>
+</table>
+
+<function name="fn_create_filenames_on_shutdown"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	IF (TG_OP = 'INSERT') THEN
+	WITH foo as (SELECT s.session_id, s.logger_id, l.logger_model, f.file_basename 	
+			FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
+			INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model
+					)
+	INSERT INTO loggers.file_archive (session_id, filename)
+		SELECT foo.session_id, 's' || foo.session_id || '_' || foo.file_basename
+			FROM foo
+			WHERE foo.session_id = NEW.session_id;
+	RETURN NULL;
+	ELSEIF (TG_OP = 'UPDATE') THEN
+		WITH foo as (SELECT s.session_id, s.logger_id, l.logger_model, f.file_basename 	
+			FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
+			INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model
+					)
+			UPDATE loggers.file_archive SET
+			session_id = foo.session_id,
+			filename = 's' || foo.session_id || '_' || foo.file_basename
+			FROM foo
+			WHERE NEW.session_id = file_archive.session_id;
+	RETURN NULL;
+	END IF;
+RETURN NULL;
+
+END;]]></definition>
+</function>
+
+<trigger name="tr_create_filenames_on_shutdown" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="loggers.shutdown">
+		<function signature="functions.fn_create_filenames_on_shutdown()"/>
+</trigger>
+
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_producers" table="loggers.logger_info">
 	<columns names="producer" ref-type="src-columns"/>
@@ -1883,6 +1944,13 @@ END;]]></definition>
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="loggers.logging_session">
 	<columns names="individ_id" ref-type="src-columns"/>
 	<columns names="individ_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logging_session_logger_id_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logger_info" table="loggers.logging_session">
+	<columns names="logger_id" ref-type="src-columns"/>
+	<columns names="logger_id" ref-type="dst-columns"/>
+		<comment><![CDATA[Could be redundant since we have this key on startup. ]]></comment>
 </constraint>
 
 <constraint name="colony_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -2011,18 +2079,6 @@ END;]]></definition>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="file_id_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.files" table="loggers.file_archive">
-	<columns names="file_id" ref-type="src-columns"/>
-	<columns names="file_id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="filename_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.files" table="loggers.file_archive">
-	<columns names="filename" ref-type="src-columns"/>
-	<columns names="filename" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="species_latin_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.species" table="metadata.subspecies">
 	<columns names="species_name_latin" ref-type="src-columns"/>
@@ -2093,6 +2149,12 @@ END;]]></definition>
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="individuals.observations">
 	<columns names="metalring_id" ref-type="src-columns"/>
 	<columns names="metalring_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="metadata.logger_files">
+	<columns names="logger_model" ref-type="src-columns"/>
+	<columns names="model" ref-type="dst-columns"/>
 </constraint>
 
 <relationship name="rel_logger_info_logger_producers" type="relfk"
@@ -2207,11 +2269,6 @@ END;]]></definition>
 	 dst-table="loggers.logger_info"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_file_archive_files" type="relfk"
-	 src-table="loggers.file_archive"
-	 dst-table="loggers.files"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_logging_session_deployment" type="relfk"
 	 src-table="loggers.logging_session"
 	 dst-table="loggers.deployment"
@@ -2309,6 +2366,16 @@ END;]]></definition>
 <relationship name="rel_individ_status_breeding_stages" type="relfk"
 	 src-table="individuals.individ_status"
 	 dst-table="metadata.breeding_stages"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logger_files_logger_models" type="relfk"
+	 src-table="metadata.logger_files"
+	 dst-table="metadata.logger_models"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_logger_info" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.logger_info"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
