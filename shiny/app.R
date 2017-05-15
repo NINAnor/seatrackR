@@ -1,25 +1,7 @@
-Skip to content
-This repository
-Search
-Pull requests
-Issues
-Gist
-@jenast
-Sign out
-Unwatch 3
-Star 0
-Fork 0 NINAnor/seatrack_shiny Private
-Code  Issues 1  Pull requests 0  Projects 0  Wiki  Pulse  Graphs  Settings
-Branch: master Find file Copy pathseatrack_shiny/app.R
-8b7f999  on Mar 20
-@jenast jenast Changed table column names
-1 contributor
-RawBlameHistory
-343 lines (233 sloc)  9.91 KB
 require(leaflet)
 require(maps)
 require(shiny)
-#require(RPostgreSQL)
+require(seatrackR)
 #require(magrittr)
 require(xtable)
 require(DBI)
@@ -28,8 +10,6 @@ require(dplyr)
 
 #tags$head(tags$link(rel='stylesheet', type='text/css', href='styles.css')),
 
-dbuser="postgjest"
-dbpassword="gjestpost"
 
 ui<-shinyUI(
   navbarPage("Seatrack visualization - V.04",
@@ -70,8 +50,7 @@ ui<-shinyUI(
 
 server<-function(input, output, session) {
 
-  con<-dbConnect(RPostgres::Postgres(),dbname="gisdata",user="postgjest",
-                 password="gjestpost",host="ninsrv16.nina.no")
+  con <- connectSeatrack()
 
 
   datasetInput <- reactive({
@@ -87,13 +66,7 @@ server<-function(input, output, session) {
 
 
 
-    #drv<-("PostgreSQL")
 
-    #for(con in dbListConnections(PostgreSQL())){ dbDisconnect(con)}
-
-    #con<-dbConnect(drv,dbname="gisdata",host="ninsrv16.nina.no",user=dbuser,password=dbpassword)
-
-    ##Set up seatrack as search path for later commands. Specifying schema in commands sometimes yields errors.
     dbGetQuery(con,"SET search_path = seatrack, public;")
 
 
@@ -267,19 +240,10 @@ server<-function(input, output, session) {
     } else
 
 
-      #drv<-("PostgreSQL")
-
-      #for(con in dbListConnections(PostgreSQL())){ dbDisconnect(con)}
-
-      #con<-dbConnect(drv,dbname="gisdata",host="ninsrv16.nina.no",user=dbuser,password=dbpassword)
-
-
-      dbGetQuery(con, "SET CLIENT_ENCODING TO 'UTF8'")
+    dbGetQuery(con, "SET CLIENT_ENCODING TO 'UTF8'")
 
     suppressWarnings(post.fields <- dbGetQuery(con,as.character(query())))
 
-    #post.fields<-fetch(res,-1)
-    #dbClearResult(res)
     if(input$limit500 == TRUE){
 
       if(nrow(post.fields)<500){
@@ -304,15 +268,6 @@ server<-function(input, output, session) {
         content<-paste(sep="<br/>", "<br> No Data! </br>", "Change data subset")
         leaflet() %>%
           addProviderTiles("OpenStreetMap.Mapnik") %>%
-          #addProviderTiles("MapQuestOpen.OSM") %>%
-          # setView(10, 60, zoom = 4) %>%
-          #addWMSTiles(
-          # "http://ninsrv16/lm/lizmap/www/index.php/lizmap/service/?repository=jenstest&project=intercept_angle&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities",
-          #layers = "Topografisk norgeskart 2",
-          #options = WMSTileOptions(format = "image/png", transparent = TRUE),
-          #attribution = "NINA wms"
-          #)
-
           addPopups(10.406467, 63.414108, content,
                     options = popupOptions(closeButton = FALSE)
           )
@@ -357,5 +312,3 @@ server<-function(input, output, session) {
 
 shinyApp(ui= ui, server= server)
 
-Contact GitHub API Training Shop Blog About
-© 2017 GitHub, Inc. Terms Privacy Security Status Help
