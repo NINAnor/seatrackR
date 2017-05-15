@@ -4,6 +4,7 @@
 #' sessions marked "active = TRUE"
 #'
 #' @return Data frame.
+#' @export
 #' @examples
 #' dontrun{
 #' con <- seatrackConnect(Username = "testreader", Password = "testreader")

@@ -7,7 +7,7 @@
 #' @param Username Character. Default = seatrack_reader
 #' @param Password Character.
 #' @return A DBI connection to the Seatrack database
-#'
+#' @export
 #' @examples
 #' dontrun{
 #' con <- seatrackConnect(Username = "testreader", Password = "testreader")
