@@ -50,7 +50,7 @@ ui<-shinyUI(
 
 server<-function(input, output, session) {
 
-  con <- seatrackConnect(Username = "seatrack_reader", Password = "seatrack_reader")
+  con <- seatrackConnect(Username = "testreader", Password = "testreader")
 
 
   datasetInput <- reactive({
@@ -72,7 +72,7 @@ server<-function(input, output, session) {
 
     cat.query<-"SELECT  species as species_cat, colony as colony_cat, data_responsible as responsible_cat
     , ring_number as ring_number_cat
-    FROM seatrack.postable
+    FROM positions.postable
     GROUP BY species, colony, data_responsible, ring_number
     "
 
@@ -225,7 +225,7 @@ server<-function(input, output, session) {
     ##ring_number as name, species, date_time, lat_smooth2 as lat, lon_smooth2 as lon
 
     fetch.q<-paste("SELECT *
-                   FROM seatrack.postable"
+                   FROM positions.postable"
                    ,group.sub,date_range, colony.sub, responsible.sub, ring.number, limit,sep="")
 
     fetch.q

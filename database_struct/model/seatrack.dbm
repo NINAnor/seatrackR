@@ -2628,4 +2628,19 @@ END;]]></definition>
 	<roles names="seatrack_writer"/>
 	<privileges usage="true"/>
 </permission>
+<permission>
+	<object name="positions.postable" type="table"/>
+	<roles names="seatrack_admin"/>
+	<privileges select="true" delete="true" insert="true" update="true" truncate="true" references="true" trigger="true"/>
+</permission>
+<permission>
+	<object name="positions.postable" type="table"/>
+	<roles names="seatrack_reader"/>
+	<privileges select="true" references="true" trigger="true"/>
+</permission>
+<permission>
+	<object name="positions.postable" type="table"/>
+	<roles names="seatrack_writer"/>
+	<privileges select="true" delete="true" insert="true" update="true" references="true" trigger="true"/>
+</permission>
 </dbmodel>
