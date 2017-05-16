@@ -1,0 +1,29 @@
+---
+title: "Importing data into the Seatrack database"
+author: "Jens Åström"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Fill in more text
+=============
+
+```{r}
+require(DBI)
+require(RPostgres)
+```
+
+
+```{r import_posdata}
+data(posdata)
+con <- seatrackConnect(Username = "jens_astrom", Password = "jens_astrom")
+dbGetQuery(con, "SET search_path = positions, public")
+
+dbWriteTable(con, "positions.posdata", posdata, append = T)
+
+```
+

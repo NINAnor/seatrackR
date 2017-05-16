@@ -3,12 +3,28 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,0" last-zoom="0.5"
-	 default-owner="postgres">
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="476,358" last-zoom="0.75"
+	 default-schema="public" default-owner="seatrack_admin">
+<role name="jens_astrom"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="jens_astrom">
+	<roles names="seatrack_admin" role-type="member" />
+</role>
+
 <role name="seatrack_reader">
 </role>
 
 <role name="seatrack_writer">
+</role>
+
+<role name="testreader"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="testreader">
+	<roles names="seatrack_reader" role-type="member" />
 </role>
 
 <role name="seatrack_admin"
@@ -18,65 +34,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 ]]></prepended-sql>
 </role>
 
-<role name="testreader"
-      inherit="true"
-      login="true"
-      encrypted="true"
-      password="testreader">
-	<roles names="seatrack_reader" role-type="refer" />
-</role>
-
-<role name="jens_astrom"
-      inherit="true"
-      login="true"
-      encrypted="true"
-      password="jens_astrom">
-	<roles names="seatrack_admin" role-type="refer" />
-</role>
-
-<database name="seatrack" append-at-eod="true" prepend-at-bod="true">
+<database name="seatrack" prepend-at-bod="true">
 	<role name="seatrack_admin"/>
-	<appended-sql><![CDATA[GRANT SELECT
-ON ALL TABLES IN SCHEMA loggers
-TO seatrack_reader;
-
-GRANT SELECT
-ON ALL TABLES IN SCHEMA metadata
-TO seatrack_reader;
-
-GRANT SELECT
-ON ALL TABLES IN SCHEMA individuals
-TO seatrack_reader;
-
-GRANT SELECT
-ON ALL TABLES IN SCHEMA views
-TO seatrack_reader;
-
-GRANT SELECT
-ON ALL TABLES IN SCHEMA positions
-TO seatrack_reader;
-
-
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
-ON ALL TABLES IN SCHEMA loggers
-TO seatrack_admin;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
-ON ALL TABLES IN SCHEMA metadata
-TO seatrack_admin;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
-ON ALL TABLES IN SCHEMA individuals
-TO seatrack_admin;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
-ON ALL TABLES IN SCHEMA views
-TO seatrack_admin;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
-ON ALL TABLES IN SCHEMA positions
-TO seatrack_admin;
-]]></appended-sql>
 	<prepended-sql><![CDATA[CREATE EXTENSION postgis;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
  ]]></prepended-sql>
@@ -748,120 +707,6 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<position x="2060" y="60"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
-	</column>
-	<column name="date_time" not-null="true">
-		<type name="timestamp" length="0"/>
-	</column>
-	<column name="logger" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="logger_id" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="logger_model" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="year_tracked" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="year_deployed" not-null="true">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="year_retrieved" not-null="true">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="ring_number" not-null="true">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="euring_code" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="species" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="colony" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="lon_raw" not-null="true">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="lat_raw" not-null="true">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="lon_smooth1" not-null="true">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="lat_smooth1" not-null="true">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="lon_smooth2" not-null="true">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="lat_smooth2" not-null="true">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="disttocol_s2" not-null="true">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="eqfilter1" not-null="true">
-		<type name="bit" length="0"/>
-	</column>
-	<column name="eqfilter2" not-null="true">
-		<type name="bit" length="0"/>
-	</column>
-	<column name="eqfilter3" not-null="true">
-		<type name="bit" length="0"/>
-	</column>
-	<column name="lat_smooth2_eqfilt3" not-null="true">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="sex">
-		<type name="text" length="0"/>
-	</column>
-	<column name="subspecies">
-		<type name="text" length="0"/>
-	</column>
-	<column name="age">
-		<type name="text" length="0"/>
-	</column>
-	<column name="col_lon">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="col_lat">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="first">
-		<type name="timestamp" length="0"/>
-	</column>
-	<column name="tsecond">
-		<type name="timestamp" length="0"/>
-	</column>
-	<column name="twl_type">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="conf">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="sun">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="software">
-		<type name="text" length="0"/>
-	</column>
-	<column name="light_threshold">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="analyzer">
-		<type name="text" length="0"/>
-	</column>
-	<column name="data_responsible">
-		<type name="text" length="0"/>
-	</column>
-	<column name="logger_yeartracked">
-		<type name="text" length="0"/>
-	</column>
-	<column name="posdata_file">
-		<type name="text" length="0"/>
 	</column>
 	<constraint name="postable_pk" type="pk-constr" table="positions.postable">
 		<columns names="id" ref-type="src-columns"/>
@@ -2328,54 +2173,28 @@ END;]]></definition>
 	 dst-table="metadata.logger_models"
 	 src-required="false" dst-required="false"/>
 
+<relationship name="rel_startup_logging_modes" type="relfk"
+	 src-table="loggers.startup"
+	 dst-table="metadata.logging_modes"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_startup_people" type="relfk"
+	 src-table="loggers.startup"
+	 dst-table="metadata.people"
+	 src-required="false" dst-required="false"/>
+
 <relationship name="rel_allocation_startup" type="relfk"
 	 src-table="loggers.allocation"
 	 dst-table="loggers.startup"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_allocation_species" type="relfk"
 	 src-table="loggers.allocation"
 	 dst-table="metadata.species"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_allocation_people" type="relfk"
-	 src-table="loggers.allocation"
-	 dst-table="metadata.people"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_allocation_logger_info" type="relfk"
-	 src-table="loggers.allocation"
-	 dst-table="loggers.logger_info"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_logging_session_deployment" type="relfk"
-	 src-table="loggers.logging_session"
-	 dst-table="loggers.deployment"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_logging_session_retrieval" type="relfk"
-	 src-table="loggers.logging_session"
-	 dst-table="loggers.retrieval"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_logging_session_startup" type="relfk"
-	 src-table="loggers.logging_session"
-	 dst-table="loggers.startup"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_logging_session_individ_info" type="relfk"
-	 src-table="loggers.logging_session"
-	 dst-table="individuals.individ_info"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_logging_session_logger_info" type="relfk"
-	 src-table="loggers.logging_session"
-	 dst-table="loggers.logger_info"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_location_colony" type="relfk"
-	 src-table="metadata.location"
-	 dst-table="metadata.colony"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_deployment_species" type="relfk"
@@ -2393,49 +2212,9 @@ END;]]></definition>
 	 dst-table="metadata.logger_fate"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_deployment_individ_info" type="relfk"
-	 src-table="loggers.deployment"
-	 dst-table="individuals.individ_info"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_deployment_mounting_types" type="relfk"
-	 src-table="loggers.deployment"
-	 dst-table="metadata.mounting_types"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_individ_info_sexing_method" type="relfk"
-	 src-table="individuals.individ_info"
-	 dst-table="metadata.sexing_method"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_individ_info_sex" type="relfk"
-	 src-table="individuals.individ_info"
-	 dst-table="metadata.sex"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_individ_info_species" type="relfk"
-	 src-table="individuals.individ_info"
-	 dst-table="metadata.species"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_individ_info_subspecies" type="relfk"
-	 src-table="individuals.individ_info"
-	 dst-table="metadata.subspecies"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_individ_status_startup" type="relfk"
-	 src-table="individuals.individ_status"
-	 dst-table="loggers.startup"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_individ_status_logger_info" type="relfk"
-	 src-table="individuals.individ_status"
-	 dst-table="loggers.logger_info"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_individ_status_breeding_stages" type="relfk"
-	 src-table="individuals.individ_status"
-	 dst-table="metadata.breeding_stages"
+<relationship name="rel_file_archive_shutdown" type="relfk"
+	 src-table="loggers.file_archive"
+	 dst-table="loggers.shutdown"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_retrieval_individ_info" type="relfk"
@@ -2448,19 +2227,91 @@ END;]]></definition>
 	 dst-table="metadata.location"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_shutdown_startup" type="relfk"
-	 src-table="loggers.shutdown"
-	 dst-table="loggers.startup"
-	 src-required="false" dst-required="false"/>
+<relationship name="rel_individ_info_sexing_method" type="relfk"
+	 src-table="individuals.individ_info"
+	 dst-table="metadata.sexing_method"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
-<relationship name="rel_file_archive_shutdown" type="relfk"
-	 src-table="loggers.file_archive"
-	 dst-table="loggers.shutdown"
+<relationship name="rel_individ_info_sex" type="relfk"
+	 src-table="individuals.individ_info"
+	 dst-table="metadata.sex"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_subspecies_species" type="relfk"
 	 src-table="metadata.subspecies"
 	 dst-table="metadata.species"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_info_species" type="relfk"
+	 src-table="individuals.individ_info"
+	 dst-table="metadata.species"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_info_subspecies" type="relfk"
+	 src-table="individuals.individ_info"
+	 dst-table="metadata.subspecies"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_individ_info" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="individuals.individ_info"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="-2.50711" y="4.55147"/>
+	</label>
+</relationship>
+
+<relationship name="rel_location_colony" type="relfk"
+	 src-table="metadata.location"
+	 dst-table="metadata.colony"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_startup_logger_info" type="relfk"
+	 src-table="loggers.startup"
+	 dst-table="loggers.logger_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_deployment" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.deployment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_retrieval" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.retrieval"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logger_year_tracked_logging_session" type="relfk"
+	 src-table="positions.logger_year_tracked"
+	 dst-table="loggers.logging_session"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_salinity_startup" type="relfk"
+	 src-table="activity.salinity"
+	 dst-table="loggers.startup"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_temperature_startup" type="relfk"
+	 src-table="activity.temperature"
+	 dst-table="loggers.startup"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_startup" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.startup"
+	 src-required="false" dst-required="false">
+	<label ref-type="dst-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="rel_shutdown_startup" type="relfk"
+	 src-table="loggers.shutdown"
+	 dst-table="loggers.startup"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_events_deployment" type="relfk"
@@ -2473,44 +2324,9 @@ END;]]></definition>
 	 dst-table="loggers.retrieval"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_logger_year_tracked_logging_session" type="relfk"
-	 src-table="positions.logger_year_tracked"
-	 dst-table="loggers.logging_session"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_temperature_startup" type="relfk"
-	 src-table="activity.temperature"
-	 dst-table="loggers.startup"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_salinity_startup" type="relfk"
-	 src-table="activity.salinity"
-	 dst-table="loggers.startup"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_startup_logging_modes" type="relfk"
-	 src-table="loggers.startup"
-	 dst-table="metadata.logging_modes"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_startup_people" type="relfk"
-	 src-table="loggers.startup"
-	 dst-table="metadata.people"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_startup_logger_info" type="relfk"
-	 src-table="loggers.startup"
-	 dst-table="loggers.logger_info"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_logger_import_import_types" type="relfk"
 	 src-table="imports.logger_import"
 	 dst-table="metadata.import_types"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_logger_import_location" type="relfk"
-	 src-table="imports.logger_import"
-	 dst-table="metadata.location"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_observations_individ_info" type="relfk"
@@ -2518,9 +2334,54 @@ END;]]></definition>
 	 dst-table="individuals.individ_info"
 	 src-required="false" dst-required="false"/>
 
+<relationship name="rel_individ_status_startup" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="loggers.startup"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_allocation_people" type="relfk"
+	 src-table="loggers.allocation"
+	 dst-table="metadata.people"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_allocation_logger_info" type="relfk"
+	 src-table="loggers.allocation"
+	 dst-table="loggers.logger_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_logger_info" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="loggers.logger_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_mounting_types" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="metadata.mounting_types"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_individ_info" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="individuals.individ_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logger_import_location" type="relfk"
+	 src-table="imports.logger_import"
+	 dst-table="metadata.location"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_breeding_stages" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="metadata.breeding_stages"
+	 src-required="false" dst-required="false"/>
+
 <relationship name="rel_logger_files_logger_models" type="relfk"
 	 src-table="metadata.logger_files"
 	 dst-table="metadata.logger_models"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logging_session_logger_info" type="relfk"
+	 src-table="loggers.logging_session"
+	 dst-table="loggers.logger_info"
 	 src-required="false" dst-required="false"/>
 
 <permission>
@@ -2577,55 +2438,5 @@ END;]]></definition>
 	<object name="loggers.logging_session" type="table"/>
 	<roles names="seatrack_reader"/>
 	<privileges select="true" references="true"/>
-</permission>
-<permission>
-	<object name="loggers.startup" type="table"/>
-	<roles names="seatrack_admin"/>
-	<privileges select="true" delete="true" insert="true" update="true" truncate="true" references="true" trigger="true"/>
-</permission>
-<permission>
-	<object name="loggers.startup" type="table"/>
-	<roles names="seatrack_reader"/>
-	<privileges select="true" references="true" trigger="true"/>
-</permission>
-<permission>
-	<object name="metadata" type="schema"/>
-	<roles names="seatrack_reader"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="metadata" type="schema"/>
-	<roles names="seatrack_admin"/>
-	<privileges create="grant-op" usage="grant-op"/>
-</permission>
-<permission>
-	<object name="metadata" type="schema"/>
-	<roles names="seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="seatrack" type="database"/>
-	<roles names="seatrack_writer"/>
-	<privileges connect="true"/>
-</permission>
-<permission>
-	<object name="individuals" type="schema"/>
-	<roles names="seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="imports" type="schema"/>
-	<roles names="seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="imports" type="schema"/>
-	<roles names="seatrack_admin"/>
-	<privileges create="grant-op" usage="grant-op"/>
-</permission>
-<permission>
-	<object name="positions" type="schema"/>
-	<roles names="seatrack_writer"/>
-	<privileges usage="true"/>
 </permission>
 </dbmodel>

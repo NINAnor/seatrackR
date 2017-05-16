@@ -50,7 +50,7 @@ ui<-shinyUI(
 
 server<-function(input, output, session) {
 
-  con <- connectSeatrack()
+  con <- seatrackConnect(Username = "seatrack_reader", Password = "seatrack_reader")
 
 
   datasetInput <- reactive({
