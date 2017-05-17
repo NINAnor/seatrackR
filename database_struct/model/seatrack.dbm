@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,0" last-zoom="0.5"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="617,378" last-zoom="0.8"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -261,7 +261,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logging_session">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="940" y="1020"/>
+	<position x="960" y="980"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -874,7 +874,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="processing">
 	<schema name="positions"/>
 	<role name="seatrack_admin"/>
-	<position x="2320" y="60"/>
+	<position x="2400" y="60"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -2050,6 +2050,62 @@ END;]]></definition>
 		<function signature="functions.fn_create_filenames_on_shutdown()"/>
 </trigger>
 
+<index name="logging_session_session_id_idx" table="loggers.logging_session"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="session_id"/>
+		</idxelement>
+</index>
+
+<index name="logging_session_logger_id_idx" table="loggers.logging_session"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="logger_id"/>
+		</idxelement>
+</index>
+
+<index name="ls_active_idx" table="loggers.logging_session"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="active"/>
+		</idxelement>
+</index>
+
+<index name="ls_colony_idx" table="loggers.logging_session"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="colony"/>
+		</idxelement>
+</index>
+
+<index name="ls_species_idx" table="loggers.logging_session"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="species"/>
+		</idxelement>
+</index>
+
+<index name="ls_year_tracked_idx" table="loggers.logging_session"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="year_tracked"/>
+		</idxelement>
+</index>
+
+<index name="ls_individ_idx" table="loggers.logging_session"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="individ_id"/>
+		</idxelement>
+</index>
+
 <constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_producers" table="loggers.logger_info">
 	<columns names="producer" ref-type="src-columns"/>
@@ -2537,113 +2593,8 @@ END;]]></definition>
 	<privileges connect="true"/>
 </permission>
 <permission>
-	<object name="loggers" type="schema"/>
-	<roles names="seatrack_reader"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="loggers" type="schema"/>
-	<roles names="seatrack_admin"/>
-	<privileges create="grant-op" usage="grant-op"/>
-</permission>
-<permission>
-	<object name="individuals" type="schema"/>
-	<roles names="seatrack_reader"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="individuals" type="schema"/>
-	<roles names="seatrack_admin"/>
-	<privileges create="grant-op" usage="grant-op"/>
-</permission>
-<permission>
-	<object name="positions" type="schema"/>
-	<roles names="seatrack_reader"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="positions" type="schema"/>
-	<roles names="seatrack_admin"/>
-	<privileges create="grant-op" usage="grant-op"/>
-</permission>
-<permission>
-	<object name="views" type="schema"/>
-	<roles names="seatrack_reader"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="views" type="schema"/>
-	<roles names="seatrack_admin"/>
-	<privileges create="grant-op" usage="grant-op"/>
-</permission>
-<permission>
-	<object name="loggers.logging_session" type="table"/>
-	<roles names="seatrack_reader"/>
-	<privileges select="true" references="true"/>
-</permission>
-<permission>
-	<object name="loggers.startup" type="table"/>
-	<roles names="seatrack_admin"/>
-	<privileges select="true" delete="true" insert="true" update="true" truncate="true" references="true" trigger="true"/>
-</permission>
-<permission>
-	<object name="loggers.startup" type="table"/>
-	<roles names="seatrack_reader"/>
-	<privileges select="true" references="true" trigger="true"/>
-</permission>
-<permission>
-	<object name="metadata" type="schema"/>
-	<roles names="seatrack_reader"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="metadata" type="schema"/>
-	<roles names="seatrack_admin"/>
-	<privileges create="grant-op" usage="grant-op"/>
-</permission>
-<permission>
-	<object name="metadata" type="schema"/>
-	<roles names="seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
 	<object name="seatrack" type="database"/>
 	<roles names="seatrack_writer"/>
 	<privileges connect="true"/>
-</permission>
-<permission>
-	<object name="individuals" type="schema"/>
-	<roles names="seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="imports" type="schema"/>
-	<roles names="seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="imports" type="schema"/>
-	<roles names="seatrack_admin"/>
-	<privileges create="grant-op" usage="grant-op"/>
-</permission>
-<permission>
-	<object name="positions" type="schema"/>
-	<roles names="seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="positions.postable" type="table"/>
-	<roles names="seatrack_admin"/>
-	<privileges select="true" delete="true" insert="true" update="true" truncate="true" references="true" trigger="true"/>
-</permission>
-<permission>
-	<object name="positions.postable" type="table"/>
-	<roles names="seatrack_writer"/>
-	<privileges select="true" delete="true" insert="true" update="true" references="true" trigger="true"/>
-</permission>
-<permission>
-	<object name="positions.postable" type="table"/>
-	<roles names="seatrack_reader"/>
-	<privileges select="true" references="true" trigger="true"/>
 </permission>
 </dbmodel>
