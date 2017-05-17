@@ -20,10 +20,11 @@ require(RPostgres)
 
 ```{r import_posdata}
 data(posdata)
-con <- seatrackConnect(Username = "jens_astrom", Password = "jens_astrom")
-dbGetQuery(con, "SET search_path = positions, public")
 
-dbWriteTable(con, "positions.posdata", posdata, append = T)
+con <- seatrackConnect(Username = "jens_astrom", Password = "jens_astrom")
+
+dbGetQuery(con, "SET search_path = positions, public")
+dbWriteTable(con, "postable", posdata, append = T, row.names = F)
 
 ```
 
