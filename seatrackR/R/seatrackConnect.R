@@ -7,6 +7,7 @@
 #' @param Username Character. Default = seatrack_reader
 #' @param Password Character.
 #' @return A DBI connection to the Seatrack database
+#' @import DBI
 #' @export
 #' @examples
 #' dontrun{
@@ -15,7 +16,7 @@
 #' dbDisconnect(con)
 #' }
 
-seatrackConnect <- function(Username, Password) {
+seatrackConnect <- function(Username, Password, host = "localhost") {
 
   if (!requireNamespace("DBI", quietly = TRUE)) {
     stop("Pkg needed for this function to work. Please install it using devtools::install_github(\"rstats-db/DBI\") ",
@@ -29,7 +30,7 @@ seatrackConnect <- function(Username, Password) {
   }
 
 
-  con <- DBI::dbConnect(RPostgres::Postgres(), host = "localhost", dbname = "seatrack", user = Username, password = Password)
+  con <- DBI::dbConnect(RPostgres::Postgres(), host = host, dbname = "seatrack", user = Username, password = Password)
 
 }
 

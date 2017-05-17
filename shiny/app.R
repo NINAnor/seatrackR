@@ -67,7 +67,7 @@ server<-function(input, output, session) {
 
 
 
-    dbGetQuery(con,"SET search_path = seatrack, public;")
+    dbGetQuery(con,"SET search_path = positions, public;")
 
 
     cat.query<-"SELECT  species as species_cat, colony as colony_cat, data_responsible as responsible_cat
@@ -104,15 +104,15 @@ server<-function(input, output, session) {
 
   output$shortTable <- renderTable({
 
-    #   shortSum <-"
-    #   SELECT count(distinct(species)) \"Antall arter\", count(distinct(colony)) \"Antall kolonier\",
-    # count(distinct(year_tracked)) \"Antall år\", count(*) \"Antall positions\",
-    #   count(distinct(ring_number)) \"Antall individer\"
-    #   FROM postable"
+      shortSum <-"
+      SELECT count(distinct(species)) \"Antall arter\", count(distinct(colony)) \"Antall kolonier\",
+    count(distinct(year_tracked)) \"Antall år\", count(*) \"Antall positions\",
+      count(distinct(ring_number)) \"Antall individer\"
+      FROM postable"
 
-    shortSum <- "
-    SELECT * FROM
-    shorttable"
+    # shortSum <- "
+    # SELECT * FROM
+    # shorttable"
 
     shortTable <- dbGetQuery(con, shortSum)
     rownames(shortTable) <- ""
@@ -129,15 +129,15 @@ server<-function(input, output, session) {
   output$shortTableEqfilter3 <- renderTable({
 
 
-    # shortSumEqfilter3 <-"
-    # SELECT count(distinct(species)) antall_arter, count(distinct(colony)) antall_kolonier, count(distinct(year_tracked)) antall_år, count(*) antall_positions,
-    # count(distinct(ring_number)) antall_individer
-    # FROM postable
-    # WHERE eqfilter3 = 1"
+    shortSumEqfilter3 <-"
+    SELECT count(distinct(species)) antall_arter, count(distinct(colony)) antall_kolonier, count(distinct(year_tracked)) antall_år, count(*) antall_positions,
+    count(distinct(ring_number)) antall_individer
+    FROM postable
+    WHERE eqfilter3 = 1"
 
-    shortSumEqfilter3 <- "
-    SELECT *
-    FROM shorttableeqfilter3"
+    # shortSumEqfilter3 <- "
+    # SELECT *
+    # FROM shorttableeqfilter3"
 
     shortTable <- dbGetQuery(con, shortSumEqfilter3)
     rownames(shortTable) <- ""
@@ -154,16 +154,16 @@ server<-function(input, output, session) {
 
   output$longerTable <- renderTable({
 
-    # longerSum <-"
-    # SELECT year_tracked år, species, count(distinct(ring_number)) antall_unike_ring_nummer, count(*) antall_posisjoner, count(distinct(colony)) antall_kolonier
-    # FROM postable
-    # GROUP BY år, species
-    # ORDER BY år, species"
+    longerSum <-"
+    SELECT year_tracked år, species, count(distinct(ring_number)) antall_unike_ring_nummer, count(*) antall_posisjoner, count(distinct(colony)) antall_kolonier
+    FROM postable
+    GROUP BY år, species
+    ORDER BY år, species"
 
-    longerSum <- "
-    SELECT *
-    FROM longersum
-    "
+    # longerSum <- "
+    # SELECT *
+    # FROM longersum
+    # "
 
     longerTable <- dbGetQuery(con, longerSum)
     #rownames(shortTable) <- ""

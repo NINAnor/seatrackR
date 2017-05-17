@@ -4,7 +4,7 @@
 \alias{seatrackConnect}
 \title{Connect to seatrack database}
 \usage{
-seatrackConnect(Username, Password)
+seatrackConnect(Username, Password, host = "localhost")
 }
 \arguments{
 \item{Username}{Character. Default = seatrack_reader}

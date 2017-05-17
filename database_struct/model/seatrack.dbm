@@ -746,7 +746,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<schema name="positions"/>
 	<role name="seatrack_admin"/>
 	<position x="2060" y="60"/>
-	<column name="id" not-null="true">
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="date_time" not-null="true">
@@ -771,7 +771,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="smallint" length="0"/>
 	</column>
 	<column name="ring_number" not-null="true">
-		<type name="integer" length="0"/>
+		<type name="text" length="0"/>
 	</column>
 	<column name="euring_code" not-null="true">
 		<type name="text" length="0"/>
@@ -782,40 +782,43 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="colony" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="lon_raw" not-null="true">
+	<column name="lon_raw">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="lat_raw" not-null="true">
+	<column name="lat_raw">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="lon_smooth1" not-null="true">
+	<column name="lon_smooth1">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="lat_smooth1" not-null="true">
+	<column name="lat_smooth1">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="lon_smooth2" not-null="true">
+	<column name="lon_smooth2">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="lat_smooth2" not-null="true">
+	<column name="lat_smooth2">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="disttocol_s2" not-null="true">
+	<column name="disttocol_s2">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="eqfilter1" not-null="true">
-		<type name="bit" length="0"/>
+	<column name="eqfilter1">
+		<type name="smallint" length="0"/>
 	</column>
-	<column name="eqfilter2" not-null="true">
-		<type name="bit" length="0"/>
+	<column name="eqfilter2">
+		<type name="smallint" length="0"/>
 	</column>
-	<column name="eqfilter3" not-null="true">
-		<type name="bit" length="0"/>
+	<column name="eqfilter3">
+		<type name="smallint" length="0"/>
 	</column>
-	<column name="lat_smooth2_eqfilt3" not-null="true">
+	<column name="lat_smooth2_eqfilt3">
 		<type name="double precision" length="0"/>
 	</column>
 	<column name="sex">
+		<type name="text" length="0"/>
+	</column>
+	<column name="morph">
 		<type name="text" length="0"/>
 	</column>
 	<column name="subspecies">
@@ -830,7 +833,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="col_lat">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="first">
+	<column name="tfirst">
 		<type name="timestamp" length="0"/>
 	</column>
 	<column name="tsecond">
@@ -2635,12 +2638,12 @@ END;]]></definition>
 </permission>
 <permission>
 	<object name="positions.postable" type="table"/>
-	<roles names="seatrack_reader"/>
-	<privileges select="true" references="true" trigger="true"/>
+	<roles names="seatrack_writer"/>
+	<privileges select="true" delete="true" insert="true" update="true" references="true" trigger="true"/>
 </permission>
 <permission>
 	<object name="positions.postable" type="table"/>
-	<roles names="seatrack_writer"/>
-	<privileges select="true" delete="true" insert="true" update="true" references="true" trigger="true"/>
+	<roles names="seatrack_reader"/>
+	<privileges select="true" references="true" trigger="true"/>
 </permission>
 </dbmodel>

@@ -2,3 +2,4 @@
 
 export(seatrackConnect)
 export(viewActiveSessions)
+import(DBI)
