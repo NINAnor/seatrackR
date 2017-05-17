@@ -24,7 +24,6 @@ ui<-shinyUI(
                                      uiOutput("choose_data_responsible"),
                                      uiOutput("choose_ring_number"),
                                      checkboxInput("limit500", "Limit display to 500 random records", value = T, width = NULL),
-
                                      downloadButton('downloadData', 'Last ned CSV')),
 
                         mainPanel(
@@ -36,10 +35,13 @@ ui<-shinyUI(
                       )
 
              ),
+             tabPanel("Active logger sessions",
+                      DT::dataTableOutput('activeLoggingSessions')
+               ),
              tabPanel("Database stats",
-                      tableOutput('shortTable'),
-                      tableOutput('shortTableEqfilter3'),
-                      tableOutput('longerTable')
+                      DT::dataTableOutput('shortTable'),
+                      DT::dataTableOutput('shortTableEqfilter3'),
+                      DT::dataTableOutput('longerTable')
              )
   ))
 
@@ -102,7 +104,12 @@ server<-function(input, output, session) {
   })
 
 
-  output$shortTable <- renderTable({
+  output$activeLoggingSessions <- DT::renderDataTable({
+    sessions <- dbGetQuery(con, "SELECT * FROM views.active_logging_sessions")
+    sessions
+    })
+
+  output$shortTable <- DT::renderDataTable({
 
       shortSum <-"
       SELECT count(distinct(species)) \"Antall arter\", count(distinct(colony)) \"Antall kolonier\",
@@ -120,13 +127,16 @@ server<-function(input, output, session) {
 
     shortTable
 
-  },
+  }
+ ,
   caption = "Summeringstabell for alle funn",
-  caption.placement = getOption("xtable.caption.placement", "bottom"),
-  caption.width = getOption("xtable.caption.width", NULL))
+ rownames = F
+  # caption.placement = getOption("xtable.caption.placement", "bottom"),
+  # caption.width = getOption("xtable.caption.width", NULL)
+  )
 
 
-  output$shortTableEqfilter3 <- renderTable({
+  output$shortTableEqfilter3 <- DT::renderDataTable({
 
 
     shortSumEqfilter3 <-"
@@ -145,14 +155,17 @@ server<-function(input, output, session) {
     shortTable
 
 
-  },
+  }
+  ,
   caption = "Summeringstabell for alle funn med eqfilter = 3",
-  caption.placement = getOption("xtable.caption.placement", "bottom"),
-  caption.width = getOption("xtable.caption.width", NULL))
+  rownames = F
+  # caption.placement = getOption("xtable.caption.placement", "bottom"),
+  # caption.width = getOption("xtable.caption.width", NULL)
+  )
 
 
 
-  output$longerTable <- renderTable({
+  output$longerTable <- DT::renderDataTable({
 
     longerSum <-"
     SELECT year_tracked år, species, count(distinct(ring_number)) antall_unike_ring_nummer, count(*) antall_posisjoner, count(distinct(colony)) antall_kolonier
@@ -170,12 +183,13 @@ server<-function(input, output, session) {
     colnames(longerTable) <- c("Logger-år", "Art", "Antall individer", "Antall posisjoner", "Antall kolonier")
     longerTable
 
-  },
-
-
+  }
+  ,
   caption = "Tabell over ringer",
-  caption.placement = getOption("xtable.caption.placement", "bottom"),
-  caption.width = getOption("xtable.caption.width", NULL))
+  rownames = F
+  # caption.placement = getOption("xtable.caption.placement", "bottom"),
+  # caption.width = getOption("xtable.caption.width", NULL)
+  )
 
 
 
