@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="617,378" last-zoom="0.8"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="397,836" last-zoom="0.8"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -414,7 +414,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="deployment">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="960" y="1400"/>
+	<position x="960" y="1520"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -642,7 +642,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="retrieval">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="1840"/>
+	<position x="1460" y="1740"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -971,7 +971,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 </table>
 
 <textbox name="Questions" font-size="9">
-	<position x="1000" y="2200"/>
+	<position x="920" y="2200"/>
 	<comment><![CDATA[Shouldn't logger_mount_method be in the deployment table instead of the individ_status?
 
 Create some support to get the correct logger_id. Could be done manually using the logger_info table. Logger type and serial number should do to identify the logger_id.]]></comment>
