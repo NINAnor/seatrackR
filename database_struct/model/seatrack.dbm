@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,1834" last-zoom="1.05"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,27" last-zoom="0.8"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -173,11 +173,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="model_unique" type="uq-constr" table="metadata.logger_models">
-		<columns names="model" ref-type="src-columns"/>
+		<columns names="producer,model" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•model⸣
-•testmodel]]>
+<![CDATA[id•producer•model⸣
+•testproducer•testmodel]]>
 	</initial-data>
 </table>
 
@@ -229,8 +229,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<columns names="person_id" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•name•person_id⸣
-•Jens Åström•]]>
+<![CDATA[id•name•person_id•abrev_name⸣
+•Jens Åström••J_Åström]]>
 	</initial-data>
 </table>
 
@@ -707,7 +707,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="date" length="0"/>
 	</column>
 	<column name="stop_time" not-null="true">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="ready_for_deployment" not-null="true">
 		<type name="boolean" length="0"/>
@@ -756,7 +756,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="date_time" not-null="true">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="logger" not-null="true">
 		<type name="text" length="0"/>
@@ -840,10 +840,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="double precision" length="0"/>
 	</column>
 	<column name="tfirst">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="tsecond">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="twl_type">
 		<type name="smallint" length="0"/>
@@ -1166,7 +1166,7 @@ WHERE active = TRUE]]></expression>
 		<type name="date" length="0"/>
 	</column>
 	<column name="starttime_gmt" not-null="true">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="logging_mode" not-null="true">
 		<type name="varchar" length="15"/>
@@ -1292,7 +1292,7 @@ WHERE active = TRUE]]></expression>
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="import_time" not-null="true">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="import_type" not-null="true">
 		<type name="varchar" length="20"/>
@@ -1304,7 +1304,7 @@ WHERE active = TRUE]]></expression>
 		<type name="date" length="0"/>
 	</column>
 	<column name="starttime_gmt">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="logging_mode">
 		<type name="varchar" length="15"/>
@@ -1322,7 +1322,7 @@ WHERE active = TRUE]]></expression>
 		<type name="date" length="0"/>
 	</column>
 	<column name="programmed_gmt_time">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="intended_species">
 		<type name="text" length="0"/>
@@ -2004,7 +2004,7 @@ WHERE s.session_id IS NULL ]]></expression>
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
 	<comment><![CDATA[Reference table that specifies what files are created by which logger model]]></comment>
-	<position x="520" y="80"/>
+	<position x="560" y="100"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -2015,13 +2015,16 @@ WHERE s.session_id IS NULL ]]></expression>
 		<type name="text" length="0"/>
 		<comment><![CDATA[base of filetype to be used as appendix on filename]]></comment>
 	</column>
+	<column name="logger_producer" not-null="true">
+		<type name="text" length="0"/>
+	</column>
 	<constraint name="logger_files_pk" type="pk-constr" table="metadata.logger_files">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•logger_model•file_basename⸣
-•testmodel•result1.txt⸣
-•testmodel•result2.csv]]>
+<![CDATA[id•logger_model•file_basename•logger_producer⸣
+•testmodel•result1.txt•testproducer⸣
+•testmodel•result2.csv•testproducer]]>
 	</initial-data>
 </table>
 
@@ -2444,8 +2447,8 @@ END;]]></definition>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="metadata.logger_files">
-	<columns names="logger_model" ref-type="src-columns"/>
-	<columns names="model" ref-type="dst-columns"/>
+	<columns names="logger_model,logger_producer" ref-type="src-columns"/>
+	<columns names="model,producer" ref-type="dst-columns"/>
 </constraint>
 
 <relationship name="rel_logger_info_logger_models" type="relfk"
