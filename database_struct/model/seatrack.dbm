@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="397,836" last-zoom="0.8"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,0" last-zoom="0.8"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -701,7 +701,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="date" length="0"/>
 	</column>
 	<column name="stop_time" not-null="true">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="ready_for_deployment" not-null="true">
 		<type name="boolean" length="0"/>
@@ -750,7 +750,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="date_time" not-null="true">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="logger" not-null="true">
 		<type name="text" length="0"/>
@@ -834,10 +834,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 		<type name="double precision" length="0"/>
 	</column>
 	<column name="tfirst">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="tsecond">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="twl_type">
 		<type name="smallint" length="0"/>
@@ -1143,7 +1143,7 @@ WHERE active = TRUE]]></expression>
 		<type name="date" length="0"/>
 	</column>
 	<column name="starttime_gmt" not-null="true">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="logging_mode" not-null="true">
 		<type name="varchar" length="15"/>
@@ -1269,7 +1269,7 @@ WHERE active = TRUE]]></expression>
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="import_time" not-null="true">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="import_type" not-null="true">
 		<type name="varchar" length="20"/>
@@ -1281,7 +1281,7 @@ WHERE active = TRUE]]></expression>
 		<type name="date" length="0"/>
 	</column>
 	<column name="starttime_gmt">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="logging_mode">
 		<type name="varchar" length="15"/>
@@ -1299,7 +1299,7 @@ WHERE active = TRUE]]></expression>
 		<type name="date" length="0"/>
 	</column>
 	<column name="programmed_gmt_time">
-		<type name="timestamp" length="0"/>
+		<type name="timestamp" length="0" precision="0"/>
 	</column>
 	<column name="intended_species">
 		<type name="text" length="0"/>
