@@ -16,7 +16,7 @@ ui<-shinyUI(
              tabPanel('Seatrack data download',
                       sidebarLayout(
                         sidebarPanel(width=2, dateRangeInput("daterange", "Date range:",
-                                                             start = Sys.Date() -365,
+                                                             start = Sys.Date() -365*5,
                                                              end   = Sys.Date()),
                                      #selectInput('species', 'Species', c("All", "Common eider"),selected="All"),
                                      uiOutput("choose_species"),
@@ -52,7 +52,7 @@ ui<-shinyUI(
 
 server<-function(input, output, session) {
 
-  con <- seatrackConnect(Username = "testreader", Password = "testreader")
+  con <- seatrackConnect(Username = "seatrack_admin", Password = "ikaiLoobai9ahf1", host = "ninpgsql01.nina.no")
 
 
   datasetInput <- reactive({

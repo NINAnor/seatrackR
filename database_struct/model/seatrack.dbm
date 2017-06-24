@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="397,836" last-zoom="0.8"
+<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,1834" last-zoom="1.05"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -89,11 +89,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<role name="seatrack_admin"/>
 </schema>
 
-<schema name="metadata" rect-visible="true" fill-color="#e1e1e1">
+<schema name="metadata" rect-visible="true" fill-color="#0000ff">
 	<role name="seatrack_admin"/>
 </schema>
 
-<schema name="loggers" rect-visible="true" fill-color="#e1e1e1">
+<schema name="loggers" rect-visible="true" fill-color="#55aa00">
 	<role name="seatrack_admin"/>
 </schema>
 
@@ -163,6 +163,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
+	<column name="producer" not-null="true">
+		<type name="text" length="0"/>
+	</column>
 	<column name="model" not-null="true">
 		<type name="text" length="0"/>
 	</column>
@@ -181,7 +184,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logging_modes">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="340"/>
+	<position x="80" y="360"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -203,7 +206,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="people">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="460"/>
+	<position x="100" y="480"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -212,6 +215,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	</column>
 	<column name="person_id" not-null="true">
 		<type name="serial" length="0"/>
+	</column>
+	<column name="abrev_name" not-null="true">
+		<type name="text" length="0"/>
 	</column>
 	<constraint name="people_pk" type="pk-constr" table="metadata.people">
 		<columns names="id" ref-type="src-columns"/>
@@ -261,7 +267,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="logging_session">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="960" y="980"/>
+	<position x="980" y="1000"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -414,7 +420,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 <table name="deployment">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="960" y="1520"/>
+	<position x="980" y="1580"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -478,7 +484,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	</initial-data>
 </table>
 
-<schema name="individuals" rect-visible="true" fill-color="#e1e1e1">
+<schema name="individuals" rect-visible="true" fill-color="#ffff00">
 	<role name="seatrack_admin"/>
 </schema>
 
@@ -738,7 +744,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	</constraint>
 </table>
 
-<schema name="positions" rect-visible="true" fill-color="#e1e1e1">
+<schema name="positions" rect-visible="true" fill-color="#ff5500">
 	<role name="seatrack_admin"/>
 </schema>
 
@@ -974,7 +980,24 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	<position x="920" y="2200"/>
 	<comment><![CDATA[Shouldn't logger_mount_method be in the deployment table instead of the individ_status?
 
-Create some support to get the correct logger_id. Could be done manually using the logger_info table. Logger type and serial number should do to identify the logger_id.]]></comment>
+Create some support to get the correct logger_id. Could be done manually using the logger_info table. Logger type and serial number should do to identify the logger_id.
+
+Allow useing metalring in deployment and retrieve individ_id from individ_info if metalring exist.
+
+Think about error check before insert new posdata to avoid duplicate data for same/similar logger id and time.
+
+
+Prob need to add new table of logger events that records other bookkeeping  events than deployment and retrieval. Need to talk Halfvdan.
+
+Add comment column to retrieval (replaces retrival type)
+
+Make breeding success criterion metadata table
+
+Add metadata table for allowed ages, incl text and numbers as text.
+
+Add blood sampling and wing sample columns to individual status table
+
+Add observation as an import type?]]></comment>
 </textbox>
 
 <table name="subspecies">
@@ -1046,7 +1069,7 @@ Create some support to get the correct logger_id. Could be done manually using t
 <table name="logger_year_tracked">
 	<schema name="positions"/>
 	<role name="seatrack_admin"/>
-	<position x="2280" y="700"/>
+	<position x="2420" y="820"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1067,7 +1090,7 @@ Create some support to get the correct logger_id. Could be done manually using t
 	</constraint>
 </table>
 
-<schema name="activity" rect-visible="true" fill-color="#e1e1e1">
+<schema name="activity" rect-visible="true" fill-color="#00ffff">
 	<role name="seatrack_admin"/>
 </schema>
 
@@ -1257,7 +1280,7 @@ WHERE active = TRUE]]></expression>
 		<columns names="lat,lon"/>
 </trigger>
 
-<schema name="imports" rect-visible="true" fill-color="#e1e1e1">
+<schema name="imports" rect-visible="true" fill-color="#ff00ff">
 	<role name="seatrack_admin"/>
 </schema>
 
@@ -2106,16 +2129,52 @@ END;]]></definition>
 		</idxelement>
 </index>
 
-<constraint name="logger_producer_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_producers" table="loggers.logger_info">
-	<columns names="producer" ref-type="src-columns"/>
-	<columns names="producer" ref-type="dst-columns"/>
-</constraint>
+<table name="retrieval_type">
+	<schema name="metadata"/>
+	<role name="postgres"/>
+	<position x="540" y="1260"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="type" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="retrieval_type_pk" type="pk-constr" table="metadata.retrieval_type">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="retrieval_type_uq" type="uq-constr" table="metadata.retrieval_type">
+		<columns names="type" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="download_types">
+	<schema name="metadata"/>
+	<role name="postgres"/>
+	<position x="600" y="1000"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="download_type" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="download_types_pk" type="pk-constr" table="metadata.download_types">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="download_type_uq" type="uq-constr" table="metadata.download_types">
+		<columns names="download_type" ref-type="src-columns"/>
+	</constraint>
+</table>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="CASCADE" ref-table="metadata.logger_models" table="loggers.logger_info">
-	<columns names="logger_model" ref-type="src-columns"/>
-	<columns names="model" ref-type="dst-columns"/>
+	<columns names="logger_model,producer" ref-type="src-columns"/>
+	<columns names="model,producer" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logger_mod_prod_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_producers" table="metadata.logger_models">
+	<columns names="producer" ref-type="src-columns"/>
+	<columns names="producer" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="startup_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -2287,10 +2346,22 @@ END;]]></definition>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="retrieval_type_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.retrieval_type" table="loggers.retrieval">
+	<columns names="retrieval_type" ref-type="src-columns"/>
+	<columns names="type" ref-type="dst-columns"/>
+</constraint>
+
 <constraint name="shutdown_startup_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.startup" table="loggers.shutdown">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="download_type_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.download_types" table="loggers.shutdown">
+	<columns names="download_type" ref-type="src-columns"/>
+	<columns names="download_type" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="shutdown_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -2376,11 +2447,6 @@ END;]]></definition>
 	<columns names="logger_model" ref-type="src-columns"/>
 	<columns names="model" ref-type="dst-columns"/>
 </constraint>
-
-<relationship name="rel_logger_info_logger_producers" type="relfk"
-	 src-table="loggers.logger_info"
-	 dst-table="metadata.logger_producers"
-	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logger_info_logger_models" type="relfk"
 	 src-table="loggers.logger_info"
@@ -2580,6 +2646,21 @@ END;]]></definition>
 <relationship name="rel_logger_files_logger_models" type="relfk"
 	 src-table="metadata.logger_files"
 	 dst-table="metadata.logger_models"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_logger_models_logger_producers" type="relfk"
+	 src-table="metadata.logger_models"
+	 dst-table="metadata.logger_producers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_retrieval_retrieval_type" type="relfk"
+	 src-table="loggers.retrieval"
+	 dst-table="metadata.retrieval_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_shutdown_download_types" type="relfk"
+	 src-table="loggers.shutdown"
+	 dst-table="metadata.download_types"
 	 src-required="false" dst-required="false"/>
 
 <permission>
