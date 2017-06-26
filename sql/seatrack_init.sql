@@ -1,7 +1,7 @@
 -- Prepended SQL commands --
---CREATE EXTENSION postgis;
---CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
+CREATE EXTENSION postgis;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+ 
 ---
 
 -- Database generated with pgModeler (PostgreSQL Database Modeler).
@@ -15,12 +15,12 @@ SET check_function_bodies = false;
 
 -- object: seatrack_reader | type: ROLE --
 -- DROP ROLE IF EXISTS seatrack_reader;
---CREATE ROLE seatrack_reader WITH ;
+CREATE ROLE seatrack_reader WITH ;
 -- ddl-end --
 
 -- object: seatrack_writer | type: ROLE --
 -- DROP ROLE IF EXISTS seatrack_writer;
---CREATE ROLE seatrack_writer WITH ;
+CREATE ROLE seatrack_writer WITH ;
 -- ddl-end --
 
 -- object: seatrack_admin | type: ROLE --
@@ -31,27 +31,27 @@ SET check_function_bodies = false;
 
 -- ddl-end --
 
---CREATE ROLE seatrack_admin WITH
---	SUPERUSER
---	CREATEROLE;
+CREATE ROLE seatrack_admin WITH 
+	SUPERUSER
+	CREATEROLE;
 -- ddl-end --
 
 -- object: testreader | type: ROLE --
 -- DROP ROLE IF EXISTS testreader;
---CREATE ROLE testreader WITH
---	INHERIT
---	LOGIN
---	ENCRYPTED PASSWORD 'testreader'
---	IN ROLE seatrack_reader;
+CREATE ROLE testreader WITH 
+	INHERIT
+	LOGIN
+	ENCRYPTED PASSWORD 'testreader'
+	IN ROLE seatrack_reader;
 -- ddl-end --
 
 -- object: jens_astrom | type: ROLE --
 -- DROP ROLE IF EXISTS jens_astrom;
---CREATE ROLE jens_astrom WITH
---	INHERIT
---	LOGIN
---	ENCRYPTED PASSWORD 'jens_astrom'
---	IN ROLE seatrack_admin;
+CREATE ROLE jens_astrom WITH 
+	INHERIT
+	LOGIN
+	ENCRYPTED PASSWORD 'jens_astrom'
+	IN ROLE seatrack_admin;
 -- ddl-end --
 
 
@@ -63,7 +63,7 @@ SET check_function_bodies = false;
 -- 	OWNER = seatrack_admin
 -- ;
 -- -- ddl-end --
---
+-- 
 
 -- object: config | type: SCHEMA --
 -- DROP SCHEMA IF EXISTS config CASCADE;
@@ -172,16 +172,17 @@ INSERT INTO metadata.logger_producers (id, producer) VALUES (DEFAULT, E'testprod
 -- DROP TABLE IF EXISTS metadata.logger_models CASCADE;
 CREATE TABLE metadata.logger_models(
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	producer text NOT NULL,
 	model text NOT NULL,
 	CONSTRAINT logger_models_pk PRIMARY KEY (id),
-	CONSTRAINT model_unique UNIQUE (model)
+	CONSTRAINT model_unique UNIQUE (producer,model)
 
 );
 -- ddl-end --
 ALTER TABLE metadata.logger_models OWNER TO seatrack_admin;
 -- ddl-end --
 
-INSERT INTO metadata.logger_models (id, model) VALUES (DEFAULT, E'testmodel');
+INSERT INTO metadata.logger_models (id, producer, model) VALUES (DEFAULT, E'testproducer', E'testmodel');
 -- ddl-end --
 
 -- object: metadata.logging_modes | type: TABLE --
@@ -206,6 +207,7 @@ CREATE TABLE metadata.people(
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
 	name text NOT NULL,
 	person_id serial NOT NULL,
+	abrev_name text NOT NULL,
 	CONSTRAINT people_pk PRIMARY KEY (id),
 	CONSTRAINT names_unique UNIQUE (name),
 	CONSTRAINT person_id_uq UNIQUE (person_id)
@@ -215,7 +217,7 @@ CREATE TABLE metadata.people(
 ALTER TABLE metadata.people OWNER TO seatrack_admin;
 -- ddl-end --
 
-INSERT INTO metadata.people (id, name, person_id) VALUES (DEFAULT, E'Jens Åström', DEFAULT);
+INSERT INTO metadata.people (id, name, person_id, abrev_name) VALUES (DEFAULT, E'Jens Åström', DEFAULT, E'J_Åström');
 -- ddl-end --
 
 -- object: loggers.allocation | type: TABLE --
@@ -473,7 +475,7 @@ CREATE TABLE loggers.shutdown(
 	download_type text NOT NULL,
 	file_available boolean NOT NULL,
 	stop_date date NOT NULL,
-	stop_time timestamp NOT NULL,
+	stop_time timestamp(0) NOT NULL,
 	ready_for_deployment boolean NOT NULL,
 	logger_returned_to_bt boolean NOT NULL,
 	CONSTRAINT shutdown_pk PRIMARY KEY (id),
@@ -502,7 +504,7 @@ ALTER TABLE loggers.file_archive OWNER TO seatrack_admin;
 -- DROP TABLE IF EXISTS positions.postable CASCADE;
 CREATE TABLE positions.postable(
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
-	date_time timestamp NOT NULL,
+	date_time timestamp(0) NOT NULL,
 	logger text NOT NULL,
 	logger_id text NOT NULL,
 	logger_model text NOT NULL,
@@ -530,8 +532,8 @@ CREATE TABLE positions.postable(
 	age text,
 	col_lon double precision,
 	col_lat double precision,
-	tfirst timestamp,
-	tsecond timestamp,
+	tfirst timestamp(0),
+	tsecond timestamp(0),
 	twl_type smallint,
 	conf smallint,
 	sun double precision,
@@ -671,9 +673,9 @@ ALTER TABLE activity.salinity OWNER TO seatrack_admin;
 -- object: views.postable | type: VIEW --
 -- DROP VIEW IF EXISTS views.postable CASCADE;
 CREATE VIEW views.postable
-AS
+AS 
 
-SELECT p.*
+SELECT p.* 
 FROM positions.postable p;
 -- ddl-end --
 ALTER VIEW views.postable OWNER TO seatrack_admin;
@@ -682,7 +684,7 @@ ALTER VIEW views.postable OWNER TO seatrack_admin;
 -- object: views.active_logging_sessions | type: VIEW --
 -- DROP VIEW IF EXISTS views.active_logging_sessions CASCADE;
 CREATE VIEW views.active_logging_sessions
-AS
+AS 
 
 SELECT *
 FROM loggers.logging_session
@@ -698,7 +700,7 @@ CREATE TABLE loggers.startup(
 	session_id serial NOT NULL,
 	logger_id integer NOT NULL,
 	startdate_gmt date NOT NULL,
-	starttime_gmt timestamp NOT NULL,
+	starttime_gmt timestamp(0) NOT NULL,
 	logging_mode varchar(15) NOT NULL,
 	started_by text NOT NULL,
 	started_where text NOT NULL,
@@ -721,18 +723,18 @@ INSERT INTO loggers.startup (id, session_id, logger_id, startdate_gmt, starttime
 CREATE FUNCTION functions.fn_update_location_geom ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
 	AS $$
-BEGIN
+BEGIN	
 -- as this is an after trigger, NEW contains all the information we need even for INSERT
-	UPDATE metadata.location SET
+	UPDATE metadata.location SET 
 	geom = ST_SetSRID(ST_MakePoint(NEW.lon,NEW.lat), 4326)
 	WHERE id=NEW.id;
 
-	--RAISE NOTICE 'UPDATING geo data for %, [%,%]' , NEW.id, NEW.lat, NEW.lon;
+	--RAISE NOTICE 'UPDATING geo data for %, [%,%]' , NEW.id, NEW.lat, NEW.lon;	
     RETURN NULL; -- result is ignored since this is an AFTER trigger
   END;
 
@@ -745,7 +747,7 @@ ALTER FUNCTION functions.fn_update_location_geom() OWNER TO seatrack_admin;
 -- object: tr_insert_location_geom | type: TRIGGER --
 -- DROP TRIGGER IF EXISTS tr_insert_location_geom ON metadata.location CASCADE;
 CREATE TRIGGER tr_insert_location_geom
-	AFTER INSERT
+	AFTER INSERT 
 	ON metadata.location
 	FOR EACH ROW
 	EXECUTE PROCEDURE functions.fn_update_location_geom();
@@ -765,18 +767,18 @@ CREATE TRIGGER fn_update_location_geom
 CREATE FUNCTION functions.fn_update_colony_geom ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
 	AS $$
-BEGIN
+BEGIN	
 -- as this is an after trigger, NEW contains all the information we need even for INSERT
-	UPDATE metadata.colony SET
+	UPDATE metadata.colony SET 
 	geom = ST_SetSRID(ST_MakePoint(NEW.lon,NEW.lat), 4326)
 	WHERE id=NEW.id;
 
-	--RAISE NOTICE 'UPDATING geo data for %, [%,%]' , NEW.id, NEW.lat, NEW.lon;
+	--RAISE NOTICE 'UPDATING geo data for %, [%,%]' , NEW.id, NEW.lat, NEW.lon;	
     RETURN NULL; -- result is ignored since this is an AFTER trigger
   END;
 $$;
@@ -787,7 +789,7 @@ ALTER FUNCTION functions.fn_update_colony_geom() OWNER TO seatrack_admin;
 -- object: tr_insert_colony_geom | type: TRIGGER --
 -- DROP TRIGGER IF EXISTS tr_insert_colony_geom ON metadata.colony CASCADE;
 CREATE TRIGGER tr_insert_colony_geom
-	AFTER INSERT
+	AFTER INSERT 
 	ON metadata.colony
 	FOR EACH ROW
 	EXECUTE PROCEDURE functions.fn_update_colony_geom();
@@ -806,17 +808,17 @@ CREATE TRIGGER tr_update_colony_geom
 -- DROP TABLE IF EXISTS imports.logger_import CASCADE;
 CREATE TABLE imports.logger_import(
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
-	import_time timestamp NOT NULL,
+	import_time timestamp(0) NOT NULL,
 	import_type varchar(20) NOT NULL,
 	logger_id integer NOT NULL,
 	startdate_gmt date,
-	starttime_gmt timestamp,
+	starttime_gmt timestamp(0),
 	logging_mode varchar(15),
 	started_by text,
 	started_where text,
 	days_delayed smallint,
 	programmed_gmt_date date,
-	programmed_gmt_time timestamp,
+	programmed_gmt_time timestamp(0),
 	intended_species text,
 	intended_location text,
 	intended_deployer text,
@@ -911,18 +913,18 @@ ALTER TABLE individuals.observations OWNER TO seatrack_admin;
 CREATE FUNCTION functions.fn_update_observations_geom ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
 	AS $$
-BEGIN
+BEGIN	
 -- as this is an after trigger, NEW contains all the information we need even for INSERT
-	UPDATE individuals.observations SET
+	UPDATE individuals.observations SET 
 	geom = ST_SetSRID(ST_MakePoint(NEW.lon,NEW.lat), 4326)
 	WHERE id=NEW.id;
 
-	--RAISE NOTICE 'UPDATING geo data for %, [%,%]' , NEW.id, NEW.lat, NEW.lon;
+	--RAISE NOTICE 'UPDATING geo data for %, [%,%]' , NEW.id, NEW.lat, NEW.lon;	
     RETURN NULL; -- result is ignored since this is an AFTER trigger
   END;
 $$;
@@ -933,7 +935,7 @@ ALTER FUNCTION functions.fn_update_observations_geom() OWNER TO seatrack_admin;
 -- object: tr_insert_observation_geom | type: TRIGGER --
 -- DROP TRIGGER IF EXISTS tr_insert_observation_geom ON individuals.observations CASCADE;
 CREATE TRIGGER tr_insert_observation_geom
-	AFTER INSERT
+	AFTER INSERT 
 	ON individuals.observations
 	FOR EACH ROW
 	EXECUTE PROCEDURE functions.fn_update_observations_geom();
@@ -953,7 +955,7 @@ CREATE TRIGGER fn_update_observation_geom
 CREATE FUNCTION functions.fn_check_logging_session_not_open ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
@@ -986,7 +988,7 @@ CREATE TRIGGER tr_check_open_logging_session
 CREATE FUNCTION functions.fn_start_new_logging_session ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
@@ -1016,13 +1018,13 @@ CREATE TRIGGER tr_insert_new_logging_session
 CREATE FUNCTION functions.fn_check_open_session_on_deployment ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
 	AS $$
 BEGIN
-		IF bool_and(logging_session.logger_id != NEW.logger_id)
+		IF bool_and(logging_session.logger_id != NEW.logger_id) 
 			FROM loggers.logging_session
 			THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
@@ -1060,7 +1062,7 @@ CREATE TRIGGER tr_check_open_session_on_deployment
 CREATE FUNCTION functions.fn_update_session_on_deployment ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
@@ -1072,7 +1074,7 @@ BEGIN
 		AND d.session_id = NEW.session_id)
 		UPDATE loggers.logging_session update SET
 		deployment_id = NEW.deployment_id,
-		colony = col.colony_int_name,
+		colony = col.colony_int_name, 
 		species = NEW.deployment_species,
 		individ_id = NEW.individ_id
 		FROM col
@@ -1099,7 +1101,7 @@ CREATE TRIGGER tr_update_session_on_deployment
 CREATE FUNCTION functions.fn_check_open_session_on_retrieval ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
@@ -1107,24 +1109,24 @@ CREATE FUNCTION functions.fn_check_open_session_on_retrieval ()
 BEGIN
 	IF  bool_and(logging_session.logger_id != NEW.logger_id)
 		FROM loggers.logging_session
-	THEN
+	THEN 
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 	END IF;
-
-	IF bool_and(logging_session.active = FALSE)
+   
+	IF bool_and(logging_session.active = FALSE) 			
 		FROM loggers.logging_session
 		WHERE logging_session.logger_id = NEW.logger_id
 	THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 	END IF;
-
+   
 	IF bool_or(logging_session.deployment_id IS NULL)
 			FROM loggers.logging_session
 			WHERE logging_session.logger_id = NEW.logger_id
 	THEN
 		RAISE EXCEPTION 'Logger % not deployed. Logger must be deployed before retrieved.', NEW.logger_id;
 	END IF;
-
+		
 	NEW.session_id := logging_session.session_id
 	FROM loggers.logging_session
 	WHERE NEW.logger_id = logging_session.logger_id
@@ -1139,7 +1141,7 @@ ALTER FUNCTION functions.fn_check_open_session_on_retrieval() OWNER TO seatrack_
 -- object: tr_check_session_on_retrieval | type: TRIGGER --
 -- DROP TRIGGER IF EXISTS tr_check_session_on_retrieval ON loggers.retrieval CASCADE;
 CREATE TRIGGER tr_check_session_on_retrieval
-	BEFORE INSERT
+	BEFORE INSERT 
 	ON loggers.retrieval
 	FOR EACH ROW
 	EXECUTE PROCEDURE functions.fn_check_open_session_on_retrieval();
@@ -1150,7 +1152,7 @@ CREATE TRIGGER tr_check_session_on_retrieval
 CREATE FUNCTION functions.fn_update_session_on_retrieval ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
@@ -1188,35 +1190,35 @@ CREATE TRIGGER tr_update_session_on_retrieval
 CREATE FUNCTION functions.fn_distribute_from_logger_import_table ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
 	AS $$
 BEGIN
 	IF NEW.import_type = 'startup' THEN
-	INSERT INTO loggers.startup
-					(logger_id,
-					startdate_gmt,
-					starttime_gmt,
-					logging_mode,
-					started_by,
-					started_where,
-					days_delayed,
-					programmed_gmt_date,
+	INSERT INTO loggers.startup 
+					(logger_id,  
+					startdate_gmt, 
+					starttime_gmt, 
+					logging_mode, 
+					started_by, 
+					started_where, 
+					days_delayed, 
+					programmed_gmt_date, 
 					programmed_gmt_time)
-	VALUES (NEW.logger_id,
-					NEW.startdate_gmt,
-					NEW.starttime_gmt,
-					NEW.logging_mode,
-					NEW.started_by,
-					NEW.started_where,
-					NEW.days_delayed,
-					NEW.programmed_gmt_date,
+	VALUES (NEW.logger_id,  
+					NEW.startdate_gmt, 
+					NEW.starttime_gmt, 
+					NEW.logging_mode, 
+					NEW.started_by, 
+					NEW.started_where, 
+					NEW.days_delayed, 
+					NEW.programmed_gmt_date, 
 					NEW.programmed_gmt_time);
 	END IF;
 	IF NEW.import_type = 'allocation' THEN
-	INSERT INTO loggers.allocation
+	INSERT INTO loggers.allocation 
 					(logger_id,
 					intended_species,
 					intended_location,
@@ -1303,13 +1305,13 @@ ALTER FUNCTION functions.fn_distribute_from_logger_import_table() OWNER TO seatr
 CREATE FUNCTION functions.fn_check_open_session_on_allocation ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
 	AS $$
 BEGIN
-		IF bool_and(logging_session.logger_id != NEW.logger_id)
+		IF bool_and(logging_session.logger_id != NEW.logger_id) 
 			FROM loggers.logging_session
 			THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding allocation data', NEW.logger_id;
@@ -1347,13 +1349,13 @@ CREATE TRIGGER tr_check_open_session_on_allocation
 CREATE FUNCTION functions.fn_check_open_session_on_status ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
 	AS $$
 BEGIN
-		IF bool_and(logging_session.logger_id != NEW.logger_id)
+		IF bool_and(logging_session.logger_id != NEW.logger_id) 
 			FROM loggers.logging_session
 			THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding status data', NEW.logger_id;
@@ -1402,7 +1404,7 @@ ALTER TABLE metadata.breeding_stages OWNER TO seatrack_admin;
 -- object: tr_distribute_import | type: TRIGGER --
 -- DROP TRIGGER IF EXISTS tr_distribute_import ON imports.logger_import CASCADE;
 CREATE TRIGGER tr_distribute_import
-	AFTER INSERT
+	AFTER INSERT 
 	ON imports.logger_import
 	FOR EACH ROW
 	EXECUTE PROCEDURE functions.fn_distribute_from_logger_import_table();
@@ -1413,13 +1415,13 @@ CREATE TRIGGER tr_distribute_import
 CREATE FUNCTION functions.fn_delete_rows_from_import ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
 	AS $$
 BEGIN
-	DELETE FROM imports.logger_import
+	DELETE FROM imports.logger_import 
 	WHERE imports.id = NEW.id;
 	RETURN NULL;
 END;
@@ -1431,7 +1433,7 @@ ALTER FUNCTION functions.fn_delete_rows_from_import() OWNER TO seatrack_admin;
 -- object: views.closed_sessions_not_shutdown | type: VIEW --
 -- DROP VIEW IF EXISTS views.closed_sessions_not_shutdown CASCADE;
 CREATE VIEW views.closed_sessions_not_shutdown
-AS
+AS 
 
 SELECT l.session_id, l.logger_id, l.year_tracked
 FROM loggers.logging_session l left join loggers.shutdown s
@@ -1447,6 +1449,7 @@ CREATE TABLE metadata.logger_files(
 	id uuid NOT NULL DEFAULT uuid_generate_v1(),
 	logger_model text NOT NULL,
 	file_basename text NOT NULL,
+	logger_producer text NOT NULL,
 	CONSTRAINT logger_files_pk PRIMARY KEY (id)
 
 );
@@ -1458,9 +1461,9 @@ COMMENT ON COLUMN metadata.logger_files.file_basename IS 'base of filetype to be
 ALTER TABLE metadata.logger_files OWNER TO seatrack_admin;
 -- ddl-end --
 
-INSERT INTO metadata.logger_files (id, logger_model, file_basename) VALUES (DEFAULT, E'testmodel', E'result1.txt');
+INSERT INTO metadata.logger_files (id, logger_model, file_basename, logger_producer) VALUES (DEFAULT, E'testmodel', E'result1.txt', E'testproducer');
 -- ddl-end --
-INSERT INTO metadata.logger_files (id, logger_model, file_basename) VALUES (DEFAULT, E'testmodel', E'result2.csv');
+INSERT INTO metadata.logger_files (id, logger_model, file_basename, logger_producer) VALUES (DEFAULT, E'testmodel', E'result2.csv', E'testproducer');
 -- ddl-end --
 
 -- object: functions.fn_create_filenames_on_shutdown | type: FUNCTION --
@@ -1468,14 +1471,14 @@ INSERT INTO metadata.logger_files (id, logger_model, file_basename) VALUES (DEFA
 CREATE FUNCTION functions.fn_create_filenames_on_shutdown ()
 	RETURNS trigger
 	LANGUAGE plpgsql
-	VOLATILE
+	VOLATILE 
 	CALLED ON NULL INPUT
 	SECURITY INVOKER
 	COST 1
 	AS $$
 BEGIN
 	IF (TG_OP = 'INSERT') THEN
-	WITH foo as (SELECT s.session_id, s.logger_id, l.logger_model, f.file_basename
+	WITH foo as (SELECT s.session_id, s.logger_id, l.logger_model, f.file_basename 	
 			FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
 			INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model
 					)
@@ -1485,7 +1488,7 @@ BEGIN
 			WHERE foo.session_id = NEW.session_id;
 	RETURN NULL;
 	ELSEIF (TG_OP = 'UPDATE') THEN
-		WITH foo as (SELECT s.session_id, s.logger_id, l.logger_model, f.file_basename
+		WITH foo as (SELECT s.session_id, s.logger_id, l.logger_model, f.file_basename 	
 			FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
 			INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model
 					)
@@ -1576,18 +1579,44 @@ CREATE INDEX ls_individ_idx ON loggers.logging_session
 	);
 -- ddl-end --
 
--- object: logger_producer_fk | type: CONSTRAINT --
--- ALTER TABLE loggers.logger_info DROP CONSTRAINT IF EXISTS logger_producer_fk CASCADE;
-ALTER TABLE loggers.logger_info ADD CONSTRAINT logger_producer_fk FOREIGN KEY (producer)
-REFERENCES metadata.logger_producers (producer) MATCH FULL
-ON DELETE RESTRICT ON UPDATE CASCADE;
+-- object: metadata.retrieval_type | type: TABLE --
+-- DROP TABLE IF EXISTS metadata.retrieval_type CASCADE;
+CREATE TABLE metadata.retrieval_type(
+	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	type text NOT NULL,
+	CONSTRAINT retrieval_type_pk PRIMARY KEY (id),
+	CONSTRAINT retrieval_type_uq UNIQUE (type)
+
+);
+-- ddl-end --
+ALTER TABLE metadata.retrieval_type OWNER TO postgres;
+-- ddl-end --
+
+-- object: metadata.download_types | type: TABLE --
+-- DROP TABLE IF EXISTS metadata.download_types CASCADE;
+CREATE TABLE metadata.download_types(
+	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	download_type text NOT NULL,
+	CONSTRAINT download_types_pk PRIMARY KEY (id),
+	CONSTRAINT download_type_uq UNIQUE (download_type)
+
+);
+-- ddl-end --
+ALTER TABLE metadata.download_types OWNER TO postgres;
 -- ddl-end --
 
 -- object: logger_model_fk | type: CONSTRAINT --
 -- ALTER TABLE loggers.logger_info DROP CONSTRAINT IF EXISTS logger_model_fk CASCADE;
-ALTER TABLE loggers.logger_info ADD CONSTRAINT logger_model_fk FOREIGN KEY (logger_model)
-REFERENCES metadata.logger_models (model) MATCH FULL
+ALTER TABLE loggers.logger_info ADD CONSTRAINT logger_model_fk FOREIGN KEY (logger_model,producer)
+REFERENCES metadata.logger_models (model,producer) MATCH FULL
 ON DELETE CASCADE ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: logger_mod_prod_fk | type: CONSTRAINT --
+-- ALTER TABLE metadata.logger_models DROP CONSTRAINT IF EXISTS logger_mod_prod_fk CASCADE;
+ALTER TABLE metadata.logger_models ADD CONSTRAINT logger_mod_prod_fk FOREIGN KEY (producer)
+REFERENCES metadata.logger_producers (producer) MATCH FULL
+ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: startup_fk | type: CONSTRAINT --
@@ -1786,10 +1815,24 @@ REFERENCES loggers.logging_session (session_id) MATCH FULL
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
+-- object: retrieval_type_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.retrieval DROP CONSTRAINT IF EXISTS retrieval_type_fk CASCADE;
+ALTER TABLE loggers.retrieval ADD CONSTRAINT retrieval_type_fk FOREIGN KEY (retrieval_type)
+REFERENCES metadata.retrieval_type (type) MATCH FULL
+ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
 -- object: shutdown_startup_fk | type: CONSTRAINT --
 -- ALTER TABLE loggers.shutdown DROP CONSTRAINT IF EXISTS shutdown_startup_fk CASCADE;
 ALTER TABLE loggers.shutdown ADD CONSTRAINT shutdown_startup_fk FOREIGN KEY (session_id)
 REFERENCES loggers.startup (session_id) MATCH FULL
+ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: download_type_fk | type: CONSTRAINT --
+-- ALTER TABLE loggers.shutdown DROP CONSTRAINT IF EXISTS download_type_fk CASCADE;
+ALTER TABLE loggers.shutdown ADD CONSTRAINT download_type_fk FOREIGN KEY (download_type)
+REFERENCES metadata.download_types (download_type) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
@@ -1886,24 +1929,24 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- object: logger_model_fk | type: CONSTRAINT --
 -- ALTER TABLE metadata.logger_files DROP CONSTRAINT IF EXISTS logger_model_fk CASCADE;
-ALTER TABLE metadata.logger_files ADD CONSTRAINT logger_model_fk FOREIGN KEY (logger_model)
-REFERENCES metadata.logger_models (model) MATCH FULL
+ALTER TABLE metadata.logger_files ADD CONSTRAINT logger_model_fk FOREIGN KEY (logger_model,logger_producer)
+REFERENCES metadata.logger_models (model,producer) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: grant_582454d72d | type: PERMISSION --
+-- object: grant_17eeefcc3b | type: PERMISSION --
 GRANT CREATE,CONNECT,TEMPORARY
    ON DATABASE seatrack
    TO seatrack_admin WITH GRANT OPTION;
 -- ddl-end --
 
--- object: grant_d0afe2d557 | type: PERMISSION --
+-- object: grant_7137601f1d | type: PERMISSION --
 GRANT CONNECT
    ON DATABASE seatrack
    TO seatrack_reader;
 -- ddl-end --
 
--- object: grant_1213e39627 | type: PERMISSION --
+-- object: grant_140480d828 | type: PERMISSION --
 GRANT CONNECT
    ON DATABASE seatrack
    TO seatrack_writer;
