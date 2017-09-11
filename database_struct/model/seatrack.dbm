@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" last-position="0,27" last-zoom="0.8"
+<dbmodel pgmodeler-ver="0.9.0-beta2" last-position="212,762" last-zoom="0.8"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -26,15 +26,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<roles names="seatrack_reader" role-type="refer" />
 </role>
 
-<role name="jens_astrom"
-      inherit="true"
-      login="true"
-      encrypted="true"
-      password="jens_astrom">
-	<roles names="seatrack_admin" role-type="refer" />
-</role>
-
-<database name="seatrack" append-at-eod="true" prepend-at-bod="true">
+<database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
 	<role name="seatrack_admin"/>
 	<appended-sql><![CDATA[GRANT SELECT
 ON ALL TABLES IN SCHEMA loggers
@@ -1413,7 +1405,7 @@ WHERE active = TRUE]]></expression>
 <table name="import_types">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="480" y="1560"/>
+	<position x="480" y="1580"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1758,7 +1750,7 @@ END;]]></definition>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-	IF NEW.import_type = 'startup' THEN
+	IF NEW.startdate_gmt IS NOT NULL THEN
 	INSERT INTO loggers.startup 
 					(logger_id,  
 					startdate_gmt, 
@@ -1779,7 +1771,7 @@ END;]]></definition>
 					NEW.programmed_gmt_date, 
 					NEW.programmed_gmt_time);
 	END IF;
-	IF NEW.import_type = 'allocation' THEN
+	IF NEW.intended_species IS NOT NULL THEN
 	INSERT INTO loggers.allocation 
 					(logger_id,
 					intended_species,
@@ -1790,7 +1782,7 @@ END;]]></definition>
 					NEW.intended_location,
 					NEW.intended_deployer);
 	END IF;
-	IF NEW.import_type = 'deployment' THEN
+	IF NEW.deployment_species IS NOT NULL THEN
 	INSERT INTO loggers.deployment
 				(logger_id,
 				individ_id,
@@ -1807,7 +1799,7 @@ END;]]></definition>
 				NEW.deployment_date,
 				NEW.logger_mount_method);
 	END IF;
-	IF NEW.import_type = 'retrieval' THEN
+	IF NEW.retrieval_type IS NOT NULL THEN
 		INSERT INTO loggers.retrieval
 					(attribute_name,
 					logger_id,
@@ -1822,7 +1814,7 @@ END;]]></definition>
 					NEW.retrieval_location,
 					NEW.retrieval_date);
 		END IF;
-	IF NEW.import_type = 'status' THEN
+	IF NEW.weight IS NOT NULL THEN
 		INSERT INTO individuals.individ_status
 					(logger_id,
 					weight,
@@ -2167,6 +2159,122 @@ END;]]></definition>
 		<columns names="download_type" ref-type="src-columns"/>
 	</constraint>
 </table>
+
+<function name="fn_distribute_from_logger_import_table_old"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="seatrack_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	IF NEW.import_type = 'startup' THEN
+	INSERT INTO loggers.startup 
+					(logger_id,  
+					startdate_gmt, 
+					starttime_gmt, 
+					logging_mode, 
+					started_by, 
+					started_where, 
+					days_delayed, 
+					programmed_gmt_date, 
+					programmed_gmt_time)
+	VALUES (NEW.logger_id,  
+					NEW.startdate_gmt, 
+					NEW.starttime_gmt, 
+					NEW.logging_mode, 
+					NEW.started_by, 
+					NEW.started_where, 
+					NEW.days_delayed, 
+					NEW.programmed_gmt_date, 
+					NEW.programmed_gmt_time);
+	END IF;
+	IF NEW.import_type = 'allocation' THEN
+	INSERT INTO loggers.allocation 
+					(logger_id,
+					intended_species,
+					intended_location,
+					intended_deployer)
+	VALUES (NEW.logger_id,
+					NEW.intended_species,
+					NEW.intended_location,
+					NEW.intended_deployer);
+	END IF;
+	IF NEW.import_type = 'deployment' THEN
+	INSERT INTO loggers.deployment
+				(logger_id,
+				individ_id,
+				logger_fate,
+				deployment_species,
+				deployment_location,
+				deployment_date,
+				logger_mount_method)
+	VALUES (NEW.logger_id,
+				NEW.individ_id,
+				NEW.logger_fate,
+				NEW.deployment_species,
+				NEW.deployment_location,
+				NEW.deployment_date,
+				NEW.logger_mount_method);
+	END IF;
+	IF NEW.import_type = 'retrieval' THEN
+		INSERT INTO loggers.retrieval
+					(attribute_name,
+					logger_id,
+					individ_id,
+					retrieval_type,
+					retrieval_location,
+					retrieval_date)
+		VALUES (NEW.attribute_name,
+					NEW.logger_id,
+					NEW.individ_id,
+					NEW.retrieval_type,
+					NEW.retrieval_location,
+					NEW.retrieval_date);
+		END IF;
+	IF NEW.import_type = 'status' THEN
+		INSERT INTO individuals.individ_status
+					(logger_id,
+					weight,
+					scull,
+					tarsus,
+					wing,
+					breeding_stage,
+					eggs,
+					chicks,
+					hatching_success,
+					breeding_success,
+					breeding_success_criterion,
+					data_responsible,
+					back_on_nest,
+					"comment",
+					"location")
+	VALUES (NEW.logger_id,
+					NEW.weight,
+					NEW.scull,
+					NEW.tarsus,
+					NEW.wing,
+					NEW.breeding_stage,
+					NEW.eggs,
+					NEW.chicks,
+					NEW.hatching_success,
+					NEW.breeding_success,
+					NEW.breeding_success_criterion,
+					NEW.data_responsible,
+					NEW.back_on_nest_date,
+					NEW."comment",
+					NEW.observation_location);
+	END IF;
+RETURN NEW;
+END;]]></definition>
+</function>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="CASCADE" ref-table="metadata.logger_models" table="loggers.logger_info">

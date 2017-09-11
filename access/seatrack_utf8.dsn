@@ -1,5 +1,5 @@
 [ODBC]
-DRIVER=PostgreSQL ANSI
+DRIVER=PostgreSQL ODBC Driver(UNICODE)
 UID=seatrack_admin
 A1=7.4
 CX=1c890089
