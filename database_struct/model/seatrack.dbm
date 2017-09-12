@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta2" last-position="212,762" last-zoom="0.8"
+<dbmodel pgmodeler-ver="0.9.0-beta2" last-position="0,414" last-zoom="0.55"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -26,9 +26,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<roles names="seatrack_reader" role-type="refer" />
 </role>
 
+<role name="shinyuser"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="shinyuser">
+	<roles names="seatrack_writer" role-type="refer" />
+</role>
+
 <database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
 	<role name="seatrack_admin"/>
-	<appended-sql><![CDATA[GRANT SELECT
+	<appended-sql><![CDATA[----------Reader permissions
+GRANT SELECT
 ON ALL TABLES IN SCHEMA loggers
 TO seatrack_reader;
 
@@ -48,7 +57,7 @@ GRANT SELECT
 ON ALL TABLES IN SCHEMA positions
 TO seatrack_reader;
 
-
+-------------------Admin permissions
 GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
 ON ALL TABLES IN SCHEMA loggers
 TO seatrack_admin;
@@ -68,10 +77,67 @@ TO seatrack_admin;
 GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
 ON ALL TABLES IN SCHEMA positions
 TO seatrack_admin;
+
+GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
+ON ALL TABLES IN SCHEMA imports
+TO seatrack_admin;
+
+-------Writer permissions
+GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
+ON ALL TABLES IN SCHEMA loggers
+TO seatrack_writer;
+
+GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
+ON ALL TABLES IN SCHEMA individuals
+TO seatrack_writer;
+
+GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
+ON ALL TABLES IN SCHEMA positions
+TO seatrack_writer;
+
+GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
+ON ALL TABLES IN SCHEMA activity
+TO seatrack_writer;
+
+GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
+ON ALL TABLES IN SCHEMA imports
+TO seatrack_writer;
+
+GRANT SELECT
+ON ALL TABLES IN SCHEMA views
+TO seatrack_writer;
+
+GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
+ON ALL TABLES IN SCHEMA metadata
+TO seatrack_writer;
+
+----------Sequence permissions
+GRANT USAGE 
+ON ALL SEQUENCES IN SCHEMA metadata 
+TO seatrack_writer, seatrack_admin, seatrack_reader;
+
+GRANT USAGE 
+ON ALL SEQUENCES IN SCHEMA loggers 
+TO seatrack_writer, seatrack_admin, seatrack_reader;
+
+GRANT USAGE 
+ON ALL SEQUENCES IN SCHEMA individuals 
+TO seatrack_writer, seatrack_admin, seatrack_reader;
+
+GRANT USAGE 
+ON ALL SEQUENCES IN SCHEMA imports
+TO seatrack_writer, seatrack_admin, seatrack_reader;
+
+GRANT USAGE 
+ON ALL SEQUENCES IN SCHEMA positions 
+TO seatrack_writer, seatrack_admin, seatrack_reader;
+
+
+
 ]]></appended-sql>
-	<prepended-sql><![CDATA[CREATE EXTENSION postgis;
+	<prepended-sql><![CDATA[CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
- ]]></prepended-sql>
+CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 </database>
 
 <schema name="public" fill-color="#e1e1e1" sql-disabled="true">
@@ -1283,11 +1349,8 @@ WHERE active = TRUE]]></expression>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
-	<column name="import_time" not-null="true">
+	<column name="import_time" not-null="true" default-value="NOW()::timestamp(0)">
 		<type name="timestamp" length="0" precision="0"/>
-	</column>
-	<column name="import_type" not-null="true">
-		<type name="varchar" length="20"/>
 	</column>
 	<column name="logger_id" not-null="true">
 		<type name="integer" length="80"/>
@@ -1848,7 +1911,9 @@ END;]]></definition>
 					NEW.observation_location);
 	END IF;
 RETURN NEW;
-END;]]></definition>
+END;
+
+]]></definition>
 </function>
 
 <function name="fn_check_open_session_on_allocation"
@@ -1953,7 +2018,7 @@ END;]]></definition>
 	</constraint>
 </table>
 
-<trigger name="tr_distribute_import" firing-type="AFTER" per-line="true" constraint="false"
+<trigger name="tr_distribute_import" firing-type="BEFORE" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
 	 table="imports.logger_import">
 		<function signature="functions.fn_distribute_from_logger_import_table()"/>
@@ -1975,8 +2040,8 @@ END;]]></definition>
 	</return-type>
 	<definition><![CDATA[BEGIN
 	DELETE FROM imports.logger_import 
-	WHERE imports.id = NEW.id;
-	RETURN NULL;
+	WHERE logger_import.id = NEW.id;
+	RETURN NEW;
 END;]]></definition>
 </function>
 
@@ -2140,6 +2205,10 @@ END;]]></definition>
 	<constraint name="retrieval_type_uq" type="uq-constr" table="metadata.retrieval_type">
 		<columns names="type" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•type⸣
+•testtype]]>
+	</initial-data>
 </table>
 
 <table name="download_types">
@@ -2275,6 +2344,12 @@ END;]]></definition>
 RETURN NEW;
 END;]]></definition>
 </function>
+
+<trigger name="tr_delete_after_import" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="imports.logger_import">
+		<function signature="functions.fn_delete_rows_from_import()"/>
+</trigger>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="CASCADE" ref-table="metadata.logger_models" table="loggers.logger_info">
@@ -2535,12 +2610,6 @@ END;]]></definition>
 	<columns names="logger_id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="import_type_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.import_types" table="imports.logger_import">
-	<columns names="import_type" ref-type="src-columns"/>
-	<columns names="import_type" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="status_location_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.location" table="imports.logger_import">
 	<columns names="observation_location" ref-type="src-columns"/>
@@ -2739,11 +2808,6 @@ END;]]></definition>
 	 dst-table="loggers.logger_info"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_logger_import_import_types" type="relfk"
-	 src-table="imports.logger_import"
-	 dst-table="metadata.import_types"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_logger_import_location" type="relfk"
 	 src-table="imports.logger_import"
 	 dst-table="metadata.location"
@@ -2788,5 +2852,50 @@ END;]]></definition>
 	<object name="seatrack" type="database"/>
 	<roles names="seatrack_writer"/>
 	<privileges connect="true"/>
+</permission>
+<permission>
+	<object name="metadata" type="schema"/>
+	<roles names="seatrack_admin"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="metadata" type="schema"/>
+	<roles names="seatrack_reader"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="metadata" type="schema"/>
+	<roles names="seatrack_writer"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="loggers" type="schema"/>
+	<roles names="seatrack_admin,seatrack_reader,seatrack_writer"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="individuals" type="schema"/>
+	<roles names="seatrack_admin,seatrack_reader,seatrack_writer"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="imports" type="schema"/>
+	<roles names="seatrack_admin,seatrack_reader,seatrack_writer"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="views" type="schema"/>
+	<roles names="seatrack_admin,seatrack_reader,seatrack_writer"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="positions" type="schema"/>
+	<roles names="seatrack_writer,seatrack_admin,seatrack_reader"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="activity" type="schema"/>
+	<roles names="seatrack_admin,seatrack_reader,seatrack_writer"/>
+	<privileges usage="true"/>
 </permission>
 </dbmodel>
