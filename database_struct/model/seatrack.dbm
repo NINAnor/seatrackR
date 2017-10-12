@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta2" last-position="0,414" last-zoom="0.55"
+<dbmodel pgmodeler-ver="0.9.0" last-position="168,1170" last-zoom="0.8"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -188,14 +188,20 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	</constraint>
 	<initial-data>
 <![CDATA[id•logger_id•logger_serial_no•producer•production_year•logger_model•project⸣
-•1•test_1234•testproducer•2013•testmodel•seatrack]]>
+••test_1234•testproducer•2013•testmodel•seatrack⸣
+••C769•Biotrack•2015•mk4083•seatrack⸣
+••C770•Biotrack•2015•mk4083•seatrack⸣
+••C771•Biotrack•2015•mk4083•seatrack⸣
+••C772•Biotrack•2015•mk4083•seatrack⸣
+••C773•Biotrack•2015•mk4083•seatrack⸣
+••C774•Biotrack•2015•mk4083•seatrack]]>
 	</initial-data>
 </table>
 
 <table name="logger_producers">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="80"/>
+	<position x="80" y="88"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -210,14 +216,19 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	</constraint>
 	<initial-data>
 <![CDATA[id•producer⸣
-•testproducer]]>
+•testproducer⸣
+•Migrate Technology⸣
+•Biotrack⸣
+•BAS⸣
+•LOTEK⸣
+•UNKNOWN]]>
 	</initial-data>
 </table>
 
 <table name="logger_models">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="200"/>
+	<position x="80" y="208"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -235,19 +246,39 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	</constraint>
 	<initial-data>
 <![CDATA[id•producer•model⸣
-•testproducer•testmodel]]>
+•testproducer•testmodel⸣
+•Migrate Technology•c330⸣
+•Migrate Technology•f100⸣
+•Migrate Technology•c250⸣
+•Migrate Technology•c65⸣
+•Migrate Technology•w65⸣
+•Biotrack•mk3005⸣
+•Biotrack•mk3006⸣
+•Biotrack•mk4083⸣
+•Biotrack•mk4093⸣
+•BAS•mk9⸣
+•BAS•mk13⸣
+•BAS•mk14⸣
+•BAS•mk15⸣
+•BAS•mk18⸣
+•BAS•mk4⸣
+•LOTEK•LAT⸣
+•UNKNOWN•other]]>
 	</initial-data>
 </table>
 
 <table name="logging_modes">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="360"/>
+	<position x="80" y="368"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="mode" not-null="true">
 		<type name="text" length="0"/>
+	</column>
+	<column name="clipped_lightrange">
+		<type name="boolean" length="0"/>
 	</column>
 	<constraint name="logging_modes_pk" type="pk-constr" table="metadata.logging_modes">
 		<columns names="id" ref-type="src-columns"/>
@@ -256,15 +287,30 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 		<columns names="mode" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•mode⸣
-•testmode]]>
+<![CDATA[id•mode•clipped_lightrange⸣
+•testmode•⸣
+•1•T⸣
+•2•F⸣
+•3•⸣
+•4•⸣
+•5•⸣
+•6•⸣
+•7•⸣
+•8•⸣
+•9•⸣
+•10•⸣
+•11•⸣
+•12•⸣
+•13•⸣
+•14•⸣
+•15•]]>
 	</initial-data>
 </table>
 
 <table name="people">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="100" y="480"/>
+	<position x="100" y="540"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -287,8 +333,66 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 		<columns names="person_id" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•name•person_id•abrev_name⸣
-•Jens Åström••J_Åström]]>
+<![CDATA[name•abrev_name•id•person_id⸣
+Alexei Ezhov•A_Ezhov••⸣
+Arild Breistøl•A_Breistøl••⸣
+Arne Follestad•A_Follestad••⸣
+Arnt Kvinnesland•A_Kvinnesland••⸣
+Oskar Bjørnstad•O_Bjørnstad••⸣
+Bergur Olsen•B_Olsen••⸣
+Børge Moe•B_Moe••⸣
+Olivier Chastel•O_Chastel••⸣
+Dorothee Ehrlich•D_Ehrlich••⸣
+Ekaterina Tolmacheva•E_Tolmacheva••⸣
+Erlend Lorentzen•E_Lorentzen••⸣
+Erpur Snær Hansen•ES_Hansen••⸣
+Francis Daunt•F_Daunt••⸣
+Geir Helge Systad•GH_Systad••⸣
+Grigori Tertitski•G_Tertitski••⸣
+Hallvard Strøm•H_Strøm••⸣
+Ingar Støyle Bringsvor•IS_Bringsvor••⸣
+Ingve Birkeland•I_Birkeland••⸣
+Jan Ove Bustnes•JO_Bustnes••⸣
+Johannis Danielsen•J_Danielsen••⸣
+Jón Einar Jónsson•JE_Jónsson••⸣
+Kjell Einar Erikstad•KE_Erikstad••⸣
+Magdalene Langset•M_Langset••⸣
+Maria Gavrilo•M_Gavrilo••⸣
+Morten Helberg•M_Helberg••⸣
+Paul Thompson•P_Thompson••⸣
+Runar Jåbekk•R_Jåbekk••⸣
+Sebastien Descamps•S_Descamps••⸣
+Signe Christensen-Dalsgaard•S_Christensen-Dalsgaard••⸣
+Sunna Bjork Ragnarsdottir•SB_Ragnarsdottir••⸣
+Gunnar Thor Hallgrimsson•GT_Hallgrimsson••⸣
+Svein-Håkon Lorentsen•SH_Lorentsen••⸣
+Olav Runde•O_Runde••⸣
+Sveinn Are Hanssen•SA_Hanssen••⸣
+Thorkell Lindberg Thorarinsson•TL_Thórarinsson••⸣
+Tycho Anker-Nilssen•T_Anker-Nilssen••⸣
+Vegard Finset•V_Finset••⸣
+Vegard Sandøy Bråthen•VS_Bråthen••⸣
+Per Fauchald•P_Fauchald••⸣
+Hálfdán Helgi Helgason•HH_Helgason••⸣
+Benjamin Merkel•B_Merkel••⸣
+Tim Guilford•T_Guilford••⸣
+Morten Frederiksen•M_Frederiksen••⸣
+Lorrain Chivers•L_Chivers••⸣
+Sara Wanless•S_Wanless••⸣
+Maria Bogdanova•M_Bogdanova••⸣
+Jacob•J_González-Solís••⸣
+Deryk Shaw•D_Shaw••⸣
+Yuri V Krasnov•Y_Krasnov••⸣
+Thierry Boulinier•T_Boulinier••⸣
+Sabrina Tartu•S_Tartu••⸣
+Tone Reiertsen•T_Reiertsen••⸣
+Aurore Ponchon•A_Ponchon••⸣
+Michael P Harris•MP_Harris••⸣
+Celine Clement Chastel•CC_Chastel••⸣
+Rob T Barret•RT_Barret••⸣
+Pierre Blevin•P_Blevin••⸣
+Frederic Angelier•F_Angelier••⸣
+Jens Åström•J_Åström••]]>
 	</initial-data>
 </table>
 
@@ -373,7 +477,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 <table name="species">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="600"/>
+	<position x="480" y="780"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -393,15 +497,26 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 		<columns names="species_name_latin" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•species_name_eng•species_name_latin⸣
-•testspecies•testus specius]]>
+<![CDATA[species_name_eng•species_name_latin•id⸣
+Common guillemot•Uria aalge•⸣
+Brünnich's guillemot•Uria lomvia•⸣
+Little auk•Alle alle•⸣
+Atlantic puffin•Fratercula arctica•⸣
+Black-legged kittiwake•Rissa tridactyla•⸣
+Northern fulmar•Fulmarus glacialis•⸣
+Lesser black-backed gull•Larus fuscus•⸣
+Herring gull•Larus argentatus•⸣
+Glaucous gull•Larus hyperboreus•⸣
+European shag•Phalacrocorax aristotelis•⸣
+Common eider•Somateria mollissima•⸣
+testspecies•Testus specius•]]>
 	</initial-data>
 </table>
 
 <table name="colony">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="760"/>
+	<position x="80" y="768"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -430,15 +545,62 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 		<columns names="colony_nat_name" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•lat•lon•colony_int_name•colony_nat_name•geom⸣
-•73.1•15.2•testcolony•testcolonü•]]>
+<![CDATA[lat•lon•colony_int_name•colony_nat_name⸣
+62.436•5.874•Runde and Aalesund•Runde and Ålesund⸣
+69.065•15.170•Anda•Anda⸣
+74.503•18.956•Bear Island•Bjørnøya⸣
+69.635•18.848•Grindoya•Grindøya⸣
+71.113•24.732•Hjelmsoya•Hjelmsøya⸣
+60.668•4.749•Hordaland•Hordaland⸣
+70.383•31.150•Hornoya•Hornøya⸣
+78.253•15.508•Isfjorden•Isfjorden⸣
+70.921•-8.718•Jan Mayen•Jan Mayen⸣
+67.447•11.910•Rost•Røst⸣
+66.585•12.229•Selvaer•Selvær⸣
+65.320•11.630•Horsvaer•Horsvær⸣
+65.202•10.995•Sklinna•Sklinna⸣
+78.900•12.217•Kongsfjorden•Kongsfjorden⸣
+69.031•16.905•Lemmingsvaer•Lemmingsvær⸣
+70.358•21.398•Loppa•Loppa⸣
+58.008•7.368•Mandal and Lindesnes•Mandal and Lindesnes⸣
+79.585•18.459•Alkefjellet•Alkefjellet⸣
+59.150•5.174•Jarsteinen•Jarsteinen⸣
+65.081•-22.740•Breidafjordur•Breiðafjörður⸣
+65.004•-23.368•Melrakkaey•Melrakkaey⸣
+63.968•-22.221•Reykjanes•Reykjanes⸣
+66.180•-15.985•Langanes and Skjalfandi•Langanes and Skjálfandi⸣
+66.529•-17.992•Grimsey•Grímsey⸣
+65.707•-18.135•Eyjafjordur•Eyjafjörður⸣
+64.588•-14.172•Papey•Papey⸣
+61.950•-6.798•Faroe Islands•Føroyar⸣
+56.186•-2.558•Isle of May•Isle of May⸣
+59.142•-3.115•Eynhallow•Eynhallow⸣
+80.144•51.468•Franz Josef Land•Zemlya Frantsa-Iosifa⸣
+69.583•32.937•Cape Gorodetskiy•Gorodetskye ptich`i bazary⸣
+69.151•35.948•Cape Krutik•Mys Krutik⸣
+68.748•37.570•Seven Islands•Sem' Ostrovov⸣
+77.069•67.642•Oranskie Islands•Oranskie Ostrova⸣
+70.593•55.021•Cape Sakhanin•Mys Sakhanina⸣
+65.048•35.786•Solovetsky archipelago•Solovetskiye Ostrova⸣
+77.000•15.550•Hornsund•Hornsund⸣
+65.54•-13.78•Hafnarholmi•Hafnarhólmi⸣
+57.158259•9.025082•Bulbjerg•Bulbjerg⸣
+59.512853•-1.650526•Fair Isle•Fair Isle⸣
+64.1716•9.4078•Halten•Halten⸣
+73.716698•-56.6633301•Kippaku•Kippaku⸣
+55.29777•-6.28041•Rathlin•Rathlin⸣
+51.737687•-5.300236•Skomer•Skomer⸣
+69.8•-51.21•Ritenbenk•Ritenbenk⸣
+64.6522•-50.59185•Nuuk•Nuuk⸣
+70.68996946•23.5989887•Melkoya•Melkøya⸣
+65•10•testcolony•testcolonü]]>
 	</initial-data>
 </table>
 
 <table name="location">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="1000"/>
+	<position x="60" y="1020"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -466,12 +628,120 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	<constraint name="location_unique" type="uq-constr" table="metadata.location">
 		<columns names="location_name" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="location_nat_unique" type="uq-constr" table="metadata.location">
-		<columns names="colony_nat_name" ref-type="src-columns"/>
-	</constraint>
 	<initial-data>
-<![CDATA[id•location_name•colony_int_name•colony_nat_name•lat•lon•geom⸣
-•testlocation•testcolony•testcolonü•72.1•10.22•]]>
+<![CDATA[location_name•colony_int_name•colony_nat_name•lat•lon⸣
+Steinsvågen•Runde and Aalesund•Runde and Ålesund•62.47111•6.12861⸣
+Runde•Anda•Anda•62.40000•5.62000⸣
+Anda•Bear Island•Bjørnøya•69.06500•15.17000⸣
+Kapp Kolthoff•Grindoya•Grindøya•74.34257•19.10117⸣
+Evjebukta•Hjelmsoya•Hjelmsøya•74.35559•19.11467⸣
+Lille Feitnakken•Hordaland•Hordaland•74.34703•19.09058⸣
+Revdalen•Hornoya•Hornøya•74.35122•19.10070⸣
+Migade•Isfjorden•Isfjorden•74.36450•19.14751⸣
+Mellom Lille Feitnakken og Feitnakken•Jan Mayen•Jan Mayen•74.34665•19.09100⸣
+Russehamna•Rost•Røst•74.23110•19.10320⸣
+Krykkjedamdalen•Selvaer•Selvær•74.34806•19.09142⸣
+Migande N•Horsvaer•Horsvær•74.36585•19.14922⸣
+Bjørnøya•Sklinna•Sklinna•74.50250•18.95556⸣
+Grindøya•Kongsfjorden•Kongsfjorden•69.63505•18.84826⸣
+Laksmannen•Lemmingsvaer•Lemmingsvær•71.11291•24.73238⸣
+Keila•Loppa•Loppa•71.10927•24.74736⸣
+Lille Kamøya•Mandal and Lindesnes•Mandal and Lindesnes•70.84875•23.06400⸣
+Lyngøya•Alkefjellet•Alkefjellet•60.66761•4.74869⸣
+Hornøya•Jarsteinen•Jarsteinen•70.38333•31.15000⸣
+Diabas•Breidafjordur•Breiðafjörður•78.36400•16.14100⸣
+Grumant•Melrakkaey•Melrakkaey•78.17400•15.12900⸣
+Bjørndalen•Reykjanes•Reykjanes•78.21500•15.27000⸣
+Jan Mayen•Langanes and Skjalfandi•Langanes and Skjálfandi•70.92056•-8.71778⸣
+Kårøy•Grimsey•Grímsey•67.50500•12.07900⸣
+Ellefsnyken•Eyjafjordur•Eyjafjörður•67.44700•11.91400⸣
+Hernyken•Papey•Papey•67.42700•11.88400⸣
+Selvær•Faroe Islands•Føroyar•66.58500•12.22900⸣
+Horsvær•Isle of May•Isle of May•65.32000•11.63000⸣
+Sklinna•Eynhallow•Eynhallow•65.20200•10.99500⸣
+Sør-Gjæslingan•Franz Josef Land•Zemlya Frantsa-Iosifa•64.74000•10.77000⸣
+Feiringfjellet•Cape Gorodetskiy•Gorodetskye ptich`i bazary•79.00500•12.41100⸣
+Ossian Sars•Cape Krutik•Mys Krutik•78.94400•12.43900⸣
+Krykkjefjellet•Seven Islands•Sem' Ostrovov•78.89700•12.19300⸣
+Kongsfjorden•Oranskie Islands•Oranskie Ostrova•78.90000•12.21667⸣
+Lemmingsvær•Cape Sakhanin•Mys Sakhanina•69.03100•16.90500⸣
+Svarthellaren•Solovetsky archipelago•Solovetskiye Ostrova•70.35833•21.39833⸣
+Husholmen•Hornsund•Hornsund•58.01750•7.36139⸣
+Vestre Røysa•Hafnarholmi•Hafnarhólmi•58.01611•7.36528⸣
+Hårkniba•testcolony•testcolonü•58.00528•7.44306⸣
+Kjorten•testcolony•testcolonü•58.00139•7.30639⸣
+Merra•testcolony•testcolonü•58.02528•7.30417⸣
+Krægan•testcolony•testcolonü•58.02694•7.29611⸣
+Mittinga•testcolony•testcolonü•57.99667•7.55389⸣
+Agneskjær•testcolony•testcolonü•58.01500•7.16722⸣
+Lauholmen•testcolony•testcolonü•58.03611•7.15222⸣
+Storøy•testcolony•testcolonü•57.99361•7.43611⸣
+Storøytåa•testcolony•testcolonü•57.98833•7.43611⸣
+Østre Gunningsholme•testcolony•testcolonü•58.00139•7.40222⸣
+Småskjæran•testcolony•testcolonü•58.02778•7.11556⸣
+Olavskjær•testcolony•testcolonü•58.02278•7.23944⸣
+Leiholmen•testcolony•testcolonü•58.00528•7.64833⸣
+Storskjær•testcolony•testcolonü•57.98250•7.63528⸣
+Lille Einerholmen•testcolony•testcolonü•58.02917•7.21722⸣
+Store Torungen•testcolony•testcolonü•58.39444•8.78222⸣
+Hillesund•testcolony•testcolonü•58.01917•7.35056⸣
+Nordre Krægan•testcolony•testcolonü•58.02694•7.29611⸣
+Store Vengelsholmen•testcolony•testcolonü•57.96667•7.52972⸣
+Kalsvikholmen•testcolony•testcolonü•58.00944•7.11306⸣
+Båly•testcolony•testcolonü•58.04111•7.15167⸣
+Småholmane•testcolony•testcolonü•58.01722•7.35944⸣
+Mandalselva Kastellet•testcolony•testcolonü•58.02361•7.45222⸣
+Sånumstranda•testcolony•testcolonü•58.01972•7.42389⸣
+Alkefjellet•testcolony•testcolonü•79.58500•18.45900⸣
+Jarsteinen•testcolony•testcolonü•59.15000•5.17358⸣
+Landey•testcolony•testcolonü•65.07778•-22.74830⸣
+Stakksey•testcolony•testcolonü•65.08165•-22.73363⸣
+Hjallsey•testcolony•testcolonü•65.08434•-22.73767⸣
+Melrakkaey•testcolony•testcolonü•65.00417•-23.36750⸣
+Rif•testcolony•testcolonü•64.92065•-23.82247⸣
+Grindavik•testcolony•testcolonü•63.84495•-22.45114⸣
+Gardahraun•testcolony•testcolonü•64.09195•-21.99127⸣
+Fontur•testcolony•testcolonü•66.37749•-14.53046⸣
+Skoruvikurbjarg•testcolony•testcolonü•66.38574•-14.83834⸣
+Saltvik•testcolony•testcolonü•66.00722•-17.38032⸣
+Ærvikurbjarg•testcolony•testcolonü•65.98660•-17.41368⸣
+Grimsey•testcolony•testcolonü•66.52884•-17.99218⸣
+Eyjafjordur•testcolony•testcolonü•65.70748•-18.13482⸣
+Papey•testcolony•testcolonü•64.58799•-14.17183⸣
+Skugvoy•testcolony•testcolonü•61.77530•-6.80620⸣
+Stora Dimun•testcolony•testcolonü•61.68650•-6.76290⸣
+Kirkjubøholmur•testcolony•testcolonü•61.94970•-6.79840⸣
+Gassadalur•testcolony•testcolonü•62.13680•-7.15340⸣
+Vestmanna•testcolony•testcolonü•62.15520•-7.14550⸣
+Lonin•testcolony•testcolonü•61.87154•-6.91517⸣
+Sundi•testcolony•testcolonü•62.05297•-6.86546⸣
+Leynavatni•testcolony•testcolonü•62.12709•-7.02181⸣
+Sandavagur timburhandilin•testcolony•testcolonü•62.04666•-7.16741⸣
+Sandavagur litla grotbroti•testcolony•testcolonü•62.04354•-7.17988⸣
+Sandavagur stora grotbroti•testcolony•testcolonü•62.04282•-7.17770⸣
+Sydrugøtu waterfront•testcolony•testcolonü•62.17758•-6.74488⸣
+Sydrugøtu grotbrot•testcolony•testcolonü•62.18571•-6.76489⸣
+Lamba grotbrot•testcolony•testcolonü•62.14312•-6.72971⸣
+Glyvursnes•testcolony•testcolonü•61.97561•-6.74630⸣
+Likkudalur•testcolony•testcolonü•61.97491•-6.75465⸣
+Havnardalur•testcolony•testcolonü•62.00726•-6.82818⸣
+Isle of May•testcolony•testcolonü•56.18580•-2.55750⸣
+Eynhallow•testcolony•testcolonü•59.14243•-3.11455⸣
+Cape Flora•testcolony•testcolonü•79.94930•50.13840⸣
+Tikhaya Bay•testcolony•testcolonü•80.33865•52.79828⸣
+Rubini•testcolony•testcolonü•80.31590•52.80467⸣
+Gorodetskiy Kape•testcolony•testcolonü•69.58293•32.93692⸣
+Cape Krutik•testcolony•testcolonü•69.15083•35.94814⸣
+Litsky Maly Island•testcolony•testcolonü•68.69333•37.76500⸣
+Ostrov Bolshoy Zelenets•testcolony•testcolonü•68.78833•37.42167⸣
+Veshnyak Island•testcolony•testcolonü•68.76167•37.52333⸣
+Eastern Bolshie Oranskye•testcolony•testcolonü•77.06910•67.64236⸣
+Sakhanina Cape•testcolony•testcolonü•70.59336•55.02108⸣
+Dolgaya Bay•testcolony•testcolonü•65.04820•35.78600⸣
+Sennaya island•testcolony•testcolonü•64.99220•35.67150⸣
+NW Sennaya island•testcolony•testcolonü•64.99560•35.66080⸣
+Parusnyi island•testcolony•testcolonü•64.98210•35.69220⸣
+Hafnarholmi•testcolony•testcolonü•65.43840•-23.01490]]>
 	</initial-data>
 </table>
 
@@ -523,7 +793,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 <table name="logger_fate">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="1320"/>
+	<position x="80" y="1328"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -538,7 +808,17 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	</constraint>
 	<initial-data>
 <![CDATA[id•logger_fate⸣
-•testfate]]>
+•testfate⸣
+•Calibration⸣
+•Deployed⸣
+•Double tagging⸣
+•Lost⸣
+•Lost before deployment⸣
+•Redeployed⸣
+•Sent to producer⸣
+•Stored⸣
+•Stored at location⸣
+•Assigned to another project]]>
 	</initial-data>
 </table>
 
@@ -549,7 +829,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 <table name="individ_info">
 	<schema name="individuals"/>
 	<role name="seatrack_admin"/>
-	<position x="20" y="1840"/>
+	<position x="80" y="2008"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -587,15 +867,28 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 		<columns names="individ_id" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•individ_id•metalring_id•species•morph•subspecies•age•sex•sexing_method⸣
-•1•1•testspecies•testmorph•testus•12•m•testmethod]]>
+<![CDATA[metalring_id•species•morph•subspecies•age•sex•sexing_method•individ_id⸣
+1•Common guillemot••••male•dna•1⸣
+2•Brünnich's guillemot••••female•morphology•2⸣
+3•Little auk••Alle alle alle••unknown•behaviour•3⸣
+4•Little auk••Alle alle polaris••male•dna•4⸣
+5•Atlantic puffin••••female•morphology•5⸣
+6•Black-legged kittiwake••••unknown•behaviour•6⸣
+7•Northern fulmar••••male•dna•7⸣
+8•Lesser black-backed gull••Larus fuscus intermedius••female•morphology•8⸣
+9•Lesser black-backed gull••Larus fuscus fuscus••unknown•behaviour•9⸣
+10•Lesser black-backed gull••Larus fuscus graellsii••male•dna•10⸣
+11•Herring gull••••female•morphology•11⸣
+12•Glaucous gull••••unknown•behaviour•12⸣
+13•European shag••••male•dna•13⸣
+14•Common eider••••female•morphology•14]]>
 	</initial-data>
 </table>
 
 <table name="sex">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="60" y="1460"/>
+	<position x="60" y="1468"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -610,15 +903,16 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	</constraint>
 	<initial-data>
 <![CDATA[id•sex⸣
-•m⸣
-•f]]>
+•male⸣
+•female⸣
+•unknown]]>
 	</initial-data>
 </table>
 
 <table name="sexing_method">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="400" y="1420"/>
+	<position x="400" y="1428"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -633,14 +927,18 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	</constraint>
 	<initial-data>
 <![CDATA[id•method⸣
-•testmethod]]>
+•testmethod⸣
+•dna⸣
+•morphology⸣
+•behaviour⸣
+•none_yet]]>
 	</initial-data>
 </table>
 
 <table name="individ_status">
 	<schema name="individuals"/>
 	<role name="seatrack_admin"/>
-	<position x="380" y="1900"/>
+	<position x="440" y="2068"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -650,7 +948,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	<column name="status_id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="session_id" not-null="true">
+	<column name="session_id">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="weight">
@@ -692,7 +990,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	<column name="comment">
 		<type name="text" length="0"/>
 	</column>
-	<column name="location" not-null="true">
+	<column name="location">
 		<type name="text" length="0"/>
 	</column>
 	<constraint name="individ_status_pk" type="pk-constr" table="individuals.individ_status">
@@ -701,6 +999,16 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	<constraint name="status_id" type="uq-constr" table="individuals.individ_status">
 		<columns names="status_id" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[logger_id•weight•scull•tarsus•wing•breeding_stage•eggs•chicks•hatching_success•breeding_success•breeding_success_criterion•data_responsible•back_on_nest•comment•location•session_id⸣
+1•••••nonbreeding/failed_breeder•••0•0•10d•Jens Åström••••1⸣
+2•••••prebreeding•••1••15d•Jens Åström••••⸣
+3•••••incubating•••1••20d•Jens Åström••••⸣
+4•••••rearing chicks•••1•1•25d•Jens Åström••••⸣
+5•••••breeding/stage_unknown•••••30d•Jens Åström••••⸣
+6•••••failed breeder•••1•0•fledging•Jens Åström••••⸣
+7•••••unknown•••••none•Jens Åström••••]]>
+	</initial-data>
 </table>
 
 <table name="retrieval">
@@ -972,7 +1280,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	<column name="light_threshold">
 		<type name="double precision" length="0"/>
 	</column>
-	<column name="tm_file">
+	<column name="trn_file">
 		<type name="text" length="0"/>
 	</column>
 	<column name="processing_file">
@@ -984,7 +1292,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	<column name="logger_download_success">
 		<type name="boolean" length="0"/>
 	</column>
-	<column name="logger_data_failed">
+	<column name="logger_date_failed">
 		<type name="boolean" length="0"/>
 	</column>
 	<column name="analyzer">
@@ -1035,15 +1343,8 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 </table>
 
 <textbox name="Questions" font-size="9">
-	<position x="920" y="2200"/>
-	<comment><![CDATA[Shouldn't logger_mount_method be in the deployment table instead of the individ_status?
-
-Create some support to get the correct logger_id. Could be done manually using the logger_info table. Logger type and serial number should do to identify the logger_id.
-
-Allow useing metalring in deployment and retrieve individ_id from individ_info if metalring exist.
-
-Think about error check before insert new posdata to avoid duplicate data for same/similar logger id and time.
-
+	<position x="1080" y="2240"/>
+	<comment><![CDATA[Allow useing metalring in deployment and retrieve individ_id from individ_info if metalring exist.
 
 Prob need to add new table of logger events that records other bookkeeping  events than deployment and retrieval. Need to talk Halfvdan.
 
@@ -1055,20 +1356,22 @@ Add metadata table for allowed ages, incl text and numbers as text.
 
 Add blood sampling and wing sample columns to individual status table
 
-Add observation as an import type?]]></comment>
+Need to decide how to handle logger fate. Should it really be included in the deployment table?
+
+Set ON UPDATE CASCADE for all? foreign keys]]></comment>
 </textbox>
 
 <table name="subspecies">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="520" y="560"/>
+	<position x="520" y="568"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="species_name_latin" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="sub_species" not-null="true">
+	<column name="sub_species">
 		<type name="text" length="0"/>
 	</column>
 	<constraint name="subspecies_pk" type="pk-constr" table="metadata.subspecies">
@@ -1079,9 +1382,23 @@ Add observation as an import type?]]></comment>
 		<comment><![CDATA[Might not be necessarily unique?]]></comment>
 	</constraint>
 	<initial-data>
-<![CDATA[id•species_name_latin•sub_species⸣
-•testus specius•testus⸣
-•testus specius•specius]]>
+<![CDATA[species_name_latin•sub_species•id⸣
+Uria aalge••⸣
+Uria lomvia••⸣
+Alle alle•Alle alle alle•⸣
+Alle alle•Alle alle polaris•⸣
+Fratercula arctica••⸣
+Rissa tridactyla••⸣
+Fulmarus glacialis••⸣
+Larus fuscus•Larus fuscus intermedius•⸣
+Larus fuscus•Larus fuscus fuscus•⸣
+Larus fuscus•Larus fuscus graellsii•⸣
+Larus argentatus••⸣
+Larus hyperboreus••⸣
+Phalacrocorax aristotelis••⸣
+Somateria mollissima••⸣
+Testus specius•testus•⸣
+Testus specius•specius•]]>
 	</initial-data>
 </table>
 
@@ -1345,7 +1662,7 @@ WHERE active = TRUE]]></expression>
 <table name="logger_import">
 	<schema name="imports"/>
 	<role name="seatrack_admin"/>
-	<position x="2160" y="1500"/>
+	<position x="2180" y="1540"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1451,8 +1768,8 @@ WHERE active = TRUE]]></expression>
 	<column name="data_responsible">
 		<type name="text" length="0"/>
 	</column>
-	<column name="back_on_nest_date">
-		<type name="date" length="0"/>
+	<column name="back_on_nest">
+		<type name="boolean" length="0"/>
 	</column>
 	<column name="comment">
 		<type name="text" length="0"/>
@@ -1468,7 +1785,7 @@ WHERE active = TRUE]]></expression>
 <table name="import_types">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="480" y="1580"/>
+	<position x="480" y="1588"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1494,7 +1811,7 @@ WHERE active = TRUE]]></expression>
 <table name="mounting_types">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="60" y="1620"/>
+	<position x="60" y="1628"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1509,14 +1826,16 @@ WHERE active = TRUE]]></expression>
 	</constraint>
 	<initial-data>
 <![CDATA[id•logger_mount_method⸣
-•testmethod]]>
+•testmethod⸣
+•tarsus⸣
+•tibia]]>
 	</initial-data>
 </table>
 
 <table name="observations">
 	<schema name="individuals"/>
 	<role name="seatrack_admin"/>
-	<position x="0" y="2400"/>
+	<position x="60" y="2568"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -2003,7 +2322,7 @@ END;]]></definition>
 <table name="breeding_stages">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="560" y="1700"/>
+	<position x="560" y="1708"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -2016,6 +2335,16 @@ END;]]></definition>
 	<constraint name="breeding_stages_pk" type="pk-constr" table="metadata.breeding_stages">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•breeding_stage⸣
+•nonbreeding/failed_breeder⸣
+•prebreeding⸣
+•incubating⸣
+•rearing chicks⸣
+•breeding/stage_unknown⸣
+•failed breeder⸣
+•unknown]]>
+	</initial-data>
 </table>
 
 <trigger name="tr_distribute_import" firing-type="BEFORE" per-line="true" constraint="false"
@@ -2061,7 +2390,7 @@ WHERE s.session_id IS NULL ]]></expression>
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
 	<comment><![CDATA[Reference table that specifies what files are created by which logger model]]></comment>
-	<position x="560" y="100"/>
+	<position x="560" y="108"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -2079,9 +2408,91 @@ WHERE s.session_id IS NULL ]]></expression>
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[id•logger_model•file_basename•logger_producer⸣
-•testmodel•result1.txt•testproducer⸣
-•testmodel•result2.csv•testproducer]]>
+<![CDATA[logger_model•file_basename•logger_producer•id⸣
+c250•.deg•Migrate Technology•⸣
+c250•driftadj.deg•Migrate Technology•⸣
+c250•.lux•Migrate Technology•⸣
+c250•driftadj.lux•Migrate Technology•⸣
+c250•.trn•Migrate Technology•⸣
+c250•driftadj.trn•Migrate Technology•⸣
+c250•.sst•Migrate Technology•⸣
+mk3006•.tem•Biotrack•⸣
+mk3006•.trn•Biotrack•⸣
+mk3006•.txt•Biotrack•⸣
+mk3006•.act•Biotrack•⸣
+mk3006•.lig•Biotrack•⸣
+c330•.deg•Migrate Technology•⸣
+c330•driftadj.deg•Migrate Technology•⸣
+c330•.lux•Migrate Technology•⸣
+c330•driftadj.lux•Migrate Technology•⸣
+c330•.trn•Migrate Technology•⸣
+c330•driftadj.trn•Migrate Technology•⸣
+c330•.sst•Migrate Technology•⸣
+f100•.deg•Migrate Technology•⸣
+f100•driftadj.deg•Migrate Technology•⸣
+f100•.lux•Migrate Technology•⸣
+f100•driftadj.lux•Migrate Technology•⸣
+f100•.trn•Migrate Technology•⸣
+f100•driftadj.trn•Migrate Technology•⸣
+f100•.sst•Migrate Technology•⸣
+c65•.deg•Migrate Technology•⸣
+c65•driftadj.deg•Migrate Technology•⸣
+c65•.lux•Migrate Technology•⸣
+c65•driftadj.lux•Migrate Technology•⸣
+c65•.trn•Migrate Technology•⸣
+c65•driftadj.trn•Migrate Technology•⸣
+c65•.sst•Migrate Technology•⸣
+w65•.deg•Migrate Technology•⸣
+w65•driftadj.deg•Migrate Technology•⸣
+w65•.lux•Migrate Technology•⸣
+w65•driftadj.lux•Migrate Technology•⸣
+w65•.trn•Migrate Technology•⸣
+w65•driftadj.trn•Migrate Technology•⸣
+w65•.sst•Migrate Technology•⸣
+mk18•.trn•BAS•⸣
+mk18•.txt•BAS•⸣
+mk18•.act•BAS•⸣
+mk18•.lig•BAS•⸣
+mk18•.trn•BAS•⸣
+mk18•.txt•BAS•⸣
+mk18•.act•BAS•⸣
+mk18•.lig•BAS•⸣
+mk14•.trn•BAS•⸣
+mk14•.txt•BAS•⸣
+mk14•.act•BAS•⸣
+mk14•.lig•BAS•⸣
+mk13•.trn•BAS•⸣
+mk13•.txt•BAS•⸣
+mk13•.act•BAS•⸣
+mk13•.lig•BAS•⸣
+mk15•.tem•BAS•⸣
+mk15•.trn•BAS•⸣
+mk15•.txt•BAS•⸣
+mk15•.act•BAS•⸣
+mk15•.lig•BAS•⸣
+mk4•.trn•BAS•⸣
+mk4•.txt•BAS•⸣
+mk4•.act•BAS•⸣
+mk4•.lig•BAS•⸣
+mk3005•.tem•Biotrack•⸣
+mk3005•.trn•Biotrack•⸣
+mk3005•.txt•Biotrack•⸣
+mk3005•.act•Biotrack•⸣
+mk3005•.lig•Biotrack•⸣
+mk4083•.trn•Biotrack•⸣
+mk4083•.txt•Biotrack•⸣
+mk4083•.act•Biotrack•⸣
+mk4083•.lig•Biotrack•⸣
+mk4093•.trn•Biotrack•⸣
+mk4093•.txt•Biotrack•⸣
+mk4093•.act•Biotrack•⸣
+mk4093•.lig•Biotrack•⸣
+mk9•.trn•BAS•⸣
+mk9•.txt•BAS•⸣
+mk9•.act•BAS•⸣
+mk9•.lig•BAS•⸣
+LAT•.bin•LOTEK•⸣
+LAT•_o.bin•LOTEK•]]>
 	</initial-data>
 </table>
 
@@ -2192,7 +2603,7 @@ END;]]></definition>
 <table name="retrieval_type">
 	<schema name="metadata"/>
 	<role name="postgres"/>
-	<position x="540" y="1260"/>
+	<position x="540" y="1268"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -2214,7 +2625,7 @@ END;]]></definition>
 <table name="download_types">
 	<schema name="metadata"/>
 	<role name="postgres"/>
-	<position x="600" y="1000"/>
+	<position x="600" y="1008"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -2227,6 +2638,18 @@ END;]]></definition>
 	<constraint name="download_type_uq" type="uq-constr" table="metadata.download_types">
 		<columns names="download_type" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•download_type⸣
+•Error⸣
+•Failed⸣
+•Lost⸣
+•Nonresponsive⸣
+•Reconstructed⸣
+•Ok⸣
+•Unknown⸣
+•Unsuccessful reconstruction⸣
+•Sleep mode]]>
+	</initial-data>
 </table>
 
 <function name="fn_distribute_from_logger_import_table_old"
@@ -2351,10 +2774,106 @@ END;]]></definition>
 		<function signature="functions.fn_delete_rows_from_import()"/>
 </trigger>
 
+<table name="breeding_success_criterion">
+	<schema name="metadata"/>
+	<role name="postgres"/>
+	<position x="60" y="1780"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="breeding_success_criterion" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="breeding_success_criterion_pk" type="pk-constr" table="metadata.breeding_success_criterion">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="breeding_success_criterion_uq" type="uq-constr" table="metadata.breeding_success_criterion">
+		<columns names="breeding_success_criterion" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[id•breeding_success_criterion⸣
+•10d⸣
+•15d⸣
+•20d⸣
+•25d⸣
+•30d⸣
+•fledging⸣
+•none]]>
+	</initial-data>
+</table>
+
+<function name="reject_process_colony_not_matching_any_type_name"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	IF NEW.colony NOT IN (SELECT DISTINCT x 
+FROM metadata.location CROSS JOIN LATERAL
+	(values(colony_int_name), (colony_nat_name)) as t(x)
+WHERE x IS NOT NULL) THEN
+RAISE EXCEPTION 'Colony name not present as native or international name in metadatal.locations table', NEW.colony;
+END IF;
+RETURN NEW;
+END;
+]]></definition>
+</function>
+
+<trigger name="tr_before_insert_or_update_process_check_colony_name" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="positions.processing">
+		<function signature="functions.reject_process_colony_not_matching_any_type_name()"/>
+		<columns names="colony"/>
+</trigger>
+
+<function name="fn_update_individ_info_logging_session"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN	
+	UPDATE individuals.individ_status 
+	SET session_id= foo.session_id
+	FROM (SELECT s.session_id
+				FROM loggers.logging_session s
+				WHERE s.logger_id = NEW.logger_id
+				AND s.active IS True) foo
+	
+	WHERE id=NEW.id;
+    RETURN NULL; -- result is ignored since this is an AFTER trigger
+  END;
+]]></definition>
+</function>
+
+<trigger name="tr_update_individ_info_logging_session_on_insert_or_update" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="individuals.individ_status">
+		<function signature="functions.fn_update_individ_info_logging_session()"/>
+		<columns names="logger_id"/>
+</trigger>
+
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="CASCADE" ref-table="metadata.logger_models" table="loggers.logger_info">
-	<columns names="logger_model,producer" ref-type="src-columns"/>
-	<columns names="model,producer" ref-type="dst-columns"/>
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="loggers.logger_info">
+	<columns names="producer,logger_model" ref-type="src-columns"/>
+	<columns names="producer,model" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="logger_mod_prod_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -2382,7 +2901,7 @@ END;]]></definition>
 </constraint>
 
 <constraint name="allocation_logger_id_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="loggers.allocation">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logger_info" table="loggers.allocation">
 	<columns names="logger_id" ref-type="src-columns"/>
 	<columns names="logger_id" ref-type="dst-columns"/>
 </constraint>
@@ -2400,7 +2919,7 @@ END;]]></definition>
 </constraint>
 
 <constraint name="logging_session_startup_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.startup" table="loggers.logging_session">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.startup" table="loggers.logging_session">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -2425,7 +2944,7 @@ END;]]></definition>
 </constraint>
 
 <constraint name="location_colony_int_name_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.colony" table="metadata.location">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.colony" table="metadata.location">
 	<columns names="colony_int_name" ref-type="src-columns"/>
 	<columns names="colony_int_name" ref-type="dst-columns"/>
 </constraint>
@@ -2455,13 +2974,13 @@ END;]]></definition>
 </constraint>
 
 <constraint name="deployment_location_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.location" table="loggers.deployment">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.location" table="loggers.deployment">
 	<columns names="deployment_location" ref-type="src-columns"/>
 	<columns names="location_name" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="deployment_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logging_session" table="loggers.deployment">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="loggers.deployment">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -2497,7 +3016,7 @@ END;]]></definition>
 </constraint>
 
 <constraint name="status_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.startup" table="individuals.individ_status">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.startup" table="individuals.individ_status">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -2509,9 +3028,21 @@ END;]]></definition>
 </constraint>
 
 <constraint name="status_breeding_stage_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.breeding_stages" table="individuals.individ_status">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.breeding_stages" table="individuals.individ_status">
 	<columns names="breeding_stage" ref-type="src-columns"/>
 	<columns names="breeding_stage" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="breeding_success_criterion_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.breeding_success_criterion" table="individuals.individ_status">
+	<columns names="breeding_success_criterion" ref-type="src-columns"/>
+	<columns names="breeding_success_criterion" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="individ_status_data_responsible_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.people" table="individuals.individ_status">
+	<columns names="data_responsible" ref-type="src-columns"/>
+	<columns names="name" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="individ_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -2527,7 +3058,7 @@ END;]]></definition>
 </constraint>
 
 <constraint name="retrieval_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logging_session" table="loggers.retrieval">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="loggers.retrieval">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -2563,13 +3094,13 @@ END;]]></definition>
 </constraint>
 
 <constraint name="events_deployment_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.deployment" table="loggers.events">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.deployment" table="loggers.events">
 	<columns names="deployment_id" ref-type="src-columns"/>
 	<columns names="deployment_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="events_retrieval_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.retrieval" table="loggers.events">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.retrieval" table="loggers.events">
 	<columns names="retrieval_id" ref-type="src-columns"/>
 	<columns names="retrieval_id" ref-type="dst-columns"/>
 </constraint>
@@ -2605,7 +3136,7 @@ END;]]></definition>
 </constraint>
 
 <constraint name="startup_logger_id_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="loggers.startup">
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logger_info" table="loggers.startup">
 	<columns names="logger_id" ref-type="src-columns"/>
 	<columns names="logger_id" ref-type="dst-columns"/>
 </constraint>
@@ -2836,6 +3367,16 @@ END;]]></definition>
 <relationship name="rel_shutdown_download_types" type="relfk"
 	 src-table="loggers.shutdown"
 	 dst-table="metadata.download_types"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_breeding_success_criterion" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="metadata.breeding_success_criterion"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_people" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="metadata.people"
 	 src-required="false" dst-required="false"/>
 
 <permission>
