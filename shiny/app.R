@@ -52,7 +52,7 @@ ui<-shinyUI(
 
 server<-function(input, output, session) {
 
-  con <- seatrackConnect(Username = "seatrack_admin", Password = "ikaiLoobai9ahf1", host = "ninpgsql01.nina.no")
+  con <- seatrackConnect(Username = "shinyuser", Password = "shinyuser", host = "ninpgsql01.nina.no")
 
 
   datasetInput <- reactive({
