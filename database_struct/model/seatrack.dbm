@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,0" last-zoom="0.7"
+<dbmodel pgmodeler-ver="0.9.0" last-position="0,612" last-zoom="0.55"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -34,6 +34,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<roles names="seatrack_writer" role-type="refer" />
 </role>
 
+<role name="seatrack_metadata_writer">
+</role>
+
 <database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
 	<role name="seatrack_admin"/>
 	<appended-sql><![CDATA[----------Reader permissions
@@ -58,29 +61,12 @@ ON ALL TABLES IN SCHEMA positions
 TO seatrack_reader;
 
 -------------------Admin permissions
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
-ON ALL TABLES IN SCHEMA loggers
+GRANT ALL ON DATABASE 
 TO seatrack_admin;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
 ON ALL TABLES IN SCHEMA metadata
-TO seatrack_admin;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
-ON ALL TABLES IN SCHEMA individuals
-TO seatrack_admin;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
-ON ALL TABLES IN SCHEMA views
-TO seatrack_admin;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
-ON ALL TABLES IN SCHEMA positions
-TO seatrack_admin;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
-ON ALL TABLES IN SCHEMA imports
-TO seatrack_admin;
+TO seatrack_metadata_writer;
 
 -------Writer permissions
 GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
@@ -107,7 +93,7 @@ GRANT SELECT
 ON ALL TABLES IN SCHEMA views
 TO seatrack_writer;
 
-GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
+GRANT SELECT
 ON ALL TABLES IN SCHEMA metadata
 TO seatrack_writer;
 
@@ -228,7 +214,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 <table name="logger_models">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="200"/>
+	<position x="89.0909" y="207.273"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -270,7 +256,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 <table name="logging_modes">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="80" y="360"/>
+	<position x="85.4545" y="387.273"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -429,7 +415,7 @@ Jens Åström•J_Åström••]]>
 <table name="logging_session">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="980" y="1000"/>
+	<position x="972.727" y="1027.27"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1338,21 +1324,6 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	</constraint>
 </table>
 
-<textbox name="Questions" font-size="9">
-	<position x="1080" y="2240"/>
-	<comment><![CDATA[Prob need to add new table of logger events that records other bookkeeping  events than deployment and retrieval. Need to talk Halfvdan.
-
-Add comment column to retrieval (replaces retrival type)
-
-Add metadata table for allowed ages, incl text and numbers as text.
-
-Add blood sampling and wing sample columns to individual status table
-
-Need to decide how to handle logger fate. Should it really be included in the deployment table?
-
-]]></comment>
-</textbox>
-
 <table name="subspecies">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
@@ -1397,7 +1368,7 @@ Testus specius•specius•]]>
 <table name="events">
 	<schema name="loggers"/>
 	<role name="seatrack_admin"/>
-	<position x="1580" y="940"/>
+	<position x="1580" y="941.818"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1508,7 +1479,7 @@ FROM positions.postable p]]></expression>
 <view name="active_logging_sessions">
 	<schema name="views"/>
 	<role name="seatrack_admin"/>
-	<position x="2380" y="1380"/>
+	<position x="2367.27" y="1356.36"/>
 	<reference>
 		<expression><![CDATA[SELECT *
 FROM loggers.logging_session
@@ -2314,7 +2285,7 @@ END;]]></definition>
 <table name="breeding_stages">
 	<schema name="metadata"/>
 	<role name="seatrack_admin"/>
-	<position x="560" y="1700"/>
+	<position x="558.182" y="1730.91"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
