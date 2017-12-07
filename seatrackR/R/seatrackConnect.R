@@ -16,7 +16,7 @@
 #' dbDisconnect(con)
 #' }
 
-seatrackConnect <- function(Username, Password, host = "ninseatrack01.nina.no") {
+seatrackConnect <- function(Username, Password, host = "seatrack.nina.no") {
 
   if (!requireNamespace("DBI", quietly = TRUE)) {
     stop("Pkg needed for this function to work. Please install it using devtools::install_github(\"rstats-db/DBI\") ",
