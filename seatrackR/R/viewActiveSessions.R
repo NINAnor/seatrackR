@@ -7,7 +7,7 @@
 #' @export
 #' @examples
 #' dontrun{
-#' con <- seatrackConnect(Username = "testreader", Password = "testreader")
+#' seatrackConnect(Username = "testreader", Password = "testreader")
 #' activeSessions <- viewActiveSessions()
 #' }
 
