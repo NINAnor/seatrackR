@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,612" last-zoom="0.55"
+<dbmodel pgmodeler-ver="0.9.0" last-position="0,484" last-zoom="0.6"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -11,7 +11,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <role name="seatrack_writer">
 </role>
 
-<role name="seatrack_admin"
+<role name="admin"
       superuser="true"
       createrole="true">
 	<prepended-sql><![CDATA[
@@ -31,15 +31,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
       login="true"
       encrypted="true"
       password="shinyuser">
-	<roles names="seatrack_writer" role-type="refer" />
+	<roles names="seatrack_reader" role-type="refer" />
 </role>
 
 <role name="seatrack_metadata_writer">
 </role>
 
 <database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
-	<role name="seatrack_admin"/>
-	<appended-sql><![CDATA[----------Reader permissions
+	<role name="admin"/>
+	<appended-sql><![CDATA[-----------usage permissions
+GRANT USAGE ON SCHEMA metadata, loggers, positions, views, imports, individuals
+TO seatrack_reader, seatrack_writer, seatrack_metadata_writer;
+
+----------Reader permissions
 GRANT SELECT
 ON ALL TABLES IN SCHEMA loggers
 TO seatrack_reader;
@@ -60,9 +64,6 @@ GRANT SELECT
 ON ALL TABLES IN SCHEMA positions
 TO seatrack_reader;
 
--------------------Admin permissions
-GRANT ALL ON DATABASE 
-TO seatrack_admin;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, TRIGGER
 ON ALL TABLES IN SCHEMA metadata
@@ -91,32 +92,32 @@ TO seatrack_writer;
 
 GRANT SELECT
 ON ALL TABLES IN SCHEMA views
-TO seatrack_writer;
+TO seatrack_reader;
 
 GRANT SELECT
 ON ALL TABLES IN SCHEMA metadata
-TO seatrack_writer;
+TO seatrack_reader;
 
 ----------Sequence permissions
 GRANT USAGE 
 ON ALL SEQUENCES IN SCHEMA metadata 
-TO seatrack_writer, seatrack_admin, seatrack_reader;
+TO seatrack_writer, seatrack_reader;
 
 GRANT USAGE 
 ON ALL SEQUENCES IN SCHEMA loggers 
-TO seatrack_writer, seatrack_admin, seatrack_reader;
+TO seatrack_writer, seatrack_reader;
 
 GRANT USAGE 
 ON ALL SEQUENCES IN SCHEMA individuals 
-TO seatrack_writer, seatrack_admin, seatrack_reader;
+TO seatrack_writer, seatrack_reader;
 
 GRANT USAGE 
 ON ALL SEQUENCES IN SCHEMA imports
-TO seatrack_writer, seatrack_admin, seatrack_reader;
+TO seatrack_writer, seatrack_reader;
 
 GRANT USAGE 
 ON ALL SEQUENCES IN SCHEMA positions 
-TO seatrack_writer, seatrack_admin, seatrack_reader;
+TO seatrack_writer,  seatrack_reader;
 
 
 
@@ -130,21 +131,21 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 </schema>
 
 <schema name="config" rect-visible="true" fill-color="#e1e1e1">
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 </schema>
 
 <schema name="metadata" rect-visible="true" fill-color="#0000ff">
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 </schema>
 
 <schema name="loggers" rect-visible="true" fill-color="#55aa00">
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 </schema>
 
 <table name="logger_info">
 	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
-	<position x="980" y="80"/>
+	<role name="admin"/>
+	<position x="992.308" y="80"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -172,6 +173,9 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 	<constraint name="logger_id_unique" type="uq-constr" table="loggers.logger_info">
 		<columns names="logger_id" ref-type="src-columns"/>
 	</constraint>
+	<constraint name="logger_mod_serial_uq" type="uq-constr" table="loggers.logger_info">
+		<columns names="logger_model,logger_serial_no" ref-type="src-columns"/>
+	</constraint>
 	<initial-data>
 <![CDATA[id•logger_id•logger_serial_no•producer•production_year•logger_model•project⸣
 ••test_1234•testproducer•2013•testmodel•seatrack⸣
@@ -186,7 +190,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 
 <table name="logger_producers">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="80" y="80"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -213,7 +217,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 
 <table name="logger_models">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="89.0909" y="207.273"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -255,7 +259,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 
 <table name="logging_modes">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="85.4545" y="387.273"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -295,7 +299,7 @@ CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
 
 <table name="people">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="100" y="540"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -384,7 +388,7 @@ Jens Åström•J_Åström••]]>
 
 <table name="allocation">
 	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="960" y="720"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -414,7 +418,7 @@ Jens Åström•J_Åström••]]>
 
 <table name="logging_session">
 	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="972.727" y="1027.27"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -462,8 +466,8 @@ Jens Åström•J_Åström••]]>
 
 <table name="species">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
-	<position x="480" y="780"/>
+	<role name="admin"/>
+	<position x="496.923" y="826.154"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -501,7 +505,7 @@ testspecies•Testus specius•]]>
 
 <table name="colony">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="80" y="760"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -585,7 +589,7 @@ testspecies•Testus specius•]]>
 
 <table name="location">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="60" y="1020"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -615,7 +619,7 @@ testspecies•Testus specius•]]>
 		<columns names="location_name" ref-type="src-columns"/>
 	</constraint>
 	<initial-data>
-<![CDATA[location_name•colony_int_name•colony_nat_name•lat•lon⸣
+<![CDATA[location_name•colony_int_name•colony_nat_name•lat•lon⸣
 Ærvikurbjarg•Langanes and Skjalfandi•Langanes and Skjálfandi•70.92056•-8.71778⸣
 Agneskjær•Mandal and Lindesnes•Mandal and Lindesnes•70.84875•23.06400⸣
 Alkefjellet•Alkefjellet•Alkefjellet•60.66761•4.74869⸣
@@ -735,7 +739,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 
 <table name="deployment">
 	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="980" y="1580"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -780,7 +784,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 
 <table name="logger_fate">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="80" y="1320"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -811,20 +815,29 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 </table>
 
 <schema name="individuals" rect-visible="true" fill-color="#ffff00">
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 </schema>
 
 <table name="individ_info">
 	<schema name="individuals"/>
-	<role name="seatrack_admin"/>
-	<position x="80" y="2000"/>
+	<role name="admin"/>
+	<position x="80" y="2003.76"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="individ_id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="text" length="0"/>
 	</column>
+	<column name="ring_number">
+		<type name="text" length="0"/>
+	</column>
+	<column name="euring_code">
+		<type name="text" length="0"/>
+	</column>
 	<column name="species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="color_ring">
 		<type name="text" length="0"/>
 	</column>
 	<column name="morph">
@@ -848,6 +861,9 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<constraint name="individ_id_uq" type="uq-constr" table="individuals.individ_info">
 		<columns names="individ_id" ref-type="src-columns"/>
 	</constraint>
+	<constraint name="metalring_uq" type="uq-constr" table="individuals.individ_info">
+		<columns names="ring_number,euring_code" ref-type="src-columns"/>
+	</constraint>
 	<initial-data>
 <![CDATA[metalring_id•species•morph•subspecies•age•sex•sexing_method•individ_id⸣
 1•Common guillemot••••male•dna•1⸣
@@ -869,13 +885,13 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 
 <table name="sex">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="60" y="1460"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="sex" not-null="true">
-		<type name="varchar" length="20"/>
+		<type name="text" length="20"/>
 	</column>
 	<constraint name="sex_pk" type="pk-constr" table="metadata.sex">
 		<columns names="id" ref-type="src-columns"/>
@@ -893,13 +909,13 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 
 <table name="sexing_method">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="400" y="1420"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="method">
-		<type name="varchar" length="40"/>
+		<type name="text" length="40"/>
 	</column>
 	<constraint name="sexing_method_pk" type="pk-constr" table="metadata.sexing_method">
 		<columns names="id" ref-type="src-columns"/>
@@ -919,8 +935,8 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 
 <table name="individ_status">
 	<schema name="individuals"/>
-	<role name="seatrack_admin"/>
-	<position x="440" y="2060"/>
+	<role name="admin"/>
+	<position x="440" y="2062.22"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -955,10 +971,10 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 		<type name="smallint" length="0"/>
 	</column>
 	<column name="hatching_success">
-		<type name="bit" length="0"/>
+		<type name="boolean" length="0"/>
 	</column>
 	<column name="breeding_success">
-		<type name="bit" length="0"/>
+		<type name="boolean" length="0"/>
 	</column>
 	<column name="breeding_success_criterion">
 		<type name="text" length="20"/>
@@ -995,7 +1011,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 
 <table name="retrieval">
 	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="1460" y="1740"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -1037,7 +1053,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 
 <table name="shutdown">
 	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="1560" y="1240"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -1073,7 +1089,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 
 <table name="file_archive">
 	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="1560" y="1540"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -1093,12 +1109,12 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 </table>
 
 <schema name="positions" rect-visible="true" fill-color="#ff5500">
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 </schema>
 
 <table name="postable">
 	<schema name="positions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="2060" y="60"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -1124,10 +1140,10 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="year_retrieved" not-null="true">
 		<type name="smallint" length="0"/>
 	</column>
-	<column name="ring_number" not-null="true">
+	<column name="ring_number">
 		<type name="text" length="0"/>
 	</column>
-	<column name="euring_code" not-null="true">
+	<column name="euring_code">
 		<type name="text" length="0"/>
 	</column>
 	<column name="species" not-null="true">
@@ -1220,6 +1236,15 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="posdata_file">
 		<type name="text" length="0"/>
 	</column>
+	<column name="import_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="data_version" default-value="1">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="database_version" default-value="2">
+		<type name="integer" length="0"/>
+	</column>
 	<constraint name="postable_pk" type="pk-constr" table="positions.postable">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
@@ -1227,7 +1252,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 
 <table name="processing">
 	<schema name="positions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="2400" y="60"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
@@ -1326,10 +1351,13 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 
 <table name="subspecies">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
-	<position x="520" y="560"/>
+	<role name="admin"/>
+	<position x="476.923" y="503.077"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
+	</column>
+	<column name="species_name_eng" not-null="true">
+		<type name="text" length="0"/>
 	</column>
 	<column name="species_name_latin" not-null="true">
 		<type name="text" length="0"/>
@@ -1340,35 +1368,38 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<constraint name="subspecies_pk" type="pk-constr" table="metadata.subspecies">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="subspecies_unique" type="uq-constr" table="metadata.subspecies">
-		<columns names="sub_species" ref-type="src-columns"/>
+	<constraint name="species_uq" type="uq-constr" table="metadata.subspecies">
+		<columns names="sub_species,species_name_eng" ref-type="src-columns"/>
 		<comment><![CDATA[Might not be necessarily unique?]]></comment>
 	</constraint>
+	<constraint name="species_latin_subspecies_uq" type="uq-constr" table="metadata.subspecies">
+		<columns names="species_name_latin,sub_species" ref-type="src-columns"/>
+	</constraint>
 	<initial-data>
-<![CDATA[species_name_latin•sub_species•id⸣
-Uria aalge••⸣
-Uria lomvia••⸣
-Alle alle•Alle alle alle•⸣
-Alle alle•Alle alle polaris•⸣
-Fratercula arctica••⸣
-Rissa tridactyla••⸣
-Fulmarus glacialis••⸣
-Larus fuscus•Larus fuscus intermedius•⸣
-Larus fuscus•Larus fuscus fuscus•⸣
-Larus fuscus•Larus fuscus graellsii•⸣
-Larus argentatus••⸣
-Larus hyperboreus••⸣
-Phalacrocorax aristotelis••⸣
-Somateria mollissima••⸣
-Testus specius•testus•⸣
-Testus specius•specius•]]>
+<![CDATA[species_name_latin•sub_species•id•species_name_eng⸣
+Uria aalge•••Common guillemot⸣
+Uria lomvia•••Brünnich's guillemot⸣
+Alle alle•Alle alle alle••Little auk⸣
+Alle alle•Alle alle polaris••Little auk⸣
+Fratercula arctica•••Atlantic puffin⸣
+Rissa tridactyla•••Black-legged kittiwake⸣
+Fulmarus glacialis•••Northern fulmar⸣
+Larus fuscus•Larus fuscus intermedius••Lesser black-backed gull⸣
+Larus fuscus•Larus fuscus fuscus••Lesser black-backed gull⸣
+Larus fuscus•Larus fuscus graellsii••Lesser black-backed gull⸣
+Larus argentatus•••Herring gull⸣
+Larus hyperboreus•••Glaucous gull⸣
+Phalacrocorax aristotelis•••European shag⸣
+Somateria mollissima•••Common eider⸣
+Testus specius•testus••testspecies⸣
+Testus specius•specius••testspecies]]>
 	</initial-data>
 </table>
 
 <table name="events">
 	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
-	<position x="1580" y="941.818"/>
+	<role name="admin"/>
+	<position x="1560" y="881.818"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1386,6 +1417,15 @@ Testus specius•specius•]]>
 	</column>
 	<column name="retrieval_id">
 		<type name="integer" length="0"/>
+	</column>
+	<column name="blood_sample">
+		<type name="text" length="0"/>
+	</column>
+	<column name="feather_sample">
+		<type name="text" length="0"/>
+	</column>
+	<column name="other_samples">
+		<type name="text" length="0"/>
 	</column>
 	<constraint name="status_id" type="uq-constr" table="loggers.events">
 		<columns names="status_id" ref-type="src-columns"/>
@@ -1406,8 +1446,8 @@ Testus specius•specius•]]>
 
 <table name="logger_year_tracked">
 	<schema name="positions"/>
-	<role name="seatrack_admin"/>
-	<position x="2420" y="820"/>
+	<role name="admin"/>
+	<position x="2073.58" y="978.846"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1429,13 +1469,13 @@ Testus specius•specius•]]>
 </table>
 
 <schema name="activity" rect-visible="true" fill-color="#00ffff">
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 </schema>
 
 <table name="temperature">
 	<schema name="activity"/>
-	<role name="seatrack_admin"/>
-	<position x="2100" y="1120"/>
+	<role name="admin"/>
+	<position x="2053.33" y="1208.89"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1449,8 +1489,8 @@ Testus specius•specius•]]>
 
 <table name="salinity">
 	<schema name="activity"/>
-	<role name="seatrack_admin"/>
-	<position x="2380" y="1120"/>
+	<role name="admin"/>
+	<position x="2333.33" y="1208.89"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1463,12 +1503,12 @@ Testus specius•specius•]]>
 </table>
 
 <schema name="views" rect-visible="true" fill-color="#e1e1e1">
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 </schema>
 
 <view name="postable">
 	<schema name="views"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="2120" y="1360"/>
 	<reference>
 		<expression><![CDATA[SELECT p.* 
@@ -1478,7 +1518,7 @@ FROM positions.postable p]]></expression>
 
 <view name="active_logging_sessions">
 	<schema name="views"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="2367.27" y="1356.36"/>
 	<reference>
 		<expression><![CDATA[SELECT *
@@ -1489,7 +1529,7 @@ WHERE active = TRUE]]></expression>
 
 <table name="startup">
 	<schema name="loggers"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="980" y="340"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -1537,7 +1577,7 @@ WHERE active = TRUE]]></expression>
 </table>
 
 <schema name="functions" rect-visible="true" fill-color="#e1e1e1">
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 </schema>
 
 <function name="fn_update_location_geom"
@@ -1549,7 +1589,7 @@ WHERE active = TRUE]]></expression>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -1589,7 +1629,7 @@ WHERE active = TRUE]]></expression>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -1619,13 +1659,13 @@ WHERE active = TRUE]]></expression>
 </trigger>
 
 <schema name="imports" rect-visible="true" fill-color="#ff00ff">
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 </schema>
 
 <table name="logger_import">
 	<schema name="imports"/>
-	<role name="seatrack_admin"/>
-	<position x="2180" y="1540"/>
+	<role name="admin"/>
+	<position x="2504.34" y="1536.78"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1720,10 +1760,10 @@ WHERE active = TRUE]]></expression>
 		<type name="smallint" length="0"/>
 	</column>
 	<column name="hatching_success">
-		<type name="bit" length="0"/>
+		<type name="boolean" length="0"/>
 	</column>
 	<column name="breeding_success">
-		<type name="bit" length="0"/>
+		<type name="boolean" length="0"/>
 	</column>
 	<column name="breeding_success_criterion">
 		<type name="text" length="0"/>
@@ -1747,7 +1787,7 @@ WHERE active = TRUE]]></expression>
 
 <table name="import_types">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="480" y="1580"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -1773,7 +1813,7 @@ WHERE active = TRUE]]></expression>
 
 <table name="mounting_types">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="60" y="1620"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -1797,8 +1837,8 @@ WHERE active = TRUE]]></expression>
 
 <table name="observations">
 	<schema name="individuals"/>
-	<role name="seatrack_admin"/>
-	<position x="60" y="2560"/>
+	<role name="admin"/>
+	<position x="60" y="2562.22"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1828,7 +1868,7 @@ WHERE active = TRUE]]></expression>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -1866,7 +1906,7 @@ WHERE active = TRUE]]></expression>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -1897,7 +1937,7 @@ END;]]></definition>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -1925,7 +1965,7 @@ END;]]></definition>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -1967,7 +2007,7 @@ END;]]></definition>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -2004,7 +2044,7 @@ END;]]></definition>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -2053,7 +2093,7 @@ END;]]></definition>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -2089,7 +2129,7 @@ END;]]></definition>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -2207,7 +2247,7 @@ END;
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -2249,7 +2289,7 @@ END;]]></definition>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -2284,7 +2324,7 @@ END;]]></definition>
 
 <table name="breeding_stages">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="558.182" y="1730.91"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -2325,7 +2365,7 @@ END;]]></definition>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -2339,7 +2379,7 @@ END;]]></definition>
 
 <view name="closed_sessions_not_shutdown">
 	<schema name="views"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<position x="2120" y="1420"/>
 	<reference>
 		<expression><![CDATA[SELECT l.session_id, l.logger_id, l.year_tracked
@@ -2351,7 +2391,7 @@ WHERE s.session_id IS NULL ]]></expression>
 
 <table name="logger_files">
 	<schema name="metadata"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<comment><![CDATA[Reference table that specifies what files are created by which logger model]]></comment>
 	<position x="560" y="100"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
@@ -2468,7 +2508,7 @@ LAT•_o.bin•LOTEK•]]>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -2581,7 +2621,14 @@ END;]]></definition>
 	</constraint>
 	<initial-data>
 <![CDATA[id•type⸣
-•testtype]]>
+•testtype⸣
+•individual caught (logger retrieved, bird released without logger)⸣
+•individual observed (logger still attached)⸣
+•individual caught (first deployment)⸣
+•individual caught (logger retrieved and replaced)⸣
+•individual caught (logger lost and replaced)⸣
+•individual observed (logger lost)⸣
+•individual observed (logger status unknown)]]>
 	</initial-data>
 </table>
 
@@ -2624,7 +2671,7 @@ END;]]></definition>
 		execution-cost="1"
 		row-amount="0">
 	<schema name="functions"/>
-	<role name="seatrack_admin"/>
+	<role name="admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
 	<type name="trigger" length="0"/>
@@ -2833,6 +2880,438 @@ END;
 		<columns names="logger_id"/>
 </trigger>
 
+<table name="metadata_import">
+	<schema name="imports"/>
+	<role name="postgres"/>
+	<position x="2074.69" y="1544.62"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="ring_number" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="euring_code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="color_ring">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_status">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_model_retrieved">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_serial_retrieved">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_model_deployed">
+		<type name="text" length="0"/>
+	</column>
+	<column name="logger_serial_deployed">
+		<type name="text" length="0"/>
+	</column>
+	<column name="species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="morph">
+		<type name="text" length="0"/>
+	</column>
+	<column name="subspecies">
+		<type name="text" length="0"/>
+	</column>
+	<column name="age">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="sex" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="sexing_method">
+		<type name="text" length="0"/>
+	</column>
+	<column name="weight">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="scull">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="tarsus">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="wing">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="breeding_stage">
+		<type name="text" length="0"/>
+	</column>
+	<column name="eggs">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="chicks">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="hatching_success">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="breeding_success">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="breeding_success_criterion">
+		<type name="text" length="0"/>
+	</column>
+	<column name="country">
+		<type name="text" length="0"/>
+	</column>
+	<column name="location">
+		<type name="text" length="0"/>
+	</column>
+	<column name="colony_latitude">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="colony_longitude">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="nest_id">
+		<type name="text" length="0"/>
+	</column>
+	<column name="blood_sample">
+		<type name="text" length="0"/>
+	</column>
+	<column name="feather_sample">
+		<type name="text" length="0"/>
+	</column>
+	<column name="other_samples">
+		<type name="text" length="0"/>
+	</column>
+	<column name="data_responsible" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="back_on_nest">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="logger_mount_method">
+		<type name="text" length="0"/>
+	</column>
+	<column name="comment">
+		<type name="text" length="0"/>
+	</column>
+	<column name="other">
+		<type name="text" length="0"/>
+	</column>
+	<column name="old_ring_number">
+		<type name="text" length="0"/>
+	</column>
+</table>
+
+<table name="euring_codes">
+	<schema name="metadata"/>
+	<role name="postgres"/>
+	<position x="574.871" y="1135.64"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="euring_code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="euring_codes_pk" type="pk-constr" table="metadata.euring_codes">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[id•euring_code⸣
+•NOS⸣
+•NOO⸣
+•RUM⸣
+•GBT⸣
+•ISR⸣
+•DKC]]>
+	</initial-data>
+</table>
+
+<textbox name="Issues" color="#ffaa00" font-size="9">
+	<position x="1127.69" y="2276.92"/>
+	<comment><![CDATA[*  Metadata_import and logger_import needs to be split up.
+    - Move parts of logger_import to metadata.
+    - Intended location (where does that come from? same as colony?)
+    - Remove Deployment info.
+    - Remove weight to breeding success criterion 
+    - Remove comment?
+* Make a separate observation import table?
+
+* Check the flowchart of importing the metadata
+    1. Separately register new individuals (to be able to quality check ring numbers in metadata)
+    2. Check that ring number corresponds to correct species
+    3. Update all relevant tables with data from metadata tables (write triggers)
+
+* Add lookup tables? 
+    - standard values for blood and feather samples?
+    - Morphs
+    - logger_status
+]]></comment>
+</textbox>
+
+<function name="fn_distribute_from_metadata_table"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[--Not finished!
+BEGIN
+	IF NEW.logger_model_deployed IS NOT NULL THEN
+	INSERT INTO loggers.deployment
+				(logger_id,
+				individ_id,
+				deployment_species,
+				deployment_location,
+				deployment_date,
+				logger_mount_method)
+	SELECT logging_session.logger_id,
+				individ_info.individ_id,
+				NEW.species,
+				NEW.location,
+				NEW.date,
+				NEW.logger_mount_method
+FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+WHERE logging_session.logger_id = logger_info.logger_id
+AND logger_info.logger_model = NEW.logger_model_deployed
+AND logger_info.logger_serial_no = NEW.logger_serial_deployed
+AND logging_session.active IS True
+AND individ_info.ring_number = NEW.ring_number
+AND individ_info.euring_code = NEW.euring_code;
+	END IF;
+	IF NEW.logger_model_retrieved IS NOT NULL THEN
+		INSERT INTO loggers.retrieval
+					(logger_id,
+					lindivid_id,
+					retrieval_type,
+					retrieval_location,
+					retrieval_date)
+		SELECT logging_session.logger_id,
+					logging_session.individ_id,
+					NEW.logger_status,
+					NEW.location,
+					NEW.date
+FROM loggers.logging_session, logger.logger_info
+WHERE logging_session.logger_id =	logger_info.id
+AND logger_info.logger_model = NEW.logger_model_retrieved
+AND logger_info.logger_serial_no = NEW.logger_serial_retrieved
+AND logging_session.active IS True;
+		END IF;
+
+	IF NEW.weight IS NOT NULL THEN
+		INSERT INTO individuals.individ_status
+					(logger_id,
+					weight,
+					scull,
+					tarsus,
+					wing,
+					breeding_stage,
+					eggs,
+					chicks,
+					hatching_success,
+					breeding_success,
+					breeding_success_criterion,
+					data_responsible,
+					back_on_nest,
+					"comment",
+					"location")
+	VALUES (NEW.logger_id,
+					NEW.weight,
+					NEW.scull,
+					NEW.tarsus,
+					NEW.wing,
+					NEW.breeding_stage,
+					NEW.eggs,
+					NEW.chicks,
+					NEW.hatching_success,
+					NEW.breeding_success,
+					NEW.breeding_success_criterion,
+					NEW.data_responsible,
+					NEW.back_on_nest_date,
+					NEW."comment",
+					NEW.observation_location);
+	END IF;
+RETURN NEW;
+END;
+
+]]></definition>
+</function>
+
+<function name="fn_deleted_uuid"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+    INSERT INTO
+        positions.deleted_uuid(id, import_date, deleted_date, posdata_file, user_name)
+        VALUES(old.id,old.import_date, CURRENT_DATE, old.posdata_file, user);
+
+           RETURN OLD;
+END;
+]]></definition>
+</function>
+
+<function name="fn_update_data_version"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+  NEW.data_version := OLD.data_version + 1;
+  RETURN NEW;
+END; 
+]]></definition>
+</function>
+
+<function name="fn_update_import_date"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+  NEW.import_date := CURRENT_DATE;
+  RETURN NEW;
+END; 
+]]></definition>
+</function>
+
+<function name="fn_used_uuid"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+    INSERT INTO
+        positions.used_uuid(id, import_date,posdata_file, user_name)
+        VALUES(new.id,new.import_date, new.posdata_file, user);
+           RETURN new;
+END;
+]]></definition>
+</function>
+
+<table name="deleted_uuid">
+	<schema name="positions"/>
+	<role name="postgres"/>
+	<position x="2711.67" y="705"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="import_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="deleted_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="posdata_file">
+		<type name="text" length="0"/>
+	</column>
+	<column name="user_name">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="deleted_uuid_pk" type="pk-constr" table="positions.deleted_uuid">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="used_uuid">
+	<schema name="positions"/>
+	<role name="postgres"/>
+	<position x="2410" y="720"/>
+	<column name="id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="import_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="posdata_file">
+		<type name="text" length="0"/>
+	</column>
+	<column name="user_name">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="used_uuid_pk" type="pk-constr" table="positions.used_uuid">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="tr_deleted_uuid_trigger" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="false" trunc-event="false"
+	 table="positions.postable">
+		<function signature="functions.fn_deleted_uuid()"/>
+</trigger>
+
+<trigger name="tr_update_data_version" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
+	 table="positions.postable">
+		<function signature="functions.fn_update_data_version()"/>
+</trigger>
+
+<trigger name="tr_update_import_date" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="positions.postable">
+		<function signature="functions.fn_update_import_date()"/>
+</trigger>
+
+<trigger name="tr_used_uuid" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="positions.postable">
+		<function signature="functions.fn_used_uuid()"/>
+</trigger>
+
+<trigger name="tr_distribute_on_metadata_import" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="imports.metadata_import">
+		<function signature="functions.fn_distribute_from_metadata_table()"/>
+</trigger>
+
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="loggers.logger_info">
 	<columns names="producer,logger_model" ref-type="src-columns"/>
@@ -2966,16 +3445,10 @@ END;
 	<columns names="sex" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="species_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.species" table="individuals.individ_info">
-	<columns names="species" ref-type="src-columns"/>
-	<columns names="species_name_eng" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="subspecies_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.subspecies" table="individuals.individ_info">
-	<columns names="subspecies" ref-type="src-columns"/>
-	<columns names="sub_species" ref-type="dst-columns"/>
+<constraint name="species_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.subspecies" table="individuals.individ_info">
+	<columns names="species,subspecies" ref-type="src-columns"/>
+	<columns names="species_name_eng,sub_species" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="status_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -3050,12 +3523,6 @@ END;
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="species_latin_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.species" table="metadata.subspecies">
-	<columns names="species_name_latin" ref-type="src-columns"/>
-	<columns names="species_name_latin" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="events_deployment_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.deployment" table="loggers.events">
 	<columns names="deployment_id" ref-type="src-columns"/>
@@ -3122,6 +3589,72 @@ END;
 	<columns names="model,producer" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="metalring_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="individuals.individ_info" table="imports.metadata_import">
+	<columns names="ring_number,euring_code" ref-type="src-columns"/>
+	<columns names="ring_number,euring_code" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logger_retrieved_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="imports.metadata_import">
+	<columns names="logger_serial_retrieved,logger_model_retrieved" ref-type="src-columns"/>
+	<columns names="logger_serial_no,logger_model" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logger_deployed_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="imports.metadata_import">
+	<columns names="logger_serial_deployed,logger_model_deployed" ref-type="src-columns"/>
+	<columns names="logger_serial_no,logger_model" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="species_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.subspecies" table="imports.metadata_import">
+	<columns names="species,subspecies" ref-type="src-columns"/>
+	<columns names="species_name_eng,sub_species" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="sex_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.sex" table="imports.metadata_import">
+	<columns names="sex" ref-type="src-columns"/>
+	<columns names="sex" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="sexing_method_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.sexing_method" table="imports.metadata_import">
+	<columns names="sexing_method" ref-type="src-columns"/>
+	<columns names="method" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="breeding_stages_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.breeding_stages" table="imports.metadata_import">
+	<columns names="breeding_stage" ref-type="src-columns"/>
+	<columns names="breeding_stage" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="breeding_success_criterion_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.breeding_success_criterion" table="imports.metadata_import">
+	<columns names="breeding_success_criterion" ref-type="src-columns"/>
+	<columns names="breeding_success_criterion" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="location_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.location" table="imports.metadata_import">
+	<columns names="location" ref-type="src-columns"/>
+	<columns names="location_name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="data_responsible_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.people" table="imports.metadata_import">
+	<columns names="data_responsible" ref-type="src-columns"/>
+	<columns names="name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="logger_mount_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.mounting_types" table="imports.metadata_import">
+	<columns names="logger_mount_method" ref-type="src-columns"/>
+	<columns names="logger_mount_method" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_logger_info_logger_models" type="relfk"
 	 src-table="loggers.logger_info"
 	 dst-table="metadata.logger_models"
@@ -3130,11 +3663,6 @@ END;
 <relationship name="rel_allocation_startup" type="relfk"
 	 src-table="loggers.allocation"
 	 dst-table="loggers.startup"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_allocation_species" type="relfk"
-	 src-table="loggers.allocation"
-	 dst-table="metadata.species"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_allocation_people" type="relfk"
@@ -3177,11 +3705,6 @@ END;
 	 dst-table="metadata.colony"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_deployment_species" type="relfk"
-	 src-table="loggers.deployment"
-	 dst-table="metadata.species"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_deployment_location" type="relfk"
 	 src-table="loggers.deployment"
 	 dst-table="metadata.location"
@@ -3210,16 +3733,6 @@ END;
 <relationship name="rel_individ_info_sex" type="relfk"
 	 src-table="individuals.individ_info"
 	 dst-table="metadata.sex"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_individ_info_species" type="relfk"
-	 src-table="individuals.individ_info"
-	 dst-table="metadata.species"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_individ_info_subspecies" type="relfk"
-	 src-table="individuals.individ_info"
-	 dst-table="metadata.subspecies"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_status_startup" type="relfk"
@@ -3255,11 +3768,6 @@ END;
 <relationship name="rel_file_archive_shutdown" type="relfk"
 	 src-table="loggers.file_archive"
 	 dst-table="loggers.shutdown"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_subspecies_species" type="relfk"
-	 src-table="metadata.subspecies"
-	 dst-table="metadata.species"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_events_deployment" type="relfk"
@@ -3342,11 +3850,71 @@ END;
 	 dst-table="metadata.people"
 	 src-required="false" dst-required="false"/>
 
-<permission>
-	<object name="seatrack" type="database"/>
-	<roles names="seatrack_admin"/>
-	<privileges create="grant-op" connect="grant-op" temporary="grant-op"/>
-</permission>
+<relationship name="rel_metadata_import_individ_info" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="individuals.individ_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_metadata_import_logger_info" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="loggers.logger_info"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_deployment_species" type="relfk"
+	 src-table="loggers.deployment"
+	 dst-table="metadata.species"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_allocation_species" type="relfk"
+	 src-table="loggers.allocation"
+	 dst-table="metadata.species"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_info_subspecies" type="relfk"
+	 src-table="individuals.individ_info"
+	 dst-table="metadata.subspecies"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_metadata_import_subspecies" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="metadata.subspecies"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_metadata_import_sex" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="metadata.sex"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_metadata_import_sexing_method" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="metadata.sexing_method"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_metadata_import_breeding_stages" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="metadata.breeding_stages"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_metadata_import_breeding_success_criterion" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="metadata.breeding_success_criterion"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_metadata_import_location" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="metadata.location"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_metadata_import_people" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="metadata.people"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_metadata_import_mounting_types" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="metadata.mounting_types"
+	 src-required="false" dst-required="false"/>
+
 <permission>
 	<object name="seatrack" type="database"/>
 	<roles names="seatrack_reader"/>
@@ -3359,47 +3927,12 @@ END;
 </permission>
 <permission>
 	<object name="metadata" type="schema"/>
-	<roles names="seatrack_admin"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="metadata" type="schema"/>
 	<roles names="seatrack_reader"/>
 	<privileges usage="true"/>
 </permission>
 <permission>
 	<object name="metadata" type="schema"/>
 	<roles names="seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="loggers" type="schema"/>
-	<roles names="seatrack_admin,seatrack_reader,seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="individuals" type="schema"/>
-	<roles names="seatrack_admin,seatrack_reader,seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="imports" type="schema"/>
-	<roles names="seatrack_admin,seatrack_reader,seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="views" type="schema"/>
-	<roles names="seatrack_admin,seatrack_reader,seatrack_writer"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="positions" type="schema"/>
-	<roles names="seatrack_writer,seatrack_admin,seatrack_reader"/>
-	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="activity" type="schema"/>
-	<roles names="seatrack_admin,seatrack_reader,seatrack_writer"/>
 	<privileges usage="true"/>
 </permission>
 </dbmodel>

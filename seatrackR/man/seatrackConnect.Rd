@@ -4,7 +4,7 @@
 \alias{seatrackConnect}
 \title{Connect to seatrack database}
 \usage{
-seatrackConnect(Username, Password, host = "localhost")
+seatrackConnect(Username, Password, host = "ninseatrack01.nina.no")
 }
 \arguments{
 \item{Username}{Character. Default = seatrack_reader}
@@ -21,8 +21,9 @@ devtools::install_github("rstats-db/DBI"). Note that connections are only accept
 }
 \examples{
 dontrun{
-con <- seatrackConnect(Username = "testreader", Password = "testreader")
+seatrackConnect(Username = "testreader", Password = "testreader")
 dbGetQuery(con, "SELECT * FROM loggers.logging_session LIMIT 10")
 dbDisconnect(con)
 }
 }
+

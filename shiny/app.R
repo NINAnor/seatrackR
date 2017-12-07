@@ -10,49 +10,95 @@ require(dplyr)
 
 #tags$head(tags$link(rel='stylesheet', type='text/css', href='styles.css')),
 
+######
+require(tools)
 
-ui<-shinyUI(
-  navbarPage("Seatrack visualization - V.04",
-             tabPanel('Seatrack data download',
-                      sidebarLayout(
-                        sidebarPanel(width=2, dateRangeInput("daterange", "Date range:",
-                                                             start = Sys.Date() -365*5,
-                                                             end   = Sys.Date()),
-                                     #selectInput('species', 'Species', c("All", "Common eider"),selected="All"),
-                                     uiOutput("choose_species"),
-                                     uiOutput("choose_colony"),
-                                     uiOutput("choose_data_responsible"),
-                                     uiOutput("choose_ring_number"),
-                                     checkboxInput("limit500", "Limit display to 500 random records", value = T, width = NULL),
-                                     downloadButton('downloadData', 'Last ned CSV')),
+Logged = FALSE;
+load("shinyPass.Rdata")
 
-                        mainPanel(
-                          fluidRow(column(12, h4("Kartet viser som default 500 tilfeldige punkter av valgt data."))),
-                          fluidRow(column(12,leafletOutput("mymap", height=600))
-                          )
-                          ,
-                          fluidRow(column(1,offset=0,"Database dialog:"),column(11,verbatimTextOutput("nText"))))
-                      )
+ui1 <- function(){
+  tagList(
+    div(id = "login",
+        wellPanel(textInput("userName", "Username"),
+                  passwordInput("passwd", "Password"),
+                  br(),actionButton("Login", "Log in"))),
+    tags$style(type="text/css", "#login {font-size:10px;   text-align: left;position:absolute;top: 40%;left: 50%;margin-top: -100px;margin-left: -150px;}")
+  )}
 
-             ),
-             tabPanel("Active logger sessions",
-                      DT::dataTableOutput('activeLoggingSessions')
-               ),
-             tabPanel("Database stats",
-                      DT::dataTableOutput('shortTable'),
-                      DT::dataTableOutput('shortTableEqfilter3'),
-                      DT::dataTableOutput('longerTable')
-             )
-  ))
+ui2 <- function(){tagList(tabPanel("Test"))}
+
+ui = (htmlOutput("page"))
+server = (function(input, output,session) {
+
+  USER <- reactiveValues(Logged = Logged)
+
+  observe({
+    if (USER$Logged == FALSE) {
+      if (!is.null(input$Login)) {
+        if (input$Login > 0) {
+          Username <- isolate(input$userName)
+          Password <- isolate(input$passwd)
+          Id.username <- which(my_username == Username)
+          Id.password <- which(my_password == Password)
+          if (length(Id.username) > 0 & length(Id.password) > 0) {
+            if (Id.username == Id.password) {
+              USER$Logged <- TRUE
+            }
+          }
+        }
+      }
+    }
+  })
+  observe({
+    if (USER$Logged == FALSE) {
+
+      output$page <- renderUI({
+        div(class="outer",do.call(bootstrapPage,c("",ui1())))
+      })
+    }
+    if (USER$Logged == TRUE)
+    {
+
+      output$page <- renderUI({navbarPage("Seatrack visualization - V.04",
+                                          tabPanel('Seatrack data download',
+                                                   sidebarLayout(
+                                                     sidebarPanel(width=2, dateRangeInput("daterange", "Date range:",
+                                                                                          start = Sys.Date() -365*5,
+                                                                                          end   = Sys.Date()),
+                                                                  #selectInput('species', 'Species', c("All", "Common eider"),selected="All"),
+                                                                  uiOutput("choose_species"),
+                                                                  uiOutput("choose_colony"),
+                                                                  uiOutput("choose_data_responsible"),
+                                                                  uiOutput("choose_ring_number"),
+                                                                  checkboxInput("limit500", "Limit display to 500 random records", value = T, width = NULL),
+                                                                  downloadButton('downloadData', 'Last ned CSV')),
+
+                                                     mainPanel(
+                                                       fluidRow(column(12, h4("Kartet viser som default 500 tilfeldige punkter av valgt data."))),
+                                                       fluidRow(column(12,leafletOutput("mymap", height=600))
+                                                       )
+                                                       ,
+                                                       fluidRow(column(1,offset=0,"Database dialog:"),column(11,verbatimTextOutput("nText"))))
+                                                   )
+
+                                          ),
+                                          tabPanel("Active logger sessions",
+                                                   DT::dataTableOutput('activeLoggingSessions')
+                                          ),
+                                          tabPanel("Database stats",
+                                                   DT::dataTableOutput('shortTable'),
+                                                   DT::dataTableOutput('shortTableEqfilter3'),
+                                                   DT::dataTableOutput('longerTable')
+                                          )
+      )
+
+      })
+
+#######
 
 
 
-
-
-
-server<-function(input, output, session) {
-
-  con <- seatrackConnect(Username = "shinyuser", Password = "shinyuser", host = "ninpgsql01.nina.no")
+  con <- seatrackConnect(Username = "shinyuser", Password = "shinyuser", host = "ninseatrack01.nina.no")
 
 
   datasetInput <- reactive({
@@ -324,5 +370,7 @@ server<-function(input, output, session) {
 
 }
 
-shinyApp(ui= ui, server= server)
+})
+})
 
+shinyApp(ui= ui, server= server)

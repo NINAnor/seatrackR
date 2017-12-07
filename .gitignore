@@ -1,6 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
+shiny/shinyPass.Rdata
 .Ruserdata
 ~$*
 old/*
