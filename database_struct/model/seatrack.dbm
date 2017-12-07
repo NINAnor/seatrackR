@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,484" last-zoom="0.6"
+<dbmodel pgmodeler-ver="0.9.0" last-position="154,642" last-zoom="0.6"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -35,6 +35,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </role>
 
 <role name="seatrack_metadata_writer">
+</role>
+
+<role name="testwriter"
+      login="true"
+      encrypted="true"
+      password="testwriter">
+	<roles names="seatrack_metadata_writer,seatrack_writer" role-type="refer" />
 </role>
 
 <database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
@@ -983,7 +990,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 		<type name="text" length="0"/>
 	</column>
 	<column name="back_on_nest">
-		<type name="date" length="0"/>
+		<type name="boolean" length="0"/>
 	</column>
 	<column name="comment">
 		<type name="text" length="0"/>
@@ -1022,7 +1029,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="retrieval_id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="attribute_name" not-null="true">
+	<column name="attribute_name">
 		<type name="text" length="0"/>
 	</column>
 	<column name="logger_id" not-null="true">
@@ -1031,7 +1038,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="individ_id" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="retrieval_type" not-null="true">
+	<column name="retrieval_type">
 		<type name="text" length="0"/>
 	</column>
 	<column name="retrieval_location">
@@ -1509,7 +1516,7 @@ Testus specius•specius••testspecies]]>
 <view name="postable">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2120" y="1360"/>
+	<position x="2071.67" y="1385"/>
 	<reference>
 		<expression><![CDATA[SELECT p.* 
 FROM positions.postable p]]></expression>
@@ -1519,7 +1526,7 @@ FROM positions.postable p]]></expression>
 <view name="active_logging_sessions">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2367.27" y="1356.36"/>
+	<position x="2318.94" y="1381.36"/>
 	<reference>
 		<expression><![CDATA[SELECT *
 FROM loggers.logging_session
@@ -1665,7 +1672,7 @@ WHERE active = TRUE]]></expression>
 <table name="logger_import">
 	<schema name="imports"/>
 	<role name="admin"/>
-	<position x="2504.34" y="1536.78"/>
+	<position x="2584.34" y="1548.45"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1785,7 +1792,7 @@ WHERE active = TRUE]]></expression>
 	</constraint>
 </table>
 
-<table name="import_types">
+<table name="import_types" hide-ext-attribs="true">
 	<schema name="metadata"/>
 	<role name="admin"/>
 	<position x="480" y="1580"/>
@@ -2380,7 +2387,7 @@ END;]]></definition>
 <view name="closed_sessions_not_shutdown">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2120" y="1420"/>
+	<position x="2071.67" y="1445"/>
 	<reference>
 		<expression><![CDATA[SELECT l.session_id, l.logger_id, l.year_tracked
 FROM loggers.logging_session l left join loggers.shutdown s
@@ -2926,7 +2933,7 @@ END;
 	<column name="age">
 		<type name="smallint" length="0"/>
 	</column>
-	<column name="sex" not-null="true">
+	<column name="sex">
 		<type name="text" length="0"/>
 	</column>
 	<column name="sexing_method">
@@ -3066,7 +3073,7 @@ END;
 	<return-type>
 	<type name="trigger" length="0"/>
 	</return-type>
-	<definition><![CDATA[--Not finished!
+	<definition><![CDATA[
 BEGIN
 	IF NEW.logger_model_deployed IS NOT NULL THEN
 	INSERT INTO loggers.deployment
@@ -3090,28 +3097,11 @@ AND logging_session.active IS True
 AND individ_info.ring_number = NEW.ring_number
 AND individ_info.euring_code = NEW.euring_code;
 	END IF;
-	IF NEW.logger_model_retrieved IS NOT NULL THEN
-		INSERT INTO loggers.retrieval
-					(logger_id,
-					lindivid_id,
-					retrieval_type,
-					retrieval_location,
-					retrieval_date)
-		SELECT logging_session.logger_id,
-					logging_session.individ_id,
-					NEW.logger_status,
-					NEW.location,
-					NEW.date
-FROM loggers.logging_session, logger.logger_info
-WHERE logging_session.logger_id =	logger_info.id
-AND logger_info.logger_model = NEW.logger_model_retrieved
-AND logger_info.logger_serial_no = NEW.logger_serial_retrieved
-AND logging_session.active IS True;
-		END IF;
-
+	
 	IF NEW.weight IS NOT NULL THEN
 		INSERT INTO individuals.individ_status
 					(logger_id,
+					session_id,
 					weight,
 					scull,
 					tarsus,
@@ -3126,7 +3116,8 @@ AND logging_session.active IS True;
 					back_on_nest,
 					"comment",
 					"location")
-	VALUES (NEW.logger_id,
+	SELECT logging_session.logger_id,
+					logging_session.session_id,
 					NEW.weight,
 					NEW.scull,
 					NEW.tarsus,
@@ -3138,14 +3129,36 @@ AND logging_session.active IS True;
 					NEW.breeding_success,
 					NEW.breeding_success_criterion,
 					NEW.data_responsible,
-					NEW.back_on_nest_date,
+					NEW.back_on_nest,
 					NEW."comment",
-					NEW.observation_location);
+					NEW.location
+FROM loggers.logging_session, individuals.individ_info
+WHERE individ_info.ring_number = NEW.ring_number
+AND individ_info.euring_code = NEW.euring_code
+AND individ_info.individ_id = logging_session.individ_id
+AND logging_session.active Is True;
 	END IF;
 RETURN NEW;
 END;
 
-]]></definition>
+IF NEW.logger_model_retrieved IS NOT NULL THEN
+		INSERT INTO loggers.retrieval
+					(logger_id,
+					individ_id,
+					retrieval_type,
+					retrieval_location,
+					retrieval_date)
+		SELECT logging_session.logger_id,
+					logging_session.individ_id,
+					NEW.logger_status,
+					NEW.location,
+					NEW.date
+FROM loggers.logging_session, loggers.logger_info
+WHERE logging_session.logger_id =	logger_info.logger_id
+AND logger_info.logger_model = NEW.logger_model_retrieved
+AND logger_info.logger_serial_no = NEW.logger_serial_retrieved
+AND logging_session.active IS True;
+		END IF;]]></definition>
 </function>
 
 <function name="fn_deleted_uuid"
