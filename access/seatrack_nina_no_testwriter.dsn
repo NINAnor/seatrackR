@@ -1,6 +1,6 @@
 [ODBC]
 DRIVER=PostgreSQL ODBC Driver(UNICODE)
-UID=testuser
+UID=testwriter
 A1=7.4-1
 CX=1c89008b
 C2=
@@ -10,5 +10,5 @@ B0=255
 A7=100
 CA=d
 PORT=5432
-SERVER=ninseatrack01.nina.no
+SERVER=seatrack.nina.no
 DATABASE=seatrack
