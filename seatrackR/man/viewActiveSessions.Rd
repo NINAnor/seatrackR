@@ -4,7 +4,7 @@
 \alias{viewActiveSessions}
 \title{View the active logger sessions}
 \usage{
-viewActiveSessions(connection = con)
+viewActiveSessions()
 }
 \value{
 Data frame.

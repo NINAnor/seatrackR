@@ -11,7 +11,8 @@
 #' activeSessions <- viewActiveSessions()
 #' }
 
-viewActiveSessions <- function(connection = con) {
-  dbGetQuery(connection, "SELECT * FROM views.active_logging_sessions")
+viewActiveSessions <- function() {
+  seatrackR:::checkCon()
+  dbGetQuery(con, "SELECT * FROM views.active_logging_sessions")
 }
 

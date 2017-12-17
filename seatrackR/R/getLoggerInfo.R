@@ -11,7 +11,7 @@
 #' }
 
 getLoggerInfo <- function(){
-  if(!exists("con")) stop("No active connection, run seatrackConnect()")
+  seatrackR:::checkCon()
 
   DBI::dbGetQuery(con, "SELECT * FROM loggers.logger_info")
 }

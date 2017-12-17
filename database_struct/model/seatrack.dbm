@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="154,642" last-zoom="0.6"
+<dbmodel pgmodeler-ver="0.9.0" last-position="237,1095" last-zoom="0.6"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -772,7 +772,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="deployment_location" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="deployment_date" not-null="true">
+	<column name="deployment_date">
 		<type name="date" length="0"/>
 	</column>
 	<column name="logger_mount_method" not-null="true">
@@ -950,6 +950,9 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="logger_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
+	<column name="statud_date">
+		<type name="date" length="0"/>
+	</column>
 	<column name="status_id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -1044,7 +1047,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="retrieval_location">
 		<type name="text" length="0"/>
 	</column>
-	<column name="retrieval_date" not-null="true">
+	<column name="retrieval_date">
 		<type name="date" length="0"/>
 	</column>
 	<constraint name="retrieval_pk" type="pk-constr" table="loggers.retrieval">
@@ -2894,7 +2897,7 @@ END;
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
-	<column name="date" not-null="true">
+	<column name="date">
 		<type name="date" length="0"/>
 	</column>
 	<column name="ring_number" not-null="true">
@@ -2912,13 +2915,13 @@ END;
 	<column name="logger_model_retrieved">
 		<type name="text" length="0"/>
 	</column>
-	<column name="logger_serial_retrieved">
+	<column name="logger_id_retrieved">
 		<type name="text" length="0"/>
 	</column>
 	<column name="logger_model_deployed">
 		<type name="text" length="0"/>
 	</column>
-	<column name="logger_serial_deployed">
+	<column name="logger_id_deployed">
 		<type name="text" length="0"/>
 	</column>
 	<column name="species">
@@ -2931,7 +2934,7 @@ END;
 		<type name="text" length="0"/>
 	</column>
 	<column name="age">
-		<type name="smallint" length="0"/>
+		<type name="text" length="0"/>
 	</column>
 	<column name="sex">
 		<type name="text" length="0"/>
@@ -2972,7 +2975,7 @@ END;
 	<column name="country">
 		<type name="text" length="0"/>
 	</column>
-	<column name="location">
+	<column name="colony">
 		<type name="text" length="0"/>
 	</column>
 	<column name="colony_latitude">
@@ -3056,6 +3059,7 @@ END;
     - standard values for blood and feather samples?
     - Morphs
     - logger_status
+* Check age column of metadata_import. Metadata seems to contain lots of text in this column
 ]]></comment>
 </textbox>
 
@@ -3073,8 +3077,7 @@ END;
 	<return-type>
 	<type name="trigger" length="0"/>
 	</return-type>
-	<definition><![CDATA[
-BEGIN
+	<definition><![CDATA[BEGIN
 	IF NEW.logger_model_deployed IS NOT NULL THEN
 	INSERT INTO loggers.deployment
 				(logger_id,
@@ -3086,13 +3089,13 @@ BEGIN
 	SELECT logging_session.logger_id,
 				individ_info.individ_id,
 				NEW.species,
-				NEW.location,
+				NEW.colony,
 				NEW.date,
 				NEW.logger_mount_method
 FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
 WHERE logging_session.logger_id = logger_info.logger_id
 AND logger_info.logger_model = NEW.logger_model_deployed
-AND logger_info.logger_serial_no = NEW.logger_serial_deployed
+AND logger_info.logger_serial_no = NEW.logger_id_deployed
 AND logging_session.active IS True
 AND individ_info.ring_number = NEW.ring_number
 AND individ_info.euring_code = NEW.euring_code;
@@ -3101,6 +3104,7 @@ AND individ_info.euring_code = NEW.euring_code;
 	IF NEW.weight IS NOT NULL THEN
 		INSERT INTO individuals.individ_status
 					(logger_id,
+					"status_date",
 					session_id,
 					weight,
 					scull,
@@ -3117,6 +3121,7 @@ AND individ_info.euring_code = NEW.euring_code;
 					"comment",
 					"location")
 	SELECT logging_session.logger_id,
+					NEW.date,
 					logging_session.session_id,
 					NEW.weight,
 					NEW.scull,
@@ -3131,7 +3136,7 @@ AND individ_info.euring_code = NEW.euring_code;
 					NEW.data_responsible,
 					NEW.back_on_nest,
 					NEW."comment",
-					NEW.location
+					NEW.colony
 FROM loggers.logging_session, individuals.individ_info
 WHERE individ_info.ring_number = NEW.ring_number
 AND individ_info.euring_code = NEW.euring_code
@@ -3139,7 +3144,6 @@ AND individ_info.individ_id = logging_session.individ_id
 AND logging_session.active Is True;
 	END IF;
 RETURN NEW;
-END;
 
 IF NEW.logger_model_retrieved IS NOT NULL THEN
 		INSERT INTO loggers.retrieval
@@ -3151,14 +3155,16 @@ IF NEW.logger_model_retrieved IS NOT NULL THEN
 		SELECT logging_session.logger_id,
 					logging_session.individ_id,
 					NEW.logger_status,
-					NEW.location,
+					NEW.colony,
 					NEW.date
 FROM loggers.logging_session, loggers.logger_info
 WHERE logging_session.logger_id =	logger_info.logger_id
 AND logger_info.logger_model = NEW.logger_model_retrieved
-AND logger_info.logger_serial_no = NEW.logger_serial_retrieved
+AND logger_info.logger_serial_no = NEW.logger_id_retrieved
 AND logging_session.active IS True;
-		END IF;]]></definition>
+END IF;
+
+END;]]></definition>
 </function>
 
 <function name="fn_deleted_uuid"
@@ -3610,13 +3616,13 @@ END;
 
 <constraint name="logger_retrieved_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="imports.metadata_import">
-	<columns names="logger_serial_retrieved,logger_model_retrieved" ref-type="src-columns"/>
+	<columns names="logger_id_retrieved,logger_model_retrieved" ref-type="src-columns"/>
 	<columns names="logger_serial_no,logger_model" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="logger_deployed_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.logger_info" table="imports.metadata_import">
-	<columns names="logger_serial_deployed,logger_model_deployed" ref-type="src-columns"/>
+	<columns names="logger_id_deployed,logger_model_deployed" ref-type="src-columns"/>
 	<columns names="logger_serial_no,logger_model" ref-type="dst-columns"/>
 </constraint>
 
@@ -3650,9 +3656,9 @@ END;
 	<columns names="breeding_success_criterion" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="location_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="metadata.location" table="imports.metadata_import">
-	<columns names="location" ref-type="src-columns"/>
+<constraint name="colony_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="RESTRICT" ref-table="metadata.location" table="imports.metadata_import">
+	<columns names="colony" ref-type="src-columns"/>
 	<columns names="location_name" ref-type="dst-columns"/>
 </constraint>
 
@@ -3913,11 +3919,6 @@ END;
 	 dst-table="metadata.breeding_success_criterion"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_metadata_import_location" type="relfk"
-	 src-table="imports.metadata_import"
-	 dst-table="metadata.location"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_metadata_import_people" type="relfk"
 	 src-table="imports.metadata_import"
 	 dst-table="metadata.people"
@@ -3926,6 +3927,11 @@ END;
 <relationship name="rel_metadata_import_mounting_types" type="relfk"
 	 src-table="imports.metadata_import"
 	 dst-table="metadata.mounting_types"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_metadata_import_location" type="relfk"
+	 src-table="imports.metadata_import"
+	 dst-table="metadata.location"
 	 src-required="false" dst-required="false"/>
 
 <permission>

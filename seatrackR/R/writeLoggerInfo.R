@@ -18,12 +18,12 @@
 
 
 writeLoggerInfo <- function(loggerData, append = T, overwrite = FALSE){
-  if(!exists("con")) stop("No connection, run seatrackConnect()")
+  seatrackR:::checkCon()
   DBI::dbWithTransaction(
     con,
     {
       DBI::dbSendQuery(con, "SET search_path TO loggers, public")
-      DBI::dbWriteTable(con, "logger_info", new, append = T, overwrite = overwrite)
+      DBI::dbWriteTable(con, "logger_info", loggerData, append = T, overwrite = overwrite)
     }
   )
 }

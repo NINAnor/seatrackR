@@ -11,12 +11,12 @@
 #' @export
 #' @examples
 #' dontrun{
-#' seatrackConnect(Username = "testreader", Password = "testreader")
+#' connectSeatrack(Username = "testreader", Password = "testreader")
 #' dbGetQuery(con, "SELECT * FROM loggers.logging_session LIMIT 10")
 #' dbDisconnect(con)
 #' }
 
-seatrackConnect <- function(Username, Password, host = "seatrack.nina.no") {
+connectSeatrack <- function(Username = "testreader", Password = "testreader", host = "seatrack.nina.no") {
 
   if (!requireNamespace("DBI", quietly = TRUE)) {
     stop("Pkg needed for this function to work. Please install it using devtools::install_github(\"rstats-db/DBI\") ",
