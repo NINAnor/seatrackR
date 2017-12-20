@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="237,1095" last-zoom="0.6"
+<dbmodel pgmodeler-ver="0.9.0" last-position="0,624" last-zoom="0.6"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -950,7 +950,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="logger_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="statud_date">
+	<column name="status_date">
 		<type name="date" length="0"/>
 	</column>
 	<column name="status_id" not-null="true">
@@ -1362,7 +1362,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 <table name="subspecies">
 	<schema name="metadata"/>
 	<role name="admin"/>
-	<position x="476.923" y="503.077"/>
+	<position x="478.59" y="503.077"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1500,7 +1500,7 @@ Testus specius•specius••testspecies]]>
 <table name="salinity">
 	<schema name="activity"/>
 	<role name="admin"/>
-	<position x="2333.33" y="1208.89"/>
+	<position x="2420" y="1203.89"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -3329,6 +3329,169 @@ END;
 	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="imports.metadata_import">
 		<function signature="functions.fn_distribute_from_metadata_table()"/>
+</trigger>
+
+<index name="postable_datarespons_idx" table="positions.postable"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="data_responsible"/>
+		</idxelement>
+</index>
+
+<index name="postable_datetime_idx" table="positions.postable"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="date_time"/>
+		</idxelement>
+</index>
+
+<index name="postable_eqfilter3_idx" table="positions.postable"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="eqfilter3"/>
+		</idxelement>
+</index>
+
+<index name="postable_id_idx" table="positions.postable"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="id"/>
+		</idxelement>
+</index>
+
+<index name="postable_postdatafile_idx" table="positions.postable"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="posdata_file"/>
+		</idxelement>
+</index>
+
+<index name="postable_species_idx" table="positions.postable"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="species"/>
+		</idxelement>
+</index>
+
+<index name="postable_ring_idx" table="positions.postable"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="ring_number"/>
+		</idxelement>
+</index>
+
+<index name="postable_logger_idx" table="positions.postable"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="logger_id"/>
+		</idxelement>
+</index>
+
+<function name="fn_check_open_session_on_metadata_deployment"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+		IF bool_and(logging_session.logger_id != NEW.logger_id_deployed) 
+			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+			WHERE logging_session.logger_id = logger_info.logger_id
+			AND logger_info.logger_model = NEW.logger_model_deployed
+			AND logger_info.logger_serial_no = NEW.logger_id_deployed
+		THEN
+			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+		END IF;
+
+		IF bool_and(logging_session.active = FALSE)
+			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+			WHERE logging_session.logger_id = logger_info.logger_id
+			AND logger_info.logger_model = NEW.logger_model_deployed
+			AND logger_info.logger_serial_no = NEW.logger_id_deployed
+		THEN
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+	END IF;
+
+END
+
+
+
+
+]]></definition>
+</function>
+
+<trigger name="tr_check_open_session_on_metadata_deployment" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="imports.metadata_import">
+		<function signature="functions.fn_check_open_session_on_metadata_deployment()"/>
+</trigger>
+
+<function name="fn_check_open_session_on_metadata_retrieval"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	IF  bool_and(logging_session.logger_id != NEW.logger_id_retrieved)
+			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+			WHERE logging_session.logger_id = logger_info.logger_id
+			AND logger_info.logger_model = NEW.logger_model_retrieved
+			AND logger_info.logger_serial_no = NEW.logger_id_retrieved
+	THEN 
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+	END IF;
+   
+	IF bool_and(logging_session.active = FALSE) 			
+			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+			WHERE logging_session.logger_id = logger_info.logger_id
+			AND logger_info.logger_model = NEW.logger_model_retrieved
+			AND logger_info.logger_serial_no = NEW.logger_id_retrieved
+	THEN
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+	END IF;
+   
+	IF bool_or(logging_session.deployment_id IS NULL)
+			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+			WHERE logging_session.logger_id = logger_info.logger_id
+			AND logger_info.logger_model = NEW.logger_model_retrieved
+			AND logger_info.logger_serial_no = NEW.logger_id_retrieved
+	THEN
+		RAISE EXCEPTION 'Logger % not deployed. Logger must be deployed before retrieved.', NEW.logger_id;
+	END IF;
+
+
+END]]></definition>
+</function>
+
+<trigger name="tr_check_open_session_on_metadata_retrieval" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="imports.metadata_import">
+		<function signature="functions.fn_check_open_session_on_metadata_retrieval()"/>
 </trigger>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
