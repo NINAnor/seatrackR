@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,624" last-zoom="0.6"
+<dbmodel pgmodeler-ver="0.9.0" last-position="0,792" last-zoom="0.6"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -775,7 +775,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="deployment_date">
 		<type name="date" length="0"/>
 	</column>
-	<column name="logger_mount_method" not-null="true">
+	<column name="logger_mount_method">
 		<type name="text" length="0"/>
 	</column>
 	<constraint name="deployment_pk" type="pk-constr" table="loggers.deployment">
@@ -2615,7 +2615,7 @@ END;]]></definition>
 
 <table name="retrieval_type">
 	<schema name="metadata"/>
-	<role name="postgres"/>
+	<role name="admin"/>
 	<position x="540" y="1260"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -2644,7 +2644,7 @@ END;]]></definition>
 
 <table name="download_types">
 	<schema name="metadata"/>
-	<role name="postgres"/>
+	<role name="admin"/>
 	<position x="600" y="1000"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -2796,7 +2796,7 @@ END;]]></definition>
 
 <table name="breeding_success_criterion">
 	<schema name="metadata"/>
-	<role name="postgres"/>
+	<role name="admin"/>
 	<position x="60" y="1780"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -2892,7 +2892,7 @@ END;
 
 <table name="metadata_import">
 	<schema name="imports"/>
-	<role name="postgres"/>
+	<role name="admin"/>
 	<position x="2074.69" y="1544.62"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -3018,7 +3018,7 @@ END;
 
 <table name="euring_codes">
 	<schema name="metadata"/>
-	<role name="postgres"/>
+	<role name="admin"/>
 	<position x="574.871" y="1135.64"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
@@ -3143,7 +3143,6 @@ AND individ_info.euring_code = NEW.euring_code
 AND individ_info.individ_id = logging_session.individ_id
 AND logging_session.active Is True;
 	END IF;
-RETURN NEW;
 
 IF NEW.logger_model_retrieved IS NOT NULL THEN
 		INSERT INTO loggers.retrieval
@@ -3163,7 +3162,7 @@ AND logger_info.logger_model = NEW.logger_model_retrieved
 AND logger_info.logger_serial_no = NEW.logger_id_retrieved
 AND logging_session.active IS True;
 END IF;
-
+RETURN NEW;
 END;]]></definition>
 </function>
 
@@ -3258,7 +3257,7 @@ END;
 
 <table name="deleted_uuid">
 	<schema name="positions"/>
-	<role name="postgres"/>
+	<role name="admin"/>
 	<position x="2711.67" y="705"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
@@ -3282,7 +3281,7 @@ END;
 
 <table name="used_uuid">
 	<schema name="positions"/>
-	<role name="postgres"/>
+	<role name="admin"/>
 	<position x="2410" y="720"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
@@ -3410,13 +3409,12 @@ END;
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-		IF bool_and(logging_session.logger_id != NEW.logger_id_deployed) 
+		IF bool_and(logging_session.logger_id != logger_info.logger_id) 
 			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
-			WHERE logging_session.logger_id = logger_info.logger_id
-			AND logger_info.logger_model = NEW.logger_model_deployed
+			WHERE logger_info.logger_model = NEW.logger_model_deployed
 			AND logger_info.logger_serial_no = NEW.logger_id_deployed
 		THEN
-			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_deployed;
 		END IF;
 
 		IF bool_and(logging_session.active = FALSE)
@@ -3425,10 +3423,11 @@ END;
 			AND logger_info.logger_model = NEW.logger_model_deployed
 			AND logger_info.logger_serial_no = NEW.logger_id_deployed
 		THEN
-		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_deployed;
 	END IF;
 
-END
+RETURN NEW;
+END;
 
 
 
@@ -3457,13 +3456,12 @@ END
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-	IF  bool_and(logging_session.logger_id != NEW.logger_id_retrieved)
+	IF  bool_and(logging_session.logger_id != logger_info.logger_id)
 			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
-			WHERE logging_session.logger_id = logger_info.logger_id
-			AND logger_info.logger_model = NEW.logger_model_retrieved
+			WHERE logger_info.logger_model = NEW.logger_model_retrieved
 			AND logger_info.logger_serial_no = NEW.logger_id_retrieved
 	THEN 
-		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_retrieved;
 	END IF;
    
 	IF bool_and(logging_session.active = FALSE) 			
@@ -3472,7 +3470,7 @@ END
 			AND logger_info.logger_model = NEW.logger_model_retrieved
 			AND logger_info.logger_serial_no = NEW.logger_id_retrieved
 	THEN
-		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_retrieved;
 	END IF;
    
 	IF bool_or(logging_session.deployment_id IS NULL)
@@ -3481,11 +3479,11 @@ END
 			AND logger_info.logger_model = NEW.logger_model_retrieved
 			AND logger_info.logger_serial_no = NEW.logger_id_retrieved
 	THEN
-		RAISE EXCEPTION 'Logger % not deployed. Logger must be deployed before retrieved.', NEW.logger_id;
+		RAISE EXCEPTION 'Logger % not deployed. Logger must be deployed before retrieved.', NEW.logger_id_retrieved;
 	END IF;
 
-
-END]]></definition>
+RETURN NEW;
+END;]]></definition>
 </function>
 
 <trigger name="tr_check_open_session_on_metadata_retrieval" firing-type="BEFORE" per-line="true" constraint="false"

@@ -16,7 +16,6 @@ metaRaw[c(21, 28, 29)] <- sapply(metaRaw[c(21, 28, 29)] , as.numeric)
 
 metaRaw$hatching_success <- as.logical(as.numeric(metaRaw$hatching_success))
 metaRaw$breeding_success <- as.logical(as.numeric(metaRaw$breeding_success))
-metaRaw$back_on_nest[metaRaw$back_on_nest == ""] <- NA
 metaRaw$age <- as.numeric(metaRaw$age)
 
 cap <- function(x) {
@@ -51,10 +50,12 @@ metaRaw$logger_model_retrieved[metaRaw$logger_model_retrieved == "Mk4093"] <- "m
 # metaRaw$logger_id_retrieved[metaRaw$logger_id_retrieved == ""] <- NA
 # metaRaw$breeding_success_criterion[metaRaw$breeding_success_criterion == ""] <- NA
 # metaRaw$colony[metaRaw$colony == ""]
-
+metaRaw[metaRaw == "NA"] <- NA
 metaRaw[metaRaw == ""] <- NA
 
 metaRaw$date <- as.Date(metaRaw$date, format = "%d/%m/%Y")
+#metaRaw <-
+metaRaw <- metaRaw[order(metaRaw$date),]
 
 sampleMetadata <- metaRaw
 devtools::use_data(sampleMetadata, overwrite = T)
@@ -103,3 +104,52 @@ DBI::dbWriteTable(con, "logger_import", sampleLoggerImport, append = T, overwrit
  # oldLoggerInfo <- DBI::dbGetQuery(con, "SELECT * FROM loggers.logger_info")
  # newLoggerInfo <- anti_join(sampleLoggerInfo, oldLoggerInfo)
  # writeLoggerInfo(newLoggerInfo)
+
+##Add this function
+compareNA <- function(v1,v2) {
+  # This function returns TRUE wherever elements are the same, including NA's,
+  # and false everywhere else.
+  same <- (v1 == v2)  |  (is.na(v1) & is.na(v2))
+  same[is.na(same)] <- FALSE
+  return(same)
+}
+
+
+
+metadata <- sampleMetadata
+# metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "v2014037"),]
+# metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "v2014025"),]
+# metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "c406"),]
+# metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "C406"),]
+# metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "C415"),]
+# metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "C393"),]
+
+##Get rid of records with loggers retrieved but not deployed
+metadata <- metadata[metadata$logger_id_retrieved %in% metadata$logger_id_deployed,]
+
+#Get rid of records of loggers retrieved before deployed.
+retr <- metaRaw[metaRaw$logger_id_retrieved %in% metaRaw$logger_id_deployed, which(names(metaRaw) %in% c("date", "logger_id_retrieved"))]
+retr <- retr[!is.na(retr$logger_id_retrieved), ]
+
+depl <- metaRaw[metaRaw$logger_id_deployed %in% metaRaw$logger_id_retrieved, which(names(metaRaw) %in% c("date", "logger_id_deployed"))]
+depl <- depl[!is.na(depl$logger_id_deployed), ]
+
+tt <- merge(retr, depl, by.x = "logger_id_retrieved", by.y = "logger_id_deployed")
+tt[tt$date.x > tt$date.y]
+#No loggers retrieved after deployment in this data set.
+##Test setting retrieval date one year later
+
+metadata <- metadata[is.na(metadata$logger_id_retrieved),]
+
+##add hoc to compensate for earlier insert
+metadata <- metadata[-which(metadata$logger_id_deployed %in% c("T089", "B1263")), ]
+
+metaRetr <- metaRaw[metaRaw$logger_id_retrieved %in% retr$logger_id_retrieved,]
+#metaRetr$date <-
+metaRetr$date <- metaRetr$date + 365
+metaRetr$logger_id_deployed <- NA
+metaRetr$logger_model_deployed <- NA
+
+
+writeMetadata(metadata)
+writeMetadata(metaRetr)
