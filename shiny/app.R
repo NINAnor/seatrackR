@@ -98,7 +98,7 @@ server = (function(input, output,session) {
 
 
 
-  con <- seatrackConnect(Username = "shinyuser", Password = "shinyuser", host = "ninseatrack01.nina.no")
+  con <- connectSeatrack(Username = "shinyuser", Password = "shinyuser", host = "ninseatrack01.nina.no")
 
 
   datasetInput <- reactive({
@@ -111,9 +111,6 @@ server = (function(input, output,session) {
 
 
   select_categories<-function(){
-
-
-
 
     dbGetQuery(con,"SET search_path = positions, public;")
 
@@ -244,8 +241,16 @@ server = (function(input, output,session) {
       return(NULL)
     } else
 
+      if(input$species=="All" & input$colony=="All" & input$data_responsible=="All" & input$ring_number =="All") {
+        fetch.q <- "SELECT * FROM positions.postable TABLESAMPLE SYSTEM_ROWS(700)
+                    WHERE eqfilter3 = 1
+                    AND lon_smooth2 is not null
+                    AND lat_smooth2 is not null"
+        return(fetch.q)
+      } else
+
       start_time<-as.character(input$daterange[1])
-    end_time<-as.character(input$daterange[2])
+      end_time<-as.character(input$daterange[2])
 
 
     if (input$species=="All"){
@@ -288,7 +293,7 @@ server = (function(input, output,session) {
                    FROM positions.postable"
                    ,group.sub,date_range, colony.sub, responsible.sub, ring.number, limit,sep="")
 
-    fetch.q
+    return(fetch.q)
 
   })
 

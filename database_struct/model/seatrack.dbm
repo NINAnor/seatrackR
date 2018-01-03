@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,792" last-zoom="0.6"
+<dbmodel pgmodeler-ver="0.9.0" last-position="0,725" last-zoom="0.6"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -131,7 +131,8 @@ TO seatrack_writer,  seatrack_reader;
 ]]></appended-sql>
 	<prepended-sql><![CDATA[CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "adminpack";]]></prepended-sql>
+CREATE EXTENSION IF NOT EXISTS "adminpack";
+CREATE EXTENSION IF NOT EXISTS "tsm_system_rows";]]></prepended-sql>
 </database>
 
 <schema name="public" fill-color="#e1e1e1" sql-disabled="true">
@@ -1457,7 +1458,7 @@ Testus specius•specius••testspecies]]>
 <table name="logger_year_tracked">
 	<schema name="positions"/>
 	<role name="admin"/>
-	<position x="2073.58" y="978.846"/>
+	<position x="2473.58" y="960.513"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1718,71 +1719,14 @@ WHERE active = TRUE]]></expression>
 	<column name="intended_deployer">
 		<type name="text" length="0"/>
 	</column>
-	<column name="individ_id">
-		<type name="text" length="0"/>
-	</column>
 	<column name="logger_fate">
-		<type name="text" length="0"/>
-	</column>
-	<column name="deployment_species">
-		<type name="text" length="0"/>
-	</column>
-	<column name="deployment_location">
-		<type name="text" length="0"/>
-	</column>
-	<column name="deployment_date">
-		<type name="date" length="0"/>
-	</column>
-	<column name="logger_mount_method">
 		<type name="text" length="0"/>
 	</column>
 	<column name="attribute_name">
 		<type name="text" length="0"/>
 	</column>
-	<column name="retrieval_type">
-		<type name="text" length="0"/>
-	</column>
-	<column name="retrieval_location">
-		<type name="text" length="0"/>
-	</column>
-	<column name="retrieval_date">
-		<type name="date" length="0"/>
-	</column>
-	<column name="weight">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="scull">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="tarsus">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="wing">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="breeding_stage">
-		<type name="text" length="0"/>
-	</column>
-	<column name="eggs">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="chicks">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="hatching_success">
-		<type name="boolean" length="0"/>
-	</column>
-	<column name="breeding_success">
-		<type name="boolean" length="0"/>
-	</column>
-	<column name="breeding_success_criterion">
-		<type name="text" length="0"/>
-	</column>
 	<column name="data_responsible">
 		<type name="text" length="0"/>
-	</column>
-	<column name="back_on_nest">
-		<type name="boolean" length="0"/>
 	</column>
 	<column name="comment">
 		<type name="text" length="0"/>
@@ -3043,10 +2987,7 @@ END;
 <textbox name="Issues" color="#ffaa00" font-size="9">
 	<position x="1127.69" y="2276.92"/>
 	<comment><![CDATA[*  Metadata_import and logger_import needs to be split up.
-    - Move parts of logger_import to metadata.
     - Intended location (where does that come from? same as colony?)
-    - Remove Deployment info.
-    - Remove weight to breeding success criterion 
     - Remove comment?
 * Make a separate observation import table?
 
@@ -3060,6 +3001,8 @@ END;
     - Morphs
     - logger_status
 * Check age column of metadata_import. Metadata seems to contain lots of text in this column
+
+pg_dump -C  -d gisdata -t seatrack.postable --data-only | psql -h ninseatrack01.nina.no -d seatrack -U jens.astrom
 ]]></comment>
 </textbox>
 
@@ -3258,7 +3201,7 @@ END;
 <table name="deleted_uuid">
 	<schema name="positions"/>
 	<role name="admin"/>
-	<position x="2711.67" y="705"/>
+	<position x="2758.34" y="735"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -3282,7 +3225,7 @@ END;
 <table name="used_uuid">
 	<schema name="positions"/>
 	<role name="admin"/>
-	<position x="2410" y="720"/>
+	<position x="2461.67" y="741.667"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
