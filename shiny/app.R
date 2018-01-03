@@ -59,22 +59,22 @@ server = (function(input, output,session) {
     if (USER$Logged == TRUE)
     {
 
-      output$page <- renderUI({navbarPage("Seatrack visualization - V.04",
+      output$page <- renderUI({navbarPage("Seatrack visualization - V.05",
                                           tabPanel('Seatrack data download',
                                                    sidebarLayout(
                                                      sidebarPanel(width=2, dateRangeInput("daterange", "Date range:",
-                                                                                          start = Sys.Date() -365*5,
+                                                                                          start = "2010-01-01",
                                                                                           end   = Sys.Date()),
                                                                   #selectInput('species', 'Species', c("All", "Common eider"),selected="All"),
                                                                   uiOutput("choose_species"),
                                                                   uiOutput("choose_colony"),
                                                                   uiOutput("choose_data_responsible"),
                                                                   uiOutput("choose_ring_number"),
-                                                                  checkboxInput("limit500", "Limit display to 500 random records", value = T, width = NULL),
+                                                                  checkboxInput("limit500", "Limit display to 500 random points", value = T, width = NULL),
                                                                   downloadButton('downloadData', 'Last ned CSV')),
 
                                                      mainPanel(
-                                                       fluidRow(column(12, h4("Kartet viser som default 500 tilfeldige punkter av valgt data."))),
+                                                       fluidRow(column(12, h4("The default map (all records) is limited to roughly 1000 points"))),
                                                        fluidRow(column(12,leafletOutput("mymap", height=600))
                                                        )
                                                        ,
@@ -115,11 +115,7 @@ server = (function(input, output,session) {
     dbGetQuery(con,"SET search_path = positions, public;")
 
 
-    cat.query<-"SELECT  species as species_cat, colony as colony_cat, data_responsible as responsible_cat
-    , ring_number as ring_number_cat
-    FROM positions.postable
-    GROUP BY species, colony, data_responsible, ring_number
-    "
+    cat.query<-"SELECT * FROM views.categories"
 
     suppressWarnings(categories<-dbGetQuery(con, cat.query))
 
@@ -154,15 +150,15 @@ server = (function(input, output,session) {
 
   output$shortTable <- DT::renderDataTable({
 
-      shortSum <-"
-      SELECT count(distinct(species)) \"Antall arter\", count(distinct(colony)) \"Antall kolonier\",
-    count(distinct(year_tracked)) \"Antall år\", count(*) \"Antall positions\",
-      count(distinct(ring_number)) \"Antall individer\"
-      FROM postable"
+    #   shortSum <-"
+    #   SELECT count(distinct(species)) \"Antall arter\", count(distinct(colony)) \"Antall kolonier\",
+    # count(distinct(year_tracked)) \"Antall år\", count(*) \"Antall positions\",
+    #   count(distinct(ring_number)) \"Antall individer\"
+    #   FROM postable"
 
-    # shortSum <- "
-    # SELECT * FROM
-    # shorttable"
+     shortSum <- "
+     SELECT *
+    FROM views.shorttable"
 
     shortTable <- dbGetQuery(con, shortSum)
     rownames(shortTable) <- ""
@@ -182,15 +178,15 @@ server = (function(input, output,session) {
   output$shortTableEqfilter3 <- DT::renderDataTable({
 
 
-    shortSumEqfilter3 <-"
-    SELECT count(distinct(species)) antall_arter, count(distinct(colony)) antall_kolonier, count(distinct(year_tracked)) antall_år, count(*) antall_positions,
-    count(distinct(ring_number)) antall_individer
-    FROM postable
-    WHERE eqfilter3 = 1"
+    # shortSumEqfilter3 <-"
+    # SELECT count(distinct(species)) antall_arter, count(distinct(colony)) antall_kolonier, count(distinct(year_tracked)) antall_år, count(*) antall_positions,
+    # count(distinct(ring_number)) antall_individer
+    # FROM postable
+    # WHERE eqfilter3 = 1"
 
-    # shortSumEqfilter3 <- "
-    # SELECT *
-    # FROM shorttableeqfilter3"
+     shortSumEqfilter3 <- "
+     SELECT *
+     FROM views.shorttableeqfilter3"
 
     shortTable <- dbGetQuery(con, shortSumEqfilter3)
     rownames(shortTable) <- ""
@@ -210,16 +206,16 @@ server = (function(input, output,session) {
 
   output$longerTable <- DT::renderDataTable({
 
-    longerSum <-"
-    SELECT year_tracked år, species, count(distinct(ring_number)) antall_unike_ring_nummer, count(*) antall_posisjoner, count(distinct(colony)) antall_kolonier
-    FROM postable
-    GROUP BY år, species
-    ORDER BY år, species"
+    # longerSum <-"
+    # SELECT year_tracked år, species, count(distinct(ring_number)) antall_unike_ring_nummer, count(*) antall_posisjoner, count(distinct(colony)) antall_kolonier
+    # FROM postable
+    # GROUP BY år, species
+    # ORDER BY år, species"
 
-    # longerSum <- "
-    # SELECT *
-    # FROM longersum
-    # "
+     longerSum <- "
+     SELECT *
+     FROM views.longersum
+     "
 
     longerTable <- dbGetQuery(con, longerSum)
     #rownames(shortTable) <- ""
@@ -241,7 +237,12 @@ server = (function(input, output,session) {
       return(NULL)
     } else
 
-      if(input$species=="All" & input$colony=="All" & input$data_responsible=="All" & input$ring_number =="All") {
+      if(input$species=="All" &
+         input$colony=="All" &
+         input$data_responsible=="All" &
+         input$ring_number =="All" &
+         input$daterange[1] == "2010-01-01"
+         ) {
         fetch.q <- "SELECT * FROM positions.postable TABLESAMPLE SYSTEM_ROWS(700)
                     WHERE eqfilter3 = 1
                     AND lon_smooth2 is not null
