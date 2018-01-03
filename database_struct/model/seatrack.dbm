@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,725" last-zoom="0.6"
+<dbmodel pgmodeler-ver="0.9.0" last-position="0,428" last-zoom="0.6"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -3434,6 +3434,63 @@ END;]]></definition>
 	 table="imports.metadata_import">
 		<function signature="functions.fn_check_open_session_on_metadata_retrieval()"/>
 </trigger>
+
+<view name="categories" materialized="true">
+	<schema name="views"/>
+	<role name="admin"/>
+	<position x="2373.33" y="1448.33"/>
+	<reference>
+		<expression><![CDATA[ species as species_cat, colony as colony_cat, data_responsible as responsible_cat
+    , ring_number as ring_number_cat
+    FROM positions.postable
+    GROUP BY species, colony, data_responsible, ring_number]]></expression>
+	</reference>
+	<expression type="select-exp">0</expression>
+</view>
+
+<view name="longersum" materialized="true">
+	<schema name="views"/>
+	<role name="admin"/>
+	<position x="2600" y="1368.33"/>
+	<reference>
+		<expression><![CDATA[year_tracked år, species, count(distinct(ring_number)) antall_unike_ring_nummer, count(*) antall_posisjoner, count(distinct(colony)) antall_kolonier
+    FROM positions.postable
+    GROUP BY år, species
+    ORDER BY år, species]]></expression>
+	</reference>
+	<expression type="select-exp">0</expression>
+</view>
+
+<view name="shorttable" materialized="true">
+	<schema name="views"/>
+	<role name="admin"/>
+	<position x="2601.67" y="1461.67"/>
+	<reference>
+		<expression><![CDATA[ count(DISTINCT postable.species) AS "Antall arter",
+    count(DISTINCT postable.colony) AS "Antall kolonier",
+    count(DISTINCT postable.year_tracked) AS "Antall år",
+    count(*) AS "Antall positions",
+    count(DISTINCT postable.ring_number) AS "Antall individer"
+   FROM positions.postable]]></expression>
+	</reference>
+	<expression type="select-exp">0</expression>
+</view>
+
+<view name="shorttableeqfilter3">
+	<schema name="views"/>
+	<role name="admin"/>
+	<position x="2601.67" y="1440"/>
+	<reference>
+		<expression><![CDATA[count(DISTINCT postable.species) AS "Antall arter",
+    count(DISTINCT postable.colony) AS "Antall kolonier",
+    count(DISTINCT postable.year_tracked) AS "Antall år",
+    count(*) AS "Antall positions",
+    count(DISTINCT postable.ring_number) AS "Antall individer"
+   FROM positions.postable
+  WHERE postable.eqfilter3 = 1]]></expression>
+	</reference>
+	<expression type="select-exp">0</expression>
+</view>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="loggers.logger_info">
