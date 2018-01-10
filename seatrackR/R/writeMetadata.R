@@ -13,7 +13,6 @@
 #' @examples
 #' dontrun{
 #' seatrackConnect(Username = "testreader", Password = "testreader")
-#' metadata <- sampleMetadata
 #' writeMetadata(sampleMetadata)
 #' }
 

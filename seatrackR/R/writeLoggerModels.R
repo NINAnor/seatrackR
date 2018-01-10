@@ -21,7 +21,7 @@ writeLoggerModels <- function(loggerModels, append = T, overwrite = FALSE){
     con,
     {
       DBI::dbSendQuery(con, "SET search_path TO metadata, public")
-      DBI::dbWriteTable(con, "logger_models", loggerModels, append = T, overwrite = overwrite)
+      DBI::dbWriteTable(con, "logger_models", loggerModels, append = append, overwrite = overwrite)
     }
   )
 }

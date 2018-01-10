@@ -21,7 +21,7 @@ writeIndividInfo <- function(individData, append = T, overwrite = FALSE){
     con,
     {
       DBI::dbSendQuery(con, "SET search_path TO individuals, public")
-      DBI::dbWriteTable(con, "individ_info", individData, append = T, overwrite = overwrite)
+      DBI::dbWriteTable(con, "individ_info", individData, append = append, overwrite = overwrite)
     }
   )
 }

@@ -23,8 +23,8 @@ devtools::install_github("rstats-db/DBI"). Note that connections are only accept
 \examples{
 dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
-dbGetQuery(con, "SELECT * FROM loggers.logging_session LIMIT 10")
-dbDisconnect(con)
+DBI::dbGetQuery(con, "SELECT * FROM loggers.logging_session LIMIT 10")
+DBI::dbDisconnect(con)
 }
 }
 
