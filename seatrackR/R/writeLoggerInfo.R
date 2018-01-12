@@ -10,7 +10,7 @@
 #' @export
 #' @examples
 #' dontrun{
-#' seatrackConnect(Username = "testreader", Password = "testreader")
+#' connectSeatrack(Username = "testreader", Password = "testreader")
 #' newLogger <- data.frame("logger_serial_no" = "test_9876", "producer" = "testproducer",
 #' "production_year" = 2010, "logger_model" = "testmodel", "project" = "seatrack")
 #' writeLoggerInfo(newLogger)
