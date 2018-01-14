@@ -11,22 +11,18 @@
 #' @examples
 #' dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
-#' newLogger <- data.frame("logger_serial_no" = "test_9876", "producer" = "testproducer",
-#' "production_year" = 2010, "logger_model" = "testmodel", "project" = "seatrack")
-#' writeLoggerInfo(newLogger)
+#' writeLoggerImport(sampleLoggerImport)
 #'
-#' #Or, using the sample data set:
-#' writeLoggerInfo(sampleLoggerInfo)
 #' }
 
 
-writeLoggerInfo <- function(loggerData, append = T, overwrite = FALSE){
+writeLoggerImport <- function(loggerImport, append = T, overwrite = FALSE){
   seatrackR:::checkCon()
   DBI::dbWithTransaction(
     con,
     {
-      DBI::dbSendQuery(con, "SET search_path TO loggers, public")
-      DBI::dbWriteTable(con, "logger_info", loggerData, append = append, overwrite = overwrite)
+      DBI::dbSendQuery(con, "SET search_path TO imports, public")
+      DBI::dbWriteTable(con, "logger_import", loggerImport, append = append, overwrite = overwrite)
     }
   )
 }

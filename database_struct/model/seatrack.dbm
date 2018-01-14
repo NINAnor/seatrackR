@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,428" last-zoom="0.6"
+<dbmodel pgmodeler-ver="0.9.0" last-position="0,792" last-zoom="0.6"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -163,14 +163,14 @@ CREATE EXTENSION IF NOT EXISTS "tsm_system_rows";]]></prepended-sql>
 	<column name="logger_serial_no" not-null="true">
 		<type name="text" length="0"/>
 	</column>
+	<column name="logger_model" not-null="true">
+		<type name="text" length="0"/>
+	</column>
 	<column name="producer" not-null="true">
 		<type name="text" length="0"/>
 	</column>
 	<column name="production_year" not-null="true">
 		<type name="smallint" length="0"/>
-	</column>
-	<column name="logger_model" not-null="true">
-		<type name="text" length="0"/>
 	</column>
 	<column name="project">
 		<type name="text" length="0"/>
@@ -184,16 +184,6 @@ CREATE EXTENSION IF NOT EXISTS "tsm_system_rows";]]></prepended-sql>
 	<constraint name="logger_mod_serial_uq" type="uq-constr" table="loggers.logger_info">
 		<columns names="logger_model,logger_serial_no" ref-type="src-columns"/>
 	</constraint>
-	<initial-data>
-<![CDATA[id•logger_id•logger_serial_no•producer•production_year•logger_model•project⸣
-••test_1234•testproducer•2013•testmodel•seatrack⸣
-••C769•Biotrack•2015•mk4083•seatrack⸣
-••C770•Biotrack•2015•mk4083•seatrack⸣
-••C771•Biotrack•2015•mk4083•seatrack⸣
-••C772•Biotrack•2015•mk4083•seatrack⸣
-••C773•Biotrack•2015•mk4083•seatrack⸣
-••C774•Biotrack•2015•mk4083•seatrack]]>
-	</initial-data>
 </table>
 
 <table name="logger_producers">
@@ -1008,16 +998,6 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<constraint name="status_id" type="uq-constr" table="individuals.individ_status">
 		<columns names="status_id" ref-type="src-columns"/>
 	</constraint>
-	<initial-data>
-<![CDATA[logger_id•weight•scull•tarsus•wing•breeding_stage•eggs•chicks•hatching_success•breeding_success•breeding_success_criterion•data_responsible•back_on_nest•comment•location•session_id⸣
-1•••••nonbreeding/failed_breeder•••0•0•10d•Jens Åström••••1⸣
-2•••••prebreeding•••1••15d•Jens Åström••••⸣
-3•••••incubating•••1••20d•Jens Åström••••⸣
-4•••••rearing chicks•••1•1•25d•Jens Åström••••⸣
-5•••••breeding/stage_unknown•••••30d•Jens Åström••••⸣
-6•••••failed breeder•••1•0•fledging•Jens Åström••••⸣
-7•••••unknown•••••none•Jens Åström••••]]>
-	</initial-data>
 </table>
 
 <table name="retrieval">
@@ -1551,9 +1531,6 @@ WHERE active = TRUE]]></expression>
 	<column name="logger_id" not-null="true">
 		<type name="integer" length="80"/>
 	</column>
-	<column name="startdate_gmt" not-null="true">
-		<type name="date" length="0"/>
-	</column>
 	<column name="starttime_gmt" not-null="true">
 		<type name="timestamp" length="0" precision="0"/>
 	</column>
@@ -1569,9 +1546,6 @@ WHERE active = TRUE]]></expression>
 	<column name="days_delayed">
 		<type name="smallint" length="0"/>
 	</column>
-	<column name="programmed_gmt_date">
-		<type name="date" length="0"/>
-	</column>
 	<column name="programmed_gmt_time">
 		<type name="timestamp" length="0"/>
 	</column>
@@ -1581,10 +1555,6 @@ WHERE active = TRUE]]></expression>
 	<constraint name="session_id_unique" type="uq-constr" table="loggers.startup">
 		<columns names="session_id" ref-type="src-columns"/>
 	</constraint>
-	<initial-data>
-<![CDATA[id•session_id•logger_id•startdate_gmt•starttime_gmt•logging_mode•started_by•started_where•days_delayed•programmed_gmt_date•programmed_gmt_time⸣
-••1•2017-05-01•2017-05-01 10:00:00•testmode•Jens Åström•NINA•2•2017-05-01•2017-05-01 10:00:00]]>
-	</initial-data>
 </table>
 
 <schema name="functions" rect-visible="true" fill-color="#e1e1e1">
@@ -1676,18 +1646,27 @@ WHERE active = TRUE]]></expression>
 <table name="logger_import">
 	<schema name="imports"/>
 	<role name="admin"/>
-	<position x="2584.34" y="1548.45"/>
+	<position x="2632.67" y="1558.45"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="import_time" not-null="true" default-value="NOW()::timestamp(0)">
 		<type name="timestamp" length="0" precision="0"/>
 	</column>
-	<column name="logger_id" not-null="true">
-		<type name="integer" length="80"/>
+	<column name="logger_serial_no" not-null="true">
+		<type name="text" length="0"/>
 	</column>
-	<column name="startdate_gmt">
-		<type name="date" length="0"/>
+	<column name="logger_model" not-null="true">
+		<type name="text" length="80"/>
+	</column>
+	<column name="producer">
+		<type name="text" length="0"/>
+	</column>
+	<column name="production_year">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="project">
+		<type name="text" length="0"/>
 	</column>
 	<column name="starttime_gmt">
 		<type name="timestamp" length="0" precision="0"/>
@@ -1703,9 +1682,6 @@ WHERE active = TRUE]]></expression>
 	</column>
 	<column name="days_delayed">
 		<type name="smallint" length="0"/>
-	</column>
-	<column name="programmed_gmt_date">
-		<type name="date" length="0"/>
 	</column>
 	<column name="programmed_gmt_time">
 		<type name="timestamp" length="0" precision="0"/>
@@ -2089,26 +2065,39 @@ END;]]></definition>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-	IF NEW.startdate_gmt IS NOT NULL THEN
+	IF NEW.logger_serial_no || NEW.logger_model NOT IN (SELECT logger_serial_no || logger_model FROM loggers.logger_info)
+	 THEN
+	INSERT INTO loggers.logger_info
+					(logger_serial_no,
+					producer, 
+					logger_model,
+					production_year,
+					project)
+	VALUES(NEW.logger_serial_no,
+					NEW.producer,
+					NEW.logger_model,
+					NEW.production_year,
+					NEW.project);
+	END IF;
+	IF NEW.starttime_gmt IS NOT NULL THEN
 	INSERT INTO loggers.startup 
 					(logger_id,  
-					startdate_gmt, 
 					starttime_gmt, 
 					logging_mode, 
 					started_by, 
 					started_where, 
 					days_delayed, 
-					programmed_gmt_date, 
 					programmed_gmt_time)
-	VALUES (NEW.logger_id,  
-					NEW.startdate_gmt, 
-					NEW.starttime_gmt, 
-					NEW.logging_mode, 
-					NEW.started_by, 
-					NEW.started_where, 
-					NEW.days_delayed, 
-					NEW.programmed_gmt_date, 
-					NEW.programmed_gmt_time);
+	SELECT logger_info.logger_id,  
+		NEW.starttime_gmt, 
+		NEW.logging_mode, 
+		NEW.started_by, 
+		NEW.started_where, 
+		NEW.days_delayed, 
+		NEW.programmed_gmt_time
+	FROM loggers.logger_info 
+	WHERE logger_info.logger_model = NEW.logger_model
+	AND logger_info.logger_serial_no = NEW.logger_serial_no;
 	END IF;
 	IF NEW.intended_species IS NOT NULL THEN
 	INSERT INTO loggers.allocation 
@@ -2116,80 +2105,16 @@ END;]]></definition>
 					intended_species,
 					intended_location,
 					intended_deployer)
-	VALUES (NEW.logger_id,
-					NEW.intended_species,
-					NEW.intended_location,
-					NEW.intended_deployer);
-	END IF;
-	IF NEW.deployment_species IS NOT NULL THEN
-	INSERT INTO loggers.deployment
-				(logger_id,
-				individ_id,
-				logger_fate,
-				deployment_species,
-				deployment_location,
-				deployment_date,
-				logger_mount_method)
-	VALUES (NEW.logger_id,
-				NEW.individ_id,
-				NEW.logger_fate,
-				NEW.deployment_species,
-				NEW.deployment_location,
-				NEW.deployment_date,
-				NEW.logger_mount_method);
-	END IF;
-	IF NEW.retrieval_type IS NOT NULL THEN
-		INSERT INTO loggers.retrieval
-					(attribute_name,
-					logger_id,
-					individ_id,
-					retrieval_type,
-					retrieval_location,
-					retrieval_date)
-		VALUES (NEW.attribute_name,
-					NEW.logger_id,
-					NEW.individ_id,
-					NEW.retrieval_type,
-					NEW.retrieval_location,
-					NEW.retrieval_date);
-		END IF;
-	IF NEW.weight IS NOT NULL THEN
-		INSERT INTO individuals.individ_status
-					(logger_id,
-					weight,
-					scull,
-					tarsus,
-					wing,
-					breeding_stage,
-					eggs,
-					chicks,
-					hatching_success,
-					breeding_success,
-					breeding_success_criterion,
-					data_responsible,
-					back_on_nest,
-					"comment",
-					"location")
-	VALUES (NEW.logger_id,
-					NEW.weight,
-					NEW.scull,
-					NEW.tarsus,
-					NEW.wing,
-					NEW.breeding_stage,
-					NEW.eggs,
-					NEW.chicks,
-					NEW.hatching_success,
-					NEW.breeding_success,
-					NEW.breeding_success_criterion,
-					NEW.data_responsible,
-					NEW.back_on_nest_date,
-					NEW."comment",
-					NEW.observation_location);
+	SELECT logger_info.logger_id,
+		NEW.intended_species,
+		NEW.intended_location,
+		NEW.intended_deployer
+		FROM loggers.logger_info 
+	WHERE logger_info.logger_model = NEW.logger_model
+	AND logger_info.logger_serial_no = NEW.logger_serial_no;
 	END IF;
 RETURN NEW;
-END;
-
-]]></definition>
+END;]]></definition>
 </function>
 
 <function name="fn_check_open_session_on_allocation"
@@ -3001,6 +2926,8 @@ END;
     - Morphs
     - logger_status
 * Check age column of metadata_import. Metadata seems to contain lots of text in this column
+
+* logger_import should have logger serial + logger model instead of logger id
 
 pg_dump -C  -d gisdata -t seatrack.postable --data-only | psql -h ninseatrack01.nina.no -d seatrack -U jens.astrom
 ]]></comment>

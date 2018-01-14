@@ -56,6 +56,9 @@ metaRaw[metaRaw == ""] <- NA
 metaRaw$date <- as.Date(metaRaw$date, format = "%d/%m/%Y")
 #metaRaw <-
 metaRaw <- metaRaw[order(metaRaw$date),]
+metaRaw$data_responsible[metaRaw$data_responsible == "Signe Christensen Dalsgaard"] <- "Signe Christensen-Dalsgaard"
+
+
 
 sampleMetadata <- metaRaw
 devtools::use_data(sampleMetadata, overwrite = T)
@@ -81,7 +84,31 @@ sampleLoggerInfo$production_year <- 2013
 sampleLoggerInfo$project <- "seatrack"
 sampleLoggerInfo <- sampleLoggerInfo[c(1, 3, 4, 2, 5)]
 names(sampleLoggerInfo)[c(1, 4)] <- c("logger_serial_no", "logger_model")
-devtools::use_data(sampleLoggerInfo, overwrite = T)
+
+##On second thought, we won't write to logger_info, but include this in logger_import instead
+
+sampleLoggerImport <- sampleLoggerInfo
+sampleLoggerImport$starttime_gmt <- Sys.time()
+sampleLoggerImport$logging_mode <- 1
+sampleLoggerImport$started_by <- "Jens Åström"
+sampleLoggerImport$started_where <- "NINA"
+sampleLoggerImport$days_delayed <- 10
+sampleLoggerImport$programmed_gmt_time <- Sys.time()
+sampleLoggerImport$intended_species <- "Little auk"
+sampleLoggerImport$intended_location <- "Bjørnøya"
+sampleLoggerImport$intended_deployer <- "Vegard Sandøy Bråthen"
+sampleLoggerImport$logger_fate <- "testfate"
+sampleLoggerImport$attribute_name <-  "testattribute"
+sampleLoggerImport$data_responsible <- "Jens Åström"
+sampleLoggerImport <- sampleLoggerImport[c("logger_serial_no", "logger_model", "producer",
+                                           "production_year", "project", "starttime_gmt",
+                                           "logging_mode", "started_by", "started_where",
+                                           "days_delayed", "programmed_gmt_time", "intended_species",
+                                           "intended_location", "intended_deployer", "logger_fate",
+                                           "attribute_name", "data_responsible")]
+
+
+devtools::use_data(sampleLoggerImport, overwrite = T)
 
 sampleLoggerModels <- sampleLoggerInfo[!duplicated(sampleLoggerInfo[c(2, 4)]), c(2, 4)]
 names(sampleLoggerModels) <- c("producer", "model")
