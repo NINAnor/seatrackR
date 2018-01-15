@@ -3,12 +3,13 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,792" last-zoom="0.6"
+<dbmodel pgmodeler-ver="0.9.0" last-position="0,0" last-zoom="0.6"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
 
 <role name="seatrack_writer">
+	<roles names="seatrack_reader" role-type="refer" />
 </role>
 
 <role name="admin"
@@ -35,6 +36,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </role>
 
 <role name="seatrack_metadata_writer">
+	<roles names="seatrack_writer" role-type="refer" />
 </role>
 
 <role name="testwriter"
@@ -1466,7 +1468,7 @@ Testus specius•specius••testspecies]]>
 <table name="temperature">
 	<schema name="activity"/>
 	<role name="admin"/>
-	<position x="2053.33" y="1208.89"/>
+	<position x="2086.67" y="1197.22"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1481,7 +1483,7 @@ Testus specius•specius••testspecies]]>
 <table name="salinity">
 	<schema name="activity"/>
 	<role name="admin"/>
-	<position x="2420" y="1203.89"/>
+	<position x="2453.34" y="1192.22"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -4040,6 +4042,36 @@ END;]]></definition>
 <permission>
 	<object name="metadata" type="schema"/>
 	<roles names="seatrack_writer"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="activity.temperature" type="table"/>
+	<roles names="seatrack_reader"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="activity.temperature" type="table"/>
+	<roles names="seatrack_writer"/>
+	<privileges select="true" delete="true" insert="true" update="true" trigger="true"/>
+</permission>
+<permission>
+	<object name="views.active_logging_sessions" type="view"/>
+	<roles names="seatrack_reader"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="views.closed_sessions_not_shutdown" type="view"/>
+	<roles names="seatrack_reader"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="views" type="schema"/>
+	<roles names="seatrack_reader"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="activity" type="schema"/>
+	<roles names="seatrack_reader"/>
 	<privileges usage="true"/>
 </permission>
 </dbmodel>
