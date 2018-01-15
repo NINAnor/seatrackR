@@ -20,10 +20,10 @@
 writeMetadata <- function(metadata){
   seatrackR:::checkCon()
 
+  DBI::dbSendQuery(con, "SET search_path TO imports, public")
   DBI::dbWithTransaction(
     con,
     {
-      DBI::dbSendQuery(con, "SET search_path TO imports, public")
       DBI::dbWriteTable(con, "metadata_import", metadata, append = T, overwrite = F)
     }
   )

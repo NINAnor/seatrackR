@@ -57,10 +57,20 @@ metaRaw$date <- as.Date(metaRaw$date, format = "%d/%m/%Y")
 #metaRaw <-
 metaRaw <- metaRaw[order(metaRaw$date),]
 metaRaw$data_responsible[metaRaw$data_responsible == "Signe Christensen Dalsgaard"] <- "Signe Christensen-Dalsgaard"
+metaRaw <-metaRaw[is.na(metaRaw$logger_id_retrieved), ] ##Remove all retrievals in this data, since none of them are deployed. We need to add some retrievals
+
+##Make up some retrievals artificially that matches the deployments
+
+tempRetr <- metaRaw[head(!is.na(metaRaw$logger_id_deployed), 20), ]
+tempRetr$logger_id_retrieved <- tempRetr$logger_id_deployed
+tempRetr$logger_model_retrieved <- tempRetr$logger_model_deployed
+tempRetr$logger_id_deployed <- NA
+tempRetr$logger_model_deployed <- NA
+tempRetr$date <- tempRetr$date + 365
 
 
+sampleMetadata <- rbind(metaRaw, tempRetr)
 
-sampleMetadata <- metaRaw
 devtools::use_data(sampleMetadata, overwrite = T)
 
 sampleIndividInfo <- sampleMetadata[!duplicated(sampleMetadata[c(2:3)]),c(2:3, 10, 4, 11, 12, 13:15)]
@@ -143,7 +153,7 @@ compareNA <- function(v1,v2) {
 
 
 
-metadata <- sampleMetadata
+metadata <- metaRaw
 # metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "v2014037"),]
 # metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "v2014025"),]
 # metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "c406"),]
@@ -151,22 +161,9 @@ metadata <- sampleMetadata
 # metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "C415"),]
 # metadata <- metadata[!compareNA(metadata$logger_id_retrieved, "C393"),]
 
-##Get rid of records with loggers retrieved but not deployed
-metadata <- metadata[metadata$logger_id_retrieved %in% metadata$logger_id_deployed,]
 
-#Get rid of records of loggers retrieved before deployed.
-retr <- metaRaw[metaRaw$logger_id_retrieved %in% metaRaw$logger_id_deployed, which(names(metaRaw) %in% c("date", "logger_id_retrieved"))]
-retr <- retr[!is.na(retr$logger_id_retrieved), ]
-
-depl <- metaRaw[metaRaw$logger_id_deployed %in% metaRaw$logger_id_retrieved, which(names(metaRaw) %in% c("date", "logger_id_deployed"))]
-depl <- depl[!is.na(depl$logger_id_deployed), ]
-
-tt <- merge(retr, depl, by.x = "logger_id_retrieved", by.y = "logger_id_deployed")
-tt[tt$date.x > tt$date.y]
 #No loggers retrieved after deployment in this data set.
 ##Test setting retrieval date one year later
-
-metadata <- metadata[is.na(metadata$logger_id_retrieved),]
 
 ##add hoc to compensate for earlier insert
 metadata <- metadata[-which(metadata$logger_id_deployed %in% c("T089", "B1263")), ]
