@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,0" last-zoom="0.6"
+<dbmodel pgmodeler-ver="0.9.0" last-position="0,1440" last-zoom="0.8"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -419,7 +419,7 @@ Jens Åström•J_Åström••]]>
 <table name="logging_session">
 	<schema name="loggers"/>
 	<role name="admin"/>
-	<position x="972.727" y="1027.27"/>
+	<position x="971.394" y="1028.6"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -448,7 +448,7 @@ Jens Åström•J_Åström••]]>
 		<type name="text" length="0"/>
 	</column>
 	<column name="individ_id">
-		<type name="text" length="0"/>
+		<type name="uuid" length="0"/>
 	</column>
 	<constraint name="logging_session_pk" type="pk-constr" table="loggers.logging_session">
 		<columns names="id" ref-type="src-columns"/>
@@ -754,7 +754,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 		<type name="integer" length="80"/>
 	</column>
 	<column name="individ_id" not-null="true">
-		<type name="text" length="0"/>
+		<type name="uuid" length="0"/>
 	</column>
 	<column name="logger_fate">
 		<type name="text" length="0"/>
@@ -826,7 +826,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="individ_id" not-null="true" default-value="uuid_generate_v1()">
-		<type name="text" length="0"/>
+		<type name="uuid" length="0"/>
 	</column>
 	<column name="ring_number">
 		<type name="text" length="0"/>
@@ -847,7 +847,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 		<type name="text" length="0"/>
 	</column>
 	<column name="age">
-		<type name="smallint" length="0"/>
+		<type name="text" length="0"/>
 	</column>
 	<column name="sex">
 		<type name="text" length="0"/>
@@ -936,7 +936,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 <table name="individ_status">
 	<schema name="individuals"/>
 	<role name="admin"/>
-	<position x="440" y="2062.22"/>
+	<position x="437.143" y="2062.22"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -994,6 +994,33 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="location">
 		<type name="text" length="0"/>
 	</column>
+	<column name="ring_number" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="euring_code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="species">
+		<type name="text" length="0"/>
+	</column>
+	<column name="color_ring">
+		<type name="text" length="0"/>
+	</column>
+	<column name="morph">
+		<type name="text" length="0"/>
+	</column>
+	<column name="subspecies">
+		<type name="text" length="0"/>
+	</column>
+	<column name="age">
+		<type name="text" length="0"/>
+	</column>
+	<column name="sex">
+		<type name="text" length="0"/>
+	</column>
+	<column name="sexing_method">
+		<type name="text" length="0"/>
+	</column>
 	<constraint name="individ_status_pk" type="pk-constr" table="individuals.individ_status">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
@@ -1022,7 +1049,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 		<type name="integer" length="0"/>
 	</column>
 	<column name="individ_id" not-null="true">
-		<type name="text" length="0"/>
+		<type name="uuid" length="0"/>
 	</column>
 	<column name="retrieval_type">
 		<type name="text" length="0"/>
@@ -1246,7 +1273,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 <table name="processing">
 	<schema name="positions"/>
 	<role name="admin"/>
-	<position x="2400" y="60"/>
+	<position x="2508.33" y="66.6667"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1533,16 +1560,16 @@ WHERE active = TRUE]]></expression>
 	<column name="logger_id" not-null="true">
 		<type name="integer" length="80"/>
 	</column>
-	<column name="starttime_gmt" not-null="true">
+	<column name="starttime_gmt">
 		<type name="timestamp" length="0" precision="0"/>
 	</column>
-	<column name="logging_mode" not-null="true">
+	<column name="logging_mode">
 		<type name="varchar" length="15"/>
 	</column>
-	<column name="started_by" not-null="true">
+	<column name="started_by">
 		<type name="text" length="0"/>
 	</column>
-	<column name="started_where" not-null="true">
+	<column name="started_where">
 		<type name="text" length="0"/>
 	</column>
 	<column name="days_delayed">
@@ -1648,7 +1675,7 @@ WHERE active = TRUE]]></expression>
 <table name="logger_import">
 	<schema name="imports"/>
 	<role name="admin"/>
-	<position x="2632.67" y="1558.45"/>
+	<position x="2621.9" y="1597.82"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1775,7 +1802,7 @@ WHERE active = TRUE]]></expression>
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="individ_id" not-null="true">
-		<type name="text" length="0"/>
+		<type name="uuid" length="0"/>
 	</column>
 	<column name="lat" not-null="true">
 		<type name="double precision" length="0"/>
@@ -1957,6 +1984,14 @@ END;]]></definition>
 		FROM col
 		WHERE update.session_id = NEW.session_id
 		AND col.session_id = NEW.session_id;
+
+	    IF NEW.deployment_location != a.indented_location
+		FROM (SELECT a.intended_location 
+		FROM loggers.allocation a
+		WHERE a.session_id = NEW.session_id) a THEN
+            RAISE EXCEPTION '% deployment location does not match indended location in allocation table', NEW.deployment_location;
+        END IF;
+
 	RETURN NULL;
 END;]]></definition>
 </function>
@@ -2764,7 +2799,7 @@ END;
 <table name="metadata_import">
 	<schema name="imports"/>
 	<role name="admin"/>
-	<position x="2074.69" y="1544.62"/>
+	<position x="2063.92" y="1583.99"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -2912,7 +2947,7 @@ END;
 </table>
 
 <textbox name="Issues" color="#ffaa00" font-size="9">
-	<position x="1127.69" y="2276.92"/>
+	<position x="944.357" y="2288.59"/>
 	<comment><![CDATA[*  Metadata_import and logger_import needs to be split up.
     - Intended location (where does that come from? same as colony?)
     - Remove comment?
@@ -2932,7 +2967,8 @@ END;
 * logger_import should have logger serial + logger model instead of logger id
 
 pg_dump -C  -d gisdata -t seatrack.postable --data-only | psql -h ninseatrack01.nina.no -d seatrack -U jens.astrom
-]]></comment>
+
+Another time I used 1. create seatrack.postable from def in gisdata, pg_dump -a that table. In pgadmin3 use restore to populate the table. Then insert into positions.postable from that. Works, but ugly.]]></comment>
 </textbox>
 
 <function name="fn_distribute_from_metadata_table"
@@ -2950,6 +2986,29 @@ pg_dump -C  -d gisdata -t seatrack.postable --data-only | psql -h ninseatrack01.
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
+	IF NEW.ring_number || NEW.euring_code NOT IN (SELECT ring_number || euring_code FROM individuals.individ_info) THEN
+		INSERT INTO individuals.individ_info (
+			ring_number,
+			euring_code,
+			species,
+			color_ring,
+			morph,
+			subspecies,
+			age,
+			sex,
+			sexing_method)
+			VALUES(
+				NEW.ring_number,
+				NEW.euring_code,
+				NEW.species,
+				NEW.color_ring,
+				NEW.morph,
+				NEW.subspecies,
+				NEW.age,
+				NEW.sex,
+				NEW.sexing_method);
+	END IF;
+
 	IF NEW.logger_model_deployed IS NOT NULL THEN
 	INSERT INTO loggers.deployment
 				(logger_id,
@@ -2972,10 +3031,9 @@ AND logging_session.active IS True
 AND individ_info.ring_number = NEW.ring_number
 AND individ_info.euring_code = NEW.euring_code;
 	END IF;
-	
-	IF NEW.weight IS NOT NULL THEN
-		INSERT INTO individuals.individ_status
-					(logger_id,
+
+
+INSERT INTO individuals.individ_status	(logger_id,
 					"status_date",
 					session_id,
 					weight,
@@ -2991,7 +3049,16 @@ AND individ_info.euring_code = NEW.euring_code;
 					data_responsible,
 					back_on_nest,
 					"comment",
-					"location")
+					"location",
+						ring_number,
+						euring_code,
+						species,
+						color_ring,
+						morph,
+						subspecies,
+						age,
+						sex,
+						sexing_method)
 	SELECT logging_session.logger_id,
 					NEW.date,
 					logging_session.session_id,
@@ -3008,14 +3075,23 @@ AND individ_info.euring_code = NEW.euring_code;
 					NEW.data_responsible,
 					NEW.back_on_nest,
 					NEW."comment",
-					NEW.colony
+					NEW.colony,
+						NEW.ring_number,
+						NEW.euring_code,
+						NEW.species,
+						NEW.color_ring,
+						NEW.morph,
+						NEW.subspecies,
+						NEW.age,
+						NEW.sex,
+						NEW.sexing_method
 FROM loggers.logging_session, individuals.individ_info
 WHERE individ_info.ring_number = NEW.ring_number
 AND individ_info.euring_code = NEW.euring_code
 AND individ_info.individ_id = logging_session.individ_id
 AND logging_session.active Is True;
-	END IF;
-
+	
+	
 IF NEW.logger_model_retrieved IS NOT NULL THEN
 		INSERT INTO loggers.retrieval
 					(logger_id,
@@ -3024,15 +3100,17 @@ IF NEW.logger_model_retrieved IS NOT NULL THEN
 					retrieval_location,
 					retrieval_date)
 		SELECT logging_session.logger_id,
-					logging_session.individ_id,
+					individ_info.individ_id,
 					NEW.logger_status,
 					NEW.colony,
 					NEW.date
-FROM loggers.logging_session, loggers.logger_info
+FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
 WHERE logging_session.logger_id =	logger_info.logger_id
 AND logger_info.logger_model = NEW.logger_model_retrieved
 AND logger_info.logger_serial_no = NEW.logger_id_retrieved
-AND logging_session.active IS True;
+AND logging_session.active IS True
+AND individ_info.ring_number = NEW.ring_number
+AND individ_info.euring_code = NEW.euring_code;
 END IF;
 RETURN NEW;
 END;]]></definition>
@@ -3367,7 +3445,7 @@ END;]]></definition>
 <view name="categories" materialized="true">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2373.33" y="1448.33"/>
+	<position x="2315.23" y="1479.76"/>
 	<reference>
 		<expression><![CDATA[ species as species_cat, colony as colony_cat, data_responsible as responsible_cat
     , ring_number as ring_number_cat
@@ -3420,6 +3498,143 @@ END;]]></definition>
 	</reference>
 	<expression type="select-exp">0</expression>
 </view>
+
+<function name="fn_update_materialized_views_on_postable_update"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+REFRESH MATERIALIZED VIEW views.categories;
+REFRESH MATERIALIZED VIEW views.longersum;
+REFRESH MATERIALIZED VIEW views.shorttable;
+RETURN NULL;
+END;]]></definition>
+</function>
+
+<trigger name="tr_update_matviews_on_postable_update" firing-type="AFTER" per-line="false" constraint="false"
+	 ins-event="true" del-event="true" upd-event="true" trunc-event="false"
+	 table="positions.postable">
+		<function signature="functions.fn_update_materialized_views_on_postable_update()"/>
+</trigger>
+
+<view name="all_depl_mismatch">
+	<schema name="views"/>
+	<role name="postgres"/>
+	<position x="2322.09" y="1429.96"/>
+	<reference>
+		<expression><![CDATA[
+a.session_id, a.logger_id, a.intended_species, a.intended_location, a.intended_deployer , d.deployment_species, d.deployment_location, d.deployment_date
+FROM loggers.allocation a join loggers.deployment d on
+a.session_id = d.session_id
+WHERE intended_location != deployment_location
+]]></expression>
+	</reference>
+	<expression type="select-exp">0</expression>
+</view>
+
+<function name="fn_update_individ_info_from_individ_status"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	
+	IF NEW.ring_number || NEW.euring_code IN (SELECT ring_number || euring_code FROM individuals.individ_info) THEN
+		IF NEW.species IS NOT NULL THEN 
+		RAISE EXCEPTION 'Species id for metalring number % does not match old info in individ_info table', NEW.ring_number;
+		END IF;
+		IF NEW.color_ring IS NOT NULL THEN
+			UPDATE individuals.individ_info
+				SET color_ring = NEW.color_ring
+				WHERE ring_number = NEW.ring_number
+				AND euring_code = NEW.euring_code;
+		END IF;
+		IF NEW.morph IS NOT NULL THEN
+			UPDATE individuals.individ_info
+				SET morph = NEW.morph
+				WHERE ring_number = NEW.ring_number
+				AND euring_code = NEW.euring_code;
+		END IF;
+		IF NEW.subspecies IS NOT NULL THEN
+			UPDATE individuals.individ_info
+				SET subspecies = NEW.subspecies
+				WHERE ring_number = NEW.ring_number
+				AND euring_code = NEW.euring_code;
+		END IF;
+		IF NEW.age IS NOT NULL THEN
+			UPDATE individuals.individ_info
+				SET age = NEW.age
+				WHERE ring_number = NEW.ring_number
+				AND euring_code = NEW.euring_code;
+		END IF;
+		IF NEW.sex IS NOT NULL THEN
+			UPDATE individuals.individ_info
+				SET sex = NEW.sex,
+				sexing_method = NEW.sexing_method
+				WHERE ring_number = NEW.ring_number
+				AND euring_code = NEW.euring_code;
+		END IF;
+
+	END IF;
+END;
+
+]]></definition>
+</function>
+
+<trigger name="tr_update_individ_info_from_individ_status" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="individuals.individ_status">
+		<function signature="functions.fn_update_individ_info_from_individ_status()"/>
+</trigger>
+
+<function name="fn_check_retrieval_match_with_deployment"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	IF NEW.individ_id != d.individ_id 
+	FROM loggers.deployment d
+	WHERE NEW.session_id = d.session_id THEN
+	RAISE EXCEPTION 'Retrieved individual % does not match deployed individual ', NEW.individ_id;
+	END IF;
+RETURN NULL;
+END;]]></definition>
+</function>
+
+<trigger name="tr_check_mismatch_with_deployment" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="loggers.retrieval">
+		<function signature="functions.fn_check_retrieval_match_with_deployment()"/>
+</trigger>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="loggers.logger_info">
@@ -3590,6 +3805,24 @@ END;]]></definition>
 	<columns names="name" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="fk_species" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.subspecies" table="individuals.individ_status">
+	<columns names="species,subspecies" ref-type="src-columns"/>
+	<columns names="species_name_eng,sub_species" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_sex" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.sex" table="individuals.individ_status">
+	<columns names="sex" ref-type="src-columns"/>
+	<columns names="sex" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_sexing_method" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.sexing_method" table="individuals.individ_status">
+	<columns names="sexing_method" ref-type="src-columns"/>
+	<columns names="method" ref-type="dst-columns"/>
+</constraint>
+
 <constraint name="individ_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="loggers.retrieval">
 	<columns names="individ_id" ref-type="src-columns"/>
@@ -3696,12 +3929,6 @@ END;]]></definition>
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="metadata.logger_files">
 	<columns names="logger_model,logger_producer" ref-type="src-columns"/>
 	<columns names="model,producer" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="metalring_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="individuals.individ_info" table="imports.metadata_import">
-	<columns names="ring_number,euring_code" ref-type="src-columns"/>
-	<columns names="ring_number,euring_code" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="logger_retrieved_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -3959,11 +4186,6 @@ END;]]></definition>
 	 dst-table="metadata.people"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_metadata_import_individ_info" type="relfk"
-	 src-table="imports.metadata_import"
-	 dst-table="individuals.individ_info"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_metadata_import_logger_info" type="relfk"
 	 src-table="imports.metadata_import"
 	 dst-table="loggers.logger_info"
@@ -4022,6 +4244,21 @@ END;]]></definition>
 <relationship name="rel_metadata_import_location" type="relfk"
 	 src-table="imports.metadata_import"
 	 dst-table="metadata.location"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_subspecies" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="metadata.subspecies"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_sex" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="metadata.sex"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_individ_status_sexing_method" type="relfk"
+	 src-table="individuals.individ_status"
+	 dst-table="metadata.sexing_method"
 	 src-required="false" dst-required="false"/>
 
 <permission>

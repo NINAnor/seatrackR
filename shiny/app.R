@@ -58,6 +58,7 @@ server = (function(input, output,session) {
     }
     if (USER$Logged == TRUE)
     {
+##############END LOGIN STUFF, begin ui part#####################
 
       output$page <- renderUI({navbarPage("Seatrack visualization - V.05",
                                           tabPanel('Seatrack data download',
@@ -85,6 +86,9 @@ server = (function(input, output,session) {
                                           tabPanel("Active logger sessions",
                                                    DT::dataTableOutput('activeLoggingSessions')
                                           ),
+                                          tabPanel("Allocation deployment mismatches",
+                                                   DT::dataTableOutput('allDeplMismatch')
+                                          ),
                                           tabPanel("Database stats",
                                                    DT::dataTableOutput('shortTable'),
                                                    DT::dataTableOutput('shortTableEqfilter3'),
@@ -94,7 +98,7 @@ server = (function(input, output,session) {
 
       })
 
-#######
+#######BELOW IS server part##############
 
 
 
@@ -147,6 +151,11 @@ server = (function(input, output,session) {
     sessions <- dbGetQuery(con, "SELECT * FROM views.active_logging_sessions")
     sessions
     })
+
+  output$allDeplMismatch <- DT::renderDataTable({
+    mismatch <- dbGetQuery(con, "SELECT * FROM views.all_depl_mismatch")
+    mismatch
+  })
 
   output$shortTable <- DT::renderDataTable({
 
