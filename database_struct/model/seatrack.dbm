@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,1440" last-zoom="0.8"
+<dbmodel pgmodeler-ver="0.9.0" last-position="652,792" last-zoom="0.8"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -1084,19 +1084,25 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="download_type" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="file_available" not-null="true">
-		<type name="boolean" length="0"/>
-	</column>
-	<column name="stop_date" not-null="true">
+	<column name="download_date">
 		<type name="date" length="0"/>
 	</column>
-	<column name="stop_time" not-null="true">
-		<type name="timestamp" length="0" precision="0"/>
-	</column>
-	<column name="ready_for_deployment" not-null="true">
+	<column name="ready_for_deployment">
 		<type name="boolean" length="0"/>
 	</column>
-	<column name="logger_returned_to_bt" not-null="true">
+	<column name="logger_returned_to_bt">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="logger_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="status">
+		<type name="text" length="0"/>
+	</column>
+	<column name="downloaded_by">
+		<type name="text" length="0"/>
+	</column>
+	<column name="decomissioned">
 		<type name="boolean" length="0"/>
 	</column>
 	<constraint name="shutdown_pk" type="pk-constr" table="loggers.shutdown">
@@ -1724,19 +1730,28 @@ WHERE active = TRUE]]></expression>
 	<column name="intended_deployer">
 		<type name="text" length="0"/>
 	</column>
-	<column name="logger_fate">
-		<type name="text" length="0"/>
-	</column>
-	<column name="attribute_name">
-		<type name="text" length="0"/>
-	</column>
 	<column name="data_responsible">
 		<type name="text" length="0"/>
 	</column>
-	<column name="comment">
+	<column name="status">
 		<type name="text" length="0"/>
 	</column>
-	<column name="observation_location">
+	<column name="shutdown_session">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="downloaded_by">
+		<type name="text" length="0"/>
+	</column>
+	<column name="download_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="download_type">
+		<type name="text" length="0"/>
+	</column>
+	<column name="decomissioned">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="comment">
 		<type name="text" length="0"/>
 	</column>
 	<constraint name="logger_import_pk" type="pk-constr" table="imports.logger_import">
@@ -2149,6 +2164,45 @@ END;]]></definition>
 		FROM loggers.logger_info 
 	WHERE logger_info.logger_model = NEW.logger_model
 	AND logger_info.logger_serial_no = NEW.logger_serial_no;
+	END IF;
+--npt done. must check if session exists?
+	IF shutdown_session IS True THEN
+		WITH foo as (SELECT ls.session_id, ls.logger_id, li.logger_serial_no, li.logger_model, ls.active
+							FROM loggers.logging_session ls , loggers.logger_info li
+							WHERE li.logger_serial_no = NEW.logger_serial_no
+							AND li.logger_model = NEW.logger_model
+							AND li.logger_id = ls.logger_id)
+
+		IF (SELECT session_id FROM foo WHERE active IS True) IN (SELECT s.session_id FROM loggers.shutdown) THEN
+			UPDATE loggers.shutdown
+			SET download_type = NEW.download_type,
+					status = NEW.status,
+					downloaded_by = NEW.downloaded_by,
+					download_type = NEW.download_type,
+					decomissioned = NEW.decomissioned
+					WHERE session_id = foo.session_id; 
+		ELSE INSERT INTO loggers.shutdown (session_id,
+																	download_type,
+																	download_fate,
+																	logger_id,
+																	status,
+																	downloaded_by,
+																	decommisioned)
+							SELECT ls.session_id,
+										NEW.download_type,
+										NEW.download_type,
+										NEW.download_fate,
+										li.logger_id,
+										NEW.status,
+										NEW.downloaded_by,
+										NEW.decomissioned
+							FROM loggers.logger_info li, loggers.logging_session ls
+							WHERE li.logger_serial_no = NEW.logger_serial_no
+							AND li.logger_model = NEW.logger_model
+							AND li.logger_id = ls.logger_id
+							AND ls.active IS True;
+		END IF;
+
 	END IF;
 RETURN NEW;
 END;]]></definition>
@@ -3913,12 +3967,6 @@ END;]]></definition>
 	<columns names="logger_id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="status_location_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.location" table="imports.logger_import">
-	<columns names="observation_location" ref-type="src-columns"/>
-	<columns names="location_name" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="observation_individ_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="individuals.observations">
 	<columns names="individ_id" ref-type="src-columns"/>
@@ -4144,11 +4192,6 @@ END;]]></definition>
 <relationship name="rel_startup_logger_info" type="relfk"
 	 src-table="loggers.startup"
 	 dst-table="loggers.logger_info"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_logger_import_location" type="relfk"
-	 src-table="imports.logger_import"
-	 dst-table="metadata.location"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_observations_individ_info" type="relfk"
