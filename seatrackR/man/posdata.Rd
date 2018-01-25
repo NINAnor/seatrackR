@@ -15,4 +15,3 @@ posdata
 A piece of a posdata file of the original format from Sklinna
 }
 \keyword{datasets}
-

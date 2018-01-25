@@ -25,4 +25,3 @@ seatrackConnect(Username = "testreader", Password = "testreader")
 writeIndividInfo(sampleIndividInfo)
 }
 }
-

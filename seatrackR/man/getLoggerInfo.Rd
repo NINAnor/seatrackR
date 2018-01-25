@@ -18,4 +18,3 @@ seatrackConnect(Username = "testreader", Password = "testreader")
 loggerInfo <- getLoggerInfo()
 }
 }
-

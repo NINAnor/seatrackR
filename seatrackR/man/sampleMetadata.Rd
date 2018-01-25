@@ -13,4 +13,3 @@ A sample of a metadata-table used to test the import functions. The table contai
 from Sklinna in 2016.
 }
 \keyword{datasets}
-

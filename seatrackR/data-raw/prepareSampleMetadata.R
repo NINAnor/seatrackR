@@ -107,18 +107,42 @@ sampleLoggerImport$programmed_gmt_time <- Sys.time()
 sampleLoggerImport$intended_species <- "Little auk"
 sampleLoggerImport$intended_location <- "Bjørnøya"
 sampleLoggerImport$intended_deployer <- "Vegard Sandøy Bråthen"
-sampleLoggerImport$logger_fate <- "testfate"
-sampleLoggerImport$attribute_name <-  "testattribute"
 sampleLoggerImport$data_responsible <- "Jens Åström"
+sampleLoggerImport$shutdown_session <- F
+sampleLoggerImport$field_status <- NA
+sampleLoggerImport$downloaded_by <- NA
+sampleLoggerImport$download_date <- NA
+sampleLoggerImport$download_type <- NA
+sampleLoggerImport$decomissioned <- NA
+sampleLoggerImport$comment <- NA
+
 sampleLoggerImport <- sampleLoggerImport[c("logger_serial_no", "logger_model", "producer",
                                            "production_year", "project", "starttime_gmt",
                                            "logging_mode", "started_by", "started_where",
                                            "days_delayed", "programmed_gmt_time", "intended_species",
-                                           "intended_location", "intended_deployer", "logger_fate",
-                                           "attribute_name", "data_responsible")]
+                                           "intended_location", "intended_deployer", "data_responsible",
+                                           "shutdown_session", "field_status", "downloaded_by", "download_type",
+                                           "download_date", "decomissioned", "comment")]
 
 
 devtools::use_data(sampleLoggerImport, overwrite = T)
+
+sampleLoggerShutdown <- sampleLoggerImport
+
+sampleLoggerShutdown <-  sampleLoggerShutdown[sampleLoggerShutdown$logger_serial_no %in% sampleMetadata$logger_id_retrieved[!is.na(sampleMetadata$logger_id_retrieved)], ]
+names(sampleLoggerShutdown)
+sampleLoggerShutdown[3:15] <- NA
+sampleLoggerShutdown$shutdown_session = T
+sampleLoggerShutdown$download_type[1:30] <- "Successfully downloaded"
+sampleLoggerShutdown$download_type[31:nrow(sampleLoggerShutdown)] <- "Nonresponsive"
+sampleLoggerShutdown$field_status[1:30] <- "OK"
+sampleLoggerShutdown$field_status[31:nrow(sampleLoggerShutdown)] <- "Error"
+sampleLoggerShutdown$downloaded_by <- "Jens Åström"
+sampleLoggerShutdown$download_date <- Sys.Date()
+sampleLoggerShutdown$decomissioned <- F
+
+devtools::use_data(sampleLoggerShutdown, overwrite = T)
+
 
 sampleLoggerModels <- sampleLoggerInfo[!duplicated(sampleLoggerInfo[c(2, 4)]), c(2, 4)]
 names(sampleLoggerModels) <- c("producer", "model")

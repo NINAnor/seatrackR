@@ -17,4 +17,3 @@ Vector of logical values
 \description{
 Taken from the R-cookbook
 }
-

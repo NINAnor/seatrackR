@@ -7,3 +7,5 @@ shiny/shinyPass.Rdata
 old/*
 Rscripts/*
 *.laccdb
+sql/
+Vegard_DB_relatedscript.R

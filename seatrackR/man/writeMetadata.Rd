@@ -26,4 +26,3 @@ seatrackConnect(Username = "testreader", Password = "testreader")
 writeMetadata(sampleMetadata)
 }
 }
-

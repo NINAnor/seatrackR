@@ -1,7 +1,7 @@
 Package: seatrackR
 Title: Interface functions for the seatrack database. Only of interest to the
     seatrack project group.
-Version: 0.0.1.110
+Version: 0.0.1.120
 Authors@R: person("Jens", "Astrom", email = "jens.astrom@nina.no", role = c("aut", "cre"))
 Description: R utility functions for interaction with the seatrack database. Of
     interest only to the project group.
@@ -10,7 +10,7 @@ Depends:
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Imports:
     DBI,
     RPostgres

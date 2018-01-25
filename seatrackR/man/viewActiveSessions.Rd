@@ -19,4 +19,3 @@ seatrackConnect(Username = "testreader", Password = "testreader")
 activeSessions <- viewActiveSessions()
 }
 }
-

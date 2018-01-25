@@ -9,4 +9,3 @@ checkCon()
 \description{
 Internal function
 }
-

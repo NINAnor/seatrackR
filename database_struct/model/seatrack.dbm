@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="652,792" last-zoom="0.8"
+<dbmodel pgmodeler-ver="0.9.0" last-position="1867,1555" last-zoom="1.1"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -1087,16 +1087,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="download_date">
 		<type name="date" length="0"/>
 	</column>
-	<column name="ready_for_deployment">
-		<type name="boolean" length="0"/>
-	</column>
-	<column name="logger_returned_to_bt">
-		<type name="boolean" length="0"/>
-	</column>
-	<column name="logger_id">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="status">
+	<column name="field_status">
 		<type name="text" length="0"/>
 	</column>
 	<column name="downloaded_by">
@@ -1116,7 +1107,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 <table name="file_archive">
 	<schema name="loggers"/>
 	<role name="admin"/>
-	<position x="1560" y="1540"/>
+	<position x="1679.05" y="1560.95"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1733,11 +1724,11 @@ WHERE active = TRUE]]></expression>
 	<column name="data_responsible">
 		<type name="text" length="0"/>
 	</column>
-	<column name="status">
-		<type name="text" length="0"/>
-	</column>
 	<column name="shutdown_session">
 		<type name="boolean" length="0"/>
+	</column>
+	<column name="status">
+		<type name="text" length="0"/>
 	</column>
 	<column name="downloaded_by">
 		<type name="text" length="0"/>
@@ -2087,7 +2078,6 @@ END;]]></definition>
 		AND r.session_id = NEW.session_id)
 		UPDATE loggers.logging_session update SET
 		retrieval_id = NEW.retrieval_id,
-		active = FALSE,
 		year_tracked = date_part('year', dep.deployment_date) || '-' || date_part('year', dep.retrieval_date)
 		FROM dep
 		WHERE update.session_id = NEW.session_id
@@ -2165,35 +2155,26 @@ END;]]></definition>
 	WHERE logger_info.logger_model = NEW.logger_model
 	AND logger_info.logger_serial_no = NEW.logger_serial_no;
 	END IF;
---npt done. must check if session exists?
-	IF shutdown_session IS True THEN
-		WITH foo as (SELECT ls.session_id, ls.logger_id, li.logger_serial_no, li.logger_model, ls.active
+
+	IF NEW.shutdown_session IS True THEN
+		
+		IF NEW.logger_serial_no || NEW.logger_model IN (SELECT logger_serial_no || logger_model  FROM (SELECT ls.session_id, ls.logger_id, li.logger_serial_no, li.logger_model, ls.active
 							FROM loggers.logging_session ls , loggers.logger_info li
 							WHERE li.logger_serial_no = NEW.logger_serial_no
 							AND li.logger_model = NEW.logger_model
-							AND li.logger_id = ls.logger_id)
-
-		IF (SELECT session_id FROM foo WHERE active IS True) IN (SELECT s.session_id FROM loggers.shutdown) THEN
-			UPDATE loggers.shutdown
-			SET download_type = NEW.download_type,
-					status = NEW.status,
-					downloaded_by = NEW.downloaded_by,
-					download_type = NEW.download_type,
-					decomissioned = NEW.decomissioned
-					WHERE session_id = foo.session_id; 
-		ELSE INSERT INTO loggers.shutdown (session_id,
-																	download_type,
-																	download_fate,
-																	logger_id,
-																	status,
-																	downloaded_by,
-																	decommisioned)
+							AND li.logger_id = ls.logger_id
+							AND active IS True) foo) THEN
+			INSERT INTO loggers.shutdown (session_id,
+																download_type,
+																download_date,
+																field_status,
+																downloaded_by,
+																cecomissioned)
 							SELECT ls.session_id,
+								
 										NEW.download_type,
-										NEW.download_type,
-										NEW.download_fate,
-										li.logger_id,
-										NEW.status,
+										NEW.download_date,
+										NEW.field_status,
 										NEW.downloaded_by,
 										NEW.decomissioned
 							FROM loggers.logger_info li, loggers.logging_session ls
@@ -2201,9 +2182,10 @@ END;]]></definition>
 							AND li.logger_model = NEW.logger_model
 							AND li.logger_id = ls.logger_id
 							AND ls.active IS True;
+		ELSE RAISE EXCEPTION 'Logger % of model % not in an open logging session',  NEW.logger_serial_no, NEW.logger_model;
 		END IF;
-
 	END IF;
+
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -2484,27 +2466,28 @@ LAT•_o.bin•LOTEK•]]>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-	IF (TG_OP = 'INSERT') THEN
-	WITH foo as (SELECT s.session_id, s.logger_id, l.logger_model, f.file_basename 	
-			FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
-			INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model
-					)
-	INSERT INTO loggers.file_archive (session_id, filename)
-		SELECT foo.session_id, 's' || foo.session_id || '_' || foo.file_basename
-			FROM foo
-			WHERE foo.session_id = NEW.session_id;
-	RETURN NULL;
-	ELSEIF (TG_OP = 'UPDATE') THEN
-		WITH foo as (SELECT s.session_id, s.logger_id, l.logger_model, f.file_basename 	
-			FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
-			INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model
-					)
-			UPDATE loggers.file_archive SET
-			session_id = foo.session_id,
-			filename = 's' || foo.session_id || '_' || foo.file_basename
-			FROM foo
-			WHERE NEW.session_id = file_archive.session_id;
-	RETURN NULL;
+	IF (TG_OP = 'INSERT' AND NEW.download_type = 'Successfully downloaded') THEN
+		WITH foo as (SELECT s.session_id, s.logger_id, l.logger_serial_no, l.logger_model, f.file_basename, EXTRACT(YEAR from r.retrieval_date) year_retr
+		FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
+		INNER JOIN loggers.retrieval r ON r.session_id = s.session_id 
+		INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model	)
+
+		INSERT INTO loggers.file_archive (session_id, filename)
+		SELECT foo.session_id, logger_serial_no || '_' || foo.year_retr || '_' || foo.logger_model || foo.file_basename
+		FROM foo
+		WHERE foo.session_id = NEW.session_id;
+
+	ELSEIF (TG_OP = 'UPDATE' AND NEW.download_type = 'Successfully downloaded') THEN
+		WITH foo as (SELECT s.session_id, s.logger_id, l.logger_serial_no, l.logger_model, f.file_basename , EXTRACT(YEAR from r.retrieval_date) year_retr
+		FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
+		INNER JOIN loggers.retrieval r ON r.session_id = s.session_id 
+		INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model	)
+
+		UPDATE loggers.file_archive SET
+		session_id = foo.session_id,
+		filename = foo.logger_serial_no || '_' || foo.year_retr || '_' || foo.logger_model || foo.file_basename
+		FROM foo
+		WHERE NEW.session_id = file_archive.session_id;
 	END IF;
 RETURN NULL;
 
@@ -3001,7 +2984,7 @@ END;
 </table>
 
 <textbox name="Issues" color="#ffaa00" font-size="9">
-	<position x="944.357" y="2288.59"/>
+	<position x="948.167" y="2287.64"/>
 	<comment><![CDATA[*  Metadata_import and logger_import needs to be split up.
     - Intended location (where does that come from? same as colony?)
     - Remove comment?
@@ -3688,6 +3671,34 @@ END;]]></definition>
 	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="loggers.retrieval">
 		<function signature="functions.fn_check_retrieval_match_with_deployment()"/>
+</trigger>
+
+<function name="fn_update_session_on_shutdown"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	UPDATE loggers.logging_session
+	SET active = 'False'
+	WHERE session_id = NEW.session_id;
+	RETURN NULL;
+END;]]></definition>
+</function>
+
+<trigger name="tr_update_session_on_shutdown" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="loggers.shutdown">
+		<function signature="functions.fn_update_session_on_shutdown()"/>
 </trigger>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
