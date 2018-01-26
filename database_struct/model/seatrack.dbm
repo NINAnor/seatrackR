@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="1867,1555" last-zoom="1.1"
+<dbmodel pgmodeler-ver="0.9.0" last-position="643,1265" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -855,6 +855,9 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="sexing_method">
 		<type name="text" length="0"/>
 	</column>
+	<column name="latest_info_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
 	<constraint name="individ_info_pk" type="pk-constr" table="individuals.individ_info">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
@@ -1032,7 +1035,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 <table name="retrieval">
 	<schema name="loggers"/>
 	<role name="admin"/>
-	<position x="1460" y="1740"/>
+	<position x="1460" y="1741.11"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -2615,122 +2618,6 @@ END;]]></definition>
 	</initial-data>
 </table>
 
-<function name="fn_distribute_from_logger_import_table_old"
-		window-func="false"
-		returns-setof="false"
-		behavior-type="CALLED ON NULL INPUT"
-		function-type="VOLATILE"
-		security-type="SECURITY INVOKER"
-		execution-cost="1"
-		row-amount="0">
-	<schema name="functions"/>
-	<role name="admin"/>
-	<language name="plpgsql" sql-disabled="true"/>
-	<return-type>
-	<type name="trigger" length="0"/>
-	</return-type>
-	<definition><![CDATA[BEGIN
-	IF NEW.import_type = 'startup' THEN
-	INSERT INTO loggers.startup 
-					(logger_id,  
-					startdate_gmt, 
-					starttime_gmt, 
-					logging_mode, 
-					started_by, 
-					started_where, 
-					days_delayed, 
-					programmed_gmt_date, 
-					programmed_gmt_time)
-	VALUES (NEW.logger_id,  
-					NEW.startdate_gmt, 
-					NEW.starttime_gmt, 
-					NEW.logging_mode, 
-					NEW.started_by, 
-					NEW.started_where, 
-					NEW.days_delayed, 
-					NEW.programmed_gmt_date, 
-					NEW.programmed_gmt_time);
-	END IF;
-	IF NEW.import_type = 'allocation' THEN
-	INSERT INTO loggers.allocation 
-					(logger_id,
-					intended_species,
-					intended_location,
-					intended_deployer)
-	VALUES (NEW.logger_id,
-					NEW.intended_species,
-					NEW.intended_location,
-					NEW.intended_deployer);
-	END IF;
-	IF NEW.import_type = 'deployment' THEN
-	INSERT INTO loggers.deployment
-				(logger_id,
-				individ_id,
-				logger_fate,
-				deployment_species,
-				deployment_location,
-				deployment_date,
-				logger_mount_method)
-	VALUES (NEW.logger_id,
-				NEW.individ_id,
-				NEW.logger_fate,
-				NEW.deployment_species,
-				NEW.deployment_location,
-				NEW.deployment_date,
-				NEW.logger_mount_method);
-	END IF;
-	IF NEW.import_type = 'retrieval' THEN
-		INSERT INTO loggers.retrieval
-					(attribute_name,
-					logger_id,
-					individ_id,
-					retrieval_type,
-					retrieval_location,
-					retrieval_date)
-		VALUES (NEW.attribute_name,
-					NEW.logger_id,
-					NEW.individ_id,
-					NEW.retrieval_type,
-					NEW.retrieval_location,
-					NEW.retrieval_date);
-		END IF;
-	IF NEW.import_type = 'status' THEN
-		INSERT INTO individuals.individ_status
-					(logger_id,
-					weight,
-					scull,
-					tarsus,
-					wing,
-					breeding_stage,
-					eggs,
-					chicks,
-					hatching_success,
-					breeding_success,
-					breeding_success_criterion,
-					data_responsible,
-					back_on_nest,
-					"comment",
-					"location")
-	VALUES (NEW.logger_id,
-					NEW.weight,
-					NEW.scull,
-					NEW.tarsus,
-					NEW.wing,
-					NEW.breeding_stage,
-					NEW.eggs,
-					NEW.chicks,
-					NEW.hatching_success,
-					NEW.breeding_success,
-					NEW.breeding_success_criterion,
-					NEW.data_responsible,
-					NEW.back_on_nest_date,
-					NEW."comment",
-					NEW.observation_location);
-	END IF;
-RETURN NEW;
-END;]]></definition>
-</function>
-
 <trigger name="tr_delete_after_import" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
 	 table="imports.logger_import">
@@ -3023,28 +2910,28 @@ Another time I used 1. create seatrack.postable from def in gisdata, pg_dump -a 
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-	IF NEW.ring_number || NEW.euring_code NOT IN (SELECT ring_number || euring_code FROM individuals.individ_info) THEN
-		INSERT INTO individuals.individ_info (
-			ring_number,
-			euring_code,
-			species,
-			color_ring,
-			morph,
-			subspecies,
-			age,
-			sex,
-			sexing_method)
-			VALUES(
-				NEW.ring_number,
-				NEW.euring_code,
-				NEW.species,
-				NEW.color_ring,
-				NEW.morph,
-				NEW.subspecies,
-				NEW.age,
-				NEW.sex,
-				NEW.sexing_method);
-	END IF;
+IF NEW.ring_number || NEW.euring_code NOT IN (SELECT ring_number || euring_code FROM individuals.individ_info) THEN
+INSERT INTO individuals.individ_info (ring_number,
+															euring_code,
+															species,
+															color_ring,
+															morph,
+															subspecies,
+															age,
+															sex,
+															sexing_method,
+															latest_info_date)		
+					VALUES(NEW.ring_number,
+									NEW.euring_code,
+									NEW.species,
+									NEW.color_ring,
+									NEW.morph,
+									NEW.subspecies,
+									NEW.age,
+									NEW.sex,
+									NEW.sexing_method,
+									NEW."date");
+END IF;
 
 	IF NEW.logger_model_deployed IS NOT NULL THEN
 	INSERT INTO loggers.deployment
@@ -3069,8 +2956,52 @@ AND individ_info.ring_number = NEW.ring_number
 AND individ_info.euring_code = NEW.euring_code;
 	END IF;
 
+IF NEW.date = (SELECT individ_status.status_date
+						FROM loggers.logging_session, individuals.individ_info, individuals.individ_status , 
+						WHERE individ_info.ring_number = NEW.ring_number
+						AND individ_info.euring_code = NEW.euring_code
+						AND individ_info.individ_id = logging_session.individ_id
+						AND logging_session.active Is True
+						AND logging_session.session_id = is.session_id) 
 
-INSERT INTO individuals.individ_status	(logger_id,
+THEN
+
+	UPDATE individuals.individ_status
+	SET 			weight = NEW.weight,
+					scull = NEW.scull,
+					tarsus = NEW.tarsus,
+					wing = NEW.wing, 
+					breeding_stage = NEW.breeding_stage,
+					eggs = NEW.eggs,
+					chicks = NEW.chicks, 
+					hatching_success = NEW.hatching_success,
+					breeding_success = NEW.breeding_success,
+					breeding_success_criterion = NEW.breeding_success_criterion,
+					data_responsible = NEW.data_responsible,
+					back_on_nest = NEW.back_on_nest,
+					"comment" = NEW."comment",
+					"location" = NEW."location",
+						ring_number = NEW.ring_number,
+						euring_code = NEW.euring_code,
+						species = NEW.species, 
+						color_ring = NEW.color_ring,
+						morph = NEW.morph,
+						subspecies = NEW.subspecies,
+						age = NEW.age,
+						sex = NEW.sex,
+						sexing_method = NEW.sexing_method
+		FROM loggers.logging_session, individuals.individ_info
+		WHERE	logger_id = logging_session.logger_id
+		AND status_date = NEW.date
+		AND  session_id = logging_session.session_id
+		AND individ_info.ring_number = NEW.ring_number
+		AND individ_info.euring_code = NEW.euring_code
+		AND individ_info.individ_id = logging_session.individ_id
+		AND logging_session.active Is True;
+	
+ELSE
+
+	INSERT INTO individuals.individ_status	(logger_id,
 					"status_date",
 					session_id,
 					weight,
@@ -3122,12 +3053,16 @@ INSERT INTO individuals.individ_status	(logger_id,
 						NEW.age,
 						NEW.sex,
 						NEW.sexing_method
-FROM loggers.logging_session, individuals.individ_info
-WHERE individ_info.ring_number = NEW.ring_number
-AND individ_info.euring_code = NEW.euring_code
-AND individ_info.individ_id = logging_session.individ_id
-AND logging_session.active Is True;
+				FROM loggers.logging_session, individuals.individ_info
+				WHERE individ_info.ring_number = NEW.ring_number
+				AND individ_info.euring_code = NEW.euring_code
+				AND individ_info.individ_id = logging_session.individ_id
+				AND logging_session.active Is True;
+
+END IF;
 	
+
+
 	
 IF NEW.logger_model_retrieved IS NOT NULL THEN
 		INSERT INTO loggers.retrieval
@@ -3596,9 +3531,18 @@ WHERE intended_location != deployment_location
 	<definition><![CDATA[BEGIN
 	
 	IF NEW.ring_number || NEW.euring_code IN (SELECT ring_number || euring_code FROM individuals.individ_info) THEN
-		IF NEW.species IS NOT NULL THEN 
-		RAISE EXCEPTION 'Species id for metalring number % does not match old info in individ_info table', NEW.ring_number;
+		IF NEW.species != (SELECT(foo.species)
+		FROM (SELECT species, ring_number, euring_code FROM individuals.individ_info) foo
+		WHERE NEW.ring_number = foo.ring_number
+		AND NEW.euring_code = foo.euring_code) THEN
+		RAISE EXCEPTION 'Species id for metalring number % does not match old species', NEW.ring_number;
 		END IF;
+
+		UPDATE individuals.individ_info
+		SET latest_info_date = NEW.status_date
+		WHERE ring_number = NEW.ring_number
+		AND euring_code = NEW.euring_code; 
+
 		IF NEW.color_ring IS NOT NULL THEN
 			UPDATE individuals.individ_info
 				SET color_ring = NEW.color_ring
@@ -3632,8 +3576,8 @@ WHERE intended_location != deployment_location
 		END IF;
 
 	END IF;
+RETURN NEW;
 END;
-
 ]]></definition>
 </function>
 
@@ -3700,6 +3644,167 @@ END;]]></definition>
 	 table="loggers.shutdown">
 		<function signature="functions.fn_update_session_on_shutdown()"/>
 </trigger>
+
+<function name="fn_check_shutdown_after_startup"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	IF NEW.download_date < (SELECT starttime_gmt::date
+				FROM loggers.startup
+				WHERE NEW.session_id = startup.session_id) THEN
+
+				SELECT raise_logger_session_exception(logger_serial_no, session_id)
+				FROM (SELECT starttime_gmt::date, logger_info.logger_serial_no, logging_session.session_id 
+				FROM loggers.startup, loggers.logger_info, loggers.logging_session
+				WHERE NEW.session_id = logging_session.session_id
+				AND logging_session.logger_id = logger_info.logger_id) fo;
+
+	
+	END IF;
+	RETURN NULL;
+END;]]></definition>
+</function>
+
+<trigger name="tr_check_shutdown_after_startup" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="loggers.shutdown">
+		<function signature="functions.fn_check_shutdown_after_startup()"/>
+</trigger>
+
+<function name="fn_check_retr_after_depl"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	IF NEW.retrieval_date < (SELECT deployment_date
+				FROM loggers.deployment
+				WHERE NEW.session_id = deployment.session_id) THEN
+
+				SELECT functions.fn_raise_download_date_exception(logger_serial_no, session_id)
+				FROM (SELECT logger_info.logger_serial_no, logging_session.session_id 
+				FROM loggers.logger_info, loggers.logging_session
+				WHERE NEW.session_id = logging_session.session_id
+				AND logging_session.logger_id = logger_info.logger_id) fo;
+
+	
+	END IF;
+	RETURN NULL;
+END;]]></definition>
+</function>
+
+<trigger name="tr_check_retr_after_depl" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="loggers.retrieval">
+		<function signature="functions.fn_check_retr_after_depl()"/>
+</trigger>
+
+<function name="fn_check_depl_after_startup"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	IF NEW.deployment_date < (SELECT starttime_gmt::date
+				FROM loggers.startup
+				WHERE NEW.session_id = startup.session_id) THEN
+
+				SELECT functions.fn_raise_deployment_date_exception(logger_serial_no, session_id)
+				FROM (SELECT logger_info.logger_serial_no, logging_session.session_id 
+				FROM loggers.startup, loggers.logger_info, loggers.logging_session
+				WHERE NEW.session_id = logging_session.session_id
+				AND logging_session.logger_id = logger_info.logger_id) fo;
+
+	
+	END IF;
+	RETURN NULL;
+END;]]></definition>
+</function>
+
+<trigger name="tr_check_depl_after_startup" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="loggers.deployment">
+		<function signature="functions.fn_check_depl_after_startup()"/>
+</trigger>
+
+<function name="fn_raise_download_date_exception"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="void" length="0"/>
+	</return-type>
+	<parameter name="logger_id">
+		<type name="text" length="0"/>
+	</parameter>
+	<parameter name="session_id">
+		<type name="integer" length="0"/>
+	</parameter>
+	<definition><![CDATA[BEGIN
+  RAISE EXCEPTION 'Download date of logger % in session % is earlier than startup date', $1, $2;
+END;]]></definition>
+</function>
+
+<function name="fn_raise_deployment_date_exception"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="void" length="0"/>
+	</return-type>
+	<parameter name="logger_id">
+		<type name="text" length="0"/>
+	</parameter>
+	<parameter name="session_id">
+		<type name="integer" length="0"/>
+	</parameter>
+	<definition><![CDATA[BEGIN
+  RAISE EXCEPTION 'Deployment date of logger % in session % is earlier than startup date', $1, $2;
+END;]]></definition>
+</function>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="loggers.logger_info">

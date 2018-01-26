@@ -96,9 +96,9 @@ sampleLoggerInfo <- sampleLoggerInfo[c(1, 3, 4, 2, 5)]
 names(sampleLoggerInfo)[c(1, 4)] <- c("logger_serial_no", "logger_model")
 
 ##On second thought, we won't write to logger_info, but include this in logger_import instead
-
+require(lubridate)
 sampleLoggerImport <- sampleLoggerInfo
-sampleLoggerImport$starttime_gmt <- Sys.time()
+sampleLoggerImport$starttime_gmt <- Sys.time() - years(4)
 sampleLoggerImport$logging_mode <- 1
 sampleLoggerImport$started_by <- "Jens Åström"
 sampleLoggerImport$started_where <- "NINA"
