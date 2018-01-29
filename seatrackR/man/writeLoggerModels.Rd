@@ -21,7 +21,7 @@ This is a convenience function that writes to the "metadata.logger_models"
 }
 \examples{
 dontrun{
-seatrackConnect(Username = "testreader", Password = "testreader")
+connectSeatrack(Username = "testreader", Password = "testreader")
 writeLoggerModels(sampleLoggerModels)
 }
 }

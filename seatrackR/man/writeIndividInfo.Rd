@@ -21,7 +21,7 @@ This is a convenience function that writes to the "individuals.individ_info"
 }
 \examples{
 dontrun{
-seatrackConnect(Username = "testreader", Password = "testreader")
+connectSeatrack(Username = "testreader", Password = "testreader")
 writeIndividInfo(sampleIndividInfo)
 }
 }

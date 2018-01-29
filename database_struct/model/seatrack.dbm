@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="643,1265" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="534,1252" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -765,14 +765,14 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="deployment_location" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="deployment_date">
+	<column name="deployment_date" not-null="true">
 		<type name="date" length="0"/>
 	</column>
 	<column name="logger_mount_method">
 		<type name="text" length="0"/>
 	</column>
 	<constraint name="deployment_pk" type="pk-constr" table="loggers.deployment">
-		<columns names="id" ref-type="src-columns"/>
+		<columns names="id,deployment_date" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="deployment_id_unique" type="uq-constr" table="loggers.deployment">
 		<columns names="deployment_id" ref-type="src-columns"/>
@@ -1060,11 +1060,11 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="retrieval_location">
 		<type name="text" length="0"/>
 	</column>
-	<column name="retrieval_date">
+	<column name="retrieval_date" not-null="true">
 		<type name="date" length="0"/>
 	</column>
 	<constraint name="retrieval_pk" type="pk-constr" table="loggers.retrieval">
-		<columns names="id" ref-type="src-columns"/>
+		<columns names="id,retrieval_date" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="retrieval_id_unique" type="uq-constr" table="loggers.retrieval">
 		<columns names="retrieval_id" ref-type="src-columns"/>
@@ -2469,7 +2469,8 @@ LAT•_o.bin•LOTEK•]]>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-	IF (TG_OP = 'INSERT' AND NEW.download_type = 'Successfully downloaded') THEN
+	IF (TG_OP = 'INSERT' AND (NEW.download_type = 'Successfully downloaded' 
+									OR NEW.download_type = 'Reconstructed')) THEN
 		WITH foo as (SELECT s.session_id, s.logger_id, l.logger_serial_no, l.logger_model, f.file_basename, EXTRACT(YEAR from r.retrieval_date) year_retr
 		FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
 		INNER JOIN loggers.retrieval r ON r.session_id = s.session_id 
@@ -2480,7 +2481,8 @@ LAT•_o.bin•LOTEK•]]>
 		FROM foo
 		WHERE foo.session_id = NEW.session_id;
 
-	ELSEIF (TG_OP = 'UPDATE' AND NEW.download_type = 'Successfully downloaded') THEN
+	ELSEIF (TG_OP = 'UPDATE' AND (NEW.download_type = 'Successfully downloaded'
+									OR NEW.download_type = 'Reconstructed')) THEN
 		WITH foo as (SELECT s.session_id, s.logger_id, l.logger_serial_no, l.logger_model, f.file_basename , EXTRACT(YEAR from r.retrieval_date) year_retr
 		FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
 		INNER JOIN loggers.retrieval r ON r.session_id = s.session_id 
@@ -3675,12 +3677,6 @@ END;]]></definition>
 	RETURN NULL;
 END;]]></definition>
 </function>
-
-<trigger name="tr_check_shutdown_after_startup" firing-type="BEFORE" per-line="true" constraint="false"
-	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
-	 table="loggers.shutdown">
-		<function signature="functions.fn_check_shutdown_after_startup()"/>
-</trigger>
 
 <function name="fn_check_retr_after_depl"
 		window-func="false"

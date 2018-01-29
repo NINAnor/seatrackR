@@ -58,6 +58,7 @@ metaRaw$date <- as.Date(metaRaw$date, format = "%d/%m/%Y")
 metaRaw <- metaRaw[order(metaRaw$date),]
 metaRaw$data_responsible[metaRaw$data_responsible == "Signe Christensen Dalsgaard"] <- "Signe Christensen-Dalsgaard"
 metaRaw <-metaRaw[is.na(metaRaw$logger_id_retrieved), ] ##Remove all retrievals in this data, since none of them are deployed. We need to add some retrievals
+metaRaw$date[is.na(metaRaw$date)] <- "2016-03-01"
 
 ##Make up some retrievals artificially that matches the deployments
 
@@ -140,6 +141,7 @@ sampleLoggerShutdown$field_status[31:nrow(sampleLoggerShutdown)] <- "Error"
 sampleLoggerShutdown$downloaded_by <- "Jens Åström"
 sampleLoggerShutdown$download_date <- Sys.Date()
 sampleLoggerShutdown$decomissioned <- F
+sampleLoggerShutdown$download_type[20:40] <- "Reconstructed"
 
 devtools::use_data(sampleLoggerShutdown, overwrite = T)
 

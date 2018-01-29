@@ -15,7 +15,7 @@ sessions marked "active = TRUE"
 }
 \examples{
 dontrun{
-seatrackConnect(Username = "testreader", Password = "testreader")
+connectSeatrack(Username = "testreader", Password = "testreader")
 activeSessions <- viewActiveSessions()
 }
 }

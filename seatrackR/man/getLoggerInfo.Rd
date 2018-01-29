@@ -14,7 +14,7 @@ This is a convenience function that reads from the table "loggers.logger_info"
 }
 \examples{
 dontrun{
-seatrackConnect(Username = "testreader", Password = "testreader")
+connectSeatrack(Username = "testreader", Password = "testreader")
 loggerInfo <- getLoggerInfo()
 }
 }

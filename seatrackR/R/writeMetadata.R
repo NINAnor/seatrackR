@@ -12,7 +12,7 @@
 #' @export
 #' @examples
 #' dontrun{
-#' seatrackConnect(Username = "testreader", Password = "testreader")
+#' connectSeatrack(Username = "testreader", Password = "testreader")
 #' writeMetadata(sampleMetadata)
 #' }
 
