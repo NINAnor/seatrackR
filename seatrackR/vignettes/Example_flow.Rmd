@@ -1,0 +1,121 @@
+---
+title: "Example workflow of input and output to the Seatrack database"
+author: "Jens Åström"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  tidy = T
+)
+```
+
+Summary
+=============
+This is an example of a normal workflow that goes through the normal cycle of logger data. This cycle also describes the order in which the tasks is meant to be performed. There are several checks in the database that might throw an error if this order is not respected, e.g. if deployment info is registered before the logger is started up, or a logger is retrieved before it is deployed etc.
+
+1. Connecting to the database
+2. Importing logger information
+    a. Registering loggers
+    b. Starting a logging session
+    c. Allocating loggers to a colony and species
+3. Importing metadata
+    a. Registering deployment data
+    b. Registering retrieval data
+    c. Registering individual bird info
+4. Shutting down loggers
+    a. Closing a logging session
+    b. Creating file names associated with the logger download procedure
+5. Storing download files
+    a. Identifying which files the storage place expects
+    b. Uploading logger files
+6. Retrieving download files from the storage space (this step can be done anytime for already present files)
+
+There are of course other important taskt, but these are not covered here. For example, sometimes it is necessary to update the lookup tables for standard information. This may be a new logger model, a new colony, new people working in the project and so on. Other tasks is to upload the processed positions files.
+
+Firstly
+===========
+
+Remember to always work using the lastest version of the R package SeatrackR. This is installed by:
+
+```{r}
+devtools::install_github("NINAnor/seatrack-db/seatrackR")
+```
+
+As of this time, the current version is `r gsub("(.*)([0-9]\\.[0-9]*\\.[0-9]*\\.[0-9]*)(.*)", "\\2",  citation("seatrackR"), perl = T)`.
+
+
+Connecting to the database
+============
+Use your name and password, provided to you elsewhere. For this work-through, we use the username: testwriter with password:testwriter.
+
+```{r connect}
+library(seatrackR)
+connectSeatrack(Username = "testwriter", Password = "testwriter")
+```
+
+Internally, this creates a connection to the database called `con` through the package `DBI` using the driver `Rpostgres::Postgres()`. Most functions used later checks that this connection is active and trows an error if it is not. Although you probably won't ever have to, you check the connection and also disconnect manually. Normally, you don't need to disconnect.
+
+```{r disconnect}
+
+disconnectSeatrack()
+
+seatrackR:::checkCon() ##produces error if not connected
+
+connectSeatrack(Username = "testwriter", Password = "testwriter")
+
+seatrackR:::checkCon() ##returns nothing if the connection exists
+
+```
+
+
+Importing logger info, allocating loggers, and starting logging sessions.
+======================
+There are two major routes for importing logger data into the database. The first is through the table imports.logger_import, which takes info on logger serial numbers and models, startup info, allocation info, and shutdown info. This table is just a pipeline to other tables in the database. It redistributes data to several tables depending on what it is fed but is always itself empty. This is meant as a convenience for the user so that they don't have to interact to more tables than necessary.
+
+As of today, the redistribution rules are:
+
+*  If the `logger_serial_number` + the `logger_model` column is not already present in the loggers.logger_info table, this info is added as a new logger and given a new logger_id in the loggers.logger_info table. This means that typoes in this import can result in registering non existent loggers! Make sure the logger serial numbers are correct when importing this data. These colums are then written to the loggers.logger_info table:
+    - logger_erial_no
+    - producer
+    - logger_model
+    -	production_year
+    - project
+*  If the column `starttime_gmt` is not empty (NULL), the logger is started up. A new logging session is registered in the loggers.logging_session as active, and these columns are moved to the loggers.startup table:
+    - logger_id
+    - starttime_gmt
+    -	logging_mode
+    -	started_by
+    -	started_where
+    -	days_delayed
+    -	programmed_gmt_time
+* If the column `intended_species` is not empty (NULL), the allocation data is moved to the loggers.allocation table. These columns are filled in in the table loggers.startup:
+    - logger_id
+    - intended_species
+    -	intended_location
+    -	intended_deployer
+    
+* Lastly, if the column `shutdown_session` is True, the logging session is shutdown in the table loggers.logging_session and info about the shutdown is imported into the loggers.shutdown table. If the column `download_type` at the same time either "Successfully downloaded", or "Reconstructed", filenames are also generated in the `loggers.file_archive` table. These columns are imported into the loggers.shutdown:
+    - session_id
+    -	download_type
+    -	download_date
+    - field_status
+    -	downloaded_by
+    -	decomissioned
+    
+    
+The table `sampleLoggerImport` contains an example of information required to register, startup, and allocate a number of loggers. This is written to the `imports.logger_import` table by the function `writeLoggerImport`.
+    
+```{r}
+head(sampleLoggerImport)
+
+writeLoggerImport(sampleLoggerImport)
+```
+

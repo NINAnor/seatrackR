@@ -2,10 +2,10 @@
 % Please edit documentation in R/checkCon.R
 \name{checkCon}
 \alias{checkCon}
-\title{Check valid seatrack database connection}
+\title{Internal functions}
 \usage{
 checkCon()
 }
 \description{
-Internal function
+Internal functions
 }

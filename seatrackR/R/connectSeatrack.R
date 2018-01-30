@@ -35,3 +35,8 @@ connectSeatrack <- function(Username = "testreader", Password = "testreader", ho
 
 }
 
+#' @export
+disconnectSeatrack <- function(){
+  DBI::dbDisconnect(con)
+}
+
