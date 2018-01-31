@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Jens Åström" />
+
+<meta name="date" content="2018-01-31" />
+
+<title>Example workflow of input and output to the Seatrack database</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Example workflow of input and output to the Seatrack database</h1>
+<h4 class="author"><em>Jens Åström</em></h4>
+<h4 class="date"><em>2018-01-31</em></h4>
+
+
+
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>This is an example of a normal workflow that goes through the normal cycle of logger data. This cycle also describes the order in which the tasks is meant to be performed. There are several checks in the database that might throw an error if this order is not respected, e.g. if deployment info is registered before the logger is started up, or a logger is retrieved before it is deployed etc.</p>
+<ol style="list-style-type: decimal">
+<li>Connecting to the database</li>
+<li>Importing logger information
+<ol style="list-style-type: lower-alpha">
+<li>Registering loggers</li>
+<li>Starting a logging session</li>
+<li>Allocating loggers to a colony and species</li>
+</ol></li>
+<li>Importing metadata
+<ol style="list-style-type: lower-alpha">
+<li>Registering deployment data</li>
+<li>Registering retrieval data</li>
+<li>Registering individual bird info</li>
+</ol></li>
+<li>Shutting down loggers
+<ol style="list-style-type: lower-alpha">
+<li>Closing a logging session</li>
+<li>Creating file names associated with the logger download procedure</li>
+</ol></li>
+<li>Storing download files
+<ol style="list-style-type: lower-alpha">
+<li>Identifying which files the storage place expects</li>
+<li>Uploading logger files</li>
+</ol></li>
+<li>Retrieving download files from the storage space (this step can be done anytime for already present files)</li>
+</ol>
+<p>There are of course other important taskt, but these are not covered here. For example, sometimes it is necessary to update the lookup tables for standard information. This may be a new logger model, a new colony, new people working in the project and so on. Other tasks is to upload the processed positions files.</p>
+</div>
+<div id="firstly" class="section level1">
+<h1>Firstly</h1>
+<p>Remember to always work using the lastest version of the R package SeatrackR. This is installed by:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;NINAnor/seatrack-db/seatrackR&quot;</span>)</code></pre></div>
+<p>As of this time, the current version is 0.0.1.140.</p>
+</div>
+<div id="connecting-to-the-database" class="section level1">
+<h1>Connecting to the database</h1>
+<p>Use your name and password, provided to you elsewhere. For this work-through, we use the username: testwriter with password:testwriter. We also use several functions in the tidyverse package universe, so we’ll load this as well.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(seatrackR)
+<span class="kw">connectSeatrack</span>(<span class="dt">Username =</span> <span class="st">&quot;testwriter&quot;</span>, <span class="dt">Password =</span> <span class="st">&quot;testwriter&quot;</span>)
+
+<span class="kw">library</span>(tidyverse)</code></pre></div>
+<p>Internally, this creates a connection to the database called <code>con</code> through the package <code>DBI</code> using the driver <code>Rpostgres::Postgres()</code>. Most functions used later checks that this connection is active and trows an error if it is not. Although you probably won’t ever have to, you check the connection and also disconnect manually. Normally, you don’t need to disconnect.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
+<span class="kw">disconnectSeatrack</span>()
+
+seatrackR<span class="op">:::</span><span class="kw">checkCon</span>()  ##produces error if not connected
+<span class="co">#&gt; Error in seatrackR:::checkCon(): No connection, run connectSeatrack()</span>
+
+<span class="kw">connectSeatrack</span>(<span class="dt">Username =</span> <span class="st">&quot;testwriter&quot;</span>, <span class="dt">Password =</span> <span class="st">&quot;testwriter&quot;</span>)
+
+seatrackR<span class="op">:::</span><span class="kw">checkCon</span>()  ##returns nothing if the connection exists</code></pre></div>
+</div>
+<div id="importing-logger-info-allocating-loggers-and-starting-logging-sessions." class="section level1">
+<h1>Importing logger info, allocating loggers, and starting logging sessions.</h1>
+<p>There are two major routes for importing logger data into the database. The first is through the table imports.logger_import, which takes info on logger serial numbers and models, startup info, allocation info, and shutdown info. This table is just a pipeline to other tables in the database. It redistributes data to several tables depending on what it is fed but is always itself empty. This is meant as a convenience for the user so that they don’t have to interact to more tables than necessary.</p>
+<p>As of today, the redistribution rules are:</p>
+<ul>
+<li>If the <code>logger_serial_number</code> + the <code>logger_model</code> column is not already present in the loggers.logger_info table, this info is added as a new logger and given a new logger_id in the loggers.logger_info table. This means that typoes in this import can result in registering non existent loggers! Make sure the logger serial numbers are correct when importing this data. These colums are then written to the loggers.logger_info table:
+<ul>
+<li>logger_erial_no</li>
+<li>producer</li>
+<li>logger_model</li>
+<li>production_year</li>
+<li>project</li>
+</ul></li>
+<li>If the column <code>starttime_gmt</code> is not empty (NULL), the logger is started up. A new logging session is registered in the loggers.logging_session as active, and these columns are moved to the loggers.startup table:
+<ul>
+<li>logger_id</li>
+<li>starttime_gmt</li>
+<li>logging_mode</li>
+<li>started_by</li>
+<li>started_where</li>
+<li>days_delayed</li>
+<li>programmed_gmt_time</li>
+</ul></li>
+<li>If the column <code>intended_species</code> is not empty (NULL), the allocation data is moved to the loggers.allocation table. These columns are filled in in the table loggers.startup:
+<ul>
+<li>logger_id</li>
+<li>intended_species</li>
+<li>intended_location</li>
+<li>intended_deployer</li>
+</ul></li>
+<li>Lastly, if the column <code>shutdown_session</code> is True, the logging session is shutdown in the table loggers.logging_session and info about the shutdown is imported into the loggers.shutdown table. If the column <code>download_type</code> at the same time either “Successfully downloaded”, or “Reconstructed”, filenames are also generated in the <code>loggers.file_archive</code> table. These columns are imported into the loggers.shutdown:
+<ul>
+<li>session_id</li>
+<li>download_type</li>
+<li>download_date</li>
+<li>field_status</li>
+<li>downloaded_by</li>
+<li>decomissioned</li>
+</ul></li>
+</ul>
+<p>The table <code>sampleLoggerImport</code> contains an example of information required to register, startup, and allocate a number of loggers. This is written to the <code>imports.logger_import</code> table by the function <code>writeLoggerImport</code>. The sample data contains both information on new loggers, their startup, and allocations. Note that we don’t have to include info on all these steps in the same go. It is fine to first just send the columns that contain the info on the logger serial numbers, then the ones that starts them, and lastly the ones that allocates them. Remember also that if you also include info on shutdown in the same go (shutdown_session = True), then the session is closed and you won’t be able to upload deployment or retrieval data. The order of input matters!</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sampleLoggerImport)
+<span class="co">#&gt; # A tibble: 6 x 22</span>
+<span class="co">#&gt;   logger_serial_no logger_model producer           production_year project</span>
+<span class="co">#&gt;   &lt;chr&gt;            &lt;chr&gt;        &lt;chr&gt;                        &lt;dbl&gt; &lt;chr&gt;  </span>
+<span class="co">#&gt; 1 Z231             c65          Migrate Technology            2013 seatra…</span>
+<span class="co">#&gt; 2 Z236             c65          Migrate Technology            2013 seatra…</span>
+<span class="co">#&gt; 3 Z234             c65          Migrate Technology            2013 seatra…</span>
+<span class="co">#&gt; 4 Z232             c65          Migrate Technology            2013 seatra…</span>
+<span class="co">#&gt; 5 Y604             f100         Migrate Technology            2013 seatra…</span>
+<span class="co">#&gt; 6 Y612             f100         Migrate Technology            2013 seatra…</span>
+<span class="co">#&gt; # ... with 17 more variables: starttime_gmt &lt;dttm&gt;, logging_mode &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   started_by &lt;chr&gt;, started_where &lt;chr&gt;, days_delayed &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   programmed_gmt_time &lt;dttm&gt;, intended_species &lt;chr&gt;,</span>
+<span class="co">#&gt; #   intended_location &lt;chr&gt;, intended_deployer &lt;chr&gt;,</span>
+<span class="co">#&gt; #   data_responsible &lt;chr&gt;, shutdown_session &lt;lgl&gt;, field_status &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   downloaded_by &lt;lgl&gt;, download_type &lt;lgl&gt;, download_date &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   decomissioned &lt;lgl&gt;, comment &lt;lgl&gt;</span></code></pre></div>
+<p>We can check how many of the rows in the table about to be imported that has starttimes, and will result in started logging sessions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">noStartups &lt;-<span class="st"> </span>sampleLoggerImport <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">no_startups =</span> <span class="kw">sum</span>(<span class="op">!</span><span class="kw">is.na</span>(starttime_gmt)))
+noStartups
+<span class="co">#&gt; # A tibble: 1 x 1</span>
+<span class="co">#&gt;   no_startups</span>
+<span class="co">#&gt;         &lt;int&gt;</span>
+<span class="co">#&gt; 1          77</span></code></pre></div>
+<p>So, the import of this data should result in 77 active sessions (since we here start with an empty database). Next, we import the logger startup data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">writeLoggerImport</span>(sampleLoggerImport)
+<span class="co">#&gt; Warning in result_create(conn@ptr, statement): Closing open result set,</span>
+<span class="co">#&gt; cancelling previous query</span>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<p>We can use some convenience functions to checkout some of the newly imported data. The <code>getLoggerInfo</code> function reads from the loggers.logger_info table, which stores basic information of each registered logger (in use or not).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">loggerInfo &lt;-<span class="st"> </span><span class="kw">getLoggerInfo</span>()  <span class="co"># This reads from the loggers.logger_info table</span>
+loggerInfo
+<span class="co">#&gt; # A tibble: 77 x 7</span>
+<span class="co">#&gt;    id     logger_id logger_serial_no logger_model producer production_year</span>
+<span class="co">#&gt;    &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;            &lt;chr&gt;        &lt;chr&gt;              &lt;int&gt;</span>
+<span class="co">#&gt;  1 2bf32…         1 Z231             c65          Migrate…            2013</span>
+<span class="co">#&gt;  2 2bf4a…         2 Z236             c65          Migrate…            2013</span>
+<span class="co">#&gt;  3 2bf52…         3 Z234             c65          Migrate…            2013</span>
+<span class="co">#&gt;  4 2bf5b…         4 Z232             c65          Migrate…            2013</span>
+<span class="co">#&gt;  5 2bf64…         5 Y604             f100         Migrate…            2013</span>
+<span class="co">#&gt;  6 2bf6b…         6 Y612             f100         Migrate…            2013</span>
+<span class="co">#&gt;  7 2bf71…         7 Y614             f100         Migrate…            2013</span>
+<span class="co">#&gt;  8 2bf74…         8 Y595             f100         Migrate…            2013</span>
+<span class="co">#&gt;  9 2bf76…         9 Y116             c330         Migrate…            2013</span>
+<span class="co">#&gt; 10 2bf78…        10 Y099             c330         Migrate…            2013</span>
+<span class="co">#&gt; # ... with 67 more rows, and 1 more variable: project &lt;chr&gt;</span></code></pre></div>
+<p>We see that we have 77 registered loggers. Next, we can have a look at the current active sessions, most easily through the <code>getActiveSessions</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">activeSessions &lt;-<span class="st"> </span><span class="kw">getActiveSessions</span>()  <span class="co"># This reads from the table loggers.logging_session. </span>
+activeSessions
+<span class="co">#&gt; # A tibble: 77 x 10</span>
+<span class="co">#&gt;    id        session_id logger_id deployment_id retrieval_id active colony</span>
+<span class="co">#&gt;    &lt;chr&gt;          &lt;int&gt;     &lt;int&gt;         &lt;int&gt;        &lt;int&gt; &lt;lgl&gt;  &lt;chr&gt; </span>
+<span class="co">#&gt;  1 2bf3e97a…          1         1            NA           NA T      &lt;NA&gt;  </span>
+<span class="co">#&gt;  2 2bf4de20…          2         2            NA           NA T      &lt;NA&gt;  </span>
+<span class="co">#&gt;  3 2bf552c4…          3         3            NA           NA T      &lt;NA&gt;  </span>
+<span class="co">#&gt;  4 2bf5ebd0…          4         4            NA           NA T      &lt;NA&gt;  </span>
+<span class="co">#&gt;  5 2bf66c36…          5         5            NA           NA T      &lt;NA&gt;  </span>
+<span class="co">#&gt;  6 2bf6d5fe…          6         6            NA           NA T      &lt;NA&gt;  </span>
+<span class="co">#&gt;  7 2bf72cac…          7         7            NA           NA T      &lt;NA&gt;  </span>
+<span class="co">#&gt;  8 2bf75218…          8         8            NA           NA T      &lt;NA&gt;  </span>
+<span class="co">#&gt;  9 2bf77630…          9         9            NA           NA T      &lt;NA&gt;  </span>
+<span class="co">#&gt; 10 2bf79994…         10        10            NA           NA T      &lt;NA&gt;  </span>
+<span class="co">#&gt; # ... with 67 more rows, and 3 more variables: species &lt;chr&gt;,</span>
+<span class="co">#&gt; #   year_tracked &lt;chr&gt;, individ_id &lt;chr&gt;</span></code></pre></div>
+<p>We se that there are 77 open sessions, meaning they have been started up but not shut down. We can se how many of these have been deployed and retrieved by counting the number of rows with deployment id and a retrieval id. Note that we exclude the rows with NAs, which signifies missing data and is read as <code>NULL</code> in the database.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">activeSessions <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">no_deployed =</span> <span class="kw">sum</span>(<span class="op">!</span><span class="kw">is.na</span>(deployment_id)), <span class="dt">no_retrieved =</span> <span class="kw">sum</span>(<span class="op">!</span><span class="kw">is.na</span>(retrieval_id)))
+<span class="co">#&gt; # A tibble: 1 x 2</span>
+<span class="co">#&gt;   no_deployed no_retrieved</span>
+<span class="co">#&gt;         &lt;int&gt;        &lt;int&gt;</span>
+<span class="co">#&gt; 1           0            0</span></code></pre></div>
+<p>At this point all 77 loggers are started up, but none is registered as deployed or retrieved.</p>
+</div>
+<div id="importing-metadata-field-information" class="section level1">
+<h1>Importing metadata (field information)</h1>
+<p>When the loggers are registered and started up, we can upload some metadata. This conforms to the existing metadata sheets used in the field. Note here the correct order of input; first start up a session through the <code>writeLoggerImport</code> function, then import deployment info using the <code>writeMetadata()</code> function, then do the same with the retrieval data. You can import deployment and retrieval data in the same go if they appear in the right order in the metadata file (sort by date to make it so).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sampleMetadata)
+<span class="co">#&gt; # A tibble: 6 x 39</span>
+<span class="co">#&gt;   date       ring_number euring_code color_ring logger_status             </span>
+<span class="co">#&gt;   &lt;date&gt;     &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;                     </span>
+<span class="co">#&gt; 1 2016-01-07 5175137     NOS         &lt;NA&gt;       individual caught (first …</span>
+<span class="co">#&gt; 2 2016-01-07 5175138     NOS         &lt;NA&gt;       individual caught (first …</span>
+<span class="co">#&gt; 3 2016-01-07 5175139     NOS         &lt;NA&gt;       individual caught (first …</span>
+<span class="co">#&gt; 4 2016-01-07 5175140     NOS         &lt;NA&gt;       individual caught (first …</span>
+<span class="co">#&gt; 5 2016-02-07 2000741     NOS         Red SM     individual observed (logg…</span>
+<span class="co">#&gt; 6 2016-02-07 2000903     NOS         Red ZY     individual observed (logg…</span>
+<span class="co">#&gt; # ... with 34 more variables: logger_model_retrieved &lt;chr&gt;,</span>
+<span class="co">#&gt; #   logger_id_retrieved &lt;chr&gt;, logger_model_deployed &lt;chr&gt;,</span>
+<span class="co">#&gt; #   logger_id_deployed &lt;chr&gt;, species &lt;chr&gt;, morph &lt;chr&gt;,</span>
+<span class="co">#&gt; #   subspecies &lt;chr&gt;, age &lt;dbl&gt;, sex &lt;chr&gt;, sexing_method &lt;chr&gt;,</span>
+<span class="co">#&gt; #   weight &lt;dbl&gt;, scull &lt;dbl&gt;, tarsus &lt;dbl&gt;, wing &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   breeding_stage &lt;chr&gt;, eggs &lt;dbl&gt;, chicks &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   hatching_success &lt;lgl&gt;, breeding_success &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   breeding_success_criterion &lt;chr&gt;, country &lt;chr&gt;, colony &lt;chr&gt;,</span>
+<span class="co">#&gt; #   colony_latitude &lt;dbl&gt;, colony_longitude &lt;dbl&gt;, nest_id &lt;chr&gt;,</span>
+<span class="co">#&gt; #   blood_sample &lt;chr&gt;, feather_sample &lt;chr&gt;, other_samples &lt;chr&gt;,</span>
+<span class="co">#&gt; #   data_responsible &lt;chr&gt;, back_on_nest &lt;chr&gt;, logger_mount_method &lt;chr&gt;,</span>
+<span class="co">#&gt; #   comment &lt;chr&gt;, other &lt;chr&gt;, old_ring_number &lt;lgl&gt;</span></code></pre></div>
+<p>In this test case, the metadata file contains both deployment, retrieval and measurement info. We can see how many deployments and retrievals we have.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">noDepRetr &lt;-<span class="st"> </span>sampleMetadata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">noDeployments =</span> <span class="kw">sum</span>(<span class="op">!</span><span class="kw">is.na</span>(logger_id_deployed)), 
+    <span class="dt">noRetrievals =</span> <span class="kw">sum</span>(<span class="op">!</span><span class="kw">is.na</span>(logger_id_retrieved)))
+noDepRetr
+<span class="co">#&gt; # A tibble: 1 x 2</span>
+<span class="co">#&gt;   noDeployments noRetrievals</span>
+<span class="co">#&gt;           &lt;int&gt;        &lt;int&gt;</span>
+<span class="co">#&gt; 1            77           57</span></code></pre></div>
+<p>So, 77 deployment events, and 57 retrieval events are going to be registered in one go, by importing this data. Before we import the data, we can do some quality checks to find common errors. The import routine should stop in the event of important errors, but it can be tedious to step through these problems one by one. The function <code>checkMetadata</code> wraps several checking routines, see <code>?checkMetadata</code> for a list of all of them.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myErrors &lt;-<span class="st"> </span><span class="kw">checkMetadata</span>(sampleMetadata)
+<span class="co">#&gt; Errors found!</span></code></pre></div>
+<p>Looks like there are errors in our metadata! The object created by the function <code>checkMetadata</code> has a special class, with a print and plot function. The plot and summary function can be used to quickly get a quick look, the print function (just typing the object) shows all errors and some hints. Look at the <code>str(myErrors)</code> if you want to se the innards of the object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(myErrors)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(myErrors)
+<span class="co">#&gt; # A tibble: 5 x 2</span>
+<span class="co">#&gt;   reason             errorCount</span>
+<span class="co">#&gt;   &lt;chr&gt;                   &lt;int&gt;</span>
+<span class="co">#&gt; 1 deployedNotActive           0</span>
+<span class="co">#&gt; 2 retrievedNotActive          3</span>
+<span class="co">#&gt; 3 deployedNotReg              0</span>
+<span class="co">#&gt; 4 retrievedNotReg             3</span>
+<span class="co">#&gt; 5 peopleNotPresent            1</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myErrors
+<span class="co">#&gt; </span>
+<span class="co">#&gt; These loggers are not in an open logging session, but metadata contains retrieval info.</span>
+<span class="co">#&gt; Start a new logging session with writeLoggerImport(), and add deployment info before importing retrieval info.</span>
+<span class="co">#&gt;   row_number logger_serial_no</span>
+<span class="co">#&gt; 1        103     scraped off!</span>
+<span class="co">#&gt; 2        104     scraped off!</span>
+<span class="co">#&gt; 3        105     scraped off!</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; These loggers are not registered in the table loggers.logger_info, but metadata contains retrieval info.</span>
+<span class="co">#&gt; Register the loggers with writeLoggerImport(), and add deployment info before importing retrieval info.</span>
+<span class="co">#&gt;   row_number logger_serial_no</span>
+<span class="co">#&gt; 1        103     scraped off!</span>
+<span class="co">#&gt; 2        104     scraped off!</span>
+<span class="co">#&gt; 3        105     scraped off!</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; These names are not in the table metadata.people. Check spelling and compare with getNames().</span>
+<span class="co">#&gt;   row_number               name</span>
+<span class="co">#&gt; 1         20 Alkekungen himself</span></code></pre></div>
+<p>In this case, it appears that the logger serial number was not readable for 3 loggers containing info on retrievals, and the field personnel noted this as “scraped off!”. Naturally, this “serial number” is not registered in the logger_info table, and these loggers are not registered as in an open logging session.</p>
+<p>In addition, someone has been having a bit of fun with the name of the data responsible on a record. This nickname is not registered in the metadata.people table.</p>
+<p>We fix these errors and run another check.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ringsOfErrors &lt;-<span class="st"> </span>sampleMetadata<span class="op">$</span>ring_number[<span class="dv">103</span><span class="op">:</span><span class="dv">105</span>]
+sampleMetadata[sampleMetadata<span class="op">$</span>ring_number <span class="op">%in%</span><span class="st"> </span>ringsOfErrors, ]
+<span class="co">#&gt; # A tibble: 6 x 39</span>
+<span class="co">#&gt;   date       ring_number euring_code color_ring logger_status             </span>
+<span class="co">#&gt;   &lt;date&gt;     &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;                     </span>
+<span class="co">#&gt; 1 2016-01-07 5175137     NOS         &lt;NA&gt;       individual caught (first …</span>
+<span class="co">#&gt; 2 2016-01-07 5175138     NOS         &lt;NA&gt;       individual caught (first …</span>
+<span class="co">#&gt; 3 2016-01-07 5175139     NOS         &lt;NA&gt;       individual caught (first …</span>
+<span class="co">#&gt; 4 2017-01-06 5175137     NOS         &lt;NA&gt;       individual caught (first …</span>
+<span class="co">#&gt; 5 2017-01-06 5175138     NOS         &lt;NA&gt;       individual caught (first …</span>
+<span class="co">#&gt; 6 2017-01-06 5175139     NOS         &lt;NA&gt;       individual caught (first …</span>
+<span class="co">#&gt; # ... with 34 more variables: logger_model_retrieved &lt;chr&gt;,</span>
+<span class="co">#&gt; #   logger_id_retrieved &lt;chr&gt;, logger_model_deployed &lt;chr&gt;,</span>
+<span class="co">#&gt; #   logger_id_deployed &lt;chr&gt;, species &lt;chr&gt;, morph &lt;chr&gt;,</span>
+<span class="co">#&gt; #   subspecies &lt;chr&gt;, age &lt;dbl&gt;, sex &lt;chr&gt;, sexing_method &lt;chr&gt;,</span>
+<span class="co">#&gt; #   weight &lt;dbl&gt;, scull &lt;dbl&gt;, tarsus &lt;dbl&gt;, wing &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   breeding_stage &lt;chr&gt;, eggs &lt;dbl&gt;, chicks &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   hatching_success &lt;lgl&gt;, breeding_success &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   breeding_success_criterion &lt;chr&gt;, country &lt;chr&gt;, colony &lt;chr&gt;,</span>
+<span class="co">#&gt; #   colony_latitude &lt;dbl&gt;, colony_longitude &lt;dbl&gt;, nest_id &lt;chr&gt;,</span>
+<span class="co">#&gt; #   blood_sample &lt;chr&gt;, feather_sample &lt;chr&gt;, other_samples &lt;chr&gt;,</span>
+<span class="co">#&gt; #   data_responsible &lt;chr&gt;, back_on_nest &lt;chr&gt;, logger_mount_method &lt;chr&gt;,</span>
+<span class="co">#&gt; #   comment &lt;chr&gt;, other &lt;chr&gt;, old_ring_number &lt;lgl&gt;</span></code></pre></div>
+<p>Going by the data on the deployments, it seems that the missing logger serial numbers where “Z231”, “Z236”, and “Z234”.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampleMetadata<span class="op">$</span>logger_id_retrieved[<span class="dv">103</span><span class="op">:</span><span class="dv">105</span>] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Z231&quot;</span>, <span class="st">&quot;Z236&quot;</span>, <span class="st">&quot;Z234&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampleMetadata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(date, colony, species, data_responsible) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(<span class="kw">row_number</span>() <span class="op">%in%</span><span class="st"> </span>
+<span class="st">    </span><span class="dv">18</span><span class="op">:</span><span class="dv">22</span>)
+<span class="co">#&gt; # A tibble: 5 x 4</span>
+<span class="co">#&gt;   date       colony  species       data_responsible     </span>
+<span class="co">#&gt;   &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt;         &lt;chr&gt;                </span>
+<span class="co">#&gt; 1 2016-05-07 Sklinna European shag Svein-Håkon Lorentsen</span>
+<span class="co">#&gt; 2 2016-06-06 Sklinna Herring gull  Svein-Håkon Lorentsen</span>
+<span class="co">#&gt; 3 2016-06-06 Sklinna Herring gull  Alkekungen himself   </span>
+<span class="co">#&gt; 4 2016-06-06 Sklinna Herring gull  Svein-Håkon Lorentsen</span>
+<span class="co">#&gt; 5 2016-06-06 Sklinna Herring gull  Svein-Håkon Lorentsen</span>
+
+## Looks like it should be Svein-Håkon
+sampleMetadata<span class="op">$</span>data_responsible[<span class="dv">20</span>] &lt;-<span class="st"> </span>sampleMetadata<span class="op">$</span>data_responsible[<span class="dv">19</span>]</code></pre></div>
+<p>Time for a new check of the data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myErrors &lt;-<span class="st"> </span><span class="kw">checkMetadata</span>(sampleMetadata)
+<span class="co">#&gt; No errors found</span></code></pre></div>
+<p>Thats better. Note however that these checks doesn’t find every possible error. Please suggest further checks to put into this routine!</p>
+<p>We can now import the metadata.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">writeMetadata</span>(sampleMetadata)
+<span class="co">#&gt; Warning in result_create(conn@ptr, statement): Closing open result set,</span>
+<span class="co">#&gt; cancelling previous query</span>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<p>And check the new status of the number of deployed and retrieved loggers.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">activeSessions &lt;-<span class="st"> </span><span class="kw">getActiveSessions</span>()
+
+
+activeSessions <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">no_deployed =</span> <span class="kw">sum</span>(<span class="op">!</span><span class="kw">is.na</span>(deployment_id)), <span class="dt">no_retrieved =</span> <span class="kw">sum</span>(<span class="op">!</span><span class="kw">is.na</span>(retrieval_id)))
+<span class="co">#&gt; # A tibble: 1 x 2</span>
+<span class="co">#&gt;   no_deployed no_retrieved</span>
+<span class="co">#&gt;         &lt;int&gt;        &lt;int&gt;</span>
+<span class="co">#&gt; 1          77           57</span></code></pre></div>
+<p>We see that the logger_session table has been filled with data on deployments and retrievals. Data on the colony, species, and individ_id the logger was deployed on is also added to the table. The rows with retrieval data also contains data on the year tracked.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">activeSessions <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(retrieval_id))
+<span class="co">#&gt; # A tibble: 57 x 10</span>
+<span class="co">#&gt;    id        session_id logger_id deployment_id retrieval_id active colony</span>
+<span class="co">#&gt;    &lt;chr&gt;          &lt;int&gt;     &lt;int&gt;         &lt;int&gt;        &lt;int&gt; &lt;lgl&gt;  &lt;chr&gt; </span>
+<span class="co">#&gt;  1 2bf3e97a…          1         1             1            1 T      Sklin…</span>
+<span class="co">#&gt;  2 2bf4de20…          2         2             2            2 T      Sklin…</span>
+<span class="co">#&gt;  3 2bf552c4…          3         3             3            3 T      Sklin…</span>
+<span class="co">#&gt;  4 2bf5ebd0…          4         4             4            4 T      Sklin…</span>
+<span class="co">#&gt;  5 2bf66c36…          5         5             5            5 T      Sklin…</span>
+<span class="co">#&gt;  6 2bf6d5fe…          6         6             6            6 T      Sklin…</span>
+<span class="co">#&gt;  7 2bf72cac…          7         7             7            7 T      Sklin…</span>
+<span class="co">#&gt;  8 2bf75218…          8         8             8            8 T      Sklin…</span>
+<span class="co">#&gt;  9 2bf77630…          9         9             9            9 T      Sklin…</span>
+<span class="co">#&gt; 10 2bf79994…         10        10            10           10 T      Sklin…</span>
+<span class="co">#&gt; # ... with 47 more rows, and 3 more variables: species &lt;chr&gt;,</span>
+<span class="co">#&gt; #   year_tracked &lt;chr&gt;, individ_id &lt;chr&gt;</span></code></pre></div>
+</div>
+<div id="importing-shutdown-information" class="section level1">
+<h1>Importing shutdown information</h1>
+<p>We can now shut down the logging sessions that have been given retrieval data. We could also have shut down these logging sessions before, but we would then not be able to add deployment or retrieval data.</p>
+<p>We use the logger_import table again to shut the logging sessions down. For all rows where shutdown_session = True, the corresponding logging sessions will be shut down. Remember that it is usually not a good idea to import startup and shutdown data at the same time, since this will just open and close the session. One way of only importing shutdown info is to blank out all the other columns in the logger import data.</p>
+<p>Here the startup and allocation info is empty.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampleLoggerShutdown
+<span class="co">#&gt; # A tibble: 57 x 22</span>
+<span class="co">#&gt;    logger_serial_no logger_model producer production_year project</span>
+<span class="co">#&gt;    &lt;chr&gt;            &lt;chr&gt;        &lt;lgl&gt;    &lt;lgl&gt;           &lt;lgl&gt;  </span>
+<span class="co">#&gt;  1 Z231             c65          NA       NA              NA     </span>
+<span class="co">#&gt;  2 Z236             c65          NA       NA              NA     </span>
+<span class="co">#&gt;  3 Z234             c65          NA       NA              NA     </span>
+<span class="co">#&gt;  4 Z232             c65          NA       NA              NA     </span>
+<span class="co">#&gt;  5 Y604             f100         NA       NA              NA     </span>
+<span class="co">#&gt;  6 Y612             f100         NA       NA              NA     </span>
+<span class="co">#&gt;  7 Y614             f100         NA       NA              NA     </span>
+<span class="co">#&gt;  8 Y595             f100         NA       NA              NA     </span>
+<span class="co">#&gt;  9 Y116             c330         NA       NA              NA     </span>
+<span class="co">#&gt; 10 Y099             c330         NA       NA              NA     </span>
+<span class="co">#&gt; # ... with 47 more rows, and 17 more variables: starttime_gmt &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   logging_mode &lt;lgl&gt;, started_by &lt;lgl&gt;, started_where &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   days_delayed &lt;lgl&gt;, programmed_gmt_time &lt;lgl&gt;, intended_species &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   intended_location &lt;lgl&gt;, intended_deployer &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   data_responsible &lt;lgl&gt;, shutdown_session &lt;lgl&gt;, field_status &lt;chr&gt;,</span>
+<span class="co">#&gt; #   downloaded_by &lt;chr&gt;, download_type &lt;chr&gt;, download_date &lt;date&gt;,</span>
+<span class="co">#&gt; #   decomissioned &lt;lgl&gt;, comment &lt;lgl&gt;</span></code></pre></div>
+<p>And we only have shutdown info.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampleLoggerShutdown <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(logger_serial_no, logger_model, shutdown_session<span class="op">:</span>comment)
+<span class="co">#&gt; # A tibble: 57 x 9</span>
+<span class="co">#&gt;    logger_serial_no logger_model shutdown_session field_status</span>
+<span class="co">#&gt;    &lt;chr&gt;            &lt;chr&gt;        &lt;lgl&gt;            &lt;chr&gt;       </span>
+<span class="co">#&gt;  1 Z231             c65          T                OK          </span>
+<span class="co">#&gt;  2 Z236             c65          T                OK          </span>
+<span class="co">#&gt;  3 Z234             c65          T                OK          </span>
+<span class="co">#&gt;  4 Z232             c65          T                OK          </span>
+<span class="co">#&gt;  5 Y604             f100         T                OK          </span>
+<span class="co">#&gt;  6 Y612             f100         T                OK          </span>
+<span class="co">#&gt;  7 Y614             f100         T                OK          </span>
+<span class="co">#&gt;  8 Y595             f100         T                OK          </span>
+<span class="co">#&gt;  9 Y116             c330         T                OK          </span>
+<span class="co">#&gt; 10 Y099             c330         T                OK          </span>
+<span class="co">#&gt; # ... with 47 more rows, and 5 more variables: downloaded_by &lt;chr&gt;,</span>
+<span class="co">#&gt; #   download_type &lt;chr&gt;, download_date &lt;date&gt;, decomissioned &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   comment &lt;lgl&gt;</span></code></pre></div>
+<p>Remember that filenames will only be produced in the case when the <code>download_type</code> is either “Successfully downloaded” or “Reconstructed”. Let’s have a look at the types of downloads we are about to import.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">downloadTypes &lt;-<span class="st"> </span>sampleLoggerShutdown <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(download_type) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tally</span>()</code></pre></div>
+<p>This means that we should get filenames from 40 of the 57 loggers.</p>
+<p>We import this data similarly as with the startups.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">writeLoggerImport</span>(sampleLoggerShutdown)
+<span class="co">#&gt; Warning in result_create(conn@ptr, statement): Closing open result set,</span>
+<span class="co">#&gt; cancelling previous query</span>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<p>This should have closed 57 sessions and so we should now have 20 still active sessions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">activeSessions &lt;-<span class="st"> </span><span class="kw">getActiveSessions</span>()
+activeSessions
+<span class="co">#&gt; # A tibble: 20 x 10</span>
+<span class="co">#&gt;    id        session_id logger_id deployment_id retrieval_id active colony</span>
+<span class="co">#&gt;    &lt;chr&gt;          &lt;int&gt;     &lt;int&gt;         &lt;int&gt;        &lt;int&gt; &lt;lgl&gt;  &lt;chr&gt; </span>
+<span class="co">#&gt;  1 2bfe73ea…         58        58            16           NA T      Sklin…</span>
+<span class="co">#&gt;  2 2bfe9b4a…         59        59            17           NA T      Sklin…</span>
+<span class="co">#&gt;  3 2bfec098…         60        60            18           NA T      Sklin…</span>
+<span class="co">#&gt;  4 2bfee4f6…         61        61            24           NA T      Sklin…</span>
+<span class="co">#&gt;  5 2bff0c7e…         62        62            28           NA T      Sklin…</span>
+<span class="co">#&gt;  6 2bff30f0…         63        63            29           NA T      Sklin…</span>
+<span class="co">#&gt;  7 2bff5576…         64        64            34           NA T      Sklin…</span>
+<span class="co">#&gt;  8 2bff79d4…         65        65            35           NA T      Sklin…</span>
+<span class="co">#&gt;  9 2bffa0da…         66        66            36           NA T      Sklin…</span>
+<span class="co">#&gt; 10 2bffc5d8…         67        67            42           NA T      Sklin…</span>
+<span class="co">#&gt; 11 2bffeae0…         68        68            48           NA T      Sklin…</span>
+<span class="co">#&gt; 12 2c000fac…         69        69            49           NA T      Sklin…</span>
+<span class="co">#&gt; 13 2c003694…         70        70            59           NA T      Sklin…</span>
+<span class="co">#&gt; 14 2c005bf6…         71        71            60           NA T      Sklin…</span>
+<span class="co">#&gt; 15 2c0081c6…         72        72            65           NA T      Sklin…</span>
+<span class="co">#&gt; 16 2c00a6ce…         73        73            66           NA T      Sklin…</span>
+<span class="co">#&gt; 17 2c00cd2a…         74        74            67           NA T      Sklin…</span>
+<span class="co">#&gt; 18 2c00f4da…         75        75            72           NA T      Sklin…</span>
+<span class="co">#&gt; 19 2c011bf4…         76        76            74           NA T      Sklin…</span>
+<span class="co">#&gt; 20 2c01411a…         77        77            75           NA T      Sklin…</span>
+<span class="co">#&gt; # ... with 3 more variables: species &lt;chr&gt;, year_tracked &lt;chr&gt;,</span>
+<span class="co">#&gt; #   individ_id &lt;chr&gt;</span></code></pre></div>
+<p>Looks good.</p>
+<p>The shutdown also creates filenames associated with the session, depending on the make and model of the logger. These end up in the table loggers.file_archive.</p>
+</div>
+<div id="working-with-the-file-archive" class="section level1">
+<h1>Working with the file archive</h1>
+<p>We can now see what these shutdowns has produced in the file archive table. This table lists the expected filenames produced by the logging sessions that has been shutdown. It is up to the users to manually upload these files to the file storage location [comming functions]</p>
+<p>We can take a look at the expected filenames through the function <code>getFileArchive</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fileArchive &lt;-<span class="st"> </span><span class="kw">getFileArchive</span>()
+
+fileArchive
+<span class="co">#&gt; # A tibble: 813 x 8</span>
+<span class="co">#&gt;    file_id session_id ring_number euring_code year_tracked</span>
+<span class="co">#&gt;      &lt;int&gt;      &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;       </span>
+<span class="co">#&gt;  1     272          1 5175137     NOS         2016-2017   </span>
+<span class="co">#&gt;  2     273          1 5175137     NOS         2016-2017   </span>
+<span class="co">#&gt;  3     274          1 5175137     NOS         2016-2017   </span>
+<span class="co">#&gt;  4     275          1 5175137     NOS         2016-2017   </span>
+<span class="co">#&gt;  5     276          1 5175137     NOS         2016-2017   </span>
+<span class="co">#&gt;  6     277          1 5175137     NOS         2016-2017   </span>
+<span class="co">#&gt;  7     278          1 5175137     NOS         2016-2017   </span>
+<span class="co">#&gt;  8     279          2 5175138     NOS         2016-2017   </span>
+<span class="co">#&gt;  9     280          2 5175138     NOS         2016-2017   </span>
+<span class="co">#&gt; 10     281          2 5175138     NOS         2016-2017   </span>
+<span class="co">#&gt; # ... with 803 more rows, and 3 more variables: logger_serial_no &lt;chr&gt;,</span>
+<span class="co">#&gt; #   logger_model &lt;chr&gt;, filename &lt;chr&gt;</span></code></pre></div>
+<p>Currently, we have shut down 5 different logger models, some of which produces 7 and some that produces 4 files.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fileArchive <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(logger_serial_no, logger_model) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tally</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(logger_model) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">summarise</span>(<span class="kw">mean</span>(n))
+<span class="co">#&gt; # A tibble: 5 x 2</span>
+<span class="co">#&gt;   logger_model `mean(n)`</span>
+<span class="co">#&gt;   &lt;chr&gt;            &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 c250              21.0</span>
+<span class="co">#&gt; 2 c330              21.0</span>
+<span class="co">#&gt; 3 c65               21.0</span>
+<span class="co">#&gt; 4 f100              21.0</span>
+<span class="co">#&gt; 5 mk4083            12.0</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fileArchive <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">noShutdownLoggers =</span> <span class="kw">n_distinct</span>(logger_serial_no, logger_model))
+<span class="co">#&gt; # A tibble: 1 x 1</span>
+<span class="co">#&gt;   noShutdownLoggers</span>
+<span class="co">#&gt;               &lt;int&gt;</span>
+<span class="co">#&gt; 1                40</span></code></pre></div>
+<p>So out of the 57 shutdowns we performed, only 40 of them resulted in files in the table loggers.file_archive. This is as predicted.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
