@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="534,1252" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="882,1251" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -2958,13 +2958,13 @@ AND individ_info.ring_number = NEW.ring_number
 AND individ_info.euring_code = NEW.euring_code;
 	END IF;
 
-IF NEW.date = (SELECT individ_status.status_date
-						FROM loggers.logging_session, individuals.individ_info, individuals.individ_status , 
+IF NEW.date IN (SELECT individ_status.status_date
+						FROM loggers.logging_session, individuals.individ_info, individuals.individ_status 
 						WHERE individ_info.ring_number = NEW.ring_number
 						AND individ_info.euring_code = NEW.euring_code
 						AND individ_info.individ_id = logging_session.individ_id
 						AND logging_session.active Is True
-						AND logging_session.session_id = is.session_id) 
+						AND logging_session.session_id = individ_status.session_id) 
 
 THEN
 
@@ -2982,7 +2982,7 @@ THEN
 					data_responsible = NEW.data_responsible,
 					back_on_nest = NEW.back_on_nest,
 					"comment" = NEW."comment",
-					"location" = NEW."location",
+					"location" = NEW.colony,
 						ring_number = NEW.ring_number,
 						euring_code = NEW.euring_code,
 						species = NEW.species, 
@@ -2993,9 +2993,9 @@ THEN
 						sex = NEW.sex,
 						sexing_method = NEW.sexing_method
 		FROM loggers.logging_session, individuals.individ_info
-		WHERE	logger_id = logging_session.logger_id
+		WHERE individ_status.logger_id = logging_session.logger_id
 		AND status_date = NEW.date
-		AND  session_id = logging_session.session_id
+		AND  individ_status.session_id = logging_session.session_id
 		AND individ_info.ring_number = NEW.ring_number
 		AND individ_info.euring_code = NEW.euring_code
 		AND individ_info.individ_id = logging_session.individ_id

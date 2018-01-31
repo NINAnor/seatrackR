@@ -105,7 +105,7 @@ checkNames <- function(myTable){
   return(out)
 }
 
-
+#' @export
 print.metadataErrors <- function(x){
 
   if (length(unlist(x)) == 0){
@@ -117,7 +117,7 @@ print.metadataErrors <- function(x){
     print(x[[1]][[1]])
   }
 
-  if(nrow(x[[1]][[1]]) > 0){
+  if(nrow(x[[1]][[2]]) > 0){
     cat("\n")
     cat("These loggers are not in an open logging session, but metadata contains retrieval info.\nStart a new logging session with writeLoggerImport(), and add deployment info before importing retrieval info.\n")
     print(x[[1]][[2]])
@@ -144,7 +144,7 @@ print.metadataErrors <- function(x){
 
 }
 
-
+#' @export
 plot.metadataErrors <- function(x, ...){
   if(length(unlist(x)) == 0) {
     plot(1:10, type = "n", xaxt = "n", yaxt = "n", ylab = "", xlab = "")
@@ -165,4 +165,18 @@ plot.metadataErrors <- function(x, ...){
   }
 
 }
+
+
+#' @export
+summary.metadataErrors <- function(x, ...){
+
+    out <- tibble("reason" = unlist(lapply(x, names)),
+                     "errorCount" = c(unlist(lapply(x[[1]], nrow)),
+                                      unlist(lapply(x[[2]], nrow)),
+                                      unlist(lapply(x[[3]], nrow))))
+
+  return(out)
+
+}
+
 

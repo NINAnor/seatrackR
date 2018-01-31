@@ -3,3 +3,4 @@
 .RData
 .Rdata
 inst/doc
+../database_struct/file_storage

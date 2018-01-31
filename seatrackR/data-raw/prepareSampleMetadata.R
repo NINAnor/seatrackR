@@ -74,7 +74,7 @@ tempRetr$date <- tempRetr$date + 365
 
 
 sampleMetadata <- rbind(metaRaw, tempRetr)
-sampleMetadata <- as.tibble(sampleMetadata)
+sampleMetadata <- as_tibble(sampleMetadata)
 devtools::use_data(sampleMetadata, overwrite = T)
 
 sampleIndividInfo <- sampleMetadata[!duplicated(sampleMetadata[c(2:3)]),c(2:3, 10, 4, 11, 12, 13:15)]

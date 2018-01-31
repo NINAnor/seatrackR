@@ -13,7 +13,7 @@
 getLoggerInfo <- function(){
   seatrackR:::checkCon()
 
-  DBI::dbGetQuery(con, "SELECT * FROM loggers.logger_info")
+  DBI::dbGetQuery(con, "SELECT * FROM loggers.logger_info") %>% as_tibble()
 }
 
 

@@ -8,11 +8,11 @@
 #' @examples
 #' dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
-#' activeSessions <- viewActiveSessions()
+#' activeSessions <- getActiveSessions()
 #' }
 
-viewActiveSessions <- function() {
+getActiveSessions <- function() {
   seatrackR:::checkCon()
-  dbGetQuery(con, "SELECT * FROM views.active_logging_sessions")
+  DBI::dbGetQuery(con, "SELECT * FROM views.active_logging_sessions")  %>% as_tibble()
 }
 

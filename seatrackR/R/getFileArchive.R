@@ -19,7 +19,7 @@ getFileArchive <- function(){
   WHERE f.session_id = ls.session_id
   AND ls.logger_id = li.logger_id
   AND ls.individ_id = ii.individ_id
-  ORDER BY file_id")
+  ORDER BY file_id")  %>% as_tibble()
 }
 
 
