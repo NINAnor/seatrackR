@@ -2,5 +2,4 @@
 .Rhistory
 .RData
 .Rdata
-inst/doc
-../database_struct/file_storage
+../database_struct/file_storage/file_storage_startup/*

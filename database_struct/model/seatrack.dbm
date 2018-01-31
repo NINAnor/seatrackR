@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="882,1251" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="652,996" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -44,6 +44,37 @@ CAUTION: Do not modify this file unless you know what you are doing.
       encrypted="true"
       password="testwriter">
 	<roles names="seatrack_metadata_writer,seatrack_writer" role-type="refer" />
+</role>
+
+<role name="jens_astrom"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="jens_astrom">
+	<roles names="admin" role-type="refer" />
+</role>
+
+<role name="vegard_braathen"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="vegard_braathen">
+	<roles names="seatrack_writer" role-type="refer" />
+</role>
+
+<role name="halfdan_helgason"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="halfdan_helgason">
+</role>
+
+<role name="borge_moe"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="borge_moe">
+	<roles names="seatrack_writer" role-type="refer" />
 </role>
 
 <database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
@@ -449,6 +480,12 @@ Jens Åström•J_Åström••]]>
 	</column>
 	<column name="individ_id">
 		<type name="uuid" length="0"/>
+	</column>
+	<column name="last_updated">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="updated_by">
+		<type name="text" length="0"/>
 	</column>
 	<constraint name="logging_session_pk" type="pk-constr" table="loggers.logging_session">
 		<columns names="id" ref-type="src-columns"/>
@@ -1730,7 +1767,7 @@ WHERE active = TRUE]]></expression>
 	<column name="shutdown_session">
 		<type name="boolean" length="0"/>
 	</column>
-	<column name="status">
+	<column name="field_status">
 		<type name="text" length="0"/>
 	</column>
 	<column name="downloaded_by">
@@ -1994,11 +2031,11 @@ END;]]></definition>
 		WHERE update.session_id = NEW.session_id
 		AND col.session_id = NEW.session_id;
 
-	    IF NEW.deployment_location != a.indented_location
+	    IF NEW.deployment_location != a.intended_location
 		FROM (SELECT a.intended_location 
 		FROM loggers.allocation a
 		WHERE a.session_id = NEW.session_id) a THEN
-            RAISE EXCEPTION '% deployment location does not match indended location in allocation table', NEW.deployment_location;
+            RAISE WARNING '% deployment location does not match indended location in allocation table', NEW.deployment_location;
         END IF;
 
 	RETURN NULL;
@@ -2613,7 +2650,7 @@ END;]]></definition>
 •Lost⸣
 •Nonresponsive⸣
 •Reconstructed⸣
-•Ok⸣
+•Successfully downloaded⸣
 •Unknown⸣
 •Unsuccessful reconstruction⸣
 •Sleep mode]]>
@@ -2844,6 +2881,12 @@ END;
 		<type name="text" length="0"/>
 	</column>
 	<column name="old_ring_number">
+		<type name="text" length="0"/>
+	</column>
+	<column name="last_updated">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="updated_by">
 		<type name="text" length="0"/>
 	</column>
 </table>
@@ -3086,6 +3129,11 @@ AND logging_session.active IS True
 AND individ_info.ring_number = NEW.ring_number
 AND individ_info.euring_code = NEW.euring_code;
 END IF;
+
+NEW.updated_by := current_user;
+NEW.last_updated := now();
+
+
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -3802,6 +3850,60 @@ END;]]></definition>
 END;]]></definition>
 </function>
 
+<function name="fn_record_metadata_last_updated"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+	INSERT INTO imports.metadata_import (updated_by, last_updated)
+	SELECT current_user, now();
+RETURN NULL;
+END;]]></definition>
+</function>
+
+<trigger name="tr_record_metadata_last_updated" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="imports.metadata_import">
+		<function signature="functions.fn_record_metadata_last_updated()"/>
+</trigger>
+
+<function name="fn_record_logging_session_last_updated"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+NEW.last_updated := now();
+NEW.updated_by := current_user;
+RETURN NEW;
+END;]]></definition>
+</function>
+
+<trigger name="tr_update_session_last_modified" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="loggers.logging_session">
+		<function signature="functions.fn_record_logging_session_last_updated()"/>
+</trigger>
+
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="loggers.logger_info">
 	<columns names="producer,logger_model" ref-type="src-columns"/>
@@ -3971,7 +4073,7 @@ END;]]></definition>
 	<columns names="name" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="fk_species" type="fk-constr" comparison-type="MATCH FULL"
+<constraint name="fk_species" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.subspecies" table="individuals.individ_status">
 	<columns names="species,subspecies" ref-type="src-columns"/>
 	<columns names="species_name_eng,sub_species" ref-type="dst-columns"/>
