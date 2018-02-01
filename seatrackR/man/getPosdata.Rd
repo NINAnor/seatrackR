@@ -4,10 +4,27 @@
 \alias{getPosdata}
 \title{View the postable table}
 \usage{
-getPosdata(loadGeometries = T, limit = 1000)
+getPosdata(selectSpecies = NULL, selectColony = NULL,
+  selectDataResponsible = NULL, selectRingnumber = NULL,
+  loadGeometries = T, limit = 1000)
+}
+\arguments{
+\item{selectSpecies}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.}
+
+\item{selectColony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL.}
+
+\item{selectDataResponsible}{Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
+must conform to the name nomenclature used in the postable. Default is NULL}
+
+\item{selectRingnumber}{Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.}
+
+\item{loadGeometries}{True, False. Should geometries be loaded from the columns lon_smooth2 and lat_smooth2.
+If True, the returned object is a simple features object. Default = True.}
+
+\item{limit}{Integer. Limit the number of rows returned to this number. Default = 1000.}
 }
 \value{
-Data frame.
+Tibble of postable records. In the case of loadGeometries = T (default), also of class sf (simple feature) with geometries based on lat lon.
 }
 \description{
 This is a convenience function that reads from the table "positions.postable".
@@ -16,6 +33,22 @@ This table contains the primary positions data.
 \examples{
 dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
-positions <- getPosdata()
+
+positions <- getPosdata(selectColony = "Kongsfjorden",
+                selectDataResponsible = "B_Moe",
+                selectSpecies = "Little auk",
+                limit = F,
+                loadGeometries = F)
+
+positions
+
+# get data with geometries (default)
+positions2 <- getPosdata(limit = 500)
+
+positions2
+
+#make a simple plot
+plot(positions2["logger_model"], pch = 16)
+
 }
 }

@@ -4,6 +4,7 @@
 #' sessions marked "active = TRUE"
 #'
 #' @return Data frame.
+#' @import dplyr
 #' @export
 #' @examples
 #' dontrun{

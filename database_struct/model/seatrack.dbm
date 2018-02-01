@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="652,996" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="702,1248" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -1172,7 +1172,7 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 <table name="postable">
 	<schema name="positions"/>
 	<role name="admin"/>
-	<position x="2060" y="60"/>
+	<position x="2061.11" y="60"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1190,6 +1190,9 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	</column>
 	<column name="year_tracked" not-null="true">
 		<type name="text" length="0"/>
+	</column>
+	<column name="session_id">
+		<type name="integer" length="0"/>
 	</column>
 	<column name="year_deployed" not-null="true">
 		<type name="smallint" length="0"/>
@@ -2118,7 +2121,7 @@ END;]]></definition>
 		AND r.session_id = NEW.session_id)
 		UPDATE loggers.logging_session update SET
 		retrieval_id = NEW.retrieval_id,
-		year_tracked = date_part('year', dep.deployment_date) || '-' || date_part('year', dep.retrieval_date)
+		year_tracked = date_part('year', dep.deployment_date) || '_' || date_part('year', dep.retrieval_date)::integer % 100
 		FROM dep
 		WHERE update.session_id = NEW.session_id
 		AND NEW.session_id = dep.session_id;
@@ -3902,6 +3905,47 @@ END;]]></definition>
 	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="loggers.logging_session">
 		<function signature="functions.fn_record_logging_session_last_updated()"/>
+</trigger>
+
+<index name="postable_logger_model" table="positions.postable"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="logger_model"/>
+		</idxelement>
+</index>
+
+<function name="fn_update_postable_logging_session"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+
+NEW.session_id := (SELECT ls.session_id
+FROM loggers.logging_session ls, loggers.logger_info li, positions.postable p
+WHERE p.logger_id = li.logger_serial_no
+AND p.logger_model = li.logger_model
+AND li.logger_id = ls.logger_id
+AND p.year_tracked = ls.year_tracked);
+
+RETURN NEW;
+END;]]></definition>
+</function>
+
+<trigger name="tr_update_postable_logging_session" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="positions.postable">
+		<function signature="functions.fn_update_postable_logging_session()"/>
 </trigger>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"

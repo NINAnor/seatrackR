@@ -71,11 +71,12 @@ server = (function(input, output,session) {
                                                                   uiOutput("choose_colony"),
                                                                   uiOutput("choose_data_responsible"),
                                                                   uiOutput("choose_ring_number"),
+                                                                  uiOutput("number_of_rows"),
                                                                   checkboxInput("limit500", "Limit display to 500 random points", value = T, width = NULL),
                                                                   downloadButton('downloadData', 'Last ned CSV')),
 
                                                      mainPanel(
-                                                       fluidRow(column(12, h4("The default map (all records) is limited to roughly 1000 points"))),
+                                                       fluidRow(column(12, h4("The default map (selecting all records) is always limited to roughly 500 points. Keep this box ticked for most subselections."))),
                                                        fluidRow(column(12,leafletOutput("mymap", height=600))
                                                        )
                                                        ,
@@ -90,9 +91,9 @@ server = (function(input, output,session) {
                                                    DT::dataTableOutput('allDeplMismatch')
                                           ),
                                           tabPanel("Database stats",
-                                                   DT::dataTableOutput('shortTable'),
-                                                   DT::dataTableOutput('shortTableEqfilter3'),
-                                                   DT::dataTableOutput('longerTable')
+                                                   DT::DTOutput('shortTable'),
+                                                   DT::DTOutput('shortTableEqfilter3'),
+                                                   DT::DTOutput('longerTable')
                                           )
       )
 
@@ -119,9 +120,9 @@ server = (function(input, output,session) {
     dbGetQuery(con,"SET search_path = positions, public;")
 
 
-    cat.query<-"SELECT * FROM views.categories"
+    cat.query <- "SELECT * FROM views.categories"
 
-    suppressWarnings(categories<-dbGetQuery(con, cat.query))
+    suppressWarnings(categories <- dbGetQuery(con, cat.query))
 
     #categories<-fetch(res,-1)
     #dbClearResult(res)
@@ -157,7 +158,7 @@ server = (function(input, output,session) {
     mismatch
   })
 
-  output$shortTable <- DT::renderDataTable({
+  output$shortTable <- DT::renderDT({
 
     #   shortSum <-"
     #   SELECT count(distinct(species)) \"Antall arter\", count(distinct(colony)) \"Antall kolonier\",
@@ -173,7 +174,7 @@ server = (function(input, output,session) {
     rownames(shortTable) <- ""
     colnames(shortTable) <- c("Antall arter", "Antall kolonier", "Antall år", "Antall posisjoner", "Antall individer")
 
-    shortTable
+    DT::datatable(shortTable)
 
   }
  ,
@@ -184,7 +185,7 @@ server = (function(input, output,session) {
   )
 
 
-  output$shortTableEqfilter3 <- DT::renderDataTable({
+  output$shortTableEqfilter3 <- DT::renderDT({
 
 
     # shortSumEqfilter3 <-"
@@ -213,7 +214,7 @@ server = (function(input, output,session) {
 
 
 
-  output$longerTable <- DT::renderDataTable({
+  output$longerTable <- DT::renderDT({
 
     # longerSum <-"
     # SELECT year_tracked år, species, count(distinct(ring_number)) antall_unike_ring_nummer, count(*) antall_posisjoner, count(distinct(colony)) antall_kolonier
@@ -239,9 +240,9 @@ server = (function(input, output,session) {
   # caption.width = getOption("xtable.caption.width", NULL)
   )
 
+  output$number_of_rows <- renderText(paste("Number of records in selection:", nrow(fields()$fields)))
 
-
-  query<-reactive({
+  query <- reactive({
     if (is.null(input$species)){
       return(NULL)
     } else
@@ -256,8 +257,8 @@ server = (function(input, output,session) {
                     WHERE eqfilter3 = 1
                     AND lon_smooth2 is not null
                     AND lat_smooth2 is not null"
-        return(fetch.q)
-      } else
+
+      } else {
 
       start_time<-as.character(input$daterange[1])
       end_time<-as.character(input$daterange[2])
@@ -301,33 +302,34 @@ server = (function(input, output,session) {
 
     fetch.q<-paste("SELECT *
                    FROM positions.postable"
-                   ,group.sub,date_range, colony.sub, responsible.sub, ring.number, limit,sep="")
-
+                   , group.sub, date_range, colony.sub, responsible.sub, ring.number, limit, sep="")
+      }
     return(fetch.q)
 
   })
 
 
 
-  fields<-reactive({
+  fields <- reactive({
     if (is.null(input$species)){
       return(NULL)
     } else
 
 
-    dbGetQuery(con, "SET CLIENT_ENCODING TO 'UTF8'")
+    dbSendQuery(con, "SET CLIENT_ENCODING TO 'UTF8'")
 
-    suppressWarnings(post.fields <- dbGetQuery(con,as.character(query())))
+    suppressWarnings(post.fields <- dbGetQuery(con, as.character(query())))
 
     if(input$limit500 == TRUE){
 
       if(nrow(post.fields)<500){
-        list(fields=post.fields, fields.subset=post.fields)
+        out <- list(fields = post.fields, fields.subset = post.fields)
       } else
-        list(fields=post.fields, fields.subset=post.fields[sample(x=1:nrow(post.fields),size=500),])
+        out <- list(fields = post.fields, fields.subset = post.fields[sample(x = 1:nrow(post.fields), size = 500), ])
     }
-    else list(fields=post.fields, fields.subset=post.fields)
+    else out <- list(fields = post.fields, fields.subset = post.fields)
 
+    return(out)
 
   })
 
@@ -349,21 +351,21 @@ server = (function(input, output,session) {
       } else
 
         if (nrow(fields()$fields)>500){
-          my.fields<-fields()$fields.subset
+          my.fields <- fields()$fields.subset
 
           leaflet() %>%
             addProviderTiles("Esri.NatGeoWorldMap") %>%
             #addProviderTiles("MapQuestOpen.OSM") %>%  # Add MapBox map tiles
             addCircleMarkers(radius=6, stroke= FALSE, fillOpacity=0.5, lng=my.fields$lon_smooth2, lat=my.fields$lat_smooth2
-                             , popup=paste("Ring ID: ",as.character(my.fields$ring_number),"<br> Species: ", my.fields$species,
-                                           "<br> Time: ", my.fields$date_time), col = "#E57200")
+                             , popup=paste("Ring ID: ", as.character(fields()$fields.subset$ring_number),"<br> Species: ", fields()$fields.subset$species,
+                                           "<br> Time: ", fields()$fields.subset$date_time), col = "#E57200")
         } else
         {
           leaflet() %>%
             addProviderTiles("Esri.NatGeoWorldMap") %>%
             #addProviderTiles("MapQuestOpen.OSM") %>%
             addCircleMarkers(radius=6, stroke= FALSE, fillOpacity=0.5, lng=fields()$fields$lon_smooth2, lat=fields()$fields$lat_smooth2
-                             , popup=paste("Ring ID: ",as.character(fields()[1]$ring_number),"<br> Species: ", fields()$fields$species,
+                             , popup=paste("Ring ID: ", as.character(fields()$fields$ring_number),"<br> Species: ", fields()$fields$species,
                                            "<br> Time: ", fields()$fields$date_time), col = "#E57200"
             )
 

@@ -9,3 +9,4 @@ Rscripts/*
 *.laccdb
 sql/
 Vegard_DB_relatedscript.R
+database_struct/file_storage
