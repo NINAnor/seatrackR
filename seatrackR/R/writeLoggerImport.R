@@ -17,7 +17,7 @@
 
 
 writeLoggerImport <- function(loggerImport, append = T, overwrite = FALSE){
-  seatrackR:::checkCon()
+ checkCon()
   DBI::dbWithTransaction(
     con,
     {

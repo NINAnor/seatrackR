@@ -18,7 +18,7 @@
 
 
 writeMetadata <- function(metadata){
-  seatrackR:::checkCon()
+ checkCon()
 
   DBI::dbSendQuery(con, "SET search_path TO imports, public")
   DBI::dbWithTransaction(
@@ -32,7 +32,7 @@ writeMetadata <- function(metadata){
 
 ##Not done, on to something...
 writeMetadata2 <- function(metadata){
-  seatrackR:::checkCon()
+ checkCon()
 
   DBI::dbSendQuery(con, "SET search_path TO imports, public")
 

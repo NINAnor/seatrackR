@@ -16,7 +16,7 @@
 
 
 writeIndividInfo <- function(individData, append = T, overwrite = FALSE){
-  seatrackR:::checkCon()
+  checkCon()
   DBI::dbWithTransaction(
     con,
     {

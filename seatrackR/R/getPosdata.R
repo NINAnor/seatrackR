@@ -45,7 +45,7 @@ getPosdata <- function(selectSpecies= NULL,
                        loadGeometries = T,
                        limit = 1000){
 
-  seatrackR:::checkCon()
+  checkCon()
 
   postable <- tbl(con, dbplyr::in_schema("positions", "postable"))
 

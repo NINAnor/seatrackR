@@ -13,7 +13,7 @@
 #' }
 
 getActiveSessions <- function() {
-  seatrackR:::checkCon()
+  checkCon()
   DBI::dbGetQuery(con, "SELECT * FROM views.active_logging_sessions")  %>% as_tibble()
 }
 

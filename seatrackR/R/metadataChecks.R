@@ -20,7 +20,7 @@
 
 
 checkMetadata <- function(myTable){
-  seatrackR:::checkCon()
+  checkCon()
   sessionErrors <- checkOpenSession(myTable)
   loggerErrors <- checkLoggers(myTable)
   nameErrors <- checkNames(myTable)
@@ -41,7 +41,7 @@ checkMetadata <- function(myTable){
 #' @describeIn checkMetadata Check loggers to be deployed or retrieved is in an open logging session
 #' @export
 checkOpenSession <- function(myTable){
-  seatrackR:::checkCon()
+ checkCon()
 
   activeSessions <- DBI::dbGetQuery(con,
              "SELECT li.logger_serial_no, li.logger_model
@@ -66,7 +66,7 @@ checkOpenSession <- function(myTable){
 #' @describeIn checkMetadata Check if loggers are registered in the loggers.logger_info table
 #' @export
 checkLoggers <- function(myTable){
-  seatrackR:::checkCon()
+  checkCon()
 
   registeredLoggers <- DBI::dbGetQuery(con,
                                     "SELECT * FROM loggers.logger_info")
@@ -90,7 +90,7 @@ checkLoggers <- function(myTable){
 #' @export
 #'
 checkNames <- function(myTable){
-  seatrackR:::checkCon()
+  checkCon()
 
   presentNames <- DBI::dbGetQuery(con,
                                     "SELECT * FROM metadata.people")

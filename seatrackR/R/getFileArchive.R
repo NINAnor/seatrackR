@@ -11,7 +11,7 @@
 #' }
 
 getFileArchive <- function(){
-  seatrackR:::checkCon()
+  checkCon()
 
   DBI::dbGetQuery(con,
   "SELECT f.file_id, f.session_id, ii.ring_number, ii.euring_code, ls.year_tracked, li.logger_serial_no, li.logger_model, f.filename

@@ -77,6 +77,54 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<roles names="seatrack_writer" role-type="refer" />
 </role>
 
+<role name="hallvard_strom"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="hallvard_strom">
+	<roles names="seatrack_reader" role-type="refer" />
+</role>
+
+<role name="sebastien_descamps"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="sebastien_descamps">
+	<roles names="seatrack_reader" role-type="refer" />
+</role>
+
+<role name="benjamin_merkel"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="benjamin_merkel">
+	<roles names="seatrack_reader" role-type="refer" />
+</role>
+
+<role name="conrad_helgeland"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="conrad_helgeland">
+	<roles names="seatrack_reader" role-type="refer" />
+</role>
+
+<role name="per_fauchald"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="per_fauchald">
+	<roles names="seatrack_reader" role-type="refer" />
+</role>
+
+<role name="arnaud_tarroux"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="arnaud_tarroux">
+	<roles names="seatrack_reader" role-type="refer" />
+</role>
+
 <database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
 	<role name="admin"/>
 	<appended-sql><![CDATA[-----------usage permissions
