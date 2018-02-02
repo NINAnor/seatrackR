@@ -10,3 +10,10 @@ Rscripts/*
 sql/
 Vegard_DB_relatedscript.R
 database_struct/file_storage
+seatrackR/.Rproj.user
+seatrackR/.Rhistory
+seatrackR/.RData
+seatrackR/.Rdata
+seatrackR/temp
+
+
