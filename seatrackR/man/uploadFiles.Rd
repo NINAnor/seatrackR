@@ -15,7 +15,7 @@ Write files to the file archive
 \examples{
 dontrun{
 
-uploadFiles(c("test_file.txt", "test_file2.txt"), originFolder = "temp")
+uploadFiles(files = c("test_file.txt", "test_file2.txt"), originFolder = "temp")
 }
 
 }

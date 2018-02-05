@@ -20,11 +20,12 @@ listFileArchive <- function(){
                       crlf = T)
 
   filesInStorage <- strsplit(filesInStorage, "\r*\n")[[1]] %>% as_tibble
+  names(filesInStorage) <- "filename"
 
   filesInDatabase <- getFileArchive()
 
   filesNotInStorage <- filesInDatabase %>%
-    filter(!(filename %in% filesInStorage)) %>%
+    filter(!(filename %in% filesInStorage$filename)) %>%
     select(filename)
 
   filesNotInDatabase <- filesInStorage %>%

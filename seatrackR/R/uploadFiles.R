@@ -7,7 +7,7 @@
 #' @examples
 #' dontrun{
 #'
-#' uploadFiles(c("test_file.txt", "test_file2.txt"), originFolder = "temp")
+#' uploadFiles(files = c("test_file.txt", "test_file2.txt"), originFolder = "temp")
 #' }
 #'
 
@@ -16,6 +16,12 @@ uploadFiles <- function(files = NULL, originFolder = NULL, overwrite = F){
   checkCon()
 
   if(!tibble::is_tibble(files)) files <- tibble::as_tibble(files)
+
+  fileArchive <- listFileArchive()
+
+  if(any(files$value %in% fileArchive$filesInStorage$filename) & overwrite == F){
+    stop(paste("At least one file already exists in the file storage, use overwrite = True to overwrite"))
+  } else {
 
 
   url <- .getFtpUrl(write = T)
@@ -44,6 +50,8 @@ uploadFiles <- function(files = NULL, originFolder = NULL, overwrite = F){
   }
 
   apply(files, 1, function(x) writeFile(x = x, url = url, originFolder = originFolder))
+
+  }
 
 }
 
