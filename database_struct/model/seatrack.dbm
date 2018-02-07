@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="702,1248" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="882,102" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -125,8 +125,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<roles names="seatrack_reader" role-type="refer" />
 </role>
 
+<tablespace name="seatrack" directory="'/data/seatrack'">
+	<role name="admin"/>
+</tablespace>
+
 <database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
 	<role name="admin"/>
+	<tablespace name="seatrack"/>
 	<appended-sql><![CDATA[-----------usage permissions
 GRANT USAGE ON SCHEMA metadata, loggers, positions, views, imports, individuals
 TO seatrack_reader, seatrack_writer, seatrack_metadata_writer;
@@ -1184,6 +1189,9 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 	<column name="decomissioned">
 		<type name="boolean" length="0"/>
 	</column>
+	<column name="shutdown_date">
+		<type name="date" length="0"/>
+	</column>
 	<constraint name="shutdown_pk" type="pk-constr" table="loggers.shutdown">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
@@ -1243,10 +1251,10 @@ testlocation•testcolony•testcolonü•58.00528•7.44306]]>
 		<type name="integer" length="0"/>
 	</column>
 	<column name="year_deployed" not-null="true">
-		<type name="smallint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="year_retrieved" not-null="true">
-		<type name="smallint" length="0"/>
+		<type name="integer" length="0"/>
 	</column>
 	<column name="ring_number">
 		<type name="text" length="0"/>
@@ -1812,9 +1820,6 @@ WHERE active = TRUE]]></expression>
 	<column name="intended_deployer">
 		<type name="text" length="0"/>
 	</column>
-	<column name="data_responsible">
-		<type name="text" length="0"/>
-	</column>
 	<column name="shutdown_session">
 		<type name="boolean" length="0"/>
 	</column>
@@ -1835,6 +1840,9 @@ WHERE active = TRUE]]></expression>
 	</column>
 	<column name="comment">
 		<type name="text" length="0"/>
+	</column>
+	<column name="shutdown_date">
+		<type name="date" length="0"/>
 	</column>
 	<constraint name="logger_import_pk" type="pk-constr" table="imports.logger_import">
 		<columns names="id" ref-type="src-columns"/>
@@ -2260,14 +2268,16 @@ END;]]></definition>
 																download_date,
 																field_status,
 																downloaded_by,
-																cecomissioned)
+																decomissioned,
+																shutdown_date)
 							SELECT ls.session_id,
 								
 										NEW.download_type,
 										NEW.download_date,
 										NEW.field_status,
 										NEW.downloaded_by,
-										NEW.decomissioned
+										NEW.decomissioned,
+										NEW.shutdown_date
 							FROM loggers.logger_info li, loggers.logging_session ls
 							WHERE li.logger_serial_no = NEW.logger_serial_no
 							AND li.logger_model = NEW.logger_model
@@ -2674,7 +2684,9 @@ END;]]></definition>
 •individual caught (logger retrieved and replaced)⸣
 •individual caught (logger lost and replaced)⸣
 •individual observed (logger lost)⸣
-•individual observed (logger status unknown)]]>
+•individual observed (logger status unknown)⸣
+•individual found dead (logger still attached)⸣
+•logger not used]]>
 	</initial-data>
 </table>
 
@@ -2738,7 +2750,8 @@ END;]]></definition>
 •25d⸣
 •30d⸣
 •fledging⸣
-•none]]>
+•none⸣
+•unknown]]>
 	</initial-data>
 </table>
 

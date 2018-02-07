@@ -1,7 +1,7 @@
 require(tidyverse)
 require(DBI)
 require(RPostgres)
-metaRaw <- read.csv("../database_struct/Standardtabeller/metadata_sklinna_2016.csv", skip = 1,
+metaRaw <- read.csv("../../database_struct/Standardtabeller/metadata_sklinna_2016.csv", skip = 1,
                     fileEncoding = "windows-1252", stringsAsFactors =  F)
 
 metaRaw <- metaRaw[1:169,]
@@ -112,8 +112,9 @@ sampleLoggerImport$programmed_gmt_time <- Sys.time()
 sampleLoggerImport$intended_species <- "Little auk"
 sampleLoggerImport$intended_location <- "Bjørnøya"
 sampleLoggerImport$intended_deployer <- "Vegard Sandøy Bråthen"
-sampleLoggerImport$data_responsible <- "Jens Åström"
+#sampleLoggerImport$data_responsible <- "Jens Åström"
 sampleLoggerImport$shutdown_session <- F
+sampleLoggerImport$shutdown_date <- NA
 sampleLoggerImport$field_status <- NA
 sampleLoggerImport$downloaded_by <- NA
 sampleLoggerImport$download_date <- NA
@@ -125,8 +126,8 @@ sampleLoggerImport <- sampleLoggerImport[c("logger_serial_no", "logger_model", "
                                            "production_year", "project", "starttime_gmt",
                                            "logging_mode", "started_by", "started_where",
                                            "days_delayed", "programmed_gmt_time", "intended_species",
-                                           "intended_location", "intended_deployer", "data_responsible",
-                                           "shutdown_session", "field_status", "downloaded_by", "download_type",
+                                           "intended_location", "intended_deployer",
+                                           "shutdown_session", "shutdown_date","field_status", "downloaded_by", "download_type",
                                            "download_date", "decomissioned", "comment")]
 
 sampleLoggerImport <- as_tibble(sampleLoggerImport)
@@ -145,6 +146,7 @@ sampleLoggerShutdown$field_status[1:30] <- "OK"
 sampleLoggerShutdown$field_status[31:nrow(sampleLoggerShutdown)] <- "Error"
 sampleLoggerShutdown$downloaded_by <- "Jens Åström"
 sampleLoggerShutdown$download_date <- Sys.Date()
+sampleLoggerShutdown$shutdown_date <- Sys.Date()
 sampleLoggerShutdown$decomissioned <- F
 sampleLoggerShutdown$download_type[20:40] <- "Reconstructed"
 
@@ -202,3 +204,12 @@ names(sampleLoggerModels) <- c("producer", "model")
 #
 # writeMetadata(metadata)
 # writeMetadata(metaRetr)
+
+
+##########
+##Posdata
+
+connectSeatrack("testreader", "testreader")
+
+posdata <- getPosdata(limit = 1000)
+use_data(posdata)
