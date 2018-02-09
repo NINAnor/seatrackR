@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="882,102" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="882,156" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -4008,6 +4008,11 @@ END;]]></definition>
 	 table="positions.postable">
 		<function signature="functions.fn_update_postable_logging_session()"/>
 </trigger>
+
+<schema name="seatrack" rect-visible="true" fill-color="#e1e1e1">
+	<role name="postgres"/>
+	<comment><![CDATA[temporary for importing from existing database]]></comment>
+</schema>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="loggers.logger_info">

@@ -315,34 +315,77 @@ The shutdown also creates filenames associated with the session, depending on th
 
 Working with the file archive
 =====================
-We can now see what these shutdowns has produced in the file archive table. This table lists the expected filenames produced by the logging sessions that has been shutdown. It is up to the users to manually upload these files to the file storage location [comming functions]
+We can now see what these shutdowns has produced in the file archive table. This table lists the expected filenames produced by the logging sessions that has been shutdown. It is up to the users to manually upload these files to the file storage location.
 
-We can take a look at the expected filenames through the function `getFileArchive`.
+
+We can take a look at the expected filenames through to functions. Firstly, the function `getFileArchive` retrieves the info of the filenames, together with which logging session they are connected to and some info on the related birds.
 
 ```{r}
-fileArchive <- getFileArchive()
+databaseFileArchive <- getFileArchive()
 
-fileArchive
+databaseFileArchive
 ```
 
-Currently, we have shut down 5 different logger models, some of which produces 7 and some that produces 4 files.
+You could use this table to get some bookkeeping info. Currently, we have shut down 5 different logger models, some of which produces 7 and some that produces 4 files. For example see how the recorded file names group into individual loggers.
 
 ```{r}
-fileArchive %>% 
+databaseFileArchive %>% 
   group_by(logger_serial_no, logger_model) %>% 
   tally() %>%  
   group_by(logger_model) %>% 
   summarise(mean(n)) 
 ```
 
+Currently, we have shut down 5 different logger models, some of which produces 7 and some that produces 4 files, depending on their make and model. We could also from this table see how many loggers that have been shutdown and are expected to have files associated with them.
+
 
 ```{r}
-fileArchive %>% 
+databaseFileArchive %>% 
   summarise("noShutdownLoggers" = n_distinct(logger_serial_no, logger_model))
 ```
-So out of the 57 shutdowns we performed, only 40 of them resulted in files in the table loggers.file_archive. This is as predicted. 
+So out of the 57 shutdowns we performed, only 40 of them resulted in files in the table loggers.file_archive. This is as predicted since only 40 was successfully downloaded or had their download data reconstructed.
 
 
+Uploading and downloading files from the file storage.
+--------------------
+So far, we have only looked in the database for the expected files connected to each logging session. The actual file storage is located on a ftp server. We can use the `listFileArchive` function to list the files in the file storage on this ftp server. This function also compares the the content of the file storage and to the proposed filenames in the database. 
 
 
+```{r}
+fileArchive <- listFileArchive()
+fileArchive
+```
+
+For the purpose of testing, we have uploaded some dummy files, called test_file.txt, and test_file2.txt. These are found in the list element `filesInStorage` and since they are not expected by the database, also in the list element `filesNotInDatabase`. The last element is `filesNotInStorage` which lists the expected files registered in the database, that are not yet sent to the file storage.
+
+We can upload files to the storage, using the function `uploadFiles`. This function grabs the appropriate username and passwords for the ftp connection from the database and uploads the files specified. You need to specify `overwrite = True` to overwrite existing files. Only users that login to the database with write permissions (members of the role group "seatrack_writer") will be able to upload files to the file storage.
+
+Here we will upload two more test files that are locally stored in the folder "temp". 
+
+```{r, include = F}
+disconnectSeatrack()
+load("../temp/credentials.Rdata")
+connectSeatrack(credentials[1], credentials[2])
+```
+
+
+```{r}
+uploadFiles(c("test_file3.txt", "test_file4.txt"), originFolder = "../temp")
+```
+
+Although we get a confirmation, we can double check that the files actually are now stored in the file storage.
+
+```{r}
+fileArchive <- listFileArchive()
+fileArchive
+```
+
+We can download files from the storage using the function `downloadFiles`. This is available for everyone that can login to the database (members of the group "seatrack_reader"). Here, we download all the files. 
+
+```{r}
+filesToGet = listFileArchive()$filesInStorage
+downloadFiles(files = filesToGet, destFolder = "../temp", overwrite = T)
+```
+
+More often though you would identify a subset of files to download. Which files you are interested in could be found through a custom SQL query, or through specialized search functions (not yet implemented).
 
