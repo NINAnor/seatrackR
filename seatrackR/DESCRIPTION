@@ -1,6 +1,6 @@
 Package: seatrackR
 Title: Interface functions for the Seatrack database
-Version: 0.0.1.190
+Version: 0.0.1.191
 Date: 2018-02-09
 Authors@R: person("Jens", "Astrom", email = "jens.astrom@nina.no", role = c("aut", "cre"))
 Description: R utility functions for interaction with the seatrack database. Of
@@ -21,5 +21,7 @@ Suggests:
     knitr,
     rmarkdown,
     tidyverse,
-    dbplyr
-VignetteBuilder: knitr
+    dbplyr,
+    R.rsp
+VignetteBuilder: R.rsp
+
