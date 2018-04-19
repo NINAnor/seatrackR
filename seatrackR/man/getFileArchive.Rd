@@ -4,7 +4,7 @@
 \alias{getFileArchive}
 \title{Retrieve info on the registered raw-files}
 \usage{
-getFileArchive()
+getFileArchive(selectColony = NULL, selectYear = NULL)
 }
 \value{
 Data frame.

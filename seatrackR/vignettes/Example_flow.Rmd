@@ -187,6 +187,7 @@ So, `r noDepRetr$noDeployments` deployment events, and `r noDepRetr$noRetrievals
 
 sampleMetadata$data_responsible[20] <- "Alkekungen himself"
 sampleMetadata$logger_id_retrieved[103:105] <- "scraped off!"
+sampleMetadata$ring_number[106] <- "5175141"
 
 ```
 

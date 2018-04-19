@@ -2,12 +2,15 @@
 % Please edit documentation in R/metadataChecks.R
 \name{checkMetadata}
 \alias{checkMetadata}
+\alias{checkRetrievedMatchDeployed}
 \alias{checkOpenSession}
 \alias{checkLoggers}
 \alias{checkNames}
 \title{checkMetadata before import}
 \usage{
 checkMetadata(myTable)
+
+checkRetrievedMatchDeployed(myTable)
 
 checkOpenSession(myTable)
 
@@ -26,6 +29,8 @@ This is a collection of functions to check the integrity of the metadata table b
 }
 \section{Functions}{
 \itemize{
+\item \code{checkRetrievedMatchDeployed}: Check loggers to be deployed or retrieved is in an open logging session
+
 \item \code{checkOpenSession}: Check loggers to be deployed or retrieved is in an open logging session
 
 \item \code{checkLoggers}: Check if loggers are registered in the loggers.logger_info table

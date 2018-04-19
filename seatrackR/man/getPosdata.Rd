@@ -6,7 +6,7 @@
 \usage{
 getPosdata(selectSpecies = NULL, selectColony = NULL,
   selectDataResponsible = NULL, selectRingnumber = NULL,
-  loadGeometries = T, limit = 1000)
+  selectYear = NULL, loadGeometries = T, limit = 1000)
 }
 \arguments{
 \item{selectSpecies}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.}

@@ -65,11 +65,11 @@ To add new line in shutdown
 
 Issues
 ===============
-* Prob need to add new table of logger events that records other bookkeeping  events than deployment and retrieval. Need to talk Halfvdan.
+* Probably need to add new table of logger events that records other bookkeeping events than deployment and retrieval. Need to talk Halfvdan. And what should the event table actually do?
 
-* Addd comment column to retrieval (replaces retrival type)
+* Add comment column to retrieval (replaces retrival type?) 
 
-* Add metadata table for allowed ages, incl text and numbers as text.
+* Add metadata table for allowed ages, incl text and numbers as text. ?
 
 * Add blood sampling and wing sample columns to individual status table
 

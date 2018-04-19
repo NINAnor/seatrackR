@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="882,156" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="406,0" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -3842,16 +3842,28 @@ END;]]></definition>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-	IF NEW.deployment_date < (SELECT starttime_gmt::date
+	IF (
+	(NEW.deployment_date < (SELECT programmed_gmt_time::date
 				FROM loggers.startup
-				WHERE NEW.session_id = startup.session_id) THEN
-
+				WHERE NEW.session_id = startup.session_id)) 
+				OR
+				
+	(NEW.deployment_date < (SELECT starttime_gmt::date
+				FROM loggers.startup
+				WHERE NEW.session_id = startup.session_id) 
+				AND
+				
+				(SELECT programmed_gmt_time::date
+				FROM loggers.startup
+				WHERE NEW.session_id = startup.session_id) IS NULL)
+				) 
+				THEN
+				
 				SELECT functions.fn_raise_deployment_date_exception(logger_serial_no, session_id)
 				FROM (SELECT logger_info.logger_serial_no, logging_session.session_id 
 				FROM loggers.startup, loggers.logger_info, loggers.logging_session
 				WHERE NEW.session_id = logging_session.session_id
 				AND logging_session.logger_id = logger_info.logger_id) fo;
-
 	
 	END IF;
 	RETURN NULL;
@@ -3991,21 +4003,23 @@ END;]]></definition>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-
-NEW.session_id := (SELECT ls.session_id
+UPDATE positions.postable pos
+SET session_id = foo.session_id 
+FROM (SELECT ls.session_id, p.id
 FROM loggers.logging_session ls, loggers.logger_info li, positions.postable p
 WHERE p.logger_id = li.logger_serial_no
 AND p.logger_model = li.logger_model
 AND li.logger_id = ls.logger_id
-AND p.year_tracked = ls.year_tracked);
-
-RETURN NEW;
+AND p.year_tracked = ls.year_tracked) foo
+WHERE pos.id = foo.id;
+RETURN NULL;
 END;]]></definition>
 </function>
 
-<trigger name="tr_update_postable_logging_session" firing-type="BEFORE" per-line="true" constraint="false"
+<trigger name="tr_update_postable_logging_session" firing-type="AFTER" per-line="false" constraint="false"
 	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="positions.postable">
+	<condition><![CDATA[pg_trigger_depth() = 0]]></condition>
 		<function signature="functions.fn_update_postable_logging_session()"/>
 </trigger>
 

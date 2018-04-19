@@ -24,6 +24,7 @@ checkMetadata <- function(myTable){
   sessionErrors <- checkOpenSession(myTable)
   loggerErrors <- checkLoggers(myTable)
   nameErrors <- checkNames(myTable)
+  #retrievedIDError <- checkRetrievedMatchDeployed(myTable)
 
   allErrors <- list(sessionErrors, loggerErrors, nameErrors)
   class(allErrors) <- c("metadataErrors", "list")
@@ -37,6 +38,40 @@ checkMetadata <- function(myTable){
 
   return(allErrors)
 }
+
+#' @describeIn checkMetadata Check loggers to be deployed or retrieved is in an open logging session
+#' @export
+checkRetrievedMatchDeployed <- function(myTable){
+
+  #This is not done. Need to merge deployments in myTable to those in database before performing check.
+    checkCon()
+
+
+  activeDataQ <- "SELECT logging_session.session_id, logger_info.logger_model, logger_info.logger_serial_no, individ_info.individ_id
+   FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+  WHERE logging_session.logger_id =	logger_info.logger_id
+  AND logging_session.individ_id = individ_info.individ_id
+  AND logging_session.active IS True
+   "
+
+activeData <- DBI::dbGetQuery(con, activeDataQ)
+
+deployedIndividualsQ <- "SELECT * FROM loggers.deployment"
+
+deployedIndividuals <- DBI::dbGetQuery(con, deployedIndividualsQ)
+
+retrievedIndividuals <- activeData %>% inner_join(myTable, by = c("logger_model" = "logger_model_retrieved",
+                                                                 "logger_serial_no" = "logger_id_retrieved"))
+
+retrievedNotDepl <- retrievedIndividuals %>%
+  left_join(deployedIndividuals, by = c("session_id" = "session_id")) %>%
+  filter(individ_id.x != individ_id.y) %>%
+  select(individ_id.x, session_id)
+
+return(retrievedNotDepl)
+
+}
+
 
 #' @describeIn checkMetadata Check loggers to be deployed or retrieved is in an open logging session
 #' @export

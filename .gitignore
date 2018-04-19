@@ -8,6 +8,7 @@ old/*
 Rscripts/*
 *.laccdb
 sql/
+thumbs.db
 Vegard_DB_relatedscript.R
 database_struct/file_storage
 seatrackR/.Rproj.user

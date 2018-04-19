@@ -42,6 +42,7 @@ getPosdata <- function(selectSpecies= NULL,
                        selectColony = NULL,
                        selectDataResponsible = NULL,
                        selectRingnumber = NULL,
+                       selectYear = NULL,
                        loadGeometries = T,
                        limit = 1000){
 
@@ -67,6 +68,10 @@ getPosdata <- function(selectSpecies= NULL,
 
   if(!is.null(selectRingnumber)){
     res <- res %>% filter(ring_number %in% selectRingnumber)
+  }
+
+  if(!is.null(selectYear)){
+    res <- res %>% filter(year_tracked %in% selectYear)
   }
 
   if(!limit == F){
