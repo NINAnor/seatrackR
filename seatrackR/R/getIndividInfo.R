@@ -14,34 +14,47 @@
 
 getIndividInfo <- function(selectColony = NULL,
                selectYear = NULL){
-  
+
   checkCon()
-  
-  
+
+
   sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
+
   individs <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_info"))
+
   status <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_status"))
-  
-  
+
+  deployments <- dplyr::tbl(con, dbplyr::in_schema("loggers", "deployment")) %>%
+    select(session_id,
+           status_date = deployment_date) %>%
+    mutate(eventType = "Deployment")
+
+  retrievals <- dplyr::tbl(con, dbplyr::in_schema("loggers", "retrieval")) %>%
+    select(session_id,
+           status_date = retrieval_date) %>%
+    mutate(eventType = "Retrieval")
+
+  events <- as_tibble(deployments) %>%
+    bind_rows(as_tibble(retrievals))
+
   if(!is.null(selectColony)){
     sessions <- sessions %>% filter(colony %in% selectColony)
   }
-  
+
   if(!is.null(selectYear)){
     sessions <- sessions %>% filter(year_tracked %in% selectYear)
   }
-  
 
-query <-  sessions %>% 
-  inner_join(individs, by = c("individ_id" = "individ_id")) %>%
-  inner_join(status, by = c("ring_number" = "ring_number", 
-                            "euring_code" = "euring_code"))  %>%
-  select(session_id = session_id.x,
+##Not done. get only 270 records now. Check join! want to make sure the status updates are linked to the correct sessions.
+query <-  sessions %>%
+  inner_join(status, by = c("session_id" = "session_id"))  %>%
+  left_join(individs, by = c("individ_id" = "individ_id")) %>%
+  select(session_id,
          colony,
          year_tracked,
-         ring_number,
-         euring_code,
-         color_ring.x,
+         ring_number = ring_number.x,
+         euring_code = euring_code.x,
+         color_ring = color_ring.x,
          species = species.x,
          subspecies = subspecies.x,
          morph = morph.x,
@@ -49,7 +62,7 @@ query <-  sessions %>%
          sex = sex.x,
          sexing_method = sexing_method.x,
          status_date,
-         weight, 
+         weight,
          scull,
          tarsus,
          wing,
@@ -65,15 +78,19 @@ query <-  sessions %>%
          status_sex = sex.y,
          status_sexing_method = sexing_method.y,
          status_age = age.y
-         ) %>%
-  arrange(colony, 
-          species,
-          year_tracked,
-          ring_number)
-          
- 
- out <- as_tibble(query)
+         )
+
+  out <- as_tibble(query) %>%
+    left_join(events,
+              by = c("session_id" = "session_id",
+                     "status_date" = "status_date")) %>%
+    arrange(colony,
+            species,
+            year_tracked,
+            ring_number,
+            status_date)
+
 
  return(out)
- 
+
 }

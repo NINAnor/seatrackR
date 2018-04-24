@@ -24,9 +24,12 @@ checkMetadata <- function(myTable){
   sessionErrors <- checkOpenSession(myTable)
   loggerErrors <- checkLoggers(myTable)
   nameErrors <- checkNames(myTable)
-  #retrievedIDError <- checkRetrievedMatchDeployed(myTable)
+  retrievedIDError <- checkRetrievedMatchDeployed(myTable)
 
-  allErrors <- list(sessionErrors, loggerErrors, nameErrors)
+  allErrors <- list(sessionErrors,
+                    loggerErrors,
+                    nameErrors,
+                    retrievedIDError)
   class(allErrors) <- c("metadataErrors", "list")
 
 
@@ -47,11 +50,10 @@ checkRetrievedMatchDeployed <- function(myTable){
     checkCon()
 
 
-  activeDataQ <- "SELECT logging_session.session_id, logger_info.logger_model, logger_info.logger_serial_no, individ_info.individ_id
-   FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
-  WHERE logging_session.logger_id =	logger_info.logger_id
-  AND logging_session.individ_id = individ_info.individ_id
-  AND logging_session.active IS True
+  activeDataQ <- "SELECT logging_session.session_id, logger_info.logger_model, logger_info.logger_serial_no, individ_info.ring_number, individ_info.euring_code
+   FROM loggers.logging_session LEFT JOIN loggers.logger_info ON logging_session.logger_id =	logger_info.logger_id
+ LEFT JOIN individuals.individ_info ON logging_session.individ_id = individ_info.individ_id
+  WHERE logging_session.active IS True
    "
 
 activeData <- DBI::dbGetQuery(con, activeDataQ)
@@ -60,15 +62,33 @@ deployedIndividualsQ <- "SELECT * FROM loggers.deployment"
 
 deployedIndividuals <- DBI::dbGetQuery(con, deployedIndividualsQ)
 
-retrievedIndividuals <- activeData %>% inner_join(myTable, by = c("logger_model" = "logger_model_retrieved",
-                                                                 "logger_serial_no" = "logger_id_retrieved"))
+myTabledeployedIndividuals <- activeData %>%
+  left_join(myTable,
+             by = c("logger_model" = "logger_model_deployed",
+                    "logger_serial_no" = "logger_id_deployed")) %>%
+  select(session_id,
+         ring_number.y,
+         euring_code.y)
+
+deployedIndividuals <- deployedIndividuals %>%
+  right_join(myTabledeployedIndividuals)
+
+retrievedIndividuals <- activeData %>%
+  inner_join(myTable,
+             by = c("logger_model" = "logger_model_retrieved",
+                    "logger_serial_no" = "logger_id_retrieved"))
+
 
 retrievedNotDepl <- retrievedIndividuals %>%
-  left_join(deployedIndividuals, by = c("session_id" = "session_id")) %>%
-  filter(individ_id.x != individ_id.y) %>%
-  select(individ_id.x, session_id)
+  left_join(deployedIndividuals,
+            by = c("session_id" = "session_id")) %>%
+  filter(ring_number.y.x != ring_number.y.y) %>%
+  select(individ_id, ring_number.y.y, euring_code.y.y, session_id)
 
-return(retrievedNotDepl)
+out <- list()
+out$retrievedRingNotDeployed <- retrievedNotDepl
+
+return(out)
 
 }
 
@@ -170,6 +190,13 @@ print.metadataErrors <- function(x){
     print(x[[2]][[2]])
   }
 
+  if(nrow(x[[4]][[1]]) > 0){
+    cat("\n")
+    cat("These retrieved ring numbers don't match the ring numbers that where deployed on this logger. \nIndivid_id of NA means the deployment data is not yet in database. \n")
+    print(x[[4]][[1]])
+
+  }
+
   if(nrow(x[[3]][[1]]) > 0){
     cat("\n")
     cat("These names are not in the table metadata.people. Check spelling and compare with getNames().\n")
@@ -185,17 +212,19 @@ plot.metadataErrors <- function(x, ...){
     plot(1:10, type = "n", xaxt = "n", yaxt = "n", ylab = "", xlab = "")
     text(6, 5, labels = "No errors found \n(through the available checking functions)")
   } else{
-    toPlot <- tibble("reason" = unlist(lapply(x, names)),
+    toPlot <- tibble("Error_type" = unlist(lapply(x, names)),
                      "errorCount" = c(unlist(lapply(x[[1]], nrow)),
                                       unlist(lapply(x[[2]], nrow)),
-                                      unlist(lapply(x[[3]], nrow))))
+                                      unlist(lapply(x[[3]], nrow)),
+                                      unlist(lapply(x[[4]], nrow))))
 
     ggplot2::ggplot(toPlot) +
-      ggplot2::geom_bar(mapping = aes(x = reason, y = errorCount, fill = reason), stat = "identity") +
+      ggplot2::geom_bar(mapping = aes(x = Error_type, y = errorCount, fill = Error_type), stat = "identity") +
       ggplot2::theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
             axis.ticks.x=element_blank()) +
-      ggplot2::ggtitle("Number of errors in metadata")
+      ggplot2::ggtitle("Number of errors in metadata") +
+      scale_fill_discrete(name = "Error type")
 
   }
 

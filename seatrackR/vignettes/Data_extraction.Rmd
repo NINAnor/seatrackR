@@ -1,0 +1,73 @@
+---
+title: "Retrieve standard data from Seatrack"
+author: "Jens Åström"
+date: "4/20/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = T)
+require(tidyverse)
+```
+
+Connect
+=======
+```{r}
+require(seatrackR)
+
+connectSeatrack("testreader", "testreader")
+```
+
+Get basic data
+==============
+As of now, 4 functions exist to retreive data from the database through prebuilt queries. Apart from that, users are free to use their own queries through the functions in `DBI` and `dplyr`, using the connection named `con` made by the `connectSeatrack()`-function.
+
+```{r}
+require(DBI)
+
+myQuery <- "SELECT * from loggers.logger_info
+              WHERE producer = 'Biotrack'"
+
+biotrackLoggers <- dbGetQuery(con, myQuery)
+head(biotrackLoggers)
+
+```
+
+The `getFileArchive` function
+---------
+
+```{r}
+eynhallowFiles <- getFileArchive(selectColony = "Eynhallow")
+eynhallowFiles
+```
+
+
+The `getIndividInfo` function
+-----------------------
+We can also select the year interval the bird where tracked.
+
+```{r}
+eynhallowIndivids <- getIndividInfo(selectColony = "Eynhallow",
+                                    selectYear = "2014_15")
+eynhallowIndivids
+```
+
+!Note the weird duplicate records here!
+
+```{r}
+eynhallowIndivids %>% print(width = Inf)
+```
+
+
+The `getPosdata` function
+```{r}
+
+eynhallowPositions <- getPosdata(selectColony = "Eynhallow")
+eynhallowPositions
+```
+
+
+
+
+
+
