@@ -58,9 +58,9 @@ query <-  sessions %>%
          species = species.x,
          subspecies = subspecies.x,
          morph = morph.x,
-         age = age.x,
-         sex = sex.x,
-         sexing_method = sexing_method.x,
+         status_age = age.x,
+         status_sex = sex.x,
+         status_sexing_method = sexing_method.x,
          status_date,
          weight,
          scull,
@@ -75,9 +75,10 @@ query <-  sessions %>%
          data_responsible,
          back_on_nest,
          comment,
-         status_sex = sex.y,
-         status_sexing_method = sexing_method.y,
-         status_age = age.y
+         latest_sex = sex.y,
+         latest_sexing_method = sexing_method.y,
+         latest_age = age.y,
+         latest_info_date
          )
 
   out <- as_tibble(query) %>%
