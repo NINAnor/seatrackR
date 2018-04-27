@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="406,0" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="0,1224" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -129,9 +129,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="admin"/>
 </tablespace>
 
+<tablespace name="temp" directory="'/data'">
+	<role name="postgres"/>
+</tablespace>
+
 <database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
 	<role name="admin"/>
-	<tablespace name="seatrack"/>
+	<tablespace name="pg_default"/>
 	<appended-sql><![CDATA[-----------usage permissions
 GRANT USAGE ON SCHEMA metadata, loggers, positions, views, imports, individuals
 TO seatrack_reader, seatrack_writer, seatrack_metadata_writer;
@@ -4028,6 +4032,35 @@ END;]]></definition>
 	<comment><![CDATA[temporary for importing from existing database]]></comment>
 </schema>
 
+<function name="fn_delete_individ_info_on_delete_individ_status"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="functions"/>
+	<role name="admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[BEGIN
+
+DELETE FROM individuals.individ_info
+WHERE ring_number NOT IN (SELECT DISTINCT ring_number FROM individuals.individ_status) AND
+euring_code NOT IN (SELECT DISTINCT ring_number FROM individuals.individ_status);
+
+RETURN NULL;]]></definition>
+</function>
+
+<trigger name="tr_delete_individ_info_on_delete_individ_status" firing-type="AFTER" per-line="false" constraint="false"
+	 ins-event="false" del-event="true" upd-event="false" trunc-event="false"
+	 table="individuals.individ_status">
+		<function signature="functions.fn_delete_individ_info_on_delete_individ_status()"/>
+</trigger>
+
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="loggers.logger_info">
 	<columns names="producer,logger_model" ref-type="src-columns"/>
@@ -4062,6 +4095,12 @@ END;]]></definition>
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logger_info" table="loggers.allocation">
 	<columns names="logger_id" ref-type="src-columns"/>
 	<columns names="logger_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_allocation_session_id" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="loggers.logging_session" table="loggers.allocation">
+	<columns names="session_id" ref-type="src-columns"/>
+	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="deployment_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -4138,7 +4177,7 @@ END;]]></definition>
 </constraint>
 
 <constraint name="deployment_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="loggers.deployment">
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="loggers.logging_session" table="loggers.deployment">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -4228,7 +4267,7 @@ END;]]></definition>
 </constraint>
 
 <constraint name="retrieval_logging_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logging_session" table="loggers.retrieval">
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="loggers.logging_session" table="loggers.retrieval">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -4240,7 +4279,7 @@ END;]]></definition>
 </constraint>
 
 <constraint name="shutdown_startup_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.startup" table="loggers.shutdown">
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="loggers.startup" table="loggers.shutdown">
 	<columns names="session_id" ref-type="src-columns"/>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
@@ -4303,6 +4342,12 @@ END;]]></definition>
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.logger_info" table="loggers.startup">
 	<columns names="logger_id" ref-type="src-columns"/>
 	<columns names="logger_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_startup_session_id" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="loggers.logging_session" table="loggers.startup">
+	<columns names="session_id" ref-type="src-columns"/>
+	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="observation_individ_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -4640,6 +4685,11 @@ END;]]></definition>
 <relationship name="rel_individ_status_sexing_method" type="relfk"
 	 src-table="individuals.individ_status"
 	 dst-table="metadata.sexing_method"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_allocation_logging_session" type="relfk"
+	 src-table="loggers.allocation"
+	 dst-table="loggers.logging_session"
 	 src-required="false" dst-required="false"/>
 
 <permission>

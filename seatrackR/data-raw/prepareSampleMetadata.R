@@ -108,7 +108,7 @@ sampleLoggerImport$logging_mode <- 1
 sampleLoggerImport$started_by <- "Jens Åström"
 sampleLoggerImport$started_where <- "NINA"
 sampleLoggerImport$days_delayed <- 10
-sampleLoggerImport$programmed_gmt_time <- Sys.time()
+sampleLoggerImport$programmed_gmt_time <- sampleLoggerImport$starttime_gmt + days(2)
 sampleLoggerImport$intended_species <- "Little auk"
 sampleLoggerImport$intended_location <- "Bjørnøya"
 sampleLoggerImport$intended_deployer <- "Vegard Sandøy Bråthen"
