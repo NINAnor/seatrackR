@@ -1,4 +1,4 @@
-#' Retrieve info on the registered raw-files
+#' Retrieve summary info on the registered raw-files
 #'
 #' This is a convenience function that pulls together various info on the files in the loggers.file_archive table and other tables
 #'
@@ -10,7 +10,7 @@
 #' fileArchive <- getFileArchive()
 #' }
 
-getFileArchive <- function(selectColony = NULL,
+getFileArchiveSummary <- function(selectColony = NULL,
                            selectYear = NULL){
   checkCon()
 
