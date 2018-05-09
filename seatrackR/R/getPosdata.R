@@ -81,7 +81,9 @@ getPosdata <- function(selectSpecies= NULL,
   res <- res  %>% as_tibble()
 
   if(loadGeometries == T){
-    res <- res %>% sf::st_as_sf(coords = c("lon_smooth2", "lat_smooth2"), crs = 4326)
+    res <- res %>% sf::st_as_sf(coords = c("lon_smooth2", "lat_smooth2"),
+                                crs = 4326,
+                                remove = F)
   }
 
 return(res)
