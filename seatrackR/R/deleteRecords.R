@@ -19,12 +19,15 @@
 #' }
 
 
-deleteRecords <- function(selectColony = NULL,
-                          selectYear = NULL,
-                          selectSpecies = NULL,
+deleteRecords <- function(colony = NULL,
+                          year = NULL,
+                          species = NULL,
+                          updatedAfter = NULL,
+                          updatedBefore = NULL,
+                          updatedBy = NULL,
                           Force = F){
 
-  #checkCon()
+  checkCon()
 
 
 #append dummy condition to ease later conditions
@@ -46,28 +49,48 @@ selectQuery <- "SELECT count(*) FROM loggers.logging_session as ls WHERE 1=1"
 
 
 
-if(!is.null(selectColony)){
-  deleteSessions <- paste0(deleteSessions, "\nAND ls.colony = '", selectColony, "'")
-  deleteStartups <- paste0(deleteStartups, "\nAND ls.colony = '", selectColony, "'")
-  deleteMetadata <- paste0(deleteMetadata, "\nAND foo.colony = '", selectColony, "'")
-  selectQuery <- paste0(selectQuery, "\nAND ls.colony = '", selectColony, "'")
+if(!is.null(colony)){
+  deleteSessions <- paste0(deleteSessions, "\nAND ls.colony = '", colony, "'")
+  deleteStartups <- paste0(deleteStartups, "\nAND ls.colony = '", colony, "'")
+  deleteMetadata <- paste0(deleteMetadata, "\nAND foo.colony = '", colony, "'")
+  selectQuery <- paste0(selectQuery, "\nAND ls.colony = '", colony, "'")
 }
 
-if(!is.null(selectYear)){
-  deleteSessions <- paste0(deleteSessions, "\nAND ls.year_tracked = '", selectYear, "'")
-  deleteStartups <- paste0(deleteStartups, "\nAND ls.year_tracked = '", selectYear, "'")
-  deleteMetadata <- paste0(deleteMetadata, "\nAND foo.year_tracked = '", selectYear, "'")
-  selectQuery <- paste0(selectQuery, "\nAND ls.year_tracked = '", selectYear, "'")
+if(!is.null(year)){
+  deleteSessions <- paste0(deleteSessions, "\nAND ls.year_tracked = '", year, "'")
+  deleteStartups <- paste0(deleteStartups, "\nAND ls.year_tracked = '", year, "'")
+  deleteMetadata <- paste0(deleteMetadata, "\nAND foo.year_tracked = '", year, "'")
+  selectQuery <- paste0(selectQuery, "\nAND ls.year_tracked = '", year, "'")
 }
 
 
-if(!is.null(selectSpecies)){
-  deleteSessions <- paste0(deleteSessions, "\nAND ls.species = '", selectSpecies, "'")
-  deleteStartups <- paste0(deleteStartups, "\nAND ls.species = '", selectSpecies, "'")
-  deleteMetadata <- paste0(deleteMetadata, "\nAND foo.species = '", selectSpecies, "'")
-  selectQuery <- paste0(selectQuery, "\nAND ls.species = '", selectSpecies, "'")
+if(!is.null(species)){
+  deleteSessions <- paste0(deleteSessions, "\nAND ls.species = '", species, "'")
+  deleteStartups <- paste0(deleteStartups, "\nAND ls.species = '", species, "'")
+  deleteMetadata <- paste0(deleteMetadata, "\nAND foo.species = '", species, "'")
+  selectQuery <- paste0(selectQuery, "\nAND ls.species = '", species, "'")
 }
 
+if(!is.null(updatedAfter)){
+  deleteSessions <- paste0(deleteSessions, "\nAND ls.last_updated > '", updatedAfter, "'")
+  deleteStartups <- paste0(deleteStartups, "\nAND ls.last_updated > '", updatedAfter, "'")
+  deleteMetadata <- paste0(deleteMetadata, "\nAND m.last_updated > '", updatedAfter, "'")
+  selectQuery <- paste0(selectQuery, "\nAND ls.last_updated > '", updatedAfter, "'")
+}
+
+if(!is.null(updatedBefore)){
+  deleteSessions <- paste0(deleteSessions, "\nAND ls.last_updated < '", updatedBefore, "'")
+  deleteStartups <- paste0(deleteStartups, "\nAND ls.last_updated < '", updatedBefore, "'")
+  deleteMetadata <- paste0(deleteMetadata, "\nAND m.last_updated < '", updatedBefore, "'")
+  selectQuery <- paste0(selectQuery, "\nAND ls.last_updated < '", updatedBefore, "'")
+}
+
+if(!is.null(updatedBy)){
+  deleteSessions <- paste0(deleteSessions, "\nAND ls.updated_by = '", updatedBy, "'")
+  deleteStartups <- paste0(deleteStartups, "\nAND ls.updated_by = '", updatedBy, "'")
+  deleteMetadata <- paste0(deleteMetadata, "\nAND m.updated_by = '", updatedBy, "'")
+  selectQuery <- paste0(selectQuery, "\nAND updated_by = '", updatedBy, "'")
+}
 
 noAffectedRows <- DBI::dbGetQuery(con, selectQuery)
 

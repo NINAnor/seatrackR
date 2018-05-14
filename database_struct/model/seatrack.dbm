@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="0,1224" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="1157,624" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -137,7 +137,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="admin"/>
 	<tablespace name="pg_default"/>
 	<appended-sql><![CDATA[-----------usage permissions
-GRANT USAGE ON SCHEMA metadata, loggers, positions, views, imports, individuals
+GRANT USAGE ON SCHEMA metadata, loggers, positions, views, imports, individuals, functions
 TO seatrack_reader, seatrack_writer, seatrack_metadata_writer;
 
 ----------Reader permissions

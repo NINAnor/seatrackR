@@ -4,15 +4,16 @@
 \alias{deleteRecords}
 \title{Delete records from the database, based on subselection criteria}
 \usage{
-deleteRecords(selectColony = NULL, selectYear = NULL,
-  selectSpecies = NULL, Force = F)
+deleteRecords(colony = NULL, year = NULL, species = NULL,
+  updatedAfter = NULL, updatedBefore = NULL, updatedBy = NULL,
+  Force = F)
 }
 \arguments{
-\item{selectColony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL.}
+\item{Force}{True, False (default = False). Skip confirmation check (for non interactive functionality)}
 
 \item{selectSpecies}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.}
 
-\item{Force}{True, False (default = False). Skip confirmation check (for non interactive functionality)}
+\item{selectColony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL.}
 
 \item{selectUpdateTime}{Timestamp or character string that can be interpreted as a timestamp through as.POSIXct. Delete only
 records that where last updated after this timestamp}
