@@ -18,44 +18,64 @@ compareNA <- function(v1,v2) {
   return(same)
 }
 
+passEnv <- new.env()
 
-.getFtpUrl <- function(write = F){
+
+.getFtpUrl <- function(){
   checkCon()
 
-  if(write == T){
-    current_user <- DBI::dbGetQuery(con, "SELECT current_user")
+  password = get(".pass", envir = passEnv)
+  current_user <- DBI::dbGetQuery(con, "SELECT current_user")
 
-    current_roles <- DBI::dbGetQuery(con, paste0("select rolname from pg_user
-                                                 join pg_auth_members on (pg_user.usesysid=pg_auth_members.member)
-                                                 join pg_roles on (pg_roles.oid=pg_auth_members.roleid)
-                                                 where
-                                                 pg_user.usename = '", current_user, "'"))
+  pwd <- paste0(password, current_user)
 
-  if(!("admin" %in% current_roles)) stop("Connected user needs to be part of admin group")
+  pwd <- paste0(current_user, ":", pwd)
 
-  pwd <- DBI::dbGetQuery(con, "SELECT pwd from restricted.write WHERE name = 'ftp.nina.no'")
-
-  pwd <- paste0("ftp.nina.no|ftpintern:", pwd)
-
-  url <- "ftp://ftp.nina.no/Download/Seatrack/"
+  url <- "ftp://seatrack.nina.no"
 
   out <- list("url" = url,
               "pwd" = pwd)
-
   return(out)
-  }
-
-  if(write == F) {
-
-    pwd <- DBI::dbGetQuery(con, "SELECT pwd from restricted.read WHERE name = 'ftp.nina.no'")
-
-    pwd <- paste0("ftp.nina.no|ftpekstern:", pwd)
-
-    url <- "ftp://ftp.nina.no/Download/Seatrack/"
-
-    out <- list("url" = url,
-                "pwd" = pwd)
-    return(out)
-  }
 
 }
+
+# .getFtpUrl <- function(write = F){
+#   checkCon()
+#
+#   if(write == T){
+#     current_user <- DBI::dbGetQuery(con, "SELECT current_user")
+#
+#     current_roles <- DBI::dbGetQuery(con, paste0("select rolname from pg_user
+#                                                  join pg_auth_members on (pg_user.usesysid=pg_auth_members.member)
+#                                                  join pg_roles on (pg_roles.oid=pg_auth_members.roleid)
+#                                                  where
+#                                                  pg_user.usename = '", current_user, "'"))
+#
+#   if(!("admin" %in% current_roles)) stop("Connected user needs to be part of admin group")
+#
+#   pwd <- DBI::dbGetQuery(con, "SELECT pwd from restricted.write WHERE name = 'ftp.nina.no'")
+#
+#   pwd <- paste0("ftp.nina.no|ftpintern:", pwd)
+#
+#   url <- "ftp://ftp.nina.no/Download/Seatrack/"
+#
+#   out <- list("url" = url,
+#               "pwd" = pwd)
+#
+#   return(out)
+#   }
+#
+#   if(write == F) {
+#
+#     pwd <- DBI::dbGetQuery(con, "SELECT pwd from restricted.read WHERE name = 'ftp.nina.no'")
+#
+#     pwd <- paste0("ftp.nina.no|ftpekstern:", pwd)
+#
+#     url <- "ftp://ftp.nina.no/Download/Seatrack/"
+#
+#     out <- list("url" = url,
+#                 "pwd" = pwd)
+#     return(out)
+#   }
+#
+# }

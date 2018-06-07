@@ -32,6 +32,7 @@ connectSeatrack <- function(Username = "testreader", Password = "testreader", ho
 
   tmp <- DBI::dbConnect(RPostgres::Postgres(), host = host, dbname = "seatrack", user = Username, password = Password)
   assign("con", tmp, .GlobalEnv)
+  assign(".pass", Password, envir = passEnv)
 
 }
 

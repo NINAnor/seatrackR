@@ -15,6 +15,18 @@
 uploadFiles <- function(files = NULL, originFolder = NULL, overwrite = F){
   checkCon()
 
+  current_user <- DBI::dbGetQuery(con, "SELECT current_user")
+
+  current_roles <- DBI::dbGetQuery(con, paste0("select rolname from pg_user
+                                                    join pg_auth_members on (pg_user.usesysid=pg_auth_members.member)
+                                                    join pg_roles on (pg_roles.oid=pg_auth_members.roleid)
+                                                    where
+                                                    pg_user.usename = '", current_user, "'"))
+  current_roles <- current_roles[,1]
+
+
+     if(!("admin" %in% current_roles || "seatrack_writer" %in% current_roles)) stop("Connected user needs to be part of seatrack_writer or admin group")
+
   if(!tibble::is_tibble(files)) files <- tibble::as_tibble(files)
 
   fileArchive <- listFileArchive()
@@ -24,7 +36,7 @@ uploadFiles <- function(files = NULL, originFolder = NULL, overwrite = F){
   } else {
 
 
-  url <- .getFtpUrl(write = T)
+  url <- .getFtpUrl()
 
   writeFile <- function(x, url, originFolder = originFolder){
 
