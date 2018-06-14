@@ -17,15 +17,21 @@
 listFileArchive <- function(){
   checkCon()
 
-  filesInStorage <- RCurl::getURL(url = .getFtpUrl()$url, userpwd = .getFtpUrl()$pwd,
-                      ftp.use.epsv = FALSE,
-                      dirlistonly = TRUE,
-                      crlf = T)
+  filesInStorage <- RCurl::getURL(url = "ftp://seatrack.nina.no", userpwd = seatrackR:::.getFtpUrl()$pwd,
+                                  ftp.use.epsv = FALSE,
+                                  dirlistonly = TRUE,
+                                  crlf = T,
+                                  verbose = F,
+                                  ftpsslauth = T,
+                                  ftp.ssl = T,
+                                  ssl.verifypeer = F,
+                                  ssl.verifyhost = F
+  )
 
   filesInStorage <- strsplit(filesInStorage, "\r*\n")[[1]] %>% as_tibble
   names(filesInStorage) <- "filename"
 
-  filesInDatabase <- getFileArchive()
+  filesInDatabase <- getFileArchiveSummary()
 
   filesNotInStorage <- filesInDatabase %>%
     filter(!(filename %in% filesInStorage$filename)) %>%

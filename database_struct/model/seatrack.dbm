@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="1157,624" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="882,622" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -125,9 +125,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<roles names="seatrack_reader" role-type="refer" />
 </role>
 
-<tablespace name="seatrack" directory="'/data/seatrack'">
-	<role name="admin"/>
-</tablespace>
+<role name="pure_ftp"
+      login="true"
+      encrypted="true"
+      password="aRw8GEF6">
+</role>
+
+<role name="restricted">
+	<roles names="pure_ftp" role-type="admin" />
+</role>
 
 <tablespace name="temp" directory="'/data'">
 	<role name="postgres"/>
@@ -135,7 +141,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
 	<role name="admin"/>
-	<tablespace name="pg_default"/>
 	<appended-sql><![CDATA[-----------usage permissions
 GRANT USAGE ON SCHEMA metadata, loggers, positions, views, imports, individuals, functions
 TO seatrack_reader, seatrack_writer, seatrack_metadata_writer;
@@ -1980,12 +1985,22 @@ WHERE active = TRUE]]></expression>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-		IF  bool_or(logging_session.active = TRUE)
-				FROM loggers.logging_session
-				WHERE logging_session.logger_id = NEW.logger_id
+		
+	IF  bool_and(logging_session.active = TRUE 
+		AND date_part('year', ls.starttime_gmt) = date_part('year', NEW.starttime_gmt))
+		FROM loggers.logging_session,loggers.startup ls
+		WHERE logging_session.logger_id = NEW.logger_id
+		AND ls.logger_id = NEW.logger_id
 		THEN
-		RAISE EXCEPTION 'Logger % already in open logging session. Close open session before starting new one', NEW.logger_id;
+		RAISE EXCEPTION 'Logger % already in open logging session started the same year. Close this open session before starting new one', NEW.logger_id;
+	
+	ELSIF  bool_or(logging_session.active = TRUE)
+		FROM loggers.logging_session
+		WHERE logging_session.logger_id = NEW.logger_id
+		THEN
+		RAISE WARNING 'Logger % already in open logging session, started another year.', NEW.logger_id;
 	END IF;
+
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -4061,6 +4076,37 @@ RETURN NULL;]]></definition>
 		<function signature="functions.fn_delete_individ_info_on_delete_individ_status()"/>
 </trigger>
 
+<schema name="restricted" rect-visible="true" fill-color="#e1e1e1">
+	<role name="admin"/>
+</schema>
+
+<view name="ftp_credentials">
+	<schema name="restricted"/>
+	<role name="admin"/>
+	<position x="0" y="0"/>
+	<reference>
+		<expression><![CDATA[ SELECT DISTINCT ON (foo.username) foo.username::text AS "User",
+    "right"(foo.rolpassword, '-3'::integer) AS "Password",
+    foo.username::character varying AS "Uid",
+        CASE
+            WHEN foo.groups ~~ '%writer'::text THEN 'write'::character varying
+            WHEN foo.groups ~~ 'admin'::text THEN 'write'::character varying
+            ELSE 'read'::character varying
+        END AS "Gid",
+    '/data/local/ftp'::text AS "Dir"
+   FROM ( SELECT pg_authid.rolname AS username,
+            pg_roles.rolname AS groups,
+            pg_authid.rolpassword
+           FROM pg_user
+             JOIN pg_auth_members ON pg_user.usesysid = pg_auth_members.member
+             JOIN pg_roles ON pg_roles.oid = pg_auth_members.roleid
+             JOIN pg_authid ON pg_user.usename = pg_authid.rolname
+          WHERE pg_authid.rolcanlogin IS TRUE) foo
+  ORDER BY foo.username;
+]]></expression>
+	</reference>
+</view>
+
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="loggers.logger_info">
 	<columns names="producer,logger_model" ref-type="src-columns"/>
@@ -4741,5 +4787,15 @@ RETURN NULL;]]></definition>
 	<object name="activity" type="schema"/>
 	<roles names="seatrack_reader"/>
 	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="restricted" type="schema"/>
+	<roles names="restricted"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="restricted.ftp_credentials" type="view"/>
+	<roles names="restricted"/>
+	<privileges select="true"/>
 </permission>
 </dbmodel>

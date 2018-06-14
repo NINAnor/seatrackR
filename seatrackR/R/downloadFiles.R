@@ -36,7 +36,13 @@ downloadFiles <- function(files = NULL, destFolder = NULL, overwrite = F){
 
     f <- RCurl::CFILE(filename, mode="wb")
 
-    a <- RCurl::curlPerform(url = paste0(url$url, x), curl = RCurl::getCurlHandle(userpwd = url$pwd), writedata = f@ref)
+    a <- RCurl::curlPerform(url = paste0(url$url, "/", x),
+                            curl = RCurl::getCurlHandle(userpwd = url$pwd),
+                            writedata = f@ref,
+                            ftpsslauth = T,
+                            ftp.ssl = T,
+                            ssl.verifypeer = F,
+                            ssl.verifyhost = F)
     RCurl::close(f)
 
     if(a == 0){

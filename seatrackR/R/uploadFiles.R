@@ -51,9 +51,14 @@ uploadFiles <- function(files = NULL, originFolder = NULL, overwrite = F){
       return(paste0("File not uploaded: ", filename))
     }
     tmp <- strsplit(url$url, "//")
-    dest <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2], x)
+    dest <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2],"/" , x)
 
-    a <- RCurl::ftpUpload(what = filename, to = dest)
+    a <- RCurl::ftpUpload(what = filename,
+                          to = dest,
+                          ftpsslauth = T,
+                          ftp.ssl = T,
+                          ssl.verifypeer = F,
+                          ssl.verifyhost = F)
 
     if(a == 0){
       return(paste0("File uploaded: ", filename))
