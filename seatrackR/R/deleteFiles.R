@@ -1,0 +1,94 @@
+#' deleteFiles
+#'
+#'
+#'
+#' @return Status messages on the actions taken for each file.
+#' @export
+#' @examples
+#' dontrun{
+#'
+#' deleteFiles(files = c("test.txt", "test_file2.txt"), originFolder = "temp")
+#' }
+#'
+#'
+
+
+
+deleteFiles <- function(files = NULL, force = F){
+
+  checkCon()
+
+  current_user <- DBI::dbGetQuery(con, "SELECT current_user")
+
+  current_roles <- DBI::dbGetQuery(con, paste0("select rolname from pg_user
+                                             join pg_auth_members on (pg_user.usesysid=pg_auth_members.member)
+                                             join pg_roles on (pg_roles.oid=pg_auth_members.roleid)
+                                             where
+                                             pg_user.usename = '", current_user, "'"))
+  current_roles <- current_roles[,1]
+
+
+  if(!("admin" %in% current_roles || "seatrack_writer" %in% current_roles)) stop("Connected user needs to be part of seatrack_writer or admin group")
+
+
+  if(!tibble::is_tibble(files)) files <- tibble::as_tibble(files)
+
+  fileArchive <- listFileArchive()
+
+  url <- .getFtpUrl()
+
+
+  deleteFile <- function(x, url){
+
+    tmp <- strsplit(url$url, "//")
+    dest <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2])
+
+    RCurl::curlPerform(url = dest,
+                       quote = paste0("DELE ", x),
+                       ftpsslauth = T,
+                       ftp.ssl = T,
+                       ssl.verifypeer = F,
+                       ssl.verifyhost = F)
+  }
+
+
+  if(any(!(files$value %in% fileArchive$filesInStorage$filename))){
+
+    notThere <- files %>%
+      filter(!(value %in% fileArchive$filesInStorage$filename))
+
+    files <- paste0(notThere$value, "\n")
+    stop(gettext("These files marked for deletion are not present in the file archive:\n", files))
+  } else {
+
+    if(force == F){
+      there <- files %>%
+        filter((value %in% fileArchive$filesInStorage$filename))
+
+      there <- paste0(there$value, collapse = "\n")
+
+      answer <- menu(c("Yes (1)", "No (2)"), title = paste0("You are about to delete these files: \n", there, collapse = ":"), " records. Are you sure?")
+
+      if(answer == 2){
+        return("No files deleted")
+      }
+
+    }
+
+
+  #Can't get rid of listing!
+   mandatoryFileListing <- capture.output(apply(files, 1, function(x) deleteFile(x = x, url = url)), type = "output")
+
+    newStatus <- listFileArchive()
+    deletedFiles <- fileArchive$filesInStorage$filename[!(fileArchive$filesInStorage$filename %in% newStatus$filesInStorage$filename)]
+
+
+    if(length(deletedFiles) == 0){
+      return("No files deleted")} else {
+        return(paste0("File deleted: ", deletedFiles))
+    }
+
+  }
+}
+
+

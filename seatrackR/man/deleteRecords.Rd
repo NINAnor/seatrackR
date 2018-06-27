@@ -6,11 +6,9 @@
 \usage{
 deleteRecords(colony = NULL, year = NULL, species = NULL,
   updatedAfter = NULL, updatedBefore = NULL, updatedBy = NULL,
-  Force = F)
+  force = F)
 }
 \arguments{
-\item{Force}{True, False (default = False). Skip confirmation check (for non interactive functionality)}
-
 \item{selectSpecies}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.}
 
 \item{selectColony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL.}
@@ -19,6 +17,8 @@ deleteRecords(colony = NULL, year = NULL, species = NULL,
 records that where last updated after this timestamp}
 
 \item{selectSpecies}{Character string. Option to limit selection to one or a set of species. Default is NULL.}
+
+\item{Force}{True, False (default = False). Skip confirmation check (for non interactive functionality)}
 }
 \value{
 Status message

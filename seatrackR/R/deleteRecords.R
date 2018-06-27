@@ -25,7 +25,7 @@ deleteRecords <- function(colony = NULL,
                           updatedAfter = NULL,
                           updatedBefore = NULL,
                           updatedBy = NULL,
-                          Force = F){
+                          force = F){
 
   checkCon()
 
@@ -94,13 +94,13 @@ if(!is.null(updatedBy)){
 
 noAffectedRows <- DBI::dbGetQuery(con, selectQuery)
 
-if(isTRUE(Force)){
+if(isTRUE(force)){
   DBI::dbSendQuery(con, deleteMetadata)
   DBI::dbSendQuery(con, deleteStartups)
   DBI::dbSendQuery(con, deleteSessions)
 
 
-} else{
+} else {
 
   answer <- menu(c("Yes (1)", "No (2)"), title = paste0("You are about to delete ", noAffectedRows[1,1], " records. Are you sure?"))
 
