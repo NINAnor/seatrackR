@@ -40,7 +40,7 @@ listFileArchive <- function(){
   filesNotInDatabase <- filesInStorage %>%
     filter(!(. %in% filesInDatabase$filename))
 
-  out <- list("filesInStorage" = filesInStorage, "filesNotInStorage" = filesNotInStorage, "filesNotInDatabase" = filesNotInDatabase)
+  out <- list("filesInArchive" = filesInStorage, "filesNotInArchive" = filesNotInStorage, "filesNotInDatabase" = filesNotInDatabase)
 
   return(out)
 }

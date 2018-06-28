@@ -20,6 +20,14 @@ This function establishes a connection to the Seatrack database. It is a simple 
 packages DBI and RPostgres (available from github via devtools::install_github("rstats-db/DBI") and
 devtools::install_github("rstats-db/DBI"). Note that connections are only accepted from a limited IP-adresses.
 }
+\note{
+The password is stored within the R session in a somewhat hidden environment, to be used in the interface with the FTP server.
+It is therefore not saved in the session if you do that when closing R. The password is not stored in cleartext within the database either, and the admins have no way of seeing it.
+The handshake between R and the FTP server is encrypted, as well as the actual data transfers.
+However, it is difficult to guarantee that it is totally safe from all eventualities.
+For example, I don't know what would happen if R would crash and store something in a crash logfile. So best practice would be to use a separate password for
+Seatrack, that you don't share with other sites or applications.
+}
 \examples{
 dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")

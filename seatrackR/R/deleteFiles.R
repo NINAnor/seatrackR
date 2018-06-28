@@ -31,7 +31,7 @@ deleteFiles <- function(files = NULL, force = F){
   if(!("admin" %in% current_roles || "seatrack_writer" %in% current_roles)) stop("Connected user needs to be part of seatrack_writer or admin group")
 
 
-  if(!tibble::is_tibble(files)) files <- tibble::as_tibble(files)
+  if(!tibble::is_tibble(files)) files <- tibble::as_tibble("filename" = files)
 
   fileArchive <- listFileArchive()
 
@@ -52,20 +52,20 @@ deleteFiles <- function(files = NULL, force = F){
   }
 
 
-  if(any(!(files$value %in% fileArchive$filesInStorage$filename))){
+  if(any(!(files$filename %in% fileArchive$filesInArchive$filename))){
 
     notThere <- files %>%
-      filter(!(value %in% fileArchive$filesInStorage$filename))
+      filter(!(filename %in% fileArchive$filesInArchive$filename))
 
-    files <- paste0(notThere$value, "\n")
+    files <- paste0(notThere$filename, "\n")
     stop(gettext("These files marked for deletion are not present in the file archive:\n", files))
   } else {
 
     if(force == F){
       there <- files %>%
-        filter((value %in% fileArchive$filesInStorage$filename))
+        filter((filename %in% fileArchive$filesInArchive$filename))
 
-      there <- paste0(there$value, collapse = "\n")
+      there <- paste0(there$filename, collapse = "\n")
 
       answer <- menu(c("Yes (1)", "No (2)"), title = paste0("You are about to delete these files: \n", there, collapse = ":"), " records. Are you sure?")
 
@@ -80,7 +80,7 @@ deleteFiles <- function(files = NULL, force = F){
    mandatoryFileListing <- capture.output(apply(files, 1, function(x) deleteFile(x = x, url = url)), type = "output")
 
     newStatus <- listFileArchive()
-    deletedFiles <- fileArchive$filesInStorage$filename[!(fileArchive$filesInStorage$filename %in% newStatus$filesInStorage$filename)]
+    deletedFiles <- fileArchive$filesInArchive$filename[!(fileArchive$filesInArchive$filename %in% newStatus$filesInArchive$filename)]
 
 
     if(length(deletedFiles) == 0){

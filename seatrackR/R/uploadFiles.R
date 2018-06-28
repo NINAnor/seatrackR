@@ -31,8 +31,8 @@ uploadFiles <- function(files = NULL, originFolder = NULL, overwrite = F){
 
   fileArchive <- listFileArchive()
 
-  if(any(files$value %in% fileArchive$filesInStorage$filename) & overwrite == F){
-    stop(paste("At least one file already exists in the file storage, use overwrite = True to overwrite"))
+  if(any(files$value %in% fileArchive$filesInArchive$filename) & overwrite == F){
+    stop(paste("At least one file already exists in the file archive, use overwrite = True to overwrite"))
   } else {
 
 

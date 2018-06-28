@@ -22,9 +22,13 @@ knitr::opts_chunk$set(
 options(width = 60)
 ```
 
+**NOT ALL CODE IS RUN IN THIS VERSION BECAUSE THE DATABASE CURRENTLY HAS DATA IN IT. SO RESULTS WILL NOT MAKE SENSE, BUT THE PRINCIPLE IS THE SAME. WE NEED TO RUN THIS ON AN EMPTY DATABASE TO CREATE LOGICAL RESULTS**
+
 Summary
 =============
 This is an example of a normal workflow that goes through the normal cycle of logger data. This cycle also describes the order in which the tasks is meant to be performed. There are several checks in the database that might throw an error if this order is not respected, e.g. if deployment info is registered before the logger is started up, or a logger is retrieved before it is deployed etc.
+
+Finally, it is shown how to work with the file archive, that stores the raw output files from the loggers.
 
 1. Connecting to the database
 2. Importing logger information
@@ -59,16 +63,24 @@ As of this time, the current version is `r gsub("(.*)([0-9]\\.[0-9]*\\.[0-9]*\\.
 
 Connecting to the database
 ============
-Use your name and password, provided to you elsewhere. For this work-through, we use the username: testwriter with password:testwriter. We also use several functions in the tidyverse package universe, so we'll load this as well.
+Use your name and password, provided to you elsewhere. Remember to change your password! This can be done with the `changePassword()` function, or for example in Pgadmin3.
+
+For this work-through, we use the username: testwriter with password:testwriter. We also use several functions in the tidyverse package universe, so we'll load this as well.
 
 ```{r connect, message=FALSE}
 library(seatrackR)
 connectSeatrack(Username = "testwriter", Password = "testwriter")
 
+## To change the password:
+# changePassword("newpassword")
+# connectSeatrack("testwriter", "newpassword")
+
+#This shouldn't be needed, but I will use dplyr and pipes in the following code.
 library(tidyverse)
+library(stringr)
 ```
 
-Internally, this creates a connection to the database called `con` through the package `DBI` using the driver `Rpostgres::Postgres()`. Most functions used later checks that this connection is active and trows an error if it is not. Although you probably won't ever have to, you check the connection and also disconnect manually. Normally, you don't need to disconnect.
+Internally, `connectSeatrack` creates a connection to the database called `con` through the package `DBI` using the driver `Rpostgres::Postgres()`. Most functions used later checks that this connection is active and trows an error if it is not. Although you probably won't ever have to, you check the connection and also disconnect manually. Normally, you don't need to disconnect.
 
 ```{r disconnect, error = T}
 
@@ -135,7 +147,7 @@ noStartups
 
 So, the import of this data should result in `r noStartups` active sessions (since we here start with an empty database). Next, we import the logger startup data.
 
-```{r}
+```{r, eval = F}
 writeLoggerImport(sampleLoggerImport)
 ```
 
@@ -246,7 +258,7 @@ Thats better. Note however that these checks doesn't find every possible error. 
 
 We can now import the metadata.
 
-```{r}
+```{r, eval = F}
 writeMetadata(sampleMetadata)
 ```
 
@@ -299,7 +311,7 @@ This means that we should get filenames from `r downloadTypes %>% filter(downloa
 
 We import this data similarly as with the startups.
 
-```{r}
+```{r, eval = F}
 writeLoggerImport(sampleLoggerShutdown)
 ```
 
@@ -316,26 +328,28 @@ The shutdown also creates filenames associated with the session, depending on th
 
 Working with the file archive
 =====================
-We can now see what these shutdowns has produced in the file archive table. This table lists the expected filenames produced by the logging sessions that has been shutdown. It is up to the users to manually upload these files to the file storage location.
+We can now see what these shutdowns has produced in the file archive table. This table lists the expected filenames produced by the logging sessions that has been shutdown. It is up to the users to manually upload these files to the file archive location. The file archive is an FTP server running on the same machine as the seatrack database. We use the passwords in the database to connect to the FTP server, but this is handled through the functions in this package so that users do not have to enter their credentials once a seatrack connection has been made.
 
 
-We can take a look at the expected filenames through to functions. Firstly, the function `getFileArchive` retrieves the info of the filenames, together with which logging session they are connected to and some info on the related birds.
+We can take a look at the expected filenames through to functions. Firstly, the function `getFileArchiveSummary` retrieves the info of the expected filenames, together with which logging session they are connected to and some info on the related birds.
 
 ```{r}
-databaseFileArchive <- getFileArchive()
+databaseFileArchive <- getFileArchiveSummary()
 
 databaseFileArchive
 ```
 
-You could use this table to get some bookkeeping info. Currently, we have shut down 5 different logger models, some of which produces 7 and some that produces 4 files. For example see how the recorded file names group into individual loggers.
+You could use this table to get some bookkeeping info. Currently, we have shut down 5 different logger models, some of which produces 7 and some that produces 4 files. For example see how the recorded file names group into individual logger models.
 
 ```{r}
 databaseFileArchive %>% 
-  group_by(logger_serial_no, logger_model) %>% 
+  group_by(logger_model, session_id) %>% 
   tally() %>%  
   group_by(logger_model) %>% 
   summarise(mean(n)) 
 ```
+
+
 
 Currently, we have shut down 5 different logger models, some of which produces 7 and some that produces 4 files, depending on their make and model. We could also from this table see how many loggers that have been shutdown and are expected to have files associated with them.
 
@@ -349,7 +363,7 @@ So out of the 57 shutdowns we performed, only 40 of them resulted in files in th
 
 Uploading and downloading files from the file storage.
 --------------------
-So far, we have only looked in the database for the expected files connected to each logging session. The actual file storage is located on a ftp server. We can use the `listFileArchive` function to list the files in the file storage on this ftp server. This function also compares the the content of the file storage and to the proposed filenames in the database. 
+So far, we have only looked in the database for the expected files connected to each logging session. The actual file storage is located on the FTP server. We can use the `listFileArchive` function to list the files in the file storage on this ftp server. This function also compares the the content of the file storage and to the proposed filenames in the database. 
 
 
 ```{r}
@@ -357,21 +371,23 @@ fileArchive <- listFileArchive()
 fileArchive
 ```
 
-For the purpose of testing, we have uploaded some dummy files, called test_file.txt, and test_file2.txt. These are found in the list element `filesInStorage` and since they are not expected by the database, also in the list element `filesNotInDatabase`. The last element is `filesNotInStorage` which lists the expected files registered in the database, that are not yet sent to the file storage.
+For the purpose of testing, we have uploaded some dummy files, called test_file.txt, and test_file2.txt. These are found in the list element `filesInArchive` and since they are not expected by the database, also in the list element `filesNotInDatabase`. The last element is `filesNotInArchive` which lists the expected files registered in the database, that are not yet sent to the file storage.
 
 We can upload files to the storage, using the function `uploadFiles`. This function grabs the appropriate username and passwords for the ftp connection from the database and uploads the files specified. You need to specify `overwrite = True` to overwrite existing files. Only users that login to the database with write permissions (members of the role group "seatrack_writer") will be able to upload files to the file storage.
 
 Here we will upload two more test files that are locally stored in the folder "temp". 
 
-```{r, include = F}
-disconnectSeatrack()
-load("../temp/credentials.Rdata")
-connectSeatrack(credentials[1], credentials[2])
-```
+
+<!-- ```{r, include = F} -->
+<!-- disconnectSeatrack() -->
+<!-- load("../temp/credentials.Rdata") -->
+<!-- connectSeatrack(credentials[1], credentials[2]) -->
+<!-- ``` -->
+
 
 
 ```{r}
-uploadFiles(c("test_file3.txt", "test_file4.txt"), originFolder = "../temp")
+uploadFiles(c("test.txt", "test2.txt"), originFolder = "../temp")
 ```
 
 Although we get a confirmation, we can double check that the files actually are now stored in the file storage.
@@ -384,9 +400,36 @@ fileArchive
 We can download files from the storage using the function `downloadFiles`. This is available for everyone that can login to the database (members of the group "seatrack_reader"). Here, we download all the files. 
 
 ```{r}
-filesToGet = listFileArchive()$filesInStorage
+filesToGet = listFileArchive()$filesInArchive
 downloadFiles(files = filesToGet, destFolder = "../temp", overwrite = T)
 ```
 
-More often though you would identify a subset of files to download. Which files you are interested in could be found through a custom SQL query, or through specialized search functions (not yet implemented).
+More often though you would identify a subset of files to download. Which files you are interested in could be found through a custom SQL query, or some R code that searches through the `getFileArchiveSummary` output.
+
+Deleting files from the FTP archive
+----------------------
+In case a wrong file has been uploaded to the file archive, or for testing purposes, we may need to delete files from the file archive. This is done through the `deleteFiles` function, which requires write permissions in the database. This asks for confirmation if you don't specify force = True. It currently prints a directory listing of what is present in the FTP server after the first deletion. I'm working on suppressing that.
+
+```{r}
+filesInArchive <- listFileArchive()$filesInArchive
+filesInArchive
+
+filesToDelete <- filesInArchive %>% 
+  filter(str_detect(filename, "test") )
+filesToDelete
+
+deleteFiles(files = filesToDelete, force = T)
+
+```
+We can double check that the test files are gone.
+
+```{r}
+listFileArchive()$filesInArchive
+
+```
+
+
+
+
+
 

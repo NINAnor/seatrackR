@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="882,622" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="1122,247" last-zoom="0.9"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>

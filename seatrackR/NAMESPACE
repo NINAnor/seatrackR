@@ -3,6 +3,7 @@
 S3method(plot,metadataErrors)
 S3method(print,metadataErrors)
 S3method(summary,metadataErrors)
+export(changePassword)
 export(checkLoggers)
 export(checkMetadata)
 export(checkNames)

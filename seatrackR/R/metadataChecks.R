@@ -237,7 +237,8 @@ summary.metadataErrors <- function(x, ...){
     out <- tibble("reason" = unlist(lapply(x, names)),
                      "errorCount" = c(unlist(lapply(x[[1]], nrow)),
                                       unlist(lapply(x[[2]], nrow)),
-                                      unlist(lapply(x[[3]], nrow))))
+                                      unlist(lapply(x[[3]], nrow)),
+                                      unlist(lapply(x[[4]], nrow))))
 
   return(out)
 
