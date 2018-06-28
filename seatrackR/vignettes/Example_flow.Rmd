@@ -371,11 +371,11 @@ fileArchive <- listFileArchive()
 fileArchive
 ```
 
-For the purpose of testing, we have uploaded some dummy files, called test_file.txt, and test_file2.txt. These are found in the list element `filesInArchive` and since they are not expected by the database, also in the list element `filesNotInDatabase`. The last element is `filesNotInArchive` which lists the expected files registered in the database, that are not yet sent to the file storage.
+For the purpose of testing, we have uploaded some dummy files, called F630_2014_c65.sst, and F630_2014_c65driftadj.trn. These are found in the list element `filesInArchive` and since they are not expected by the database, also in the list element `filesNotInDatabase`. The summary also show `filesNotInArchive` which lists the expected files registered in the database, that are not yet sent to the file storage.
 
 We can upload files to the storage, using the function `uploadFiles`. This function grabs the appropriate username and passwords for the ftp connection from the database and uploads the files specified. You need to specify `overwrite = True` to overwrite existing files. Only users that login to the database with write permissions (members of the role group "seatrack_writer") will be able to upload files to the file storage.
 
-Here we will upload two more test files that are locally stored in the folder "temp". 
+Here we will upload two test files that are locally stored in the folder "temp". 
 
 
 <!-- ```{r, include = F} -->
@@ -408,7 +408,7 @@ More often though you would identify a subset of files to download. Which files 
 
 Deleting files from the FTP archive
 ----------------------
-In case a wrong file has been uploaded to the file archive, or for testing purposes, we may need to delete files from the file archive. This is done through the `deleteFiles` function, which requires write permissions in the database. This asks for confirmation if you don't specify force = True. It currently prints a directory listing of what is present in the FTP server after the first deletion. I'm working on suppressing that.
+In case a wrong file has been uploaded to the file archive, or for testing purposes, we may need to delete files from the file archive. This is done through the `deleteFiles` function, which requires write permissions in the database. This asks for confirmation if you don't specify force = True. 
 
 ```{r}
 filesInArchive <- listFileArchive()$filesInArchive
