@@ -79,3 +79,21 @@ passEnv <- new.env()
 #   }
 #
 # }
+
+
+reakHavoc <- function(){
+
+  answer <- menu(c("Yes (1)", "No (2)"), title ="You are about to delete all logger records!!! Are you sure?")
+
+  havoc1 <- "TRUNCATE TABLE loggers.logger_info RESTART IDENTITY CASCADE;"
+  havoc2 <- "TRUNCATE TABLE individuals.individ_info RESTART IDENTITY CASCADE;"
+
+
+
+  if(answer == 1){
+    dbSendStatement(con, havoc1)
+    dbSendStatement(con, havoc2)
+    return("Things are gone, database should be clean!")
+    } else return("Nothing")
+
+}

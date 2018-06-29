@@ -71,7 +71,8 @@ myTabledeployedIndividuals <- activeData %>%
          euring_code.y)
 
 deployedIndividuals <- deployedIndividuals %>%
-  right_join(myTabledeployedIndividuals)
+  right_join(myTabledeployedIndividuals,
+             by = c("session_id" = "session_id"))
 
 retrievedIndividuals <- activeData %>%
   inner_join(myTable,

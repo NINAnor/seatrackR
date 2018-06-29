@@ -1,6 +1,7 @@
 require(tidyverse)
 require(DBI)
 require(RPostgres)
+require(lubridate)
 metaRaw <- read.csv("../../database_struct/Standardtabeller/metadata_sklinna_2016.csv", skip = 1,
                     fileEncoding = "windows-1252", stringsAsFactors =  F)
 
@@ -75,6 +76,15 @@ tempRetr$date <- tempRetr$date + 365
 
 sampleMetadata <- rbind(metaRaw, tempRetr)
 sampleMetadata <- as_tibble(sampleMetadata)
+# sampleMetadata %>%
+#   filter(!is.na(logger_id_deployed))
+#
+# sampleMetadata %>%
+#   filter(!is.na(logger_id_retrieved))
+#
+# sampleMetadata$date[!is.na(sampleMetadata$logger_id_retrieved)] <- sampleMetadata$date[!is.na(sampleMetadata$logger_id_retrieved)] + month(1)
+
+
 devtools::use_data(sampleMetadata, overwrite = T)
 
 sampleIndividInfo <- sampleMetadata[!duplicated(sampleMetadata[c(2:3)]),c(2:3, 10, 4, 11, 12, 13:15)]
@@ -103,7 +113,7 @@ names(sampleLoggerInfo)[c(1, 4)] <- c("logger_serial_no", "logger_model")
 ##On second thought, we won't write to logger_info, but include this in logger_import instead
 require(lubridate)
 sampleLoggerImport <- sampleLoggerInfo
-sampleLoggerImport$starttime_gmt <- Sys.time() - years(4)
+sampleLoggerImport$starttime_gmt <- as.Date('2015-01-01') + years(1)
 sampleLoggerImport$logging_mode <- 1
 sampleLoggerImport$started_by <- "Jens Åström"
 sampleLoggerImport$started_where <- "NINA"
@@ -122,6 +132,16 @@ sampleLoggerImport$download_type <- NA
 sampleLoggerImport$decomissioned <- NA
 sampleLoggerImport$comment <- NA
 
+##Add another startup to test multiple active sessions
+temp <- sampleLoggerImport %>%
+  filter(logger_serial_no %in% c("Z236", "Z231"))
+temp$starttime_gmt <-  as.Date(c("2017-01-01", "2017-01-01"))
+temp$programmed_gmt_time <- as.Date(c("2017-01-01", "2017-01-01"))
+
+sampleLoggerImport <- sampleLoggerImport %>%
+  bind_rows(temp)
+
+
 sampleLoggerImport <- sampleLoggerImport[c("logger_serial_no", "logger_model", "producer",
                                            "production_year", "project", "starttime_gmt",
                                            "logging_mode", "started_by", "started_where",
@@ -138,7 +158,7 @@ sampleLoggerShutdown <- sampleLoggerImport
 
 sampleLoggerShutdown <-  sampleLoggerShutdown[sampleLoggerShutdown$logger_serial_no %in% sampleMetadata$logger_id_retrieved[!is.na(sampleMetadata$logger_id_retrieved)], ]
 names(sampleLoggerShutdown)
-sampleLoggerShutdown[3:15] <- NA
+sampleLoggerShutdown[c(3:5, 7:15)] <- NA ##keep starttime_gmt to allow multiple open sessions
 sampleLoggerShutdown$shutdown_session = T
 sampleLoggerShutdown$download_type[1:30] <- "Successfully downloaded"
 sampleLoggerShutdown$download_type[31:nrow(sampleLoggerShutdown)] <- "Nonresponsive"
@@ -149,6 +169,7 @@ sampleLoggerShutdown$download_date <- Sys.Date()
 sampleLoggerShutdown$shutdown_date <- Sys.Date()
 sampleLoggerShutdown$decomissioned <- F
 sampleLoggerShutdown$download_type[20:40] <- "Reconstructed"
+
 
 sampleLoggerShutdown <- as_tibble(sampleLoggerShutdown)
 devtools::use_data(sampleLoggerShutdown, overwrite = T)

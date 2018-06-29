@@ -9,7 +9,7 @@ output:
   rmarkdown::html_vignette:
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{R.rsp::asis}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -134,7 +134,7 @@ The table `sampleLoggerImport` contains an example of information required to re
     
 
 ```{r}
-head(sampleLoggerImport)
+sampleLoggerImport
 ``` 
 We can check how many of the rows in the table about to be imported that has starttimes, and will result in started logging sessions. 
 
