@@ -84,6 +84,19 @@ sampleMetadata <- as_tibble(sampleMetadata)
 #
 # sampleMetadata$date[!is.na(sampleMetadata$logger_id_retrieved)] <- sampleMetadata$date[!is.na(sampleMetadata$logger_id_retrieved)] + month(1)
 
+dep <- sampleMetadata %>% filter(date < '2017-01-01')
+ret <- sampleMetadata %>% filter(date >= '2017-01-01')
+
+##add deployment data for the duplicate sessions.
+dupDep <- dep[1:2, ]
+dupDep$ring_number <- c("1234", "5678")
+dupDep$date <- as.Date(c("2017-03-04"))
+
+dupRet <- ret[1:2, ]
+dupRet$ring_number <- c("1234", "5678")
+dupRet$date <- as.Date(c("2018-03-04"))
+
+sampleMetadata <- bind_rows(dep, dupDep, dupRet, ret)
 
 devtools::use_data(sampleMetadata, overwrite = T)
 

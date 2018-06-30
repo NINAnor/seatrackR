@@ -83,6 +83,8 @@ passEnv <- new.env()
 
 reakHavoc <- function(){
 
+  checkCon()
+
   answer <- menu(c("Yes (1)", "No (2)"), title ="You are about to delete all logger records!!! Are you sure?")
 
   havoc1 <- "TRUNCATE TABLE loggers.logger_info RESTART IDENTITY CASCADE;"

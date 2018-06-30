@@ -22,7 +22,6 @@ knitr::opts_chunk$set(
 options(width = 60)
 ```
 
-**NOT ALL CODE IS RUN IN THIS VERSION BECAUSE THE DATABASE CURRENTLY HAS DATA IN IT. SO RESULTS WILL NOT MAKE SENSE, BUT THE PRINCIPLE IS THE SAME. WE NEED TO RUN THIS ON AN EMPTY DATABASE TO CREATE LOGICAL RESULTS**
 
 Summary
 =============
@@ -147,7 +146,7 @@ noStartups
 
 So, the import of this data should result in `r noStartups` active sessions (since we here start with an empty database). Next, we import the logger startup data.
 
-```{r, eval = F}
+```{r, eval = T}
 writeLoggerImport(sampleLoggerImport)
 ```
 
@@ -181,7 +180,7 @@ Importing metadata (field information)
 When the loggers are registered and started up, we can upload some metadata. This conforms to the existing metadata sheets used in the field. Note here the correct order of input; first start up a session through the `writeLoggerImport` function, then import deployment info using the `writeMetadata()` function, then do the same with the retrieval data. You can import deployment and retrieval data in the same go if they appear in the right order in the metadata file (sort by date to make it so). 
 
 ```{r}
-head(sampleMetadata)
+sampleMetadata
 ```
 In this test case, the metadata file contains both deployment, retrieval and measurement info. We can see how many deployments and retrievals we have.
 
@@ -198,7 +197,7 @@ So, `r noDepRetr$noDeployments` deployment events, and `r noDepRetr$noRetrievals
 ```{r, include = F}
 
 sampleMetadata$data_responsible[20] <- "Alkekungen himself"
-sampleMetadata$logger_id_retrieved[103:105] <- "scraped off!"
+sampleMetadata$logger_id_retrieved[106:108] <- "scraped off!"
 sampleMetadata$ring_number[106] <- "5175141"
 
 ```
@@ -230,14 +229,14 @@ In addition, someone has been having a bit of fun with the name of the data resp
 We fix these errors and run another check.
 
 ```{r}
-ringsOfErrors <- sampleMetadata$ring_number[103:105]
+ringsOfErrors <- sampleMetadata$ring_number[106:108]
 sampleMetadata[sampleMetadata$ring_number %in% ringsOfErrors, ]
 
 ```
 Going by the data on the deployments, it seems that the missing logger serial numbers where "Z231", "Z236", and "Z234".
 
 ```{r}
-sampleMetadata$logger_id_retrieved[103:105] <- c("Z231", "Z236", "Z234")  
+sampleMetadata$logger_id_retrieved[106:108] <- c("Z231", "Z236", "Z234")  
 ```
 
 ```{r}
@@ -253,12 +252,14 @@ Time for a new check of the data.
 ```{r}
 myErrors <- checkMetadata(sampleMetadata)
 ```
+
+**We still show some errors here because the checking functions can't yet handle multiple open sessions. To be fixed!** **Also, there is a true error here where the rings don't match.**
 Thats better. Note however that these checks doesn't find every possible error. Please suggest further checks to put into this routine!
 
 
 We can now import the metadata.
 
-```{r, eval = F}
+```{r, eval = T}
 writeMetadata(sampleMetadata)
 ```
 
@@ -311,7 +312,7 @@ This means that we should get filenames from `r downloadTypes %>% filter(downloa
 
 We import this data similarly as with the startups.
 
-```{r, eval = F}
+```{r, eval = T}
 writeLoggerImport(sampleLoggerShutdown)
 ```
 
