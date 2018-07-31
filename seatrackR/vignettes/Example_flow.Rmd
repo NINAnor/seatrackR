@@ -164,7 +164,7 @@ activeSessions
 
 ```
 
-We se that there are `r nrow(activeSessions)` open sessions, meaning they have been started up but not shut down.
+We see that there are `r nrow(activeSessions)` open sessions, meaning they have been started up but not shut down.
 We can se how many of these have been deployed and retrieved by counting the number of rows with deployment id and a retrieval id. Note that we exclude the rows with NAs, which signifies missing data and is read as `NULL` in the database.
 
 ```{r}
@@ -197,8 +197,8 @@ So, `r noDepRetr$noDeployments` deployment events, and `r noDepRetr$noRetrievals
 ```{r, include = F}
 
 sampleMetadata$data_responsible[20] <- "Alkekungen himself"
-sampleMetadata$logger_id_retrieved[106:108] <- "scraped off!"
-sampleMetadata$ring_number[106] <- "5175141"
+sampleMetadata$logger_id_retrieved[107:109] <- "scraped off!" #"Z231" "Z236" "Z234"
+sampleMetadata$ring_number[110] <- "5175149" # "5175140"
 
 ```
 
@@ -229,15 +229,17 @@ In addition, someone has been having a bit of fun with the name of the data resp
 We fix these errors and run another check.
 
 ```{r}
-ringsOfErrors <- sampleMetadata$ring_number[106:108]
+ringsOfErrors <- sampleMetadata$ring_number[107:109]
 sampleMetadata[sampleMetadata$ring_number %in% ringsOfErrors, ]
 
 ```
 Going by the data on the deployments, it seems that the missing logger serial numbers where "Z231", "Z236", and "Z234".
 
 ```{r}
-sampleMetadata$logger_id_retrieved[106:108] <- c("Z231", "Z236", "Z234")  
+sampleMetadata$logger_id_retrieved[107:109] <- c("Z231", "Z236", "Z234")  
 ```
+
+Now we look at the name that was not registered.
 
 ```{r}
 sampleMetadata %>% 
@@ -247,13 +249,27 @@ sampleMetadata %>%
 ##Looks like it should be Svein-Håkon
 sampleMetadata$data_responsible[20] <- sampleMetadata$data_responsible[19]
 ```
+Next, we take a look at the non-matching ring numbers for the deployment and retrievals
+
+```{r}
+
+sampleMetadata %>% 
+  filter(logger_id_deployed == "Z232" | logger_id_retrieved == "Z232")
+
+## Looks like there might be a typo on the retrieval data. The last digit should be a 0 and not a 9.
+
+```
+
+```{r}
+sampleMetadata$ring_number[which(sampleMetadata$logger_id_retrieved == "Z232")] <- 5175140
+
+```
 Time for a new check of the data.
 
 ```{r}
 myErrors <- checkMetadata(sampleMetadata)
 ```
 
-**We still show some errors here because the checking functions can't yet handle multiple open sessions. To be fixed!** **Also, there is a true error here where the rings don't match.**
 Thats better. Note however that these checks doesn't find every possible error. Please suggest further checks to put into this routine!
 
 
@@ -307,6 +323,7 @@ Remember that filenames will only be produced in the case when the `download_typ
 downloadTypes <- sampleLoggerShutdown %>% 
   group_by(download_type) %>% 
   tally()
+downloadTypes
 ```
 This means that we should get filenames from `r downloadTypes %>% filter(download_type == "Successfully downloaded" | download_type == "Reconstructed" ) %>% tally()` of the `r nrow(sampleLoggerShutdown)` loggers.
 

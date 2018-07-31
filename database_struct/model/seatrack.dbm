@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="1122,247" last-zoom="0.9"
+<dbmodel pgmodeler-ver="0.9.0" last-position="651,828" last-zoom="0.7"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -1985,7 +1985,7 @@ WHERE active = TRUE]]></expression>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-		
+
 	IF  bool_and(logging_session.active = TRUE 
 		AND date_part('year', ls.starttime_gmt) = date_part('year', NEW.starttime_gmt))
 		FROM loggers.logging_session,loggers.startup ls
@@ -2000,6 +2000,7 @@ WHERE active = TRUE]]></expression>
 		THEN
 		RAISE WARNING 'Logger % already in open logging session, started another year.', NEW.logger_id;
 	END IF;
+
 
 RETURN NEW;
 END;]]></definition>
@@ -2059,18 +2060,18 @@ END;]]></definition>
 			THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 		END IF;
-
 		IF bool_and(logging_session.active = FALSE)
 			FROM loggers.logging_session
 			WHERE logging_session.logger_id = NEW.logger_id
 		THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 	END IF;
-
 	NEW.session_id := logging_session.session_id
-	FROM loggers.logging_session
+	FROM loggers.logging_session, loggers.startup
 	WHERE NEW.logger_id = logging_session.logger_id
-	AND logging_session.active = TRUE;
+	AND logging_session.active = TRUE
+	AND logging_session.session_id = startup.session_id
+	AND date_part('year', startup.starttime_gmt) = date_part('year', NEW.deployment_date);
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -2115,7 +2116,6 @@ END;]]></definition>
 		WHERE a.session_id = NEW.session_id) a THEN
             RAISE WARNING '% deployment location does not match indended location in allocation table', NEW.deployment_location;
         END IF;
-
 	RETURN NULL;
 END;]]></definition>
 </function>
@@ -2154,7 +2154,7 @@ END;]]></definition>
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 	END IF;
    
-	IF bool_or(logging_session.deployment_id IS NULL)
+	IF bool_and(logging_session.deployment_id IS NULL)
 			FROM loggers.logging_session
 			WHERE logging_session.logger_id = NEW.logger_id
 	THEN
@@ -2164,7 +2164,8 @@ END;]]></definition>
 	NEW.session_id := logging_session.session_id
 	FROM loggers.logging_session
 	WHERE NEW.logger_id = logging_session.logger_id
-	AND logging_session.active = TRUE;
+	AND logging_session.active = TRUE
+	AND logging_session.individ_id = NEW.individ_id;
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -2225,7 +2226,8 @@ END;]]></definition>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-	IF NEW.logger_serial_no || NEW.logger_model NOT IN (SELECT logger_serial_no || logger_model FROM loggers.logger_info)
+
+IF NEW.logger_serial_no || NEW.logger_model NOT IN (SELECT logger_serial_no || logger_model FROM loggers.logger_info)
 	 THEN
 	INSERT INTO loggers.logger_info
 					(logger_serial_no,
@@ -2239,7 +2241,7 @@ END;]]></definition>
 					NEW.production_year,
 					NEW.project);
 	END IF;
-	IF NEW.starttime_gmt IS NOT NULL THEN
+	IF NEW.starttime_gmt IS NOT NULL AND NEW.shutdown_session IS False THEN
 	INSERT INTO loggers.startup 
 					(logger_id,  
 					starttime_gmt, 
@@ -2264,24 +2266,27 @@ END;]]></definition>
 					(logger_id,
 					intended_species,
 					intended_location,
-					intended_deployer)
+					intended_deployer,
+					starttime_gmt)
 	SELECT logger_info.logger_id,
 		NEW.intended_species,
 		NEW.intended_location,
-		NEW.intended_deployer
+		NEW.intended_deployer,
+		NEW.starttime_gmt
 		FROM loggers.logger_info 
 	WHERE logger_info.logger_model = NEW.logger_model
 	AND logger_info.logger_serial_no = NEW.logger_serial_no;
 	END IF;
-
 	IF NEW.shutdown_session IS True THEN
 		
 		IF NEW.logger_serial_no || NEW.logger_model IN (SELECT logger_serial_no || logger_model  FROM (SELECT ls.session_id, ls.logger_id, li.logger_serial_no, li.logger_model, ls.active
-							FROM loggers.logging_session ls , loggers.logger_info li
+							FROM loggers.logging_session ls , loggers.logger_info li, loggers.startup
 							WHERE li.logger_serial_no = NEW.logger_serial_no
 							AND li.logger_model = NEW.logger_model
 							AND li.logger_id = ls.logger_id
-							AND active IS True) foo) THEN
+							AND active IS True
+							AND ls.session_id = startup.session_id
+							AND startup.starttime_gmt = NEW.starttime_gmt) foo) THEN
 			INSERT INTO loggers.shutdown (session_id,
 																download_type,
 																download_date,
@@ -2297,15 +2302,16 @@ END;]]></definition>
 										NEW.downloaded_by,
 										NEW.decomissioned,
 										NEW.shutdown_date
-							FROM loggers.logger_info li, loggers.logging_session ls
+							FROM loggers.logger_info li, loggers.logging_session ls, loggers.startup
 							WHERE li.logger_serial_no = NEW.logger_serial_no
 							AND li.logger_model = NEW.logger_model
 							AND li.logger_id = ls.logger_id
-							AND ls.active IS True;
+							AND ls.active IS True
+							AND ls.session_id = startup.session_id
+							AND startup.starttime_gmt = NEW.starttime_gmt;
 		ELSE RAISE EXCEPTION 'Logger % of model % not in an open logging session',  NEW.logger_serial_no, NEW.logger_model;
 		END IF;
 	END IF;
-
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -2330,18 +2336,20 @@ END;]]></definition>
 			THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding allocation data', NEW.logger_id;
 		END IF;
-
 		IF bool_and(logging_session.active = FALSE)
-			FROM loggers.logging_session
+			FROM loggers.logging_session, loggers.startup
 			WHERE logging_session.logger_id = NEW.logger_id
+			AND logging_session.session_id = startup.session_id
+			AND startup.starttime_gmt = NEW.starttime_gmt
 		THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding allocation data', NEW.logger_id;
 	END IF;
-
 	NEW.session_id := logging_session.session_id
-	FROM loggers.logging_session
+	FROM loggers.logging_session, loggers.startup
 	WHERE NEW.logger_id = logging_session.logger_id
-	AND logging_session.active = TRUE;
+	AND logging_session.active = TRUE
+	AND logging_session.session_id = startup.session_id
+	AND startup.starttime_gmt = NEW.starttime_gmt;
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -2372,18 +2380,19 @@ END;]]></definition>
 			THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding status data', NEW.logger_id;
 		END IF;
-
 		IF bool_and(logging_session.active = FALSE)
 			FROM loggers.logging_session
 			WHERE logging_session.logger_id = NEW.logger_id
 		THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding status data', NEW.logger_id;
 	END IF;
-
 	NEW.session_id := logging_session.session_id
-	FROM loggers.logging_session
+	FROM loggers.logging_session, individuals.individ_info
 	WHERE NEW.logger_id = logging_session.logger_id
-	AND logging_session.active = TRUE;
+	AND logging_session.active = TRUE
+	AND individ_info.individ_id = logging_session.individ_id
+	AND NEW.ring_number = individ_info.ring_number
+	AND NEW.euring_code = individ_info.euring_code;
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -2592,19 +2601,16 @@ LAT•_o.bin•LOTEK•]]>
 		FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
 		INNER JOIN loggers.retrieval r ON r.session_id = s.session_id 
 		INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model	)
-
 		INSERT INTO loggers.file_archive (session_id, filename)
 		SELECT foo.session_id, logger_serial_no || '_' || foo.year_retr || '_' || foo.logger_model || foo.file_basename
 		FROM foo
 		WHERE foo.session_id = NEW.session_id;
-
 	ELSEIF (TG_OP = 'UPDATE' AND (NEW.download_type = 'Successfully downloaded'
 									OR NEW.download_type = 'Reconstructed')) THEN
 		WITH foo as (SELECT s.session_id, s.logger_id, l.logger_serial_no, l.logger_model, f.file_basename , EXTRACT(YEAR from r.retrieval_date) year_retr
 		FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
 		INNER JOIN loggers.retrieval r ON r.session_id = s.session_id 
 		INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model	)
-
 		UPDATE loggers.file_archive SET
 		session_id = foo.session_id,
 		filename = foo.logger_serial_no || '_' || foo.year_retr || '_' || foo.logger_model || foo.file_basename
@@ -2612,7 +2618,6 @@ LAT•_o.bin•LOTEK•]]>
 		WHERE NEW.session_id = file_archive.session_id;
 	END IF;
 RETURN NULL;
-
 END;]]></definition>
 </function>
 
@@ -3060,7 +3065,6 @@ INSERT INTO individuals.individ_info (ring_number,
 									NEW.sexing_method,
 									NEW."date");
 END IF;
-
 	IF NEW.logger_model_deployed IS NOT NULL THEN
 	INSERT INTO loggers.deployment
 				(logger_id,
@@ -3075,15 +3079,16 @@ END IF;
 				NEW.colony,
 				NEW.date,
 				NEW.logger_mount_method
-FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+FROM loggers.logging_session, loggers.logger_info, individuals.individ_info, loggers.startup
 WHERE logging_session.logger_id = logger_info.logger_id
 AND logger_info.logger_model = NEW.logger_model_deployed
 AND logger_info.logger_serial_no = NEW.logger_id_deployed
 AND logging_session.active IS True
 AND individ_info.ring_number = NEW.ring_number
-AND individ_info.euring_code = NEW.euring_code;
+AND individ_info.euring_code = NEW.euring_code
+AND logging_session.session_id =  startup.session_id
+AND date_part('year', NEW.date) = date_part('year', startup.starttime_gmt);
 	END IF;
-
 IF NEW.date IN (SELECT individ_status.status_date
 						FROM loggers.logging_session, individuals.individ_info, individuals.individ_status 
 						WHERE individ_info.ring_number = NEW.ring_number
@@ -3091,9 +3096,7 @@ IF NEW.date IN (SELECT individ_status.status_date
 						AND individ_info.individ_id = logging_session.individ_id
 						AND logging_session.active Is True
 						AND logging_session.session_id = individ_status.session_id) 
-
 THEN
-
 	UPDATE individuals.individ_status
 	SET 			weight = NEW.weight,
 					scull = NEW.scull,
@@ -3128,7 +3131,6 @@ THEN
 		AND logging_session.active Is True;
 	
 ELSE
-
 	INSERT INTO individuals.individ_status	(logger_id,
 					"status_date",
 					session_id,
@@ -3186,11 +3188,8 @@ ELSE
 				AND individ_info.euring_code = NEW.euring_code
 				AND individ_info.individ_id = logging_session.individ_id
 				AND logging_session.active Is True;
-
 END IF;
 	
-
-
 	
 IF NEW.logger_model_retrieved IS NOT NULL THEN
 		INSERT INTO loggers.retrieval
@@ -3205,18 +3204,16 @@ IF NEW.logger_model_retrieved IS NOT NULL THEN
 					NEW.colony,
 					NEW.date
 FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
-WHERE logging_session.logger_id =	logger_info.logger_id
+WHERE logging_session.logger_id = logger_info.logger_id
 AND logger_info.logger_model = NEW.logger_model_retrieved
 AND logger_info.logger_serial_no = NEW.logger_id_retrieved
 AND logging_session.active IS True
 AND individ_info.ring_number = NEW.ring_number
-AND individ_info.euring_code = NEW.euring_code;
+AND individ_info.euring_code = NEW.euring_code
+AND logging_session.individ_id =  individ_info.individ_id;
 END IF;
-
 NEW.updated_by := current_user;
 NEW.last_updated := now();
-
-
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -3471,7 +3468,6 @@ END;
 		THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_deployed;
 		END IF;
-
 		IF bool_and(logging_session.active = FALSE)
 			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
 			WHERE logging_session.logger_id = logger_info.logger_id
@@ -3480,10 +3476,8 @@ END;
 		THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_deployed;
 	END IF;
-
 RETURN NEW;
 END;
-
 
 
 
@@ -3528,7 +3522,7 @@ END;
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_retrieved;
 	END IF;
    
-	IF bool_or(logging_session.deployment_id IS NULL)
+	IF bool_and(logging_session.deployment_id IS NULL)
 			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
 			WHERE logging_session.logger_id = logger_info.logger_id
 			AND logger_info.logger_model = NEW.logger_model_retrieved
@@ -3536,7 +3530,6 @@ END;
 	THEN
 		RAISE EXCEPTION 'Logger % not deployed. Logger must be deployed before retrieved.', NEW.logger_id_retrieved;
 	END IF;
-
 RETURN NEW;
 END;]]></definition>
 </function>
@@ -3675,7 +3668,6 @@ WHERE intended_location != deployment_location
 		SET latest_info_date = NEW.status_date
 		WHERE ring_number = NEW.ring_number
 		AND euring_code = NEW.euring_code; 
-
 		IF NEW.color_ring IS NOT NULL THEN
 			UPDATE individuals.individ_info
 				SET color_ring = NEW.color_ring
@@ -3707,11 +3699,9 @@ WHERE intended_location != deployment_location
 				WHERE ring_number = NEW.ring_number
 				AND euring_code = NEW.euring_code;
 		END IF;
-
 	END IF;
 RETURN NEW;
-END;
-]]></definition>
+END;]]></definition>
 </function>
 
 <trigger name="tr_update_individ_info_from_individ_status" firing-type="AFTER" per-line="true" constraint="false"
@@ -3826,14 +3816,13 @@ END;]]></definition>
 	<definition><![CDATA[BEGIN
 	IF NEW.retrieval_date < (SELECT deployment_date
 				FROM loggers.deployment
-				WHERE NEW.session_id = deployment.session_id) THEN
+				WHERE NEW.session_id = deployment.session_id) THEN 
 
 				SELECT functions.fn_raise_download_date_exception(logger_serial_no, session_id)
 				FROM (SELECT logger_info.logger_serial_no, logging_session.session_id 
 				FROM loggers.logger_info, loggers.logging_session
 				WHERE NEW.session_id = logging_session.session_id
 				AND logging_session.logger_id = logger_info.logger_id) fo;
-
 	
 	END IF;
 	RETURN NULL;
@@ -3960,13 +3949,14 @@ END;]]></definition>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-	INSERT INTO imports.metadata_import (updated_by, last_updated)
-	SELECT current_user, now();
-RETURN NULL;
+	NEW.updated_by := current_user;
+	NEW.last_updated := now();
+
+RETURN NEW;
 END;]]></definition>
 </function>
 
-<trigger name="tr_record_metadata_last_updated" firing-type="AFTER" per-line="true" constraint="false"
+<trigger name="tr_record_metadata_last_updated" firing-type="BEFORE" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="imports.metadata_import">
 		<function signature="functions.fn_record_metadata_last_updated()"/>

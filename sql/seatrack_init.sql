@@ -159,13 +159,26 @@ CREATE ROLE arnaud_tarroux WITH
 	IN ROLE seatrack_reader;
 -- ddl-end --
 
+-- object: pure_ftp | type: ROLE --
+-- DROP ROLE IF EXISTS pure_ftp;
+CREATE ROLE pure_ftp WITH 
+	LOGIN
+	ENCRYPTED PASSWORD 'aRw8GEF6';
+-- ddl-end --
+
+-- object: restricted | type: ROLE --
+-- DROP ROLE IF EXISTS restricted;
+CREATE ROLE restricted WITH 
+	ADMIN pure_ftp;
+-- ddl-end --
+
 -- Tablespaces creation must be done outside an multicommand file.
 -- These commands were put in this file only for convenience.
--- -- object: seatrack | type: TABLESPACE --
--- -- DROP TABLESPACE IF EXISTS seatrack CASCADE;
--- CREATE TABLESPACE seatrack
--- 	OWNER admin
--- 	LOCATION '/data/seatrack';
+-- -- object: temp | type: TABLESPACE --
+-- -- DROP TABLESPACE IF EXISTS temp CASCADE;
+-- CREATE TABLESPACE temp
+-- 	OWNER postgres
+-- 	LOCATION '/data';
 -- -- ddl-end --
 -- 
 
@@ -179,7 +192,6 @@ CREATE ROLE arnaud_tarroux WITH
 -- 	ENCODING = 'UTF8'
 -- 	LC_COLLATE = 'en_US.UTF-8'
 -- 	LC_CTYPE = 'en_US.UTF-8'
--- 	TABLESPACE = seatrack
 -- 	OWNER = admin
 -- ;
 -- -- ddl-end --
@@ -257,7 +269,14 @@ ALTER SCHEMA seatrack OWNER TO postgres;
 COMMENT ON SCHEMA seatrack IS 'temporary for importing from existing database';
 -- ddl-end --
 
-SET search_path TO pg_catalog,public,config,metadata,loggers,individuals,positions,activity,views,functions,imports,seatrack;
+-- object: restricted | type: SCHEMA --
+-- DROP SCHEMA IF EXISTS restricted CASCADE;
+CREATE SCHEMA restricted;
+-- ddl-end --
+ALTER SCHEMA restricted OWNER TO admin;
+-- ddl-end --
+
+SET search_path TO pg_catalog,public,config,metadata,loggers,individuals,positions,activity,views,functions,imports,seatrack,restricted;
 -- ddl-end --
 
 -- object: loggers.logger_info | type: TABLE --
@@ -1698,12 +1717,23 @@ CREATE FUNCTION functions.fn_check_logging_session_not_open ()
 	COST 1
 	AS $$
 BEGIN
-		IF  bool_or(logging_session.active = TRUE)
-				FROM loggers.logging_session
-				WHERE logging_session.logger_id = NEW.logger_id
+
+	IF  bool_and(logging_session.active = TRUE 
+		AND date_part('year', ls.starttime_gmt) = date_part('year', NEW.starttime_gmt))
+		FROM loggers.logging_session,loggers.startup ls
+		WHERE logging_session.logger_id = NEW.logger_id
+		AND ls.logger_id = NEW.logger_id
 		THEN
-		RAISE EXCEPTION 'Logger % already in open logging session. Close open session before starting new one', NEW.logger_id;
+		RAISE EXCEPTION 'Logger % already in open logging session started the same year. Close this open session before starting new one', NEW.logger_id;
+	
+	ELSIF  bool_or(logging_session.active = TRUE)
+		FROM loggers.logging_session
+		WHERE logging_session.logger_id = NEW.logger_id
+		THEN
+		RAISE WARNING 'Logger % already in open logging session, started another year.', NEW.logger_id;
 	END IF;
+
+
 RETURN NEW;
 END;
 $$;
@@ -1766,18 +1796,18 @@ BEGIN
 			THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 		END IF;
-
 		IF bool_and(logging_session.active = FALSE)
 			FROM loggers.logging_session
 			WHERE logging_session.logger_id = NEW.logger_id
 		THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 	END IF;
-
 	NEW.session_id := logging_session.session_id
-	FROM loggers.logging_session
+	FROM loggers.logging_session, loggers.startup
 	WHERE NEW.logger_id = logging_session.logger_id
-	AND logging_session.active = TRUE;
+	AND logging_session.active = TRUE
+	AND logging_session.session_id = startup.session_id
+	AND date_part('year', startup.starttime_gmt) = date_part('year', NEW.deployment_date);
 RETURN NEW;
 END;
 $$;
@@ -1824,7 +1854,6 @@ BEGIN
 		WHERE a.session_id = NEW.session_id) a THEN
             RAISE WARNING '% deployment location does not match indended location in allocation table', NEW.deployment_location;
         END IF;
-
 	RETURN NULL;
 END;
 $$;
@@ -1865,7 +1894,7 @@ BEGIN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id;
 	END IF;
    
-	IF bool_or(logging_session.deployment_id IS NULL)
+	IF bool_and(logging_session.deployment_id IS NULL)
 			FROM loggers.logging_session
 			WHERE logging_session.logger_id = NEW.logger_id
 	THEN
@@ -1875,7 +1904,8 @@ BEGIN
 	NEW.session_id := logging_session.session_id
 	FROM loggers.logging_session
 	WHERE NEW.logger_id = logging_session.logger_id
-	AND logging_session.active = TRUE;
+	AND logging_session.active = TRUE
+	AND logging_session.individ_id = NEW.individ_id;
 RETURN NEW;
 END;
 $$;
@@ -1940,7 +1970,8 @@ CREATE FUNCTION functions.fn_distribute_from_logger_import_table ()
 	COST 1
 	AS $$
 BEGIN
-	IF NEW.logger_serial_no || NEW.logger_model NOT IN (SELECT logger_serial_no || logger_model FROM loggers.logger_info)
+
+IF NEW.logger_serial_no || NEW.logger_model NOT IN (SELECT logger_serial_no || logger_model FROM loggers.logger_info)
 	 THEN
 	INSERT INTO loggers.logger_info
 					(logger_serial_no,
@@ -1954,7 +1985,7 @@ BEGIN
 					NEW.production_year,
 					NEW.project);
 	END IF;
-	IF NEW.starttime_gmt IS NOT NULL THEN
+	IF NEW.starttime_gmt IS NOT NULL AND NEW.shutdown_session IS False THEN
 	INSERT INTO loggers.startup 
 					(logger_id,  
 					starttime_gmt, 
@@ -1979,24 +2010,27 @@ BEGIN
 					(logger_id,
 					intended_species,
 					intended_location,
-					intended_deployer)
+					intended_deployer,
+					starttime_gmt)
 	SELECT logger_info.logger_id,
 		NEW.intended_species,
 		NEW.intended_location,
-		NEW.intended_deployer
+		NEW.intended_deployer,
+		NEW.starttime_gmt
 		FROM loggers.logger_info 
 	WHERE logger_info.logger_model = NEW.logger_model
 	AND logger_info.logger_serial_no = NEW.logger_serial_no;
 	END IF;
-
 	IF NEW.shutdown_session IS True THEN
 		
 		IF NEW.logger_serial_no || NEW.logger_model IN (SELECT logger_serial_no || logger_model  FROM (SELECT ls.session_id, ls.logger_id, li.logger_serial_no, li.logger_model, ls.active
-							FROM loggers.logging_session ls , loggers.logger_info li
+							FROM loggers.logging_session ls , loggers.logger_info li, loggers.startup
 							WHERE li.logger_serial_no = NEW.logger_serial_no
 							AND li.logger_model = NEW.logger_model
 							AND li.logger_id = ls.logger_id
-							AND active IS True) foo) THEN
+							AND active IS True
+							AND ls.session_id = startup.session_id
+							AND startup.starttime_gmt = NEW.starttime_gmt) foo) THEN
 			INSERT INTO loggers.shutdown (session_id,
 																download_type,
 																download_date,
@@ -2012,15 +2046,16 @@ BEGIN
 										NEW.downloaded_by,
 										NEW.decomissioned,
 										NEW.shutdown_date
-							FROM loggers.logger_info li, loggers.logging_session ls
+							FROM loggers.logger_info li, loggers.logging_session ls, loggers.startup
 							WHERE li.logger_serial_no = NEW.logger_serial_no
 							AND li.logger_model = NEW.logger_model
 							AND li.logger_id = ls.logger_id
-							AND ls.active IS True;
+							AND ls.active IS True
+							AND ls.session_id = startup.session_id
+							AND startup.starttime_gmt = NEW.starttime_gmt;
 		ELSE RAISE EXCEPTION 'Logger % of model % not in an open logging session',  NEW.logger_serial_no, NEW.logger_model;
 		END IF;
 	END IF;
-
 RETURN NEW;
 END;
 $$;
@@ -2044,18 +2079,20 @@ BEGIN
 			THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding allocation data', NEW.logger_id;
 		END IF;
-
 		IF bool_and(logging_session.active = FALSE)
-			FROM loggers.logging_session
+			FROM loggers.logging_session, loggers.startup
 			WHERE logging_session.logger_id = NEW.logger_id
+			AND logging_session.session_id = startup.session_id
+			AND startup.starttime_gmt = NEW.starttime_gmt
 		THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding allocation data', NEW.logger_id;
 	END IF;
-
 	NEW.session_id := logging_session.session_id
-	FROM loggers.logging_session
+	FROM loggers.logging_session, loggers.startup
 	WHERE NEW.logger_id = logging_session.logger_id
-	AND logging_session.active = TRUE;
+	AND logging_session.active = TRUE
+	AND logging_session.session_id = startup.session_id
+	AND startup.starttime_gmt = NEW.starttime_gmt;
 RETURN NEW;
 END;
 $$;
@@ -2088,18 +2125,19 @@ BEGIN
 			THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding status data', NEW.logger_id;
 		END IF;
-
 		IF bool_and(logging_session.active = FALSE)
 			FROM loggers.logging_session
 			WHERE logging_session.logger_id = NEW.logger_id
 		THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding status data', NEW.logger_id;
 	END IF;
-
 	NEW.session_id := logging_session.session_id
-	FROM loggers.logging_session
+	FROM loggers.logging_session, individuals.individ_info
 	WHERE NEW.logger_id = logging_session.logger_id
-	AND logging_session.active = TRUE;
+	AND logging_session.active = TRUE
+	AND individ_info.individ_id = logging_session.individ_id
+	AND NEW.ring_number = individ_info.ring_number
+	AND NEW.euring_code = individ_info.euring_code;
 RETURN NEW;
 END;
 $$;
@@ -2390,19 +2428,16 @@ BEGIN
 		FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
 		INNER JOIN loggers.retrieval r ON r.session_id = s.session_id 
 		INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model	)
-
 		INSERT INTO loggers.file_archive (session_id, filename)
 		SELECT foo.session_id, logger_serial_no || '_' || foo.year_retr || '_' || foo.logger_model || foo.file_basename
 		FROM foo
 		WHERE foo.session_id = NEW.session_id;
-
 	ELSEIF (TG_OP = 'UPDATE' AND (NEW.download_type = 'Successfully downloaded'
 									OR NEW.download_type = 'Reconstructed')) THEN
 		WITH foo as (SELECT s.session_id, s.logger_id, l.logger_serial_no, l.logger_model, f.file_basename , EXTRACT(YEAR from r.retrieval_date) year_retr
 		FROM  loggers.logging_session s INNER JOIN loggers.logger_info l ON s.logger_id = l.logger_id
 		INNER JOIN loggers.retrieval r ON r.session_id = s.session_id 
 		INNER JOIN metadata.logger_files f ON l.logger_model = f.logger_model	)
-
 		UPDATE loggers.file_archive SET
 		session_id = foo.session_id,
 		filename = foo.logger_serial_no || '_' || foo.year_retr || '_' || foo.logger_model || foo.file_basename
@@ -2410,7 +2445,6 @@ BEGIN
 		WHERE NEW.session_id = file_archive.session_id;
 	END IF;
 RETURN NULL;
-
 END;
 $$;
 -- ddl-end --
@@ -2772,7 +2806,6 @@ INSERT INTO individuals.individ_info (ring_number,
 									NEW.sexing_method,
 									NEW."date");
 END IF;
-
 	IF NEW.logger_model_deployed IS NOT NULL THEN
 	INSERT INTO loggers.deployment
 				(logger_id,
@@ -2787,15 +2820,16 @@ END IF;
 				NEW.colony,
 				NEW.date,
 				NEW.logger_mount_method
-FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+FROM loggers.logging_session, loggers.logger_info, individuals.individ_info, loggers.startup
 WHERE logging_session.logger_id = logger_info.logger_id
 AND logger_info.logger_model = NEW.logger_model_deployed
 AND logger_info.logger_serial_no = NEW.logger_id_deployed
 AND logging_session.active IS True
 AND individ_info.ring_number = NEW.ring_number
-AND individ_info.euring_code = NEW.euring_code;
+AND individ_info.euring_code = NEW.euring_code
+AND logging_session.session_id =  startup.session_id
+AND date_part('year', NEW.date) = date_part('year', startup.starttime_gmt);
 	END IF;
-
 IF NEW.date IN (SELECT individ_status.status_date
 						FROM loggers.logging_session, individuals.individ_info, individuals.individ_status 
 						WHERE individ_info.ring_number = NEW.ring_number
@@ -2803,9 +2837,7 @@ IF NEW.date IN (SELECT individ_status.status_date
 						AND individ_info.individ_id = logging_session.individ_id
 						AND logging_session.active Is True
 						AND logging_session.session_id = individ_status.session_id) 
-
 THEN
-
 	UPDATE individuals.individ_status
 	SET 			weight = NEW.weight,
 					scull = NEW.scull,
@@ -2840,7 +2872,6 @@ THEN
 		AND logging_session.active Is True;
 	
 ELSE
-
 	INSERT INTO individuals.individ_status	(logger_id,
 					"status_date",
 					session_id,
@@ -2898,11 +2929,8 @@ ELSE
 				AND individ_info.euring_code = NEW.euring_code
 				AND individ_info.individ_id = logging_session.individ_id
 				AND logging_session.active Is True;
-
 END IF;
 	
-
-
 	
 IF NEW.logger_model_retrieved IS NOT NULL THEN
 		INSERT INTO loggers.retrieval
@@ -2917,18 +2945,16 @@ IF NEW.logger_model_retrieved IS NOT NULL THEN
 					NEW.colony,
 					NEW.date
 FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
-WHERE logging_session.logger_id =	logger_info.logger_id
+WHERE logging_session.logger_id = logger_info.logger_id
 AND logger_info.logger_model = NEW.logger_model_retrieved
 AND logger_info.logger_serial_no = NEW.logger_id_retrieved
 AND logging_session.active IS True
 AND individ_info.ring_number = NEW.ring_number
-AND individ_info.euring_code = NEW.euring_code;
+AND individ_info.euring_code = NEW.euring_code
+AND logging_session.individ_id =  individ_info.individ_id;
 END IF;
-
 NEW.updated_by := current_user;
 NEW.last_updated := now();
-
-
 RETURN NEW;
 END;
 $$;
@@ -3185,7 +3211,6 @@ BEGIN
 		THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_deployed;
 		END IF;
-
 		IF bool_and(logging_session.active = FALSE)
 			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
 			WHERE logging_session.logger_id = logger_info.logger_id
@@ -3194,10 +3219,8 @@ BEGIN
 		THEN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_deployed;
 	END IF;
-
 RETURN NEW;
 END;
-
 
 
 
@@ -3244,7 +3267,7 @@ BEGIN
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_retrieved;
 	END IF;
    
-	IF bool_or(logging_session.deployment_id IS NULL)
+	IF bool_and(logging_session.deployment_id IS NULL)
 			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
 			WHERE logging_session.logger_id = logger_info.logger_id
 			AND logger_info.logger_model = NEW.logger_model_retrieved
@@ -3252,7 +3275,6 @@ BEGIN
 	THEN
 		RAISE EXCEPTION 'Logger % not deployed. Logger must be deployed before retrieved.', NEW.logger_id_retrieved;
 	END IF;
-
 RETURN NEW;
 END;
 $$;
@@ -3399,7 +3421,6 @@ BEGIN
 		SET latest_info_date = NEW.status_date
 		WHERE ring_number = NEW.ring_number
 		AND euring_code = NEW.euring_code; 
-
 		IF NEW.color_ring IS NOT NULL THEN
 			UPDATE individuals.individ_info
 				SET color_ring = NEW.color_ring
@@ -3431,11 +3452,9 @@ BEGIN
 				WHERE ring_number = NEW.ring_number
 				AND euring_code = NEW.euring_code;
 		END IF;
-
 	END IF;
 RETURN NEW;
 END;
-
 $$;
 -- ddl-end --
 ALTER FUNCTION functions.fn_update_individ_info_from_individ_status() OWNER TO admin;
@@ -3555,14 +3574,13 @@ CREATE FUNCTION functions.fn_check_retr_after_depl ()
 BEGIN
 	IF NEW.retrieval_date < (SELECT deployment_date
 				FROM loggers.deployment
-				WHERE NEW.session_id = deployment.session_id) THEN
+				WHERE NEW.session_id = deployment.session_id) THEN 
 
 				SELECT functions.fn_raise_download_date_exception(logger_serial_no, session_id)
 				FROM (SELECT logger_info.logger_serial_no, logging_session.session_id 
 				FROM loggers.logger_info, loggers.logging_session
 				WHERE NEW.session_id = logging_session.session_id
 				AND logging_session.logger_id = logger_info.logger_id) fo;
-
 	
 	END IF;
 	RETURN NULL;
@@ -3592,16 +3610,28 @@ CREATE FUNCTION functions.fn_check_depl_after_startup ()
 	COST 1
 	AS $$
 BEGIN
-	IF NEW.deployment_date < (SELECT starttime_gmt::date
+	IF (
+	(NEW.deployment_date < (SELECT programmed_gmt_time::date
 				FROM loggers.startup
-				WHERE NEW.session_id = startup.session_id) THEN
-
+				WHERE NEW.session_id = startup.session_id)) 
+				OR
+				
+	(NEW.deployment_date < (SELECT starttime_gmt::date
+				FROM loggers.startup
+				WHERE NEW.session_id = startup.session_id) 
+				AND
+				
+				(SELECT programmed_gmt_time::date
+				FROM loggers.startup
+				WHERE NEW.session_id = startup.session_id) IS NULL)
+				) 
+				THEN
+				
 				SELECT functions.fn_raise_deployment_date_exception(logger_serial_no, session_id)
 				FROM (SELECT logger_info.logger_serial_no, logging_session.session_id 
 				FROM loggers.startup, loggers.logger_info, loggers.logging_session
 				WHERE NEW.session_id = logging_session.session_id
 				AND logging_session.logger_id = logger_info.logger_id) fo;
-
 	
 	END IF;
 	RETURN NULL;
@@ -3667,9 +3697,10 @@ CREATE FUNCTION functions.fn_record_metadata_last_updated ()
 	COST 1
 	AS $$
 BEGIN
-	INSERT INTO imports.metadata_import (updated_by, last_updated)
-	SELECT current_user, now();
-RETURN NULL;
+	NEW.updated_by := current_user;
+	NEW.last_updated := now();
+
+RETURN NEW;
 END;
 $$;
 -- ddl-end --
@@ -3679,7 +3710,7 @@ ALTER FUNCTION functions.fn_record_metadata_last_updated() OWNER TO admin;
 -- object: tr_record_metadata_last_updated | type: TRIGGER --
 -- DROP TRIGGER IF EXISTS tr_record_metadata_last_updated ON imports.metadata_import CASCADE;
 CREATE TRIGGER tr_record_metadata_last_updated
-	AFTER INSERT OR UPDATE
+	BEFORE INSERT OR UPDATE
 	ON imports.metadata_import
 	FOR EACH ROW
 	EXECUTE PROCEDURE functions.fn_record_metadata_last_updated();
@@ -3734,15 +3765,16 @@ CREATE FUNCTION functions.fn_update_postable_logging_session ()
 	COST 1
 	AS $$
 BEGIN
-
-NEW.session_id := (SELECT ls.session_id
+UPDATE positions.postable pos
+SET session_id = foo.session_id 
+FROM (SELECT ls.session_id, p.id
 FROM loggers.logging_session ls, loggers.logger_info li, positions.postable p
 WHERE p.logger_id = li.logger_serial_no
 AND p.logger_model = li.logger_model
 AND li.logger_id = ls.logger_id
-AND p.year_tracked = ls.year_tracked);
-
-RETURN NEW;
+AND p.year_tracked = ls.year_tracked) foo
+WHERE pos.id = foo.id;
+RETURN NULL;
 END;
 $$;
 -- ddl-end --
@@ -3752,10 +3784,69 @@ ALTER FUNCTION functions.fn_update_postable_logging_session() OWNER TO admin;
 -- object: tr_update_postable_logging_session | type: TRIGGER --
 -- DROP TRIGGER IF EXISTS tr_update_postable_logging_session ON positions.postable CASCADE;
 CREATE TRIGGER tr_update_postable_logging_session
-	BEFORE INSERT OR UPDATE
+	AFTER INSERT OR UPDATE
 	ON positions.postable
-	FOR EACH ROW
+	FOR EACH STATEMENT
+	WHEN (pg_trigger_depth() = 0)
 	EXECUTE PROCEDURE functions.fn_update_postable_logging_session();
+-- ddl-end --
+
+-- object: functions.fn_delete_individ_info_on_delete_individ_status | type: FUNCTION --
+-- DROP FUNCTION IF EXISTS functions.fn_delete_individ_info_on_delete_individ_status() CASCADE;
+CREATE FUNCTION functions.fn_delete_individ_info_on_delete_individ_status ()
+	RETURNS trigger
+	LANGUAGE plpgsql
+	VOLATILE 
+	CALLED ON NULL INPUT
+	SECURITY INVOKER
+	COST 1
+	AS $$
+BEGIN
+
+DELETE FROM individuals.individ_info
+WHERE ring_number NOT IN (SELECT DISTINCT ring_number FROM individuals.individ_status) AND
+euring_code NOT IN (SELECT DISTINCT ring_number FROM individuals.individ_status);
+
+RETURN NULL;
+$$;
+-- ddl-end --
+ALTER FUNCTION functions.fn_delete_individ_info_on_delete_individ_status() OWNER TO admin;
+-- ddl-end --
+
+-- object: tr_delete_individ_info_on_delete_individ_status | type: TRIGGER --
+-- DROP TRIGGER IF EXISTS tr_delete_individ_info_on_delete_individ_status ON individuals.individ_status CASCADE;
+CREATE TRIGGER tr_delete_individ_info_on_delete_individ_status
+	AFTER DELETE 
+	ON individuals.individ_status
+	FOR EACH STATEMENT
+	EXECUTE PROCEDURE functions.fn_delete_individ_info_on_delete_individ_status();
+-- ddl-end --
+
+-- object: restricted.ftp_credentials | type: VIEW --
+-- DROP VIEW IF EXISTS restricted.ftp_credentials CASCADE;
+CREATE VIEW restricted.ftp_credentials
+AS 
+
+SELECT DISTINCT ON (foo.username) foo.username::text AS "User",
+    "right"(foo.rolpassword, '-3'::integer) AS "Password",
+    foo.username::character varying AS "Uid",
+        CASE
+            WHEN foo.groups ~~ '%writer'::text THEN 'write'::character varying
+            WHEN foo.groups ~~ 'admin'::text THEN 'write'::character varying
+            ELSE 'read'::character varying
+        END AS "Gid",
+    '/data/local/ftp'::text AS "Dir"
+   FROM ( SELECT pg_authid.rolname AS username,
+            pg_roles.rolname AS groups,
+            pg_authid.rolpassword
+           FROM pg_user
+             JOIN pg_auth_members ON pg_user.usesysid = pg_auth_members.member
+             JOIN pg_roles ON pg_roles.oid = pg_auth_members.roleid
+             JOIN pg_authid ON pg_user.usename = pg_authid.rolname
+          WHERE pg_authid.rolcanlogin IS TRUE) foo
+  ORDER BY foo.username;
+-- ddl-end --
+ALTER VIEW restricted.ftp_credentials OWNER TO admin;
 -- ddl-end --
 
 -- object: logger_model_fk | type: CONSTRAINT --
@@ -3798,6 +3889,13 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE loggers.allocation ADD CONSTRAINT allocation_logger_id_fk FOREIGN KEY (logger_id)
 REFERENCES loggers.logger_info (logger_id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: fk_allocation_session_id | type: CONSTRAINT --
+-- ALTER TABLE loggers.allocation DROP CONSTRAINT IF EXISTS fk_allocation_session_id CASCADE;
+ALTER TABLE loggers.allocation ADD CONSTRAINT fk_allocation_session_id FOREIGN KEY (session_id)
+REFERENCES loggers.logging_session (session_id) MATCH FULL
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: deployment_logging_session_fk | type: CONSTRAINT --
@@ -3888,7 +3986,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ALTER TABLE loggers.deployment DROP CONSTRAINT IF EXISTS deployment_logging_session_fk CASCADE;
 ALTER TABLE loggers.deployment ADD CONSTRAINT deployment_logging_session_fk FOREIGN KEY (session_id)
 REFERENCES loggers.logging_session (session_id) MATCH FULL
-ON DELETE RESTRICT ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: deployment_logger_mount_method_fk | type: CONSTRAINT --
@@ -3993,7 +4091,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ALTER TABLE loggers.retrieval DROP CONSTRAINT IF EXISTS retrieval_logging_session_fk CASCADE;
 ALTER TABLE loggers.retrieval ADD CONSTRAINT retrieval_logging_session_fk FOREIGN KEY (session_id)
 REFERENCES loggers.logging_session (session_id) MATCH FULL
-ON DELETE RESTRICT ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: retrieval_type_fk | type: CONSTRAINT --
@@ -4007,7 +4105,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ALTER TABLE loggers.shutdown DROP CONSTRAINT IF EXISTS shutdown_startup_fk CASCADE;
 ALTER TABLE loggers.shutdown ADD CONSTRAINT shutdown_startup_fk FOREIGN KEY (session_id)
 REFERENCES loggers.startup (session_id) MATCH FULL
-ON DELETE RESTRICT ON UPDATE CASCADE;
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: download_type_fk | type: CONSTRAINT --
@@ -4078,6 +4176,13 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE loggers.startup ADD CONSTRAINT startup_logger_id_fk FOREIGN KEY (logger_id)
 REFERENCES loggers.logger_info (logger_id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: fk_startup_session_id | type: CONSTRAINT --
+-- ALTER TABLE loggers.startup DROP CONSTRAINT IF EXISTS fk_startup_session_id CASCADE;
+ALTER TABLE loggers.startup ADD CONSTRAINT fk_startup_session_id FOREIGN KEY (session_id)
+REFERENCES loggers.logging_session (session_id) MATCH FULL
+ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: observation_individ_fk | type: CONSTRAINT --
@@ -4164,70 +4269,82 @@ REFERENCES metadata.mounting_types (logger_mount_method) MATCH FULL
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
--- object: grant_39a9fc2039 | type: PERMISSION --
+-- object: grant_0ff5b2c673 | type: PERMISSION --
 GRANT CONNECT
    ON DATABASE seatrack
    TO seatrack_reader;
 -- ddl-end --
 
--- object: grant_5a2c4ff228 | type: PERMISSION --
+-- object: grant_e164f99ea7 | type: PERMISSION --
 GRANT CONNECT
    ON DATABASE seatrack
    TO seatrack_writer;
 -- ddl-end --
 
--- object: grant_a59a8ba57b | type: PERMISSION --
+-- object: grant_57b178ec24 | type: PERMISSION --
 GRANT USAGE
    ON SCHEMA metadata
    TO seatrack_reader;
 -- ddl-end --
 
--- object: grant_b61627295f | type: PERMISSION --
+-- object: grant_565c260782 | type: PERMISSION --
 GRANT USAGE
    ON SCHEMA metadata
    TO seatrack_writer;
 -- ddl-end --
 
--- object: grant_43f1c0ea1f | type: PERMISSION --
+-- object: grant_be34c9b222 | type: PERMISSION --
 GRANT SELECT
    ON TABLE activity.temperature
    TO seatrack_reader;
 -- ddl-end --
 
--- object: grant_8ee64e3790 | type: PERMISSION --
+-- object: grant_a377dd0534 | type: PERMISSION --
 GRANT SELECT,INSERT,UPDATE,DELETE,TRIGGER
    ON TABLE activity.temperature
    TO seatrack_writer;
 -- ddl-end --
 
--- object: grant_0e2c894565 | type: PERMISSION --
+-- object: grant_1868831bab | type: PERMISSION --
 GRANT SELECT
    ON TABLE views.active_logging_sessions
    TO seatrack_reader;
 -- ddl-end --
 
--- object: grant_96ef3e9163 | type: PERMISSION --
+-- object: grant_d77875aac0 | type: PERMISSION --
 GRANT SELECT
    ON TABLE views.closed_sessions_not_shutdown
    TO seatrack_reader;
 -- ddl-end --
 
--- object: grant_66a987500a | type: PERMISSION --
+-- object: grant_6f6b40bb05 | type: PERMISSION --
 GRANT USAGE
    ON SCHEMA views
    TO seatrack_reader;
 -- ddl-end --
 
--- object: grant_6fa31f3540 | type: PERMISSION --
+-- object: grant_5d101cda13 | type: PERMISSION --
 GRANT USAGE
    ON SCHEMA activity
    TO seatrack_reader;
 -- ddl-end --
 
+-- object: grant_61c7c4b953 | type: PERMISSION --
+GRANT USAGE
+   ON SCHEMA restricted
+   TO restricted;
+-- ddl-end --
+
+-- object: grant_706b8dd9b3 | type: PERMISSION --
+GRANT SELECT
+   ON TABLE restricted.ftp_credentials
+   TO restricted;
+-- ddl-end --
+
 
 -- Appended SQL commands --
 -----------usage permissions
-GRANT USAGE ON SCHEMA metadata, loggers, positions, views, imports, individuals
+GRANT USAGE ON SCHEMA metadata, loggers, positions, views, imports, individuals, functions
 TO seatrack_reader, seatrack_writer, seatrack_metadata_writer;
 
 ----------Reader permissions

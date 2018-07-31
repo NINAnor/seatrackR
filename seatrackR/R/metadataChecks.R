@@ -50,9 +50,14 @@ checkRetrievedMatchDeployed <- function(myTable){
     checkCon()
 
 
-  activeDataQ <- "SELECT logging_session.session_id, logger_info.logger_model, logger_info.logger_serial_no, individ_info.ring_number, individ_info.euring_code
+  activeDataQ <- "SELECT logging_session.session_id,
+logger_info.logger_model,
+logger_info.logger_serial_no,
+individ_info.ring_number,
+individ_info.euring_code,
+date_part('year', starttime_gmt) as \"startYear\"
    FROM loggers.logging_session LEFT JOIN loggers.logger_info ON logging_session.logger_id =	logger_info.logger_id
- LEFT JOIN individuals.individ_info ON logging_session.individ_id = individ_info.individ_id
+ LEFT JOIN individuals.individ_info ON logging_session.individ_id = individ_info.individ_id LEFT JOIN loggers.startup ON logging_session.session_id = startup.session_id
   WHERE logging_session.active IS True
    "
 
@@ -62,29 +67,44 @@ deployedIndividualsQ <- "SELECT * FROM loggers.deployment"
 
 deployedIndividuals <- DBI::dbGetQuery(con, deployedIndividualsQ)
 
-myTabledeployedIndividuals <- activeData %>%
-  left_join(myTable,
+myTableDeployedIndividuals <- myTable %>%
+  transform(startYear = as.integer(as.character(format(date, "%Y"))))
+
+myTableDeployedIndividuals <- activeData %>%
+  left_join(myTableDeployedIndividuals,
              by = c("logger_model" = "logger_model_deployed",
-                    "logger_serial_no" = "logger_id_deployed")) %>%
+                    "logger_serial_no" = "logger_id_deployed",
+                    "startYear" = "startYear")) %>%
   select(session_id,
          ring_number.y,
-         euring_code.y)
+         euring_code.y,
+         startYear)
 
 deployedIndividuals <- deployedIndividuals %>%
-  right_join(myTabledeployedIndividuals,
+  right_join(myTableDeployedIndividuals,
              by = c("session_id" = "session_id"))
 
+myTableRetrievedIndividuals <- myTable %>%
+  transform(startYear = as.integer(as.character(format(date, "%Y"))) - 1) ##CHECK THIS
+
+
 retrievedIndividuals <- activeData %>%
-  inner_join(myTable,
+  inner_join(myTableRetrievedIndividuals,
              by = c("logger_model" = "logger_model_retrieved",
-                    "logger_serial_no" = "logger_id_retrieved"))
+                    "logger_serial_no" = "logger_id_retrieved",
+                    "startYear" = "startYear"))
 
 
 retrievedNotDepl <- retrievedIndividuals %>%
   left_join(deployedIndividuals,
             by = c("session_id" = "session_id")) %>%
   filter(ring_number.y.x != ring_number.y.y) %>%
-  select(individ_id, ring_number.y.y, euring_code.y.y, session_id)
+  select(individ_id, ring_number = ring_number.y.x,
+         euring_code = euring_code.y.x,
+         session_id,
+         logger_model,
+         logger_serial_no,
+         logger_id)
 
 out <- list()
 out$retrievedRingNotDeployed <- retrievedNotDepl
