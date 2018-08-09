@@ -79,8 +79,17 @@ The data sent to the Polar institute also have the subspecies names added to the
 newExport <- dbReadTable(con, Id(schema = "views", table = "export"))
 nrow(newExport)
 write.csv(newExport, file = "seatrack_export_2018-08-09.csv")
+```
+
+If you are interested in knowing separate old, deleted rows, these are found in the table `positions.deleted_uuid`.
+
+```{r}
+deletedUuids <- dbReadTable(con, Id(schema = "positions", table =  "deleted_uuid"))
+nrow(deletedUuids)
+write.csv(deletedUuids, file = "deletedUuids_2018-08-09.csv")
 
 ```
+
 
 Other functions for download
 ================
