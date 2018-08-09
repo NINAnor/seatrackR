@@ -6,7 +6,7 @@
 \usage{
 getPosdata(selectSpecies = NULL, selectColony = NULL,
   selectDataResponsible = NULL, selectRingnumber = NULL,
-  selectYear = NULL, loadOnlyValidGeometries = F, limit = F)
+  selectYear = NULL, loadGeometries = F, limit = F)
 }
 \arguments{
 \item{selectSpecies}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.}
@@ -18,7 +18,7 @@ must conform to the name nomenclature used in the postable. Default is NULL}
 
 \item{selectRingnumber}{Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.}
 
-\item{loadOnlyValidGeometries}{True, False. Should geometries be loaded from the columns lon_smooth2 and lat_smooth2?
+\item{loadGeometries}{True, False. Should geometries be loaded from the columns lon_smooth2 and lat_smooth2?
 If True, the returned object is a simple features object with only rows of eqfilter3 == 1, and with lat_smooth2 and lon_smooth2 values. Default = False}
 
 \item{limit}{FALSE or Integer. Limit the number of rows returned to this number. Default = False.}

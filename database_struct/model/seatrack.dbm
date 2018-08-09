@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="651,828" last-zoom="0.7"
+<dbmodel pgmodeler-ver="0.9.0" last-position="122,827" last-zoom="0.7"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -1634,7 +1634,7 @@ Testus specius•specius••testspecies]]>
 <view name="postable">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2071.67" y="1385"/>
+	<position x="2070.24" y="1385"/>
 	<reference>
 		<expression><![CDATA[SELECT p.* 
 FROM positions.postable p]]></expression>
@@ -1644,7 +1644,7 @@ FROM positions.postable p]]></expression>
 <view name="active_logging_sessions">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2318.94" y="1381.36"/>
+	<position x="2317.51" y="1381.36"/>
 	<reference>
 		<expression><![CDATA[SELECT *
 FROM loggers.logging_session
@@ -2461,7 +2461,7 @@ END;]]></definition>
 <view name="closed_sessions_not_shutdown">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2071.67" y="1445"/>
+	<position x="2070.24" y="1445"/>
 	<reference>
 		<expression><![CDATA[SELECT l.session_id, l.logger_id, l.year_tracked
 FROM loggers.logging_session l left join loggers.shutdown s
@@ -3543,7 +3543,7 @@ END;]]></definition>
 <view name="categories" materialized="true">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2315.23" y="1479.76"/>
+	<position x="2313.8" y="1479.76"/>
 	<reference>
 		<expression><![CDATA[ species as species_cat, colony as colony_cat, data_responsible as responsible_cat
     , ring_number as ring_number_cat
@@ -3556,7 +3556,7 @@ END;]]></definition>
 <view name="longersum" materialized="true">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2600" y="1368.33"/>
+	<position x="2598.57" y="1368.33"/>
 	<reference>
 		<expression><![CDATA[year_tracked år, species, count(distinct(ring_number)) antall_unike_ring_nummer, count(*) antall_posisjoner, count(distinct(colony)) antall_kolonier
     FROM positions.postable
@@ -3569,7 +3569,7 @@ END;]]></definition>
 <view name="shorttable" materialized="true">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2601.67" y="1461.67"/>
+	<position x="2600.24" y="1461.67"/>
 	<reference>
 		<expression><![CDATA[ count(DISTINCT postable.species) AS "Antall arter",
     count(DISTINCT postable.colony) AS "Antall kolonier",
@@ -3584,7 +3584,7 @@ END;]]></definition>
 <view name="shorttableeqfilter3">
 	<schema name="views"/>
 	<role name="admin"/>
-	<position x="2601.67" y="1440"/>
+	<position x="2600.24" y="1440"/>
 	<reference>
 		<expression><![CDATA[count(DISTINCT postable.species) AS "Antall arter",
     count(DISTINCT postable.colony) AS "Antall kolonier",
@@ -3628,7 +3628,7 @@ END;]]></definition>
 <view name="all_depl_mismatch">
 	<schema name="views"/>
 	<role name="postgres"/>
-	<position x="2322.09" y="1429.96"/>
+	<position x="2320.66" y="1429.96"/>
 	<reference>
 		<expression><![CDATA[
 a.session_id, a.logger_id, a.intended_species, a.intended_location, a.intended_deployer , d.deployment_species, d.deployment_location, d.deployment_date
@@ -4093,6 +4093,62 @@ RETURN NULL;]]></definition>
              JOIN pg_authid ON pg_user.usename = pg_authid.rolname
           WHERE pg_authid.rolcanlogin IS TRUE) foo
   ORDER BY foo.username;
+]]></expression>
+	</reference>
+</view>
+
+<view name="export">
+	<schema name="views"/>
+	<role name="admin"/>
+	<position x="2097.14" y="1495.71"/>
+	<reference>
+		<expression><![CDATA[ SELECT postable.id,
+    postable.date_time,
+    postable.logger,
+    postable.logger_id,
+    postable.logger_model,
+    postable.year_tracked,
+    postable.year_deployed,
+    postable.year_retrieved,
+    postable.ring_number,
+    postable.euring_code,
+    postable.species,
+    postable.colony,
+    postable.lon_raw,
+    postable.lat_raw,
+    postable.lon_smooth1,
+    postable.lat_smooth1,
+    postable.lon_smooth2,
+    postable.lat_smooth2,
+    postable.disttocol_s2,
+    postable.eqfilter1,
+    postable.eqfilter2,
+    postable.eqfilter3,
+    postable.lat_smooth2_eqfilt3,
+    postable.sex,
+    postable.morph,
+    postable.subspecies,
+    postable.age,
+    postable.col_lon,
+    postable.col_lat,
+    postable.tfirst,
+    postable.tsecond,
+    postable.twl_type,
+    postable.conf,
+    postable.sun,
+    postable.software,
+    postable.light_threshold,
+    postable.analyzer,
+    postable.data_responsible,
+    postable.logger_yeartracked,
+    postable.posdata_file,
+    postable.import_date,
+    postable.data_version,
+    postable.database_version,
+    subspecies.species_name_latin,
+    subspecies.sub_species
+   FROM positions.postable
+     LEFT JOIN metadata.subspecies ON postable.species::text = subspecies.species_name_eng AND COALESCE(postable.subspecies, ''::character varying)::text = COALESCE(subspecies.sub_species, ''::text);
 ]]></expression>
 	</reference>
 </view>
@@ -4786,6 +4842,11 @@ RETURN NULL;]]></definition>
 <permission>
 	<object name="restricted.ftp_credentials" type="view"/>
 	<roles names="restricted"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="views.export" type="view"/>
+	<roles names="seatrack_reader"/>
 	<privileges select="true"/>
 </permission>
 </dbmodel>

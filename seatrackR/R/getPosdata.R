@@ -8,7 +8,7 @@
 #' @param selectDataResponsible Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
 #' must conform to the name nomenclature used in the postable. Default is NULL
 #' @param selectRingnumber Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.
-#' @param loadOnlyValidGeometries True, False. Should geometries be loaded from the columns lon_smooth2 and lat_smooth2?
+#' @param loadGeometries True, False. Should geometries be loaded from the columns lon_smooth2 and lat_smooth2?
 #' If True, the returned object is a simple features object with only rows of eqfilter3 == 1, and with lat_smooth2 and lon_smooth2 values. Default = False
 #' @param limit FALSE or Integer. Limit the number of rows returned to this number. Default = False.
 #' @return Tibble of postable records. In the case of loadGeometries = T (default), also of class sf (simple feature) with geometries based on lat lon.
@@ -43,7 +43,7 @@ getPosdata <- function(selectSpecies= NULL,
                        selectDataResponsible = NULL,
                        selectRingnumber = NULL,
                        selectYear = NULL,
-                       loadOnlyValidGeometries = F,
+                       loadGeometries = F,
                        limit = F){
 
   checkCon()
@@ -81,7 +81,7 @@ getPosdata <- function(selectSpecies= NULL,
 
   res <- res  %>% as_tibble()
 
-  if(loadOnlyValidGeometries == T){
+  if(loadGeometries == T){
     res <- res %>% filter(!is.na(lon_smooth2) &
                             !is.na(lat_smooth2) &
                             eqfilter3 == 1)
