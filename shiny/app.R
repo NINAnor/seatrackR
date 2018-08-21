@@ -172,7 +172,7 @@ server = (function(input, output,session) {
 
     shortTable <- dbGetQuery(con, shortSum)
     rownames(shortTable) <- ""
-    colnames(shortTable) <- c("Antall arter", "Antall kolonier", "Antall år", "Antall posisjoner", "Antall individer")
+    colnames(shortTable) <- c("Antall arter", "Antall kolonier", "Antall år", "Antall posisjoner", "Antall individer", "Antall tracks")
 
     DT::datatable(shortTable)
 
@@ -200,7 +200,7 @@ server = (function(input, output,session) {
 
     shortTable <- dbGetQuery(con, shortSumEqfilter3)
     rownames(shortTable) <- ""
-    colnames(shortTable) <- c("Antall arter", "Antall kolonier", "Antall år", "Antall posisjoner", "Antall individer")
+    colnames(shortTable) <- c("Antall arter", "Antall kolonier", "Antall år", "Antall posisjoner", "Antall individer", "Antall tracks")
     shortTable
 
 

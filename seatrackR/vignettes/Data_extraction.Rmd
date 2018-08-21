@@ -71,6 +71,7 @@ eynhallowPositions
 plot(eynhallowPositions["ring_number"])
 ```
 
+
 Position data for export
 ==================
 The data sent to the Polar institute also have the subspecies names added to the records. The export ready positions data can be retrieved most easily through a specific export view. Note that this will download all records, and will take some time. Note that this export does not contain information on the used and deleted uuids. 
@@ -110,18 +111,30 @@ The `getIndividInfo` function
 This function summarizes all observation data for the individual birds. We can subselect the colony and year interval the bird where tracked.
 
 ```{r}
-eynhallowIndivids <- getIndividInfo(selectColony = "Eynhallow",
+hornoyaIndivids <- getIndividInfo(selectColony = "Hornoya",
                                     selectYear = "2014_15")
-eynhallowIndivids
+hornoyaIndivids
 ```
 
 !Note the weird duplicate records here! **TO BE FIXED**
 
 ```{r}
-eynhallowIndivids %>% print(width = Inf)
+hornoyaIndivids %>% print(width = Inf)
 ```
 
 
+Commonly used info
+-------------
+I have made a couple of views for som common information, that are displayed on the shiny app http://view.nina.no/seatrack/. These can be found like this as well.
+
+```{r}
+shorttable <- dbReadTable(con, Id(schema = "views", table = "shorttable"))
+shorttable
+```
+```{r}
+shorttableeqfilter3 <- dbReadTable(con, Id(schema = "views", table = "shorttableeqfilter3"))
+shorttableeqfilter3
+```
 
 
 

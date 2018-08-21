@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="122,827" last-zoom="0.7"
+<dbmodel pgmodeler-ver="0.9.0" last-position="120,825" last-zoom="0.7"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -2241,7 +2241,7 @@ IF NEW.logger_serial_no || NEW.logger_model NOT IN (SELECT logger_serial_no || l
 					NEW.production_year,
 					NEW.project);
 	END IF;
-	IF NEW.starttime_gmt IS NOT NULL AND NEW.shutdown_session IS False THEN
+	IF NEW.starttime_gmt IS NOT NULL AND NEW.shutdown_session IS NOT True THEN
 	INSERT INTO loggers.startup 
 					(logger_id,  
 					starttime_gmt, 
@@ -2309,7 +2309,7 @@ IF NEW.logger_serial_no || NEW.logger_model NOT IN (SELECT logger_serial_no || l
 							AND ls.active IS True
 							AND ls.session_id = startup.session_id
 							AND startup.starttime_gmt = NEW.starttime_gmt;
-		ELSE RAISE EXCEPTION 'Logger % of model % not in an open logging session',  NEW.logger_serial_no, NEW.logger_model;
+		ELSE RAISE EXCEPTION 'Logger % of model % not in an open logging session started at %',  NEW.logger_serial_no, NEW.logger_model, NEW.starttime_gmt;
 		END IF;
 	END IF;
 RETURN NEW;
@@ -3461,14 +3461,14 @@ END;
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition><![CDATA[BEGIN
-		IF bool_and(logging_session.logger_id != logger_info.logger_id) 
+		IF COALESCE(bool_and(logging_session.logger_id != logger_info.logger_id), False) 
 			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
 			WHERE logger_info.logger_model = NEW.logger_model_deployed
 			AND logger_info.logger_serial_no = NEW.logger_id_deployed
 		THEN
 			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_deployed;
 		END IF;
-		IF bool_and(logging_session.active = FALSE)
+		IF COALESCE(bool_and(logging_session.active IS NOT True), False)
 			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
 			WHERE logging_session.logger_id = logger_info.logger_id
 			AND logger_info.logger_model = NEW.logger_model_deployed
@@ -3513,7 +3513,7 @@ END;
 		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_retrieved;
 	END IF;
    
-	IF bool_and(logging_session.active = FALSE) 			
+	IF bool_and(logging_session.active IS NOT True)		
 			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
 			WHERE logging_session.logger_id = logger_info.logger_id
 			AND logger_info.logger_model = NEW.logger_model_retrieved
