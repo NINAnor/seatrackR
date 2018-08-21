@@ -75,7 +75,7 @@ Position data for export
 ==================
 The data sent to the Polar institute also have the subspecies names added to the records. The export ready positions data can be retrieved most easily through a specific export view. Note that this will download all records, and will take some time. Note that this export does not contain information on the used and deleted uuids. 
 
-```{r}
+```{r, eval = F}
 newExport <- dbReadTable(con, Id(schema = "views", table = "export"))
 nrow(newExport)
 write.csv(newExport, file = "seatrack_export_2018-08-09.csv")
@@ -83,7 +83,7 @@ write.csv(newExport, file = "seatrack_export_2018-08-09.csv")
 
 If you are interested in knowing separate old, deleted rows, these are found in the table `positions.deleted_uuid`.
 
-```{r}
+```{r, eval = F}
 deletedUuids <- dbReadTable(con, Id(schema = "positions", table =  "deleted_uuid"))
 nrow(deletedUuids)
 write.csv(deletedUuids, file = "deletedUuids_2018-08-09.csv")
