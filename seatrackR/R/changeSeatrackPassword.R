@@ -1,4 +1,4 @@
-#' changePassword
+#' changeSeatrackPassword
 #'
 #' Changes the password for a user in the Seatrack database. Since the passwords for the file archive are fetched from the database,
 #' this also affects the file archive.
@@ -10,11 +10,11 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' changePassword("newPassword")
+#' changeSeatrackPassword("newPassword")
 #' }
 #'
 
-changePassword <- function(password = NULL){
+changeSeatrackPassword <- function(password = NULL){
 
   checkCon()
 

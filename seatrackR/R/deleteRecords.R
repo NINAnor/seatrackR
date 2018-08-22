@@ -33,7 +33,7 @@ deleteRecords <- function(colony = NULL,
 
 
 #append dummy condition to ease later conditions
-deleteSessions <- "DELETE FROM loggers.logging_session as ls LEFT OUTER JOIN loggers.allocation a ON ls.session_id = a.session_id WHERE 1=1"
+deleteSessions <- "DELETE FROM loggers.logging_session USING loggers.logging_session as ls LEFT OUTER JOIN loggers.allocation a ON ls.session_id = a.session_id WHERE 1=1"
 
 ##Is this really necessary?
 deleteStartups <- "DELETE FROM loggers.startup USING loggers.startup as s
