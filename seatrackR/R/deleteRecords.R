@@ -20,32 +20,39 @@
 
 
 deleteRecords <- function(colony = NULL,
+                          intendedLocation = NULL,
                           year = NULL,
                           species = NULL,
                           updatedAfter = NULL,
                           updatedBefore = NULL,
                           updatedBy = NULL,
+                          sessionId = NULL,
                           force = F){
 
   checkCon()
 
 
 #append dummy condition to ease later conditions
-deleteSessions <- "DELETE FROM loggers.logging_session as ls WHERE 1=1"
+deleteSessions <- "DELETE FROM loggers.logging_session as ls LEFT OUTER JOIN loggers.allocation a ON ls.session_id = a.session_id WHERE 1=1"
+
+##Is this really necessary?
 deleteStartups <- "DELETE FROM loggers.startup USING loggers.startup as s
-                LEFT OUTER JOIN loggers.logging_session as ls ON s.session_id = ls.session_id
-                WHERE startup.id = s.id"
+               LEFT OUTER JOIN loggers.logging_session as ls ON s.session_id = ls.session_id
+                LEFT OUTER JOIN loggers.allocation a ON ls.session_id = a.session_id
+              WHERE startup.id = s.id"
 
 
-deleteMetadata <- "WITH foo as(SELECT ls.colony, ls.species, deployment_date \"date\" FROM loggers.deployment d LEFT JOIN
-                  loggers.logging_session ls on d.session_id = ls.session_id UNION
-                  SELECT ls.colony, ls.species, retrieval_date \"date\" FROM loggers.retrieval r LEFT JOIN
-                  loggers.logging_session ls on r.session_id = ls.session_id)
+deleteMetadata <- "WITH foo as(SELECT a.intended_location, bar.*
+                                  FROM (SELECT ls.session_id, ls.colony, ls.species, deployment_date \"date\"
+                                          FROM loggers.deployment d LEFT JOIN
+                                          loggers.logging_session ls on d.session_id = ls.session_id UNION
+                                  SELECT ls.session_id, ls.colony, ls.species, retrieval_date \"date\" FROM loggers.retrieval r LEFT JOIN
+                                        loggers.logging_session ls on r.session_id = ls.session_id) bar LEFT OUTER JOIN loggers.allocation a ON bar.session_id = a.session_id)
                   DELETE FROM imports.metadata_import USING imports.metadata_import as m
                   LEFT OUTER JOIN foo ON foo.colony = m.colony AND foo.date = m.date
                   WHERE metadata_import.id = m.id"
 
-selectQuery <- "SELECT count(*) FROM loggers.logging_session as ls WHERE 1=1"
+selectQuery <- "SELECT count(*) FROM loggers.logging_session as ls LEFT OUTER JOIN loggers.allocation a ON ls.session_id = a.session_id WHERE 1=1"
 
 
 
@@ -55,6 +62,14 @@ if(!is.null(colony)){
   deleteMetadata <- paste0(deleteMetadata, "\nAND foo.colony = '", colony, "'")
   selectQuery <- paste0(selectQuery, "\nAND ls.colony = '", colony, "'")
 }
+
+if(!is.null(intendedLocation)){
+  deleteSessions <- paste0(deleteSessions, "\nAND a.intended_location = '", intendedLocation, "'")
+  deleteStartups <- paste0(deleteStartups, "\nAND a.intended_location = '", intendedLocation, "'")
+  deleteMetadata <- paste0(deleteMetadata, "\nAND foo.intended_location = '", intendedLocation, "'")
+  selectQuery <- paste0(selectQuery, "\nAND a.intended_location = '", intendedLocation, "'")
+}
+
 
 if(!is.null(year)){
   deleteSessions <- paste0(deleteSessions, "\nAND ls.year_tracked = '", year, "'")
@@ -91,6 +106,14 @@ if(!is.null(updatedBy)){
   deleteMetadata <- paste0(deleteMetadata, "\nAND m.updated_by = '", updatedBy, "'")
   selectQuery <- paste0(selectQuery, "\nAND updated_by = '", updatedBy, "'")
 }
+
+if(!is.null(sessionId)){
+  deleteSessions <- paste0(deleteSessions, "\nAND ls.session_id = '", sessionId, "'")
+  deleteStartups <- paste0(deleteStartups, "\nAND ls.session_id = '", sessionId, "'")
+  deleteMetadata <- paste0(deleteMetadata, "\nAND foo.session_id = '", sessionId, "'")
+  selectQuery <- paste0(selectQuery, "\nAND ls.session_id = '", sessionId, "'")
+}
+
 
 noAffectedRows <- DBI::dbGetQuery(con, selectQuery)
 
