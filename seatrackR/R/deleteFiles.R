@@ -31,7 +31,9 @@ deleteFiles <- function(files = NULL, force = F){
   if(!("admin" %in% current_roles || "seatrack_writer" %in% current_roles)) stop("Connected user needs to be part of seatrack_writer or admin group")
 
 
-  if(!tibble::is_tibble(files)) files <- tibble::as_tibble("filename" = files)
+  if(!tibble::is_tibble(files)) files <- tibble::as_tibble(x = files)
+
+  names(files) <- "filename"
 
   fileArchive <- listFileArchive()
 
