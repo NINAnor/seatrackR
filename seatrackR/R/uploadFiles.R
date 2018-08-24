@@ -12,7 +12,10 @@
 #'
 
 
-uploadFiles <- function(files = NULL, originFolder = NULL, overwrite = F){
+uploadFiles <- function(files = NULL,
+                        originFolder = NULL,
+                        overwrite = F,
+                        verbose = F){
   checkCon()
 
   current_user <- DBI::dbGetQuery(con, "SELECT current_user")
@@ -38,7 +41,10 @@ uploadFiles <- function(files = NULL, originFolder = NULL, overwrite = F){
 
   url <- .getFtpUrl()
 
-  writeFile <- function(x, url, originFolder = originFolder){
+  writeFile <- function(x,
+                        url,
+                        originFolder = originFolder,
+                        verbose = verbose){
 
     if(!is.null(originFolder)){
       filename <- paste0(originFolder, "/", x)
@@ -58,7 +64,8 @@ uploadFiles <- function(files = NULL, originFolder = NULL, overwrite = F){
                           ftpsslauth = T,
                           ftp.ssl = T,
                           ssl.verifypeer = F,
-                          ssl.verifyhost = F)
+                          ssl.verifyhost = F,
+                          verbose = verbose)
 
     if(a == 0){
       return(paste0("File uploaded: ", filename))
