@@ -13,18 +13,20 @@
 #' }
 #'
 
-
 downloadFiles <- function(files = NULL, destFolder = NULL, overwrite = F){
   checkCon()
 
   if(!tibble::is_tibble(files)) files <- tibble::as_tibble(files)
 
-  url <- .getFtpUrl()
+  url <- seatrackR:::.getFtpUrl()
 
-  getFile <- function(x, url, destFolder = destFolder, ...){
+
+
+  getFile <- function(x, destFolder = destFolder, overwrite = overwrite){
 
     if(!is.null(destFolder)){
       filename <- paste0(destFolder, "/", x)
+
     } else {
       filename <- paste(x)
     }
@@ -33,26 +35,34 @@ downloadFiles <- function(files = NULL, destFolder = NULL, overwrite = F){
       warning(paste("File", filename, "already exists, use overwrite = True to overwrite"))
       return(paste0("File not downloaded: ", filename))
     } else {
+      tmp <- strsplit(url$url, "//")
+      getUrl <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2],"/" , x)
+      getHandle <- httr::handle(getUrl)
 
-    f <- RCurl::CFILE(filename, mode="wb")
 
-    a <- RCurl::curlPerform(url = paste0(url$url, "/", x),
-                            curl = RCurl::getCurlHandle(userpwd = url$pwd),
-                            writedata = f@ref,
-                            ftpsslauth = T,
-                            ftp.ssl = T,
-                            ssl.verifypeer = F,
-                            ssl.verifyhost = F)
-    RCurl::close(f)
+      mess  <- lapply(getUrl, factory(function(x){
+        rawOut <<- httr::with_config(httr::config(ssl_verifypeer = F,
+                                               ssl_verifyhost = F,
+                                               use_ssl = T),
+                                  httr::GET(url = x, handle = getHandle))}))
 
-    if(a == 0){
-      return(paste0("File downloaded: ", filename))
-    } else
-    return(a)
+
+
+      bin <- httr::content(rawOut, "raw")
+      writeBin(bin, paste0(destFolder, "/", x))
+
+      if(any(grepl("File successfully transferred", mess[[1]]$warn))){
+        return(paste0("File downloaded: ", x))
+      }
+
+      }
+
   }
 
-  }
-
-  apply(files, 1, function(x) getFile(x = x, url = url, destFolder = destFolder, overwrite = T))
+  apply(files, 1, function(x) getFile(x, overwrite = overwrite, destFolder = destFolder))
 }
+
+
+
+
 

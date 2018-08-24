@@ -17,19 +17,28 @@
 listFileArchive <- function(){
   checkCon()
 
-  filesInStorage <- RCurl::getURL(url = "ftp://seatrack.nina.no", userpwd = seatrackR:::.getFtpUrl()$pwd,
-                                  ftp.use.epsv = FALSE,
-                                  dirlistonly = TRUE,
-                                  crlf = T,
-                                  verbose = F,
-                                  ftpsslauth = T,
-                                  ftp.ssl = T,
-                                  ssl.verifypeer = F,
-                                  ssl.verifyhost = F
-  )
+  ##Get files in archive, using curl instead of RCurl
+  url <- seatrackR:::.getFtpUrl()
+  tmp <- strsplit(url$url, "//")
+  dest <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2])
 
-  filesInStorage <- strsplit(filesInStorage, "\r*\n")[[1]] %>% as_tibble
+  list_files <- curl::new_handle()
+
+  curl::handle_setopt(list_files,
+                      ftp_use_epsv = TRUE,
+                      dirlistonly = TRUE,
+                      use_ssl = T,
+                      ssl_verifyhost = F,
+                      ssl_verifypeer = F)
+
+  con <- curl::curl(url = dest, "r", handle = list_files)
+
+  filesInStorage <- readLines(con)
+  close(con)
+
+  filesInStorage <- as_tibble(filesInStorage)
   names(filesInStorage) <- "filename"
+
 
   filesInDatabase <- getFileArchiveSummary()
 
