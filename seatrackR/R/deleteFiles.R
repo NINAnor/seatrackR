@@ -12,7 +12,8 @@
 #'
 #'
 
-
+##Use httr::with_options(...,
+#DELETE())
 
 deleteFiles <- function(files = NULL, force = F){
 
