@@ -4,7 +4,7 @@
 \alias{deleteFiles}
 \title{deleteFiles}
 \usage{
-deleteFiles(files = NULL, force = F)
+deleteFiles(files = NULL, force = F, ...)
 }
 \value{
 Status messages on the actions taken for each file.
