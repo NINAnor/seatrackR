@@ -105,7 +105,7 @@ reakHavoc <- function(){
 
 factory <- function(fun)
   function(...) {
-    warn <- err <- NULL
+    warn <- err <- mess <- NULL
     res <- withCallingHandlers(
       tryCatch(fun(...), error=function(e) {
         err <<- conditionMessage(e)
@@ -113,8 +113,11 @@ factory <- function(fun)
       }), warning=function(w) {
         warn <<- append(warn, conditionMessage(w))
         invokeRestart("muffleWarning")
+      },
+      message = function(m){
+        mess <<- append(mess, conditionMessage(m))
       })
-    list(res, warn=warn, err=err)
+    list(res, warn=warn, err=err, mess = mess)
   }
 
 .has <- function(x, what)

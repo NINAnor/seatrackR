@@ -55,7 +55,7 @@ uploadFiles <- function(files = NULL,
     if(!file.exists(filename)){
       warning(paste("Cannot find file: ", filename ))
       return(paste0("File not uploaded: ", filename))
-    }
+    } else {
 
     tmp <- strsplit(url$url, "//")
     getUrl <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2],"/" , x)
@@ -64,14 +64,23 @@ uploadFiles <- function(files = NULL,
     filePkg <- httr::upload_file(filename)
 
     mess  <- lapply(getUrl, factory(function(x){
-      rawOut <<- httr::with_config(httr::config(ssl_verifypeer = F,
+      httr::with_config(httr::config(ssl_verifypeer = F,
                                                     ssl_verifyhost = F,
                                                     use_ssl = T,
                                                     upload = T,
-                                                    filetime = F), PUT(getUrl, body = filePkg))
+                                                    filetime = F), httr::PUT(getUrl, body = filePkg))
       }))
 
-}
+
+    if(any(grepl("File successfully transferred", mess[[1]]$warn))){
+      return(paste0("File uploaded: ", x))
+    }
+
+
+    }
+
+  }
+
     # with_config(httr::config(ssl_verifypeer = F,
     #                           ssl_verifyhost = F,
     #                           use_ssl = T,

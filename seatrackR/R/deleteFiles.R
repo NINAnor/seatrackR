@@ -15,7 +15,7 @@
 ##Use httr::with_options(...,
 #DELETE())
 
-deleteFiles <- function(files = NULL, force = F){
+deleteFiles <- function(files = NULL, force = F, ...){
 
   checkCon()
 
@@ -38,20 +38,30 @@ deleteFiles <- function(files = NULL, force = F){
 
   fileArchive <- listFileArchive()
 
-  url <- .getFtpUrl()
+  url <- seatrackR:::.getFtpUrl()
 
 
-  deleteFile <- function(x, url){
+  deleteFile <- function(x, url, ...){
 
     tmp <- strsplit(url$url, "//")
-    dest <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2])
+    dest <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2], "/", x)
 
-    RCurl::curlPerform(url = dest,
-                       quote = paste0("DELE ", x),
-                       ftpsslauth = T,
-                       ftp.ssl = T,
-                       ssl.verifypeer = F,
-                       ssl.verifyhost = F)
+    getHandle <- httr::handle(dest)
+
+    mess  <- lapply(x, factory(function(x){
+
+      httr::with_config(httr::config(ssl_verifypeer = F,
+                                   ssl_verifyhost = F,
+                                   use_ssl = T,
+                                   dirlistonly = T,
+                                   customrequest = paste0("DELE ", x),
+                                   filetime = F,
+                                   ...),
+                      httr::POST(url = dest, handle = getHandle))
+
+
+
+      }))
   }
 
 
@@ -79,8 +89,8 @@ deleteFiles <- function(files = NULL, force = F){
     }
 
 
-  #Can't get rid of listing!
-   mandatoryFileListing <- capture.output(apply(files, 1, function(x) deleteFile(x = x, url = url)), type = "output")
+     apply(files, 1, function(x) deleteFile(x = x, url = url))
+
 
     newStatus <- listFileArchive()
     deletedFiles <- fileArchive$filesInArchive$filename[!(fileArchive$filesInArchive$filename %in% newStatus$filesInArchive$filename)]
@@ -93,5 +103,7 @@ deleteFiles <- function(files = NULL, force = F){
 
   }
 }
+
+
 
 
