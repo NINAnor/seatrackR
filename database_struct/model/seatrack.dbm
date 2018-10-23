@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="120,825" last-zoom="0.7"
+<dbmodel pgmodeler-ver="0.9.0" last-position="119,824" last-zoom="0.7"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -3462,26 +3462,31 @@ END;
 	</return-type>
 	<definition><![CDATA[BEGIN
 		IF COALESCE(bool_and(logging_session.logger_id != logger_info.logger_id), False) 
-			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+			FROM loggers.logging_session, loggers.logger_info
 			WHERE logger_info.logger_model = NEW.logger_model_deployed
 			AND logger_info.logger_serial_no = NEW.logger_id_deployed
 		THEN
-			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_deployed;
+			RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data.', NEW.logger_id_deployed;
 		END IF;
 		IF COALESCE(bool_and(logging_session.active IS NOT True), False)
-			FROM loggers.logging_session, loggers.logger_info, individuals.individ_info
+			FROM loggers.logging_session, loggers.logger_info
 			WHERE logging_session.logger_id = logger_info.logger_id
 			AND logger_info.logger_model = NEW.logger_model_deployed
 			AND logger_info.logger_serial_no = NEW.logger_id_deployed
 		THEN
-		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data', NEW.logger_id_deployed;
+		RAISE EXCEPTION 'Logger % not in open logging session. Open session before adding deployment data.', NEW.logger_id_deployed;
+	END IF;
+
+		IF COALESCE(NOT bool_or(date_part('year', startup.starttime_gmt) = date_part('year', NEW.date)), False)
+			FROM loggers.logging_session, loggers.logger_info, loggers.startup
+			WHERE logging_session.logger_id = logger_info.logger_id
+			AND logging_session.session_id = startup.session_id
+			AND logger_info.logger_model = NEW.logger_model_deployed
+			AND logger_info.logger_serial_no = NEW.logger_id_deployed
+		THEN RAISE EXCEPTION 'Logger % not started up in the year it was deployed. Make sure startup year matches the deployement year.', NEW.logger_id_deployed;
 	END IF;
 RETURN NEW;
-END;
-
-
-
-]]></definition>
+END;]]></definition>
 </function>
 
 <trigger name="tr_check_open_session_on_metadata_deployment" firing-type="BEFORE" per-line="true" constraint="false"
