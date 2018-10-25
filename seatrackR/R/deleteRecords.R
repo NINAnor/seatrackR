@@ -33,17 +33,24 @@ deleteRecords <- function(colony = NULL,
 
 
 #append dummy condition to ease later conditions
-#deleteSessions <- "DELETE FROM loggers.logging_session USING loggers.logging_session as ls LEFT OUTER JOIN loggers.allocation a ON ls.session_id = a.session_id WHERE 1=1"
+deleteSessions <- "DELETE FROM loggers.logging_session
+                  USING loggers.logging_session as ls
+                  LEFT OUTER JOIN loggers.allocation a ON
+                  ls.session_id = a.session_id
+                  WHERE logging_session.id = ls.id"
 
-deleteSessions <- "DELETE FROM loggers.logging_session ls  WHERE 1=1"
+#deleteSessions <- "DELETE FROM loggers.logging_session as ls USING loggers.allocation a WHERE ls.session_id = a.session_id"
 
 ##Is this really necessary?
-# deleteStartups <- "DELETE FROM loggers.startup USING loggers.startup as s
-#                LEFT OUTER JOIN loggers.logging_session as ls ON s.session_id = ls.session_id
-#                 LEFT OUTER JOIN loggers.allocation a ON ls.session_id = a.session_id
-#               WHERE startup.id = s.id"
+ deleteStartups <- "DELETE FROM loggers.startup
+                USING loggers.startup as s
+                LEFT OUTER JOIN loggers.logging_session as ls ON s.session_id = ls.session_id
+                 LEFT OUTER JOIN loggers.allocation a ON ls.session_id = a.session_id
+               WHERE startup.id = s.id"
 
-deleteStartups <- "DELETE FROM loggers.startup ls WHERE 1=1"
+# deleteStartups <- "DELETE FROM loggers.startup s USING loggers.logging_session as ls, loggers.allocation a
+# 	WHERE s.session_id = ls.session_id
+#         AND ls.session_id = a.session_id"
 
 deleteMetadata <- "WITH foo as(SELECT a.intended_location, bar.*
                                   FROM (SELECT ls.session_id, ls.colony, ls.species, deployment_date \"date\"
