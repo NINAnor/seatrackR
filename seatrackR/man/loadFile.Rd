@@ -4,19 +4,29 @@
 \alias{loadFile}
 \title{Load a single file from the file archive into R}
 \usage{
-loadFile(filename = NULL)
+loadFile(filename = NULL, ...)
+}
+\arguments{
+\item{filename}{character, matching a filename in the archive}
+
+\item{...}{further parameters to readr::read_csv function}
 }
 \value{
 Status messages on the actions taken for each file.
 }
 \description{
-Load a single file from the file archive into R
+We load the file using read_csv from the readr package, and parameters
 }
 \examples{
 dontrun{
 ##To download all files in the file storage
 myFiles = listFileArchive()$filesInArchive
 loadedFile <- loadFile(filename = myFiles[1,])
+
+#Some files starts funny, this might help:
+loadedFile2 <- loadFile(filename = myFiles[1,],
+                       skip = 1,
+                       col_names = F)
 }
 
 }
