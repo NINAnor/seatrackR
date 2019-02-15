@@ -48,7 +48,7 @@ downloadFiles <- function(files = NULL, destFolder = NULL, overwrite = F){
 
 
 
-      bin <- httr::content(rawOut, "raw")
+      bin <- httr::content(rawOut, type = "raw")
       writeBin(bin, paste0(destFolder, "/", x))
 
       if(any(grepl("File successfully transferred", mess[[1]]$warn))){
