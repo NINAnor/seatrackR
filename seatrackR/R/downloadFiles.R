@@ -13,14 +13,20 @@
 #' }
 #'
 
-downloadFiles <- function(files = NULL, destFolder = NULL, overwrite = F){
-  checkCon()
 
-  if(!tibble::is_tibble(files)) files <- tibble::as_tibble(files)
+downloadFiles <- function(files = NULL, destFolder = NULL, overwrite = F){
+  seatrackR:::checkCon()
+
+  if(!tibble::is_tibble(files)) files <- tibble::tibble(filename = files)
+
+  archive <- listFileArchive()
+
+  notThere <- files$filename[!(files$filename %in% archive$filesInArchive$filename)]
+  if(length(notThere) > 0) stop(c("Requested files are not in archive: \n", paste(notThere, "\n")))
 
   url <- seatrackR:::.getFtpUrl()
 
-
+  tempEnv <- new.env(parent = as.environment("package:seatrackR"))
 
   getFile <- function(x, destFolder = destFolder, overwrite = overwrite){
 
@@ -40,29 +46,31 @@ downloadFiles <- function(files = NULL, destFolder = NULL, overwrite = F){
       getHandle <- httr::handle(getUrl)
 
 
-      mess  <- lapply(getUrl, factory(function(x){
-        rawOut <<- httr::with_config(httr::config(ssl_verifypeer = F,
-                                               ssl_verifyhost = F,
-                                               use_ssl = T),
-                                  httr::GET(url = x, handle = getHandle))}))
+
+       mess  <- lapply(getUrl, seatrackR:::factory(function(x){
+         rawOut <- httr::with_config(httr::config(ssl_verifypeer = F,
+                                                   ssl_verifyhost = F,
+                                                   use_ssl = T),
+                                      httr::GET(url = x, handle = getHandle))
+         assign("rawOut", rawOut, envir = tempEnv)
+         }))
 
 
+       if(!is.null(mess[[1]]$err)){
+         return(paste(mess[[1]]$err, ":", x))
+         } else {
+           bin <- httr::content(tempEnv$rawOut, type = "raw")
+           writeBin(bin, paste0(destFolder, "/", x))
+         }
 
-      bin <- httr::content(rawOut, type = "raw")
-      writeBin(bin, paste0(destFolder, "/", x))
+      ##Need to include a working positive status message
 
-      if(any(grepl("File successfully transferred", mess[[1]]$warn))){
-        return(paste0("File downloaded: ", x))
-      }
-
-      }
+    }
 
   }
 
   apply(files, 1, function(x) getFile(x, overwrite = overwrite, destFolder = destFolder))
 }
-
-
 
 
 
