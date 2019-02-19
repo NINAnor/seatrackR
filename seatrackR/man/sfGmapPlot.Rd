@@ -5,9 +5,10 @@
 \title{sfGmapPlot}
 \usage{
 sfGmapPlot(sf, maptype = c("terrain", "terrain-background", "satellite",
-  "roadmap", "hybrid", "toner", "watercolor", "terrain-labels", "terrain-lines",
-  "toner-2010", "toner-2011", "toner-background", "toner-hybrid",
-  "toner-labels", "toner-lines", "toner-lite"), color = "salmon", zoom = 4)
+  "roadmap", "hybrid", "toner", "watercolor", "terrain-labels",
+  "terrain-lines", "toner-2010", "toner-2011", "toner-background",
+  "toner-hybrid", "toner-labels", "toner-lines", "toner-lite"),
+  color = "salmon", zoom = 4)
 }
 \arguments{
 \item{sf}{a simple features object}

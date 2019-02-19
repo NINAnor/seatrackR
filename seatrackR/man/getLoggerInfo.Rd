@@ -2,7 +2,7 @@
 % Please edit documentation in R/getLoggerInfo.R
 \name{getLoggerInfo}
 \alias{getLoggerInfo}
-\title{View the logger info table}
+\title{View the view info table}
 \usage{
 getLoggerInfo()
 }
@@ -10,7 +10,8 @@ getLoggerInfo()
 Data frame.
 }
 \description{
-This is a convenience function that reads from the table "loggers.logger_info"
+This is a convenience function that reads from the view "views.logger_info". Note that there also exists a table "loggers.logger_info" with more limited information.
+#'
 }
 \examples{
 dontrun{
