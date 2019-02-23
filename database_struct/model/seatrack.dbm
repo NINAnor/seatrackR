@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0" last-position="119,824" last-zoom="0.7"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="119,824" last-zoom="0.7"
 	 default-owner="postgres">
 <role name="seatrack_reader">
 </role>
@@ -139,7 +139,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="postgres"/>
 </tablespace>
 
-<database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" append-at-eod="true" prepend-at-bod="true">
+<database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" is-template="false" allow-conns="true" append-at-eod="true" prepend-at-bod="true">
 	<role name="admin"/>
 	<appended-sql><![CDATA[-----------usage permissions
 GRANT USAGE ON SCHEMA metadata, loggers, positions, views, imports, individuals, functions
@@ -602,89 +602,8 @@ testspecies•Testus specius•]]>
 	</initial-data>
 </table>
 
-<table name="colony">
-	<schema name="metadata"/>
-	<role name="admin"/>
-	<position x="80" y="760"/>
-	<column name="id" not-null="true" default-value="uuid_generate_v1()">
-		<type name="uuid" length="0"/>
-	</column>
-	<column name="lat">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="lon">
-		<type name="double precision" length="0"/>
-	</column>
-	<column name="colony_int_name">
-		<type name="text" length="0"/>
-	</column>
-	<column name="colony_nat_name">
-		<type name="text" length="0"/>
-	</column>
-	<column name="geom">
-		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
-	</column>
-	<constraint name="colony_pk" type="pk-constr" table="metadata.colony">
-		<columns names="id" ref-type="src-columns"/>
-	</constraint>
-	<constraint name="colony_int_name_unique" type="uq-constr" table="metadata.colony">
-		<columns names="colony_int_name" ref-type="src-columns"/>
-	</constraint>
-	<constraint name="colony_nat_unique" type="uq-constr" table="metadata.colony">
-		<columns names="colony_nat_name" ref-type="src-columns"/>
-	</constraint>
-	<initial-data>
-<![CDATA[lat•lon•colony_int_name•colony_nat_name⸣
-62.436•5.874•Runde and Aalesund•Runde and Ålesund⸣
-69.065•15.170•Anda•Anda⸣
-74.503•18.956•Bear Island•Bjørnøya⸣
-69.635•18.848•Grindoya•Grindøya⸣
-71.113•24.732•Hjelmsoya•Hjelmsøya⸣
-60.668•4.749•Hordaland•Hordaland⸣
-70.383•31.150•Hornoya•Hornøya⸣
-78.253•15.508•Isfjorden•Isfjorden⸣
-70.921•-8.718•Jan Mayen•Jan Mayen⸣
-67.447•11.910•Rost•Røst⸣
-66.585•12.229•Selvaer•Selvær⸣
-65.320•11.630•Horsvaer•Horsvær⸣
-65.202•10.995•Sklinna•Sklinna⸣
-78.900•12.217•Kongsfjorden•Kongsfjorden⸣
-69.031•16.905•Lemmingsvaer•Lemmingsvær⸣
-70.358•21.398•Loppa•Loppa⸣
-58.008•7.368•Mandal and Lindesnes•Mandal and Lindesnes⸣
-79.585•18.459•Alkefjellet•Alkefjellet⸣
-59.150•5.174•Jarsteinen•Jarsteinen⸣
-65.081•-22.740•Breidafjordur•Breiðafjörður⸣
-65.004•-23.368•Melrakkaey•Melrakkaey⸣
-63.968•-22.221•Reykjanes•Reykjanes⸣
-66.180•-15.985•Langanes and Skjalfandi•Langanes and Skjálfandi⸣
-66.529•-17.992•Grimsey•Grímsey⸣
-65.707•-18.135•Eyjafjordur•Eyjafjörður⸣
-64.588•-14.172•Papey•Papey⸣
-61.950•-6.798•Faroe Islands•Føroyar⸣
-56.186•-2.558•Isle of May•Isle of May⸣
-59.142•-3.115•Eynhallow•Eynhallow⸣
-80.144•51.468•Franz Josef Land•Zemlya Frantsa-Iosifa⸣
-69.583•32.937•Cape Gorodetskiy•Gorodetskye ptich`i bazary⸣
-69.151•35.948•Cape Krutik•Mys Krutik⸣
-68.748•37.570•Seven Islands•Sem' Ostrovov⸣
-77.069•67.642•Oranskie Islands•Oranskie Ostrova⸣
-70.593•55.021•Cape Sakhanin•Mys Sakhanina⸣
-65.048•35.786•Solovetsky archipelago•Solovetskiye Ostrova⸣
-77.000•15.550•Hornsund•Hornsund⸣
-65.54•-13.78•Hafnarholmi•Hafnarhólmi⸣
-57.158259•9.025082•Bulbjerg•Bulbjerg⸣
-59.512853•-1.650526•Fair Isle•Fair Isle⸣
-64.1716•9.4078•Halten•Halten⸣
-73.716698•-56.6633301•Kippaku•Kippaku⸣
-55.29777•-6.28041•Rathlin•Rathlin⸣
-51.737687•-5.300236•Skomer•Skomer⸣
-69.8•-51.21•Ritenbenk•Ritenbenk⸣
-64.6522•-50.59185•Nuuk•Nuuk⸣
-70.68996946•23.5989887•Melkoya•Melkøya⸣
-65•10•testcolony•testcolonü]]>
-	</initial-data>
-</table>
+<extension name="postgis">
+</extension>
 
 <table name="location">
 	<schema name="metadata"/>
@@ -1759,19 +1678,6 @@ WHERE active = TRUE]]></expression>
     RETURN NULL; -- result is ignored since this is an AFTER trigger
   END;]]></definition>
 </function>
-
-<trigger name="tr_insert_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
-	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
-	 table="metadata.colony">
-		<function signature="functions.fn_update_colony_geom()"/>
-</trigger>
-
-<trigger name="tr_update_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
-	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
-	 table="metadata.colony">
-		<function signature="functions.fn_update_colony_geom()"/>
-		<columns names="lat,lon"/>
-</trigger>
 
 <schema name="imports" rect-visible="true" fill-color="#ff00ff">
 	<role name="admin"/>
@@ -3358,9 +3264,10 @@ END;
 		<function signature="functions.fn_deleted_uuid()"/>
 </trigger>
 
-<trigger name="tr_update_data_version" firing-type="BEFORE" per-line="true" constraint="false"
+<trigger name="tr_update_data_version" firing-type="AFTER" per-line="true" constraint="true"
 	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
 	 table="positions.postable">
+	<condition><![CDATA[pg_trigger_depth() = 0]]></condition>
 		<function signature="functions.fn_update_data_version()"/>
 </trigger>
 
@@ -3624,9 +3531,10 @@ RETURN NULL;
 END;]]></definition>
 </function>
 
-<trigger name="tr_update_matviews_on_postable_update" firing-type="AFTER" per-line="false" constraint="false"
+<trigger name="tr_update_matviews_on_postable_update" firing-type="AFTER" per-line="true" constraint="true"
 	 ins-event="true" del-event="true" upd-event="true" trunc-event="false"
 	 table="positions.postable">
+	<condition><![CDATA[pg_trigger_depth() = 0]]></condition>
 		<function signature="functions.fn_update_materialized_views_on_postable_update()"/>
 </trigger>
 
@@ -4030,13 +3938,6 @@ RETURN NULL;
 END;]]></definition>
 </function>
 
-<trigger name="tr_update_postable_logging_session" firing-type="AFTER" per-line="false" constraint="false"
-	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
-	 table="positions.postable">
-	<condition><![CDATA[pg_trigger_depth() = 0]]></condition>
-		<function signature="functions.fn_update_postable_logging_session()"/>
-</trigger>
-
 <schema name="seatrack" rect-visible="true" fill-color="#e1e1e1">
 	<role name="postgres"/>
 	<comment><![CDATA[temporary for importing from existing database]]></comment>
@@ -4157,6 +4058,103 @@ RETURN NULL;]]></definition>
 ]]></expression>
 	</reference>
 </view>
+
+<table name="colony">
+	<schema name="metadata"/>
+	<role name="admin"/>
+	<position x="80" y="760"/>
+	<column name="id" not-null="true" default-value="uuid_generate_v1()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="lat">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="lon">
+		<type name="double precision" length="0"/>
+	</column>
+	<column name="colony_int_name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="colony_nat_name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="geom">
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<constraint name="colony_pk" type="pk-constr" table="metadata.colony">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="colony_int_name_unique" type="uq-constr" table="metadata.colony">
+		<columns names="colony_int_name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="colony_nat_unique" type="uq-constr" table="metadata.colony">
+		<columns names="colony_nat_name" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[lat•lon•colony_int_name•colony_nat_name⸣
+62.436•5.874•Runde and Aalesund•Runde and Ålesund⸣
+69.065•15.170•Anda•Anda⸣
+74.503•18.956•Bear Island•Bjørnøya⸣
+69.635•18.848•Grindoya•Grindøya⸣
+71.113•24.732•Hjelmsoya•Hjelmsøya⸣
+60.668•4.749•Hordaland•Hordaland⸣
+70.383•31.150•Hornoya•Hornøya⸣
+78.253•15.508•Isfjorden•Isfjorden⸣
+70.921•-8.718•Jan Mayen•Jan Mayen⸣
+67.447•11.910•Rost•Røst⸣
+66.585•12.229•Selvaer•Selvær⸣
+65.320•11.630•Horsvaer•Horsvær⸣
+65.202•10.995•Sklinna•Sklinna⸣
+78.900•12.217•Kongsfjorden•Kongsfjorden⸣
+69.031•16.905•Lemmingsvaer•Lemmingsvær⸣
+70.358•21.398•Loppa•Loppa⸣
+58.008•7.368•Mandal and Lindesnes•Mandal and Lindesnes⸣
+79.585•18.459•Alkefjellet•Alkefjellet⸣
+59.150•5.174•Jarsteinen•Jarsteinen⸣
+65.081•-22.740•Breidafjordur•Breiðafjörður⸣
+65.004•-23.368•Melrakkaey•Melrakkaey⸣
+63.968•-22.221•Reykjanes•Reykjanes⸣
+66.180•-15.985•Langanes and Skjalfandi•Langanes and Skjálfandi⸣
+66.529•-17.992•Grimsey•Grímsey⸣
+65.707•-18.135•Eyjafjordur•Eyjafjörður⸣
+64.588•-14.172•Papey•Papey⸣
+61.950•-6.798•Faroe Islands•Føroyar⸣
+56.186•-2.558•Isle of May•Isle of May⸣
+59.142•-3.115•Eynhallow•Eynhallow⸣
+80.144•51.468•Franz Josef Land•Zemlya Frantsa-Iosifa⸣
+69.583•32.937•Cape Gorodetskiy•Gorodetskye ptich`i bazary⸣
+69.151•35.948•Cape Krutik•Mys Krutik⸣
+68.748•37.570•Seven Islands•Sem' Ostrovov⸣
+77.069•67.642•Oranskie Islands•Oranskie Ostrova⸣
+70.593•55.021•Cape Sakhanin•Mys Sakhanina⸣
+65.048•35.786•Solovetsky archipelago•Solovetskiye Ostrova⸣
+77.000•15.550•Hornsund•Hornsund⸣
+65.54•-13.78•Hafnarholmi•Hafnarhólmi⸣
+57.158259•9.025082•Bulbjerg•Bulbjerg⸣
+59.512853•-1.650526•Fair Isle•Fair Isle⸣
+64.1716•9.4078•Halten•Halten⸣
+73.716698•-56.6633301•Kippaku•Kippaku⸣
+55.29777•-6.28041•Rathlin•Rathlin⸣
+51.737687•-5.300236•Skomer•Skomer⸣
+69.8•-51.21•Ritenbenk•Ritenbenk⸣
+64.6522•-50.59185•Nuuk•Nuuk⸣
+70.68996946•23.5989887•Melkoya•Melkøya⸣
+65•10•testcolony•testcolonü]]>
+	</initial-data>
+</table>
+
+<trigger name="tr_insert_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="metadata.colony">
+		<function signature="functions.fn_update_colony_geom()"/>
+</trigger>
+
+<trigger name="tr_update_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
+	 table="metadata.colony">
+		<function signature="functions.fn_update_colony_geom()"/>
+		<columns names="lat,lon"/>
+</trigger>
 
 <constraint name="logger_model_fk" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="RESTRICT" ref-table="metadata.logger_models" table="loggers.logger_info">
@@ -4521,272 +4519,272 @@ RETURN NULL;]]></definition>
 
 <relationship name="rel_logger_info_logger_models" type="relfk"
 	 src-table="loggers.logger_info"
-	 dst-table="metadata.logger_models"
+	 dst-table="metadata.logger_models" reference-fk="logger_model_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_allocation_startup" type="relfk"
 	 src-table="loggers.allocation"
-	 dst-table="loggers.startup"
+	 dst-table="loggers.startup" reference-fk="startup_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_allocation_people" type="relfk"
 	 src-table="loggers.allocation"
-	 dst-table="metadata.people"
+	 dst-table="metadata.people" reference-fk="allocation_people_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_allocation_logger_info" type="relfk"
 	 src-table="loggers.allocation"
-	 dst-table="loggers.logger_info"
+	 dst-table="loggers.logger_info" reference-fk="allocation_logger_id_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logging_session_deployment" type="relfk"
 	 src-table="loggers.logging_session"
-	 dst-table="loggers.deployment"
+	 dst-table="loggers.deployment" reference-fk="deployment_logging_session_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logging_session_retrieval" type="relfk"
 	 src-table="loggers.logging_session"
-	 dst-table="loggers.retrieval"
+	 dst-table="loggers.retrieval" reference-fk="retrieval_logging_session_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logging_session_startup" type="relfk"
 	 src-table="loggers.logging_session"
-	 dst-table="loggers.startup"
+	 dst-table="loggers.startup" reference-fk="logging_session_startup_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logging_session_individ_info" type="relfk"
 	 src-table="loggers.logging_session"
-	 dst-table="individuals.individ_info"
+	 dst-table="individuals.individ_info" reference-fk="logging_session_individ_id_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logging_session_logger_info" type="relfk"
 	 src-table="loggers.logging_session"
-	 dst-table="loggers.logger_info"
+	 dst-table="loggers.logger_info" reference-fk="logging_session_logger_id_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_location_colony" type="relfk"
 	 src-table="metadata.location"
-	 dst-table="metadata.colony"
+	 dst-table="metadata.colony" reference-fk="colony_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_deployment_location" type="relfk"
 	 src-table="loggers.deployment"
-	 dst-table="metadata.location"
+	 dst-table="metadata.location" reference-fk="location_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_deployment_logger_fate" type="relfk"
 	 src-table="loggers.deployment"
-	 dst-table="metadata.logger_fate"
+	 dst-table="metadata.logger_fate" reference-fk="logger_fate_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_deployment_individ_info" type="relfk"
 	 src-table="loggers.deployment"
-	 dst-table="individuals.individ_info"
+	 dst-table="individuals.individ_info" reference-fk="individ_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_deployment_mounting_types" type="relfk"
 	 src-table="loggers.deployment"
-	 dst-table="metadata.mounting_types"
+	 dst-table="metadata.mounting_types" reference-fk="deployment_logger_mount_method_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_info_sexing_method" type="relfk"
 	 src-table="individuals.individ_info"
-	 dst-table="metadata.sexing_method"
+	 dst-table="metadata.sexing_method" reference-fk="sexing_method_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_info_sex" type="relfk"
 	 src-table="individuals.individ_info"
-	 dst-table="metadata.sex"
+	 dst-table="metadata.sex" reference-fk="sex_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_status_startup" type="relfk"
 	 src-table="individuals.individ_status"
-	 dst-table="loggers.startup"
+	 dst-table="loggers.startup" reference-fk="status_logging_session_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_status_logger_info" type="relfk"
 	 src-table="individuals.individ_status"
-	 dst-table="loggers.logger_info"
+	 dst-table="loggers.logger_info" reference-fk="status_logger_id_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_status_breeding_stages" type="relfk"
 	 src-table="individuals.individ_status"
-	 dst-table="metadata.breeding_stages"
+	 dst-table="metadata.breeding_stages" reference-fk="status_breeding_stage_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_retrieval_individ_info" type="relfk"
 	 src-table="loggers.retrieval"
-	 dst-table="individuals.individ_info"
+	 dst-table="individuals.individ_info" reference-fk="individ_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_retrieval_location" type="relfk"
 	 src-table="loggers.retrieval"
-	 dst-table="metadata.location"
+	 dst-table="metadata.location" reference-fk="location_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_shutdown_startup" type="relfk"
 	 src-table="loggers.shutdown"
-	 dst-table="loggers.startup"
+	 dst-table="loggers.startup" reference-fk="shutdown_startup_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_file_archive_shutdown" type="relfk"
 	 src-table="loggers.file_archive"
-	 dst-table="loggers.shutdown"
+	 dst-table="loggers.shutdown" reference-fk="shutdown_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_events_deployment" type="relfk"
 	 src-table="loggers.events"
-	 dst-table="loggers.deployment"
+	 dst-table="loggers.deployment" reference-fk="events_deployment_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_events_retrieval" type="relfk"
 	 src-table="loggers.events"
-	 dst-table="loggers.retrieval"
+	 dst-table="loggers.retrieval" reference-fk="events_retrieval_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logger_year_tracked_logging_session" type="relfk"
 	 src-table="positions.logger_year_tracked"
-	 dst-table="loggers.logging_session"
+	 dst-table="loggers.logging_session" reference-fk="logger_year_tracked_logging_session_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_temperature_startup" type="relfk"
 	 src-table="activity.temperature"
-	 dst-table="loggers.startup"
+	 dst-table="loggers.startup" reference-fk="temp_session_id_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_salinity_startup" type="relfk"
 	 src-table="activity.salinity"
-	 dst-table="loggers.startup"
+	 dst-table="loggers.startup" reference-fk="salinity_session_id_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_startup_logging_modes" type="relfk"
 	 src-table="loggers.startup"
-	 dst-table="metadata.logging_modes"
+	 dst-table="metadata.logging_modes" reference-fk="logging_modes_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_startup_people" type="relfk"
 	 src-table="loggers.startup"
-	 dst-table="metadata.people"
+	 dst-table="metadata.people" reference-fk="people_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_startup_logger_info" type="relfk"
 	 src-table="loggers.startup"
-	 dst-table="loggers.logger_info"
+	 dst-table="loggers.logger_info" reference-fk="startup_logger_id_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_observations_individ_info" type="relfk"
 	 src-table="individuals.observations"
-	 dst-table="individuals.individ_info"
+	 dst-table="individuals.individ_info" reference-fk="observation_individ_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logger_files_logger_models" type="relfk"
 	 src-table="metadata.logger_files"
-	 dst-table="metadata.logger_models"
+	 dst-table="metadata.logger_models" reference-fk="logger_model_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_logger_models_logger_producers" type="relfk"
 	 src-table="metadata.logger_models"
-	 dst-table="metadata.logger_producers"
+	 dst-table="metadata.logger_producers" reference-fk="logger_mod_prod_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_retrieval_retrieval_type" type="relfk"
 	 src-table="loggers.retrieval"
-	 dst-table="metadata.retrieval_type"
+	 dst-table="metadata.retrieval_type" reference-fk="retrieval_type_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_shutdown_download_types" type="relfk"
 	 src-table="loggers.shutdown"
-	 dst-table="metadata.download_types"
+	 dst-table="metadata.download_types" reference-fk="download_type_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_status_breeding_success_criterion" type="relfk"
 	 src-table="individuals.individ_status"
-	 dst-table="metadata.breeding_success_criterion"
+	 dst-table="metadata.breeding_success_criterion" reference-fk="breeding_success_criterion_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_status_people" type="relfk"
 	 src-table="individuals.individ_status"
-	 dst-table="metadata.people"
+	 dst-table="metadata.people" reference-fk="individ_status_data_responsible_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_metadata_import_logger_info" type="relfk"
 	 src-table="imports.metadata_import"
-	 dst-table="loggers.logger_info"
+	 dst-table="loggers.logger_info" reference-fk="logger_retrieved_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_deployment_species" type="relfk"
 	 src-table="loggers.deployment"
-	 dst-table="metadata.species"
+	 dst-table="metadata.species" reference-fk="species_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_allocation_species" type="relfk"
 	 src-table="loggers.allocation"
-	 dst-table="metadata.species"
+	 dst-table="metadata.species" reference-fk="species_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_info_subspecies" type="relfk"
 	 src-table="individuals.individ_info"
-	 dst-table="metadata.subspecies"
+	 dst-table="metadata.subspecies" reference-fk="species_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_metadata_import_subspecies" type="relfk"
 	 src-table="imports.metadata_import"
-	 dst-table="metadata.subspecies"
+	 dst-table="metadata.subspecies" reference-fk="species_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_metadata_import_sex" type="relfk"
 	 src-table="imports.metadata_import"
-	 dst-table="metadata.sex"
+	 dst-table="metadata.sex" reference-fk="sex_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_metadata_import_sexing_method" type="relfk"
 	 src-table="imports.metadata_import"
-	 dst-table="metadata.sexing_method"
+	 dst-table="metadata.sexing_method" reference-fk="sexing_method_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_metadata_import_breeding_stages" type="relfk"
 	 src-table="imports.metadata_import"
-	 dst-table="metadata.breeding_stages"
+	 dst-table="metadata.breeding_stages" reference-fk="breeding_stages_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_metadata_import_breeding_success_criterion" type="relfk"
 	 src-table="imports.metadata_import"
-	 dst-table="metadata.breeding_success_criterion"
+	 dst-table="metadata.breeding_success_criterion" reference-fk="breeding_success_criterion_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_metadata_import_people" type="relfk"
 	 src-table="imports.metadata_import"
-	 dst-table="metadata.people"
+	 dst-table="metadata.people" reference-fk="data_responsible_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_metadata_import_mounting_types" type="relfk"
 	 src-table="imports.metadata_import"
-	 dst-table="metadata.mounting_types"
+	 dst-table="metadata.mounting_types" reference-fk="logger_mount_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_metadata_import_location" type="relfk"
 	 src-table="imports.metadata_import"
-	 dst-table="metadata.location"
+	 dst-table="metadata.location" reference-fk="colony_fk"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_status_subspecies" type="relfk"
 	 src-table="individuals.individ_status"
-	 dst-table="metadata.subspecies"
+	 dst-table="metadata.subspecies" reference-fk="fk_species"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_status_sex" type="relfk"
 	 src-table="individuals.individ_status"
-	 dst-table="metadata.sex"
+	 dst-table="metadata.sex" reference-fk="fk_sex"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_individ_status_sexing_method" type="relfk"
 	 src-table="individuals.individ_status"
-	 dst-table="metadata.sexing_method"
+	 dst-table="metadata.sexing_method" reference-fk="fk_sexing_method"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_allocation_logging_session" type="relfk"
 	 src-table="loggers.allocation"
-	 dst-table="loggers.logging_session"
+	 dst-table="loggers.logging_session" reference-fk="fk_allocation_session_id"
 	 src-required="false" dst-required="false"/>
 
 <permission>

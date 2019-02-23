@@ -1,0 +1,492 @@
+---
+title: "The Seatrack database and R"
+subtitle: "A short intro"
+author: "Jens Åström"
+date: "`r format(Sys.time(), '%d %b, %Y')`"
+output:
+  NinaR::ninaBeamer:
+    fig_cap: FALSE
+    highlight: tango
+    incremental: FALSE
+    toc: FALSE
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{R.rsp::asis}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, echo=FALSE}
+# A lot of options can be tweaked through the knitr::opts_chunk, like below.
+# The use of 'tikz' is optional, and is used here to specify the font used
+# in figures, and to get figure text rendered nicely. 'Tikz' is a little bit slower
+# to render though and therefore we use 'cache=T'. Set this to false to force the 
+# figures to render.
+# pdf is also a good choice instead of 'tikz', but won't create as nice figure texts.
+
+# Other options are set in the YAML-section at the beginning of the file. See the rmarkdown
+# and knitr manuals to make sense of these. The date in the YAML-section can be replaced
+# with a static value.
+
+# Some trial and error is needed to get the figure and column sizes right.
+
+
+
+knitr::opts_chunk$set(comment=NA, collapse=T, cache=T, autodep=T,
+               dev="pdf", fig.width = 4.5,
+               dpi = 300,
+               fig.height = 4,
+               out.width = '0.6\\linewidth',
+               size ='tiny',
+               dev.args=list(pointsize=12),
+               message=F, warning=F,
+               fig.align = 'center',
+               tidy = "styler")
+options(tikzDefaultEngine="xetex")
+options(tikzXelatexPackages=c(
+    "\\usepackage{tikz}\n",
+    "\\usepackage[active,tightpage,xetex]{preview}\n",
+    "\\usepackage{fontspec,xunicode}\n",
+    "\\setmainfont{Verdana}\n",
+    "\\PreviewEnvironment{pgfpicture}\n",
+    "\\setlength\\PreviewBorder{0pt}\n"))
+options(width = 80)
+
+```
+
+## Database description
+
+* PostgreSQL (with PostGIS) database hosted at NINA: seatrack.nina.no 
+    - Only available from Polar institute and NINA's IP-range. So use VPN when travelling
+* Can be accessed with "standard tools" like PgAdmin, ODBC, Access, and R
+* This presentation only covers working with the database through R
+
+
+## R-package "seatrackR"
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+```
+
+* Custom functions for working with the database
+* Code at: https://github.com/NINAnor/seatrack-db/tree/master/seatrackR
+
+Install:
+```{r, eval = F}
+devtools::install_github("NINAnor/seatrack-db/seatrackR", 
+                         build_vignettes = True)
+```
+* When in trouble, update the package first and restart R. If the problem persists, notify jens.astrom@nina.no.
+
+## Connecting
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+```
+
+* Note that you need a personal user name
+* There are three types of users
+    - seatrack_reader (only reads, most users)
+    - seatrack_writer (can write logger logistict, position data, and upload files to archive)
+    - seatrack_metadata_writer (can alter lookup-tables)
+
+```{r}
+require(seatrackR)
+connectSeatrack(Username = "testreader", 
+                Password = "testreader")
+```
+
+## Connecting
+
+Remember to change your default password! 
+
+Don't use a sensitive password, e.g. something you use on another important places. I can't swear that noone will be able to see it!
+
+```{r, eval = F}
+changeSeatrackPassword(password = "hunter2")
+```
+
+
+## Querying the database
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+* The `connectSeatrack` function creates a `DBI` connection called `con`. You can use this with the `DBI`, `dplyr`, `sf` packages.
+* An example of using R's ordinary functions, reading an entire table:
+```{r}
+loggers <- dbReadTable(con, Id(schema = "loggers", table = "logger_info"))
+head(loggers)
+```
+
+## Querying the database
+ 
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+Writing custom SQL queries in the standard R way.
+
+```{r}
+LOTEKLoggersQ <- "SELECT * FROM loggers.logger_info WHERE producer = 'LOTEK'"
+
+LOTEKLoggers <- dbGetQuery(con, LOTEKLoggersQ)
+head(LOTEKLoggers)
+```
+
+## Querying the database
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+Simple operations like this could also be done using dplyr/dbplyr. The filtering here actually happens on the database side, but you can specify it using dplyr commands in R.
+
+```{r}
+BASLoggers <- dbReadTable(con, Id(schema = "loggers", table = "logger_info")) %>% 
+  filter(producer == 'BAS')
+
+head(BASLoggers)
+```
+
+## Querying the database
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+Dplyr can also do joins using "dbplyr". A silly example:
+
+```{r}
+require(dbplyr)
+status <- tbl(con, in_schema("individuals", "individ_status"))
+loggers <- tbl(con, in_schema("loggers", "logger_info"))
+
+loggerEggs <- status %>% 
+  inner_join(loggers, by = c("logger_id" = "logger_id")) %>% 
+  group_by(producer) %>% 
+  filter(!is.na(eggs)) %>% 
+  select(producer,
+         eggs)
+```
+
+## Querying the database
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+```{r}
+ggplot(loggerEggs, aes(eggs, producer)) +
+  geom_boxplot()
+  
+```
+
+
+## Querying the database
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+```
+
+* Making your own custom queries of course requires some knowledge of how the database is structured. 
+* If you wan't to know more about this, pgAdmin can be a good tool to get an overview.
+* We can also help you construct the queries that you are interested in, or give guidance. 
+* If a query is usted often, we can make a custom function in the R-package.
+* The database structural model can be viewed by the command:
+```{r, eval = F}
+viewDatabaseModel()
+```
+
+## Database structure
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+* The database structural model can be viewed by the command:
+```{r, eval = F}
+viewDatabaseModel()
+```
+```{r,  out.width = '120pt', dev='png', echo=F}
+knitr::include_graphics("images/seatrackModel.png")
+```
+Understanding this might still be challenging...
+
+## Database structure
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+* Most of the complexity deals with the logistical lifecycle of the loggers
+    - This is handled in the schema "loggers"
+    - Separate tables for startups, allocations, deployments, retrievals, shutdowns, associated filenames
+* Much of the rest is lookup-tables, for data-integrity
+    - Lookup tables in separate schema "metadata"
+* Position data is in the "positions" schema, table "postable"
+    - This contains all pre-processed position data.
+* Info on individuals is in the "individuals" schema
+    - Current info is stored in "individ_info"
+    - Record of all status updates in "individ_status" (breeding, size, etc.)
+* Most data can be linked (merged/joined) by the session_id
+    - "Logger_id" and "individ_id" also useful
+    - NB! that the position data is linked with the rest through the "session_id" column
+  
+
+## Working with the database through the R-package
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+To simplify the usage of the database, we have created some R functions to read and write from the database. For example, to get a list all the active logger sessions (logger started up, but not yet shut down.):
+
+```{r}
+activeSessions <- getActiveSessions()
+activeSessions
+```
+
+
+## Working with the database through the R-package
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+Getting position data:
+
+```{r}
+lbbg2015 <- getPosdata(selectSpecies = "Lesser black-backed gull",
+                        selectYear = "2015_16")
+lbbg2015
+```
+
+## Working with the database through the R-package
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+Loading it with geometries as an sf object
+
+```{r}
+lbbg2015sf <- getPosdata(selectSpecies = "Lesser black-backed gull",
+                        selectYear = "2015_16",
+                        loadGeometries = T)
+
+lbbg2015sf
+```
+
+## Working with the database through the R-package
+
+* Plotting - native sf way
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+```{r}
+plot(lbbg2015sf["colony"],
+     pch = 16,
+     key.width = lcm(6))
+```
+
+## Working with the database through the R-package
+
+* Plotting - ggplot2
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+```{r}
+require("rnaturalearth")
+world <- ne_countries(scale = "medium", returnclass = "sf")
+p <- ggplot(world) +
+  geom_sf() +
+  geom_sf(data = lbbg2015sf, aes(color = colony,
+                                 fill = colony)) +
+  coord_sf(xlim = c(-30, 60), ylim = c(-10, 80), expand = FALSE) +
+  ggtitle("Lesser black-backed gulls in 2015-2016")
+
+```
+## Working with the database through the R-package
+
+```{r, echo = F, dev = "png", fig.width= 6, fig.height = 6}
+p
+```
+
+
+## Working with the database through the R-package
+
+* Several other custom R functions exists, see help(package = "seatrackR") for an overview. Look also at the vignettes
+    - For example: `getIndividInfo`, `getLoggerInfo`
+* Several functions for the few users that imports data
+
+## File archive
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+* In addition to the database, we also have an FTP-server (file archive) that can store the raw data files from the loggers
+* After shutdown, each session is expected to yield a set of files, which is noted in the loggers.file_archive table
+* The files should after that be given the correct names and be uploaded to the FTP-server
+    - Custom function in the R-package: `uploadFiles`
+* The FTP-server uses SSL security, and the R functions gets the login credentials from the PostgreSQL database
+    - In other words, use the R functions to upload and download files from the file archive
+    - No need for separate user credentials
+    - Pretty good security
+
+
+## File archive
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+To see what the file archive contains (and not contains):
+
+```{r}
+fileArchive <- listFileArchive()
+```
+\columnsbegin
+\column{.3\textwidth}
+
+```{r}
+fileArchive$filesInArchive
+```
+
+\column{.3\textwidth}
+
+```{r}
+fileArchive$filesNotInArchive
+```
+
+\column{.3\textwidth}
+
+```{r}
+fileArchive$filesNotInDatabase
+```
+
+
+\columnsend
+
+## File archive
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+To get a summary of the expected files and their related info:
+```{r, eval = F}
+filesSummary <- getFileArchiveSummary()
+filesSummary 
+```
+
+
+```{r, echo = F}
+filesSummary <- getFileArchiveSummary()
+filesSummary %>% print(n = 5,
+                       width = Inf) 
+```
+
+## File archive
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+Example: get the raw files from Røst in season 2014 - 2015.
+
+First we check which files contains this information and see which ones exists in the file archive
+```{r}
+rost2014ExpectedFiles <- filesSummary %>% 
+  filter(colony == "Rost", 
+         year_tracked == "2014_15")
+#merge with available files
+rost2014AvailableFiles <- rost2014ExpectedFiles  %>% 
+  inner_join(fileArchive$filesInArchive)
+#all there?
+nrow(rost2014ExpectedFiles)
+nrow(rost2014AvailableFiles)
+
+```
+
+## File archive
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+Downloading the files into a local folder.
+```{r, eval = F}
+downloadFiles(files = rost2014AvailableFiles$filename,
+              destFolder = "rostRawFiles")
+
+```
+
+## File archive
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+
+We can also load the contents of a file into R using the `loadFile` function. Here we look at the second file in the list from Røst in 2014.
+
+```{r}
+M970_2015Trn <- loadFile(rost2014AvailableFiles$filename[2],
+                      col_names = F)
+
+M970_2015Trn
+```
+
+## File archive
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+Note that some files have some initial information in a header and special format, that you have to specify. 
+
+```{r}
+M970_2015Sst <- loadFile(rost2014AvailableFiles$filename[1],
+                      col_names = F)
+
+M970_2015Sst %>% print(n = 12)
+```
+
+## File archive
+
+```{r, echo=F, results = 'asis'}
+cat("\\scriptsize")
+cat("\\fvset{fontsize=\\tiny}")
+```
+Specifying rows to skip and custom column delimination. 
+
+```{r}
+M970_2015Sst <- loadFile(rost2014AvailableFiles$filename[1],
+                      col_names = T,
+                      skip = 19,
+                      delim = "\t")
+
+M970_2015Sst
+```
+
+
+
