@@ -1,12 +1,14 @@
 Package: seatrackR
 Title: Interface functions for the Seatrack database
-Version: 0.0.1.14
-Date: 2019-02-19
+Version: 0.0.1.15
+Date: 2019-02-23
 Authors@R: person("Jens", "Astrom", email = "jens.astrom@nina.no", role = c("aut", "cre"))
 Description: R utility functions for interaction with the seatrack database. Of
     interest only to the project group.
 Depends:
-    R (>= 3.3.1)
+    R (>= 3.3.1),
+    DBI,
+    dplyr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

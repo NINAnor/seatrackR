@@ -11,7 +11,8 @@
 #' }
 #'
 
-viewDatabaseModel <- function(){
+viewDatabaseModel <- function(type = c("png", "svg")){
+  type <- match.arg(type, c("png", "svg"))
 
-  browseURL(system.file("img", "seatrackModel.png", package = "seatrackR"))
+  browseURL(system.file("img", paste0("seatrackModel.", type), package = "seatrackR"))
 }

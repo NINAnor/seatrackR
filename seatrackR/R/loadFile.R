@@ -1,9 +1,10 @@
 #' Load a single file from the file archive into R
 #'
-#' We load the file using read_csv from the readr package, and parameters
+#' We load the file using read_delim from the readr package, and parameters
 #'
 #' @param filename character, matching a filename in the archive
-#' @param ... further parameters to readr::read_csv function
+#' @param delim the character used for deliminating the columns, passed to readr::read_delim function
+#' @param ... further parameters to readr::read_delim function
 #' @return Status messages on the actions taken for each file.
 #' @export
 #' @examples
@@ -19,7 +20,7 @@
 #' }
 #'
 
-loadFile <- function(filename = NULL, ...){
+loadFile <- function(filename = NULL, delim = ",", ...){
   checkCon()
 
   if(length(filename) != 1){
@@ -39,7 +40,9 @@ loadFile <- function(filename = NULL, ...){
                                   httr::GET(url = getUrl, handle = getHandle)))
 
 
-    out <- readr::read_csv(httr::content(rawOut, "raw"), ...)
+    out <- readr::read_delim(httr::content(rawOut, type = "raw"),
+                             delim = delim,
+                             ...)
 
       return(out)
 
