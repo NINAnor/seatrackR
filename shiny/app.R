@@ -60,7 +60,7 @@ server = (function(input, output,session) {
     {
 ##############END LOGIN STUFF, begin ui part#####################
 
-      output$page <- renderUI({navbarPage("Seatrack visualization - V.05",
+      output$page <- renderUI({navbarPage("Seatrack visualization - V.06",
                                           tabPanel('Seatrack data download',
                                                    sidebarLayout(
                                                      sidebarPanel(width=2, dateRangeInput("daterange", "Date range:",
@@ -71,6 +71,7 @@ server = (function(input, output,session) {
                                                                   uiOutput("choose_colony"),
                                                                   uiOutput("choose_data_responsible"),
                                                                   uiOutput("choose_ring_number"),
+                                                                  uiOutput("legend"),
                                                                   uiOutput("number_of_rows"),
                                                                   checkboxInput("limit500", "Limit display to 500 random points", value = T, width = NULL),
                                                                   downloadButton('downloadData', 'Last ned CSV')),
@@ -103,7 +104,7 @@ server = (function(input, output,session) {
 
 
 
-  con <- connectSeatrack(Username = "shinyuser", Password = "shinyuser", host = "ninseatrack01.nina.no")
+ connectSeatrack(Username = "shinyuser", Password = "shinyuser", host = "ninseatrack01.nina.no")
 
 
   datasetInput <- reactive({
@@ -117,7 +118,7 @@ server = (function(input, output,session) {
 
   select_categories<-function(){
 
-    dbGetQuery(con,"SET search_path = positions, public;")
+    dbSendStatement(con,"SET search_path = positions, public;")
 
 
     cat.query <- "SELECT * FROM views.categories"
@@ -145,6 +146,10 @@ server = (function(input, output,session) {
 
   output$choose_ring_number <- renderUI({
     selectInput('ring_number', 'Ring number', c("All", sort(as.character(unique(select_categories()$ring_number)))), selected="All")
+  })
+
+  output$legend <- renderUI({
+    radioButtons('legend', 'Figure legend', choices = c("None", "Species", "Colony", "Date"), selected="None")
   })
 
 
@@ -291,7 +296,9 @@ server = (function(input, output,session) {
     if (input$ring_number =="All"){
       ring.number <-""
     } else {
-      ring.number <- paste0("\n AND ring_number = '", as.character(input$ring_number), "'")
+      ring.number <- paste0("\n AND ring_number = '",
+                            as.character(input$ring_number),
+                            "'")
     }
 
     limit<-"\n AND lon_smooth2 is not null
@@ -301,8 +308,14 @@ server = (function(input, output,session) {
     ##ring_number as name, species, date_time, lat_smooth2 as lat, lon_smooth2 as lon
 
     fetch.q<-paste("SELECT *
-                   FROM positions.postable"
-                   , group.sub, date_range, colony.sub, responsible.sub, ring.number, limit, sep="")
+                   FROM positions.postable",
+                   group.sub,
+                   date_range,
+                   colony.sub,
+                   responsible.sub,
+                   ring.number,
+                   limit,
+                   sep="")
       }
     return(fetch.q)
 
@@ -350,24 +363,99 @@ server = (function(input, output,session) {
           )
       } else
 
+        ##Make palette based on tickmark choices.
+        dates <- data.frame("julian" = as.numeric(julian(fields()$fields.subset$date_time, origin = input$daterange[1])))
+        specPal <- colorFactor(palette = rainbow(11), domain = fields()$fields.subset$species)
+        datePal <- colorNumeric(palette = rainbow(7), domain = dates$julian)
+        colPal <- colorFactor(palette = topo.colors(length(unique(fields()$fields.subset$colony))), domain = fields()$fields.subset$colony)
+
+        myLabelFormat <- function(..., dates = F){
+          if(dates){
+            function(type = "numeric", cuts){
+              as.Date(cuts, origin =input$daterange[1])
+            }
+          } else {
+            labelFormat(...)
+          }
+        }
+
+
+        if(input$legend == "None"){
+          chosenPal <- "#E57200"
+          legendPal <- "#E57200"
+          chosenLegendVal <- fields()$fields$species
+          legendTitle <- "Positions"
+          labelFormat <- myLabelFormat(dates = F)
+        }
+
+        if(input$legend == "Species"){
+          chosenPal <- ~specPal(species)
+          legendPal <- specPal
+          chosenLegendVal <- fields()$fields$species
+          legendTitle <- "Species"
+          labelFormat <- myLabelFormat(dates = F)
+        }
+
+        if(input$legend == "Date"){
+          chosenPal <- ~ datePal(dates$julian)
+          legendPal <- datePal
+          chosenLegendVal <- dates$julian
+          legendTitle <- "Date"
+          labelFormat <- myLabelFormat(dates = T)
+        }
+
+        if(input$legend == "Colony"){
+          chosenPal <- ~ colPal(colony)
+          legendPal <- colPal
+          chosenLegendVal <- fields()$fields$colony
+          legendTitle <- "Colony"
+          labelFormat <- myLabelFormat(dates = F)
+        }
+
+
         if (nrow(fields()$fields)>500){
           my.fields <- fields()$fields.subset
 
-          leaflet() %>%
+         p <- leaflet(fields()$fields.subset) %>%
             addProviderTiles("Esri.NatGeoWorldMap") %>%
             #addProviderTiles("MapQuestOpen.OSM") %>%  # Add MapBox map tiles
-            addCircleMarkers(radius=6, stroke= FALSE, fillOpacity=0.5, lng=my.fields$lon_smooth2, lat=my.fields$lat_smooth2
-                             , popup=paste("Ring ID: ", as.character(fields()$fields.subset$ring_number),"<br> Species: ", fields()$fields.subset$species,
-                                           "<br> Time: ", fields()$fields.subset$date_time), col = "#E57200")
+            addCircleMarkers(radius=6, stroke= FALSE,
+                             fillOpacity=0.5,
+                             lng=my.fields$lon_smooth2,
+                             lat=my.fields$lat_smooth2,
+                             popup=paste("Ring ID: ",
+                                         as.character(fields()$fields.subset$ring_number),
+                                         "<br> Species: ", fields()$fields.subset$species,
+                                           "<br> Time: ", fields()$fields.subset$date_time),
+                             color = chosenPal)
+          if(input$legend != "None"){
+        p <- p %>%  addLegend("bottomright", pal = legendPal, values = chosenLegendVal,
+                      title = legendTitle,
+                      opacity = 1,
+                      labFormat = labelFormat)
+          }
+         p
         } else
         {
-          leaflet() %>%
+         p <- leaflet(fields()$fields.subset) %>%
             addProviderTiles("Esri.NatGeoWorldMap") %>%
             #addProviderTiles("MapQuestOpen.OSM") %>%
-            addCircleMarkers(radius=6, stroke= FALSE, fillOpacity=0.5, lng=fields()$fields$lon_smooth2, lat=fields()$fields$lat_smooth2
-                             , popup=paste("Ring ID: ", as.character(fields()$fields$ring_number),"<br> Species: ", fields()$fields$species,
-                                           "<br> Time: ", fields()$fields$date_time), col = "#E57200"
-            )
+            addCircleMarkers(radius=6, stroke= FALSE,
+                             fillOpacity=0.5,
+                             lng=fields()$fields$lon_smooth2,
+                             lat=fields()$fields$lat_smooth2,
+                             popup=paste("Ring ID: ",
+                                         as.character(fields()$fields$ring_number),
+                                         "<br> Species: ", fields()$fields$species,
+                                           "<br> Time: ", fields()$fields$date_time),
+                             color = chosenPal)
+          if(input$legend != "None"){
+         p <- p %>% addLegend("bottomright", pal = legendPal, values = chosenLegendVal,
+                      title = legendTitle,
+                      opacity = 1,
+                      labFormat = labelFormat)
+          }
+         p
 
         }
 
