@@ -4,7 +4,7 @@
 \alias{viewDatabaseModel}
 \title{View the database structure in a browser}
 \usage{
-viewDatabaseModel()
+viewDatabaseModel(type = c("png", "svg"))
 }
 \value{
 Opens a internet browser window with the database model.
