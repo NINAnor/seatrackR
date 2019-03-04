@@ -6,6 +6,10 @@
 #'
 #' @param Username Character. Default = seatrack_reader
 #' @param Password Character.
+#' @param host Character. The host of the database. For testing purposes. There should be no need for the user to change this.
+#' @param check_interrupts True/False. Should user interrupts be checked during the query execution (before
+#'   first row of data is available)? Setting to `TRUE` allows interruption of queries
+#'   running too long.
 #' @return A DBI connection to the Seatrack database
 #' @import DBI
 #' @export
@@ -23,7 +27,11 @@
 #' DBI::dbDisconnect(con)
 #' }
 
-connectSeatrack <- function(Username = "testreader", Password = "testreader", host = "seatrack.nina.no") {
+connectSeatrack <- function(Username = "testreader",
+                            Password = "testreader",
+                            host = "seatrack.nina.no",
+                            check_interrupts = TRUE) {
+
 
   if (!requireNamespace("DBI", quietly = TRUE)) {
     stop("Pkg needed for this function to work. Please install it using devtools::install_github(\"rstats-db/DBI\") ",
@@ -37,7 +45,13 @@ connectSeatrack <- function(Username = "testreader", Password = "testreader", ho
   }
 
 
-  tmp <- DBI::dbConnect(RPostgres::Postgres(), host = host, dbname = "seatrack", user = Username, password = Password)
+  tmp <- DBI::dbConnect(RPostgres::Postgres(),
+                        host = host,
+                        dbname = "seatrack",
+                        user = Username,
+                        password = Password,
+                        check_interrupts = check_interrupts)
+
   assign("con", tmp, .GlobalEnv)
   assign(".pass", Password, envir = passEnv)
 

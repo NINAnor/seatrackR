@@ -4,18 +4,20 @@
 \alias{loadFile}
 \title{Load a single file from the file archive into R}
 \usage{
-loadFile(filename = NULL, ...)
+loadFile(filename = NULL, delim = ",", ...)
 }
 \arguments{
 \item{filename}{character, matching a filename in the archive}
 
-\item{...}{further parameters to readr::read_csv function}
+\item{delim}{the character used for deliminating the columns, passed to readr::read_delim function}
+
+\item{...}{further parameters to readr::read_delim function}
 }
 \value{
 Status messages on the actions taken for each file.
 }
 \description{
-We load the file using read_csv from the readr package, and parameters
+We load the file using read_delim from the readr package, and parameters
 }
 \examples{
 dontrun{

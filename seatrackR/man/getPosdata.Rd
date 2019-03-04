@@ -9,14 +9,20 @@ getPosdata(selectSpecies = NULL, selectColony = NULL,
   selectYear = NULL, loadGeometries = F, limit = F)
 }
 \arguments{
-\item{selectSpecies}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.}
+\item{selectSpecies}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
+The available choices can be seen in the column `species_name_eng` in the result from the function `getSpecies()`.}
 
-\item{selectColony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL.}
+\item{selectColony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
+choices can be seen in the column `colony_int_name` in the result from the function `getColonies()`.}
 
 \item{selectDataResponsible}{Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
-must conform to the name nomenclature used in the postable. Default is NULL}
+must conform to the name nomenclature used in the postable. Default is NULL. The available
+choices can be seen in the column `name` in the result from the function `getNames()`.}
 
 \item{selectRingnumber}{Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.}
+
+\item{selectYear}{Character string. Option to limit selection to one or more years that the logging sessions span. The availablle
+choices can be found in the `year_tracked` column in the result form the `getYears` function.}
 
 \item{loadGeometries}{True, False. Should geometries be loaded from the columns lon_smooth2 and lat_smooth2?
 If True, the returned object is a simple features object with only rows of eqfilter3 == 1, and with lat_smooth2 and lon_smooth2 values. Default = False}
