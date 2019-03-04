@@ -5,12 +5,18 @@
 \title{Connect to seatrack database}
 \usage{
 connectSeatrack(Username = "testreader", Password = "testreader",
-  host = "seatrack.nina.no")
+  host = "seatrack.nina.no", check_interrupts = TRUE)
 }
 \arguments{
 \item{Username}{Character. Default = seatrack_reader}
 
 \item{Password}{Character.}
+
+\item{host}{Character. The host of the database. For testing purposes. There should be no need for the user to change this.}
+
+\item{check_interrupts}{True/False. Should user interrupts be checked during the query execution (before
+first row of data is available)? Setting to `TRUE` allows interruption of queries
+running too long.}
 }
 \value{
 A DBI connection to the Seatrack database

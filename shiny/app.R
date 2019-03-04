@@ -8,7 +8,7 @@ require(DBI)
 require(RPostgres)
 require(dplyr)
 
-#tags$head(tags$link(rel='stylesheet', type='text/css', href='styles.css')),
+#tags$head(tags$link(rel='stylesheet', type='text/css', href='styles.css'))
 
 ######
 require(tools)
@@ -116,10 +116,9 @@ server = (function(input, output,session) {
       write.csv(datasetInput(), file, row.names=F)})
 
 
-  select_categories<-function(){
+  available_categories <- function(){
 
-    dbSendStatement(con,"SET search_path = positions, public;")
-
+    dbSendStatement(con, "SET search_path = positions, public;")
 
     cat.query <- "SELECT * FROM views.categories"
 
@@ -129,24 +128,115 @@ server = (function(input, output,session) {
     #dbClearResult(res)
 
     categories
+
+  }
+
+  select_categories <- function(){
+    available_categories <- available_categories()
+
+    #if(!is.null(input$colony)){
+    if(as.character(input$colony) != "All"){
+      available_categories <- available_categories %>%
+        filter(colony_cat == as.character(input$colony))
+    }
+    #}
+
+    #if(!is.null(input$species)){
+    if(as.character(input$species) != "All"){
+      available_categories <- available_categories %>%
+        filter(species_cat == as.character(input$species))
+    }
+    #}
+
+    #if(!is.null(input$data_responsible)){
+    if(as.character(input$data_responsible) != "All"){
+      available_categories <- available_categories %>%
+        filter(responsible_cat == as.character(input$data_responsible))
+    }
+    #}
+
+    #if(!is.null(input$ring_number)){
+    if(as.character(input$ring_number) != "All"){
+      available_categories <- available_categories %>%
+        filter(ring_number_cat == as.character(input$ring_number))
+    }
+    #}
+
+    available_categories
+
+    #str(colony)
+
   }
 
 
+
   output$choose_species<- renderUI({
-    selectInput('species', 'Species', c("All", sort(as.character(unique(select_categories()$species_cat)))), selected="All")
+
+    available_categories <- available_categories()
+    selectInput('species', 'Species', c("All", sort(as.character(unique(available_categories()$species_cat)))))
+
   })
+
 
   output$choose_colony<- renderUI({
-    selectInput('colony', 'Colony', c("All", sort(as.character(unique(select_categories()$colony_cat)))), selected="All")
+
+    available_categories <- available_categories()
+    selectInput('colony', 'Colony', c("All", sort(as.character(unique(available_categories()$colony_cat)))))
+
   })
 
+
   output$choose_data_responsible<- renderUI({
-    selectInput('data_responsible', 'Data responsible', c("All", sort(as.character(unique(select_categories()$responsible_cat)))), selected="All")
+    available_categories <- available_categories()
+    selectInput('data_responsible', 'Data responsible', c("All", sort(as.character(unique(available_categories()$responsible_cat)))))
+
   })
 
   output$choose_ring_number <- renderUI({
-    selectInput('ring_number', 'Ring number', c("All", sort(as.character(unique(select_categories()$ring_number)))), selected="All")
+
+    available_categories <- available_categories()
+    selectInput('ring_number', 'Ring number', c("All", sort(as.character(unique(available_categories()$ring_number_cat)))))
+
   })
+
+
+
+
+
+  observeEvent(c(input$colony, input$species, input$data_responsible, input$ring_number),
+
+               {
+                 if(as.character(input$species) == "All"){
+                   updateSelectInput(session, 'species', 'Species', c("All", sort(as.character(unique(select_categories()$species_cat)))))
+                 } else {
+                   updateSelectInput(session, 'species', 'Species', c("All", sort(as.character(unique(select_categories()$species_cat)))),
+                                     selected = input$species)
+                 }
+
+
+                 if(as.character(input$colony) == "All"){
+                   updateSelectInput(session, 'colony', 'Colony', c("All", sort(as.character(unique(select_categories()$colony_cat)))))
+                 } else {
+                   updateSelectInput(session, 'colony', 'Colony', c("All", sort(as.character(unique(select_categories()$colony_cat)))),
+                                     selected = input$colony)
+                 }
+
+
+                 if(as.character(input$data_responsible) == "All"){
+                   updateSelectInput(session, 'data_responsible', 'Data responsible', c("All", sort(as.character(unique(select_categories()$responsible_cat)))))
+                 } else {
+                   updateSelectInput(session, 'data_responsible', 'Data responsible', c("All", sort(as.character(unique(select_categories()$responsible_cat)))),
+                                     selected = input$data_responsible)
+                 }
+
+
+                 if(as.character(input$ring_number) == "All"){
+                   updateSelectInput(session, 'ring_number', 'Ring number', c("All", sort(as.character(unique(select_categories()$ring_number_cat)))))
+                 } else {
+                   updateSelectInput(session, 'ring_number', 'Ring number', c("All", sort(as.character(unique(select_categories()$ring_number_cat)))),
+                                     selected = input$ring_number)
+                 }
+               })
 
   output$legend <- renderUI({
     radioButtons('legend', 'Figure legend', choices = c("None", "Species", "Colony", "Date"), selected="None")
@@ -366,7 +456,7 @@ server = (function(input, output,session) {
         ##Make palette based on tickmark choices.
         dates <- data.frame("julian" = as.numeric(julian(fields()$fields.subset$date_time, origin = input$daterange[1])))
         specPal <- colorFactor(palette = rainbow(11), domain = fields()$fields.subset$species)
-        datePal <- colorNumeric(palette = rainbow(7), domain = dates$julian)
+        datePal <- colorNumeric(palette = heat.colors(24), domain = dates$julian)
         colPal <- colorFactor(palette = topo.colors(length(unique(fields()$fields.subset$colony))), domain = fields()$fields.subset$colony)
 
         myLabelFormat <- function(..., dates = F){
@@ -426,6 +516,7 @@ server = (function(input, output,session) {
                              popup=paste("Ring ID: ",
                                          as.character(fields()$fields.subset$ring_number),
                                          "<br> Species: ", fields()$fields.subset$species,
+                                         "<br> Home colony: ", fields()$fields.subset$colony,
                                            "<br> Time: ", fields()$fields.subset$date_time),
                              color = chosenPal)
           if(input$legend != "None"){
@@ -447,6 +538,7 @@ server = (function(input, output,session) {
                              popup=paste("Ring ID: ",
                                          as.character(fields()$fields$ring_number),
                                          "<br> Species: ", fields()$fields$species,
+                                         "<br> Home colony: ", fields()$fields$colony,
                                            "<br> Time: ", fields()$fields$date_time),
                              color = chosenPal)
           if(input$legend != "None"){
