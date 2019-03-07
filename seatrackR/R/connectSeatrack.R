@@ -30,7 +30,7 @@
 connectSeatrack <- function(Username = "testreader",
                             Password = "testreader",
                             host = "seatrack.nina.no",
-                            check_interrupts = TRUE) {
+                            ...) {
 
 
   if (!requireNamespace("DBI", quietly = TRUE)) {
@@ -50,7 +50,7 @@ connectSeatrack <- function(Username = "testreader",
                         dbname = "seatrack",
                         user = Username,
                         password = Password,
-                        check_interrupts = check_interrupts)
+                        ...)
 
   assign("con", tmp, .GlobalEnv)
   assign(".pass", Password, envir = passEnv)

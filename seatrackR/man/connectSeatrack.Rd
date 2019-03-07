@@ -5,7 +5,7 @@
 \title{Connect to seatrack database}
 \usage{
 connectSeatrack(Username = "testreader", Password = "testreader",
-  host = "seatrack.nina.no", check_interrupts = TRUE)
+  host = "seatrack.nina.no", ...)
 }
 \arguments{
 \item{Username}{Character. Default = seatrack_reader}
