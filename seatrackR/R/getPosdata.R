@@ -99,3 +99,62 @@ getPosdata <- function(selectSpecies= NULL,
 return(res)
 
 }
+
+#' @export
+getPosdata2 <- function(selectSpecies= NULL,
+                       selectColony = NULL,
+                       selectDataResponsible = NULL,
+                       selectRingnumber = NULL,
+                       selectYear = NULL,
+                       loadGeometries = F,
+                       limit = F){
+
+  checkCon()
+
+  if(!limit == F & !is.numeric(limit)){
+    stop("limit must be FALSE or a numeric value")
+  }
+
+  postable <- tbl(con, dbplyr::in_schema("views", "postable2"))
+  res <- postable
+
+  if(!is.null(selectSpecies)){
+    res <- res %>% filter(species %in% selectSpecies)
+  }
+
+  if(!is.null(selectColony)){
+    res <- res %>% filter(colony %in% selectColony)
+  }
+
+  if(!is.null(selectDataResponsible)){
+    res <- res %>% filter(data_responsible %in% selectDataResponsible)
+  }
+
+  if(!is.null(selectRingnumber)){
+    res <- res %>% filter(ring_number %in% selectRingnumber)
+  }
+
+  if(!is.null(selectYear)){
+    res <- res %>% filter(year_tracked %in% selectYear)
+  }
+
+  if(!limit == F){
+    res <- res %>% head(limit)
+  }
+
+  res <- res  %>% as_tibble()
+
+  if(loadGeometries == T){
+    res <- res %>% filter(!is.na(lon_smooth2) &
+                            !is.na(lat_smooth2) &
+                            eqfilter3 == 1)
+
+    res <- res %>% sf::st_as_sf(coords = c("lon_smooth2", "lat_smooth2"),
+                                crs = 4326,
+                                remove = F)
+  }
+
+  return(res)
+
+}
+
