@@ -1,6 +1,6 @@
 #' Retrieve info on the individuals
 #'
-#' This is a convenience function that pulls together various info on the files in the individuals.infivid_info and individuals.individ_status table and other tables
+#' This is a convenience function that pulls together various info on the files in the individuals.individ_info and individuals.individ_status table and other tables
 #'
 #' @return Data frame.
 #' @export
@@ -72,7 +72,7 @@ query <-  sessions %>%
          hatching_success,
          breeding_success,
          breeding_success_criterion,
-         data_responsible,
+         data_responsible = data_responsible.x,
          back_on_nest,
          comment,
          latest_sex = sex.y,
