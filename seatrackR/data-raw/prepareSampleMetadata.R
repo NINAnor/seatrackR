@@ -332,5 +332,52 @@ lapply(toLoad, writeFun)
 
 
 ##Activity data
+lightRaw <- read_delim("../../database_struct/Standardtabeller/light_BT_overview.txt", delim = "\t")
+lightRaw
 
+filenames <- dbReadTable(con, Id(schema = "loggers", table = "file_archive"))
+
+sampleLight <- lightRaw %>%
+  slice(1:100) %>%
+  mutate(filename = filenames$filename[1],
+         date_time = as_datetime(date_time)) %>%
+  select(filename,
+         date_time,
+         clipped,
+         raw_light,
+         std_light)
+
+
+sampleLight
+
+writeRecordings(lightData = sampleLight)
+
+
+activityRaw <- read_delim("../../database_struct/Standardtabeller/activity_BT_overview.txt", delim = "\t")
+sampleActivity <- activityRaw %>%
+  slice(1:100) %>%
+  mutate(filename = filenames$filename[1],
+         date_time = as_datetime(date_time)) %>%
+  select(filename,
+         date_time,
+         conductivity,
+         std_conductivity)
+
+writeRecordings(activityData = sampleActivity)
+
+
+temperatureRaw <- read_delim("../../database_struct/Standardtabeller/temperature_BT_overview.txt", delim = "\t")
+
+sampleTemperature <- temperatureRaw %>%
+  slice(1:100) %>%
+  mutate(filename = filenames$filename[1],
+         date_time = as_datetime(date_time)) %>%
+  select(filename,
+         date_time,
+         wet_min,
+         wet_max,
+         wet_mean,
+         num_samples)
+
+writeRecordings(temperatureData = sampleTemperature)
 

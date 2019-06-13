@@ -643,7 +643,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="individ_info">
 	<schema name="individuals"/>
 	<role name="admin"/>
-	<position x="50" y="1008.05"/>
+	<position x="48.8235" y="1008.05"/>
 	<column name="id" not-null="true" default-value="uuid_generate_v1()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1305,7 +1305,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="session_id" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="file_name" not-null="true">
+	<column name="filename" not-null="true">
 		<type name="text" length="0"/>
 	</column>
 	<column name="individ_id">
@@ -1341,7 +1341,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="session_id" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="file_name" not-null="true">
+	<column name="filename" not-null="true">
 		<type name="text" length="0"/>
 	</column>
 	<column name="individ_id">
@@ -1511,12 +1511,14 @@ BEGIN
 <trigger name="tr_insert_location_geom" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
 	 table="metadata.location">
+	<condition><![CDATA[WHEN (pg_trigger_depth() < 1)]]></condition>
 		<function signature="functions.fn_update_location_geom()"/>
 </trigger>
 
 <trigger name="fn_update_location_geom" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
 	 table="metadata.location">
+	<condition><![CDATA[WHEN (pg_trigger_depth() < 1)]]></condition>
 		<function signature="functions.fn_update_location_geom()"/>
 </trigger>
 
@@ -1548,12 +1550,14 @@ BEGIN
 <trigger name="tr_insert_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
 	 table="metadata.colony">
+	<condition><![CDATA[WHEN (pg_trigger_depth() < 1)]]></condition>
 		<function signature="functions.fn_update_colony_geom()"/>
 </trigger>
 
 <trigger name="tr_update_colony_geom" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
 	 table="metadata.colony">
+	<condition><![CDATA[WHEN (pg_trigger_depth() < 1)]]></condition>
 		<function signature="functions.fn_update_colony_geom()"/>
 </trigger>
 
@@ -4725,6 +4729,7 @@ END;]]></definition>
 <trigger name="tr_create_individ_id" firing-type="BEFORE" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="individuals.individ_info">
+	<condition><![CDATA[WHEN ((new.individ_id IS NULL))]]></condition>
 		<function signature="functions.fn_create_individ_id()"/>
 </trigger>
 
@@ -4738,7 +4743,7 @@ END;]]></definition>
 	<column name="session_id" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="file_name" not-null="true">
+	<column name="filename" not-null="true">
 		<type name="text" length="0"/>
 	</column>
 	<column name="individ_id">
@@ -5001,28 +5006,16 @@ END;]]></definition>
 	<columns names="session_id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="temp_session_id_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.startup" table="recordings.temperature">
-	<columns names="session_id" ref-type="src-columns"/>
-	<columns names="session_id" ref-type="dst-columns"/>
+<constraint name="temp_filename_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.file_archive" table="recordings.temperature">
+	<columns names="filename" ref-type="src-columns"/>
+	<columns names="filename" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="individ_id_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="recordings.temperature">
-	<columns names="individ_id" ref-type="src-columns"/>
-	<columns names="individ_id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="salinity_session_id_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.startup" table="recordings.activity">
-	<columns names="session_id" ref-type="src-columns"/>
-	<columns names="session_id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="activity_individ_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="recordings.activity">
-	<columns names="individ_id" ref-type="src-columns"/>
-	<columns names="individ_id" ref-type="dst-columns"/>
+<constraint name="activity_filename_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.file_archive" table="recordings.activity">
+	<columns names="filename" ref-type="src-columns"/>
+	<columns names="filename" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="logging_modes_fk" type="fk-constr" comparison-type="MATCH FULL"
@@ -5115,16 +5108,10 @@ END;]]></definition>
 	<columns names="logger_mount_method" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="light_session_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="loggers.startup" table="recordings.light">
-	<columns names="session_id" ref-type="src-columns"/>
-	<columns names="session_id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="light_individ_fk" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="CASCADE" del-action="RESTRICT" ref-table="individuals.individ_info" table="recordings.light">
-	<columns names="individ_id" ref-type="src-columns"/>
-	<columns names="individ_id" ref-type="dst-columns"/>
+<constraint name="light_filename_fk" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="RESTRICT" ref-table="loggers.file_archive" table="recordings.light">
+	<columns names="filename" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <relationship name="rel_logger_info_logger_models" type="relfk"
@@ -5367,18 +5354,6 @@ END;]]></definition>
 	 dst-table="loggers.logging_session" reference-fk="logger_year_tracked_logging_session_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_temperature_startup" type="relfk"
-	 custom-color="#420596"
-	 src-table="recordings.temperature"
-	 dst-table="loggers.startup" reference-fk="temp_session_id_fk"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_salinity_startup" type="relfk"
-	 custom-color="#c7bf9e"
-	 src-table="recordings.activity"
-	 dst-table="loggers.startup" reference-fk="salinity_session_id_fk"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_startup_logging_modes" type="relfk"
 	 custom-color="#9f9777"
 	 src-table="loggers.startup"
@@ -5469,24 +5444,19 @@ END;]]></definition>
 	 dst-table="metadata.mounting_types" reference-fk="logger_mount_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_temperature_cp_startup" type="relfk"
-	 src-table="recordings.light"
-	 dst-table="loggers.startup" reference-fk="light_session_fk"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_temperature_individ_info" type="relfk"
+<relationship name="rel_temperature_file_archive" type="relfk"
 	 src-table="recordings.temperature"
-	 dst-table="individuals.individ_info" reference-fk="individ_id_fk"
+	 dst-table="loggers.file_archive" reference-fk="temp_filename_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_light_individ_info" type="relfk"
-	 src-table="recordings.light"
-	 dst-table="individuals.individ_info" reference-fk="light_individ_fk"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_activity_individ_info" type="relfk"
+<relationship name="rel_activity_file_archive" type="relfk"
 	 src-table="recordings.activity"
-	 dst-table="individuals.individ_info" reference-fk="activity_individ_fk"
+	 dst-table="loggers.file_archive" reference-fk="activity_filename_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_light_file_archive" type="relfk"
+	 src-table="recordings.light"
+	 dst-table="loggers.file_archive" reference-fk="light_filename_fk"
 	 src-required="false" dst-required="false"/>
 
 <permission>
