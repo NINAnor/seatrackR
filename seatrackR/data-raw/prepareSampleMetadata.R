@@ -190,7 +190,7 @@ devtools::use_data(sampleLoggerShutdown, overwrite = T)
 
 sampleLoggerModels <- sampleLoggerInfo[!duplicated(sampleLoggerInfo[c(2, 4)]), c(2, 4)]
 names(sampleLoggerModels) <- c("producer", "model")
-#devtools::use_data(sampleLoggerModels, overwrite = T)
+devtools::use_data(sampleLoggerModels, overwrite = T)
 
 # tmpLoggerInfo <- dbGetQuery(con, "SELECT * FROM loggers.logger_info")
 # sampleLoggerImport<- tmpLoggerInfo["logger_id"]
@@ -247,3 +247,137 @@ connectSeatrack("testreader", "testreader")
 
 posdata <- getPosdata(limit = 1000)
 use_data(posdata)
+
+#Metadata
+#This is a bit of a hack to save the metadata from the production database to the testing version.
+connectSeatrack()
+
+toLoad <- list("breeding_stages",
+            "breeding_success_criterion",
+            "colony",
+            "download_types",
+            "euring_codes",
+            "import_types",
+            "location",
+            "logger_fate",
+            "logger_producers",
+            "logger_models",
+            "logger_files",
+            "logging_modes",
+            "mounting_types",
+            "people",
+            "retrieval_type",
+            "sex",
+            "sexing_method",
+            "species",
+            "subspecies")
+
+loadFun <- function(x){
+  tmp <- dbReadTable(con,  Id(schema = "metadata", table = x))
+  assign(x, tmp, envir = .GlobalEnv)
+}
+
+lapply(toLoad, loadFun)
+
+
+# breeding_stages <- dbReadTable(con, Id(schema = "metadata", table = "breeding_stages"))
+# breeding_success_criterion <- dbReadTable(con, Id(schema = "metadata", table = "breeding_success_criterion"))
+# colony <- dbReadTable(con, Id(schema = "metadata", table = "colony"))
+# download_types <- dbReadTable(con, Id(schema = "metadata", table = "download_types"))
+# euring_codes <- dbReadTable(con, Id(schema = "metadata", table = "euring_codes"))
+# import_types <- dbReadTable(con, Id(schema = "metadata", table = "import_types"))
+# location <- dbReadTable(con, Id(schema = "metadata", table = "location"))
+# logger_fate <- dbReadTable(con, Id(schema = "metadata", table = "logger_fate"))
+# logger_files <- dbReadTable(con, Id(schema = "metadata", table = "logger_files"))
+# logger_models <- dbReadTable(con, Id(schema = "metadata", table = "logger_models"))
+# logger_producers <- dbReadTable(con, Id(schema = "metadata", table = "logger_producers"))
+# logging_modes <- dbReadTable(con, Id(schema = "metadata", table = "logging_modes"))
+# mounting_types <- dbReadTable(con, Id(schema = "metadata", table = "mounting_types"))
+# people <- dbReadTable(con, Id(schema = "metadata", table = "people"))
+# retrieval_type <- dbReadTable(con, Id(schema = "metadata", table = "retrieval_type"))
+# sex <- dbReadTable(con, Id(schema = "metadata", table = "sex"))
+# sexing_method <- dbReadTable(con, Id(schema = "metadata", table = "sexing_method"))
+# species <- dbReadTable(con, Id(schema = "metadata", table = "species"))
+# subspecies <- dbReadTable(con, Id(schema = "metadata", table = "subspecies"))
+
+
+save(breeding_stages,
+     breeding_success_criterion,
+     colony,
+     download_types,
+     euring_codes,
+     import_types,
+     location,
+     logger_fate,
+     logger_models,
+     logger_files,
+     logger_producers,
+     logging_modes,
+     mounting_types,
+     people,
+     retrieval_type,
+     sex,
+     sexing_method,
+     species,
+     subspecies, file = "data/metadata.rda")
+
+#connectSeatrack(dbname = "seatrack_devel", Username = "seatrack_admin", Password = "")
+
+writeFun <- function(x){
+    dbWriteTable(con,  Id(schema = "metadata", table = x), append = T, get(x))
+
+}
+
+lapply(toLoad, writeFun)
+
+
+##Activity data
+lightRaw <- read_delim("../../database_struct/Standardtabeller/light_BT_overview.txt", delim = "\t")
+lightRaw
+
+filenames <- dbReadTable(con, Id(schema = "loggers", table = "file_archive"))
+
+sampleLight <- lightRaw %>%
+  slice(1:100) %>%
+  mutate(filename = filenames$filename[1],
+         date_time = as_datetime(date_time)) %>%
+  select(filename,
+         date_time,
+         clipped,
+         raw_light,
+         std_light)
+
+
+sampleLight
+
+writeRecordings(lightData = sampleLight)
+
+
+activityRaw <- read_delim("../../database_struct/Standardtabeller/activity_BT_overview.txt", delim = "\t")
+sampleActivity <- activityRaw %>%
+  slice(1:100) %>%
+  mutate(filename = filenames$filename[1],
+         date_time = as_datetime(date_time)) %>%
+  select(filename,
+         date_time,
+         conductivity,
+         std_conductivity)
+
+writeRecordings(activityData = sampleActivity)
+
+
+temperatureRaw <- read_delim("../../database_struct/Standardtabeller/temperature_BT_overview.txt", delim = "\t")
+
+sampleTemperature <- temperatureRaw %>%
+  slice(1:100) %>%
+  mutate(filename = filenames$filename[1],
+         date_time = as_datetime(date_time)) %>%
+  select(filename,
+         date_time,
+         wet_min,
+         wet_max,
+         wet_mean,
+         num_samples)
+
+writeRecordings(temperatureData = sampleTemperature)
+

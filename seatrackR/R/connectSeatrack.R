@@ -7,6 +7,7 @@
 #' @param Username Character. Default = seatrack_reader
 #' @param Password Character.
 #' @param host Character. The host of the database. For testing purposes. There should be no need for the user to change this.
+#' @param dbname Character. Name of database, for testing purposes. Default is "seatrack" which is the production database.
 #' @param check_interrupts True/False. Should user interrupts be checked during the query execution (before
 #'   first row of data is available)? Setting to `TRUE` allows interruption of queries
 #'   running too long.
@@ -30,6 +31,7 @@
 connectSeatrack <- function(Username = "testreader",
                             Password = "testreader",
                             host = "seatrack.nina.no",
+                            dbname = "seatrack",
                             ...) {
 
 
@@ -47,7 +49,7 @@ connectSeatrack <- function(Username = "testreader",
 
   tmp <- DBI::dbConnect(RPostgres::Postgres(),
                         host = host,
-                        dbname = "seatrack",
+                        dbname = dbname,
                         user = Username,
                         password = Password,
                         ...)
