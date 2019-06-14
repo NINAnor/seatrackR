@@ -2,7 +2,11 @@
 % Please edit documentation in R/writeRecordings.R
 \name{writeRecordings}
 \alias{writeRecordings}
+<<<<<<< HEAD
 \title{Update light, temperature or activity data}
+=======
+\title{Update the individ_info table}
+>>>>>>> 3aaffc7ae9abcce13733c385ecd10eb48e498dff
 \usage{
 writeRecordings(lightData = NULL, activityData = NULL,
   temperatureData = NULL, append = T, overwrite = FALSE)
@@ -22,7 +26,11 @@ writeRecordings(lightData = NULL, activityData = NULL,
 Data frame.
 }
 \description{
+<<<<<<< HEAD
 This is a convenience function that writes to the light, temperature or the activity table in schema Recordings
+=======
+This is a convenience function that writes to the "individuals.individ_info"
+>>>>>>> 3aaffc7ae9abcce13733c385ecd10eb48e498dff
 }
 \examples{
 dontrun{
