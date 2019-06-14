@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 #' Update light, temperature or activity data
 #'
 #' This is a convenience function that writes to the light, temperature or the activity table in schema Recordings
-=======
-#' Update the individ_info table
-#'
-#' This is a convenience function that writes to the "individuals.individ_info"
->>>>>>> 3aaffc7ae9abcce13733c385ecd10eb48e498dff
 #'
 #' @param lightData A named vector or data frame that fits the light table in schema recordings
 #' @param activityData A named vector or data frame that fits the activity table in schema recordings
