@@ -29,8 +29,8 @@ getRecordings <- function(type = NULL,
 
   type <- match.arg(type, choices = c("light", "temperature", "activity"))
 
-  sourceTbl <- dplyr::tbl(con, in_schema("Recordings", type))
-  sessionTbl <- dplyr::tbl(con, in_schema("loggers", "logging_session"))
+  sourceTbl <- dplyr::tbl(con, dbplyr::in_schema("Recordings", type))
+  sessionTbl <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 
 
   temp <- sourceTbl %>%
