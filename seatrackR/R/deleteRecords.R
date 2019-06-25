@@ -31,6 +31,32 @@ deleteRecords <- function(colony = NULL,
 
   checkCon()
 
+#append dummy condition to ease later conditions
+deleteTemp<- "DELETE FROM recordings.temperature
+                USING recordings.temperature as t
+                LEFT OUTER JOIN loggers.logging_session as ls ON
+                t.session_id = ls.session_id
+                LEFT OUTER JOIN loggers.allocation a ON
+                ls.session_id = a.session_id
+                WHERE temperature.id = t.id"
+
+#append dummy condition to ease later conditions
+deleteAct<- "DELETE FROM recordings.activity
+                USING recordings.activity as act
+                LEFT OUTER JOIN loggers.logging_session as ls ON
+                act.session_id = ls.session_id
+                LEFT OUTER JOIN loggers.allocation a ON
+                ls.session_id = a.session_id
+                WHERE activity.id = act.id"
+
+deleteLight<- "DELETE FROM recordings.light
+                USING recordings.light as lig
+                LEFT OUTER JOIN loggers.logging_session as ls ON
+                lig.session_id = ls.session_id
+                LEFT OUTER JOIN loggers.allocation a ON
+                ls.session_id = a.session_id
+                WHERE light.id = lig.id"
+
 
 #append dummy condition to ease later conditions
 deleteSessions <- "DELETE FROM loggers.logging_session
@@ -67,6 +93,9 @@ selectQuery <- "SELECT count(*) FROM loggers.logging_session as ls LEFT OUTER JO
 
 
 if(!is.null(colony)){
+  deleteTemp <- paste0(deleteTemp, "\nAND ls.colony = '", colony, "'")
+  deleteAct <- paste0(deleteAct, "\nAND ls.colony = '", colony, "'")
+  deleteLight <- paste0(deleteLight, "\nAND ls.colony = '", colony, "'")
   deleteSessions <- paste0(deleteSessions, "\nAND ls.colony = '", colony, "'")
   deleteStartups <- paste0(deleteStartups, "\nAND ls.colony = '", colony, "'")
   deleteMetadata <- paste0(deleteMetadata, "\nAND foo.colony = '", colony, "'")
@@ -74,6 +103,9 @@ if(!is.null(colony)){
 }
 
 if(!is.null(intendedLocation)){
+  deleteTemp <- paste0(deleteTemp, "\nAND a.intended_location = '", intendedLocation, "'")
+  deleteAct <- paste0(deleteAct, "\nAND a.intended_location = '", intendedLocation, "'")
+  deleteLight <- paste0(deleteLight, "\nAND a.intended_location = '", intendedLocation, "'")
   deleteSessions <- paste0(deleteSessions, "\nAND a.intended_location = '", intendedLocation, "'")
   deleteStartups <- paste0(deleteStartups, "\nAND a.intended_location = '", intendedLocation, "'")
   deleteMetadata <- paste0(deleteMetadata, "\nAND foo.intended_location = '", intendedLocation, "'")
@@ -82,6 +114,9 @@ if(!is.null(intendedLocation)){
 
 
 if(!is.null(year)){
+  deleteTemp <- paste0(deleteTemp, "\nAND ls.year_tracked = '", year, "'")
+  deleteAct <- paste0(deleteAct, "\nAND ls.year_tracked = '", year, "'")
+  deleteLight <- paste0(deleteLight, "\nAND ls.year_tracked = '", year, "'")
   deleteSessions <- paste0(deleteSessions, "\nAND ls.year_tracked = '", year, "'")
   deleteStartups <- paste0(deleteStartups, "\nAND ls.year_tracked = '", year, "'")
   deleteMetadata <- paste0(deleteMetadata, "\nAND foo.year_tracked = '", year, "'")
@@ -90,6 +125,9 @@ if(!is.null(year)){
 
 
 if(!is.null(species)){
+  deleteTemp <- paste0(deleteTemp, "\nAND ls.species = '", species, "'")
+  deleteAct <- paste0(deleteAct, "\nAND ls.species = '", species, "'")
+  deleteLight <- paste0(deleteLight, "\nAND ls.species = '", species, "'")
   deleteSessions <- paste0(deleteSessions, "\nAND ls.species = '", species, "'")
   deleteStartups <- paste0(deleteStartups, "\nAND ls.species = '", species, "'")
   deleteMetadata <- paste0(deleteMetadata, "\nAND foo.species = '", species, "'")
@@ -97,6 +135,9 @@ if(!is.null(species)){
 }
 
 if(!is.null(updatedAfter)){
+  deleteTemp <- paste0(deleteTemp, "\nAND ls.last_updated > '", updatedAfter, "'")
+  deleteAct <- paste0(deleteAct, "\nAND ls.last_updated > '", updatedAfter, "'")
+  deleteLight <- paste0(deleteLight, "\nAND ls.last_updated > '", updatedAfter, "'")
   deleteSessions <- paste0(deleteSessions, "\nAND ls.last_updated > '", updatedAfter, "'")
   deleteStartups <- paste0(deleteStartups, "\nAND ls.last_updated > '", updatedAfter, "'")
   deleteMetadata <- paste0(deleteMetadata, "\nAND m.last_updated > '", updatedAfter, "'")
@@ -104,6 +145,9 @@ if(!is.null(updatedAfter)){
 }
 
 if(!is.null(updatedBefore)){
+  deleteTemp <- paste0(deleteTemp, "\nAND ls.last_updated < '", updatedBefore, "'")
+  deleteAct <- paste0(deleteAct, "\nAND ls.last_updated < '", updatedBefore, "'")
+  deleteLight <- paste0(deleteLight, "\nAND ls.last_updated < '", updatedBefore, "'")
   deleteSessions <- paste0(deleteSessions, "\nAND ls.last_updated < '", updatedBefore, "'")
   deleteStartups <- paste0(deleteStartups, "\nAND ls.last_updated < '", updatedBefore, "'")
   deleteMetadata <- paste0(deleteMetadata, "\nAND m.last_updated < '", updatedBefore, "'")
@@ -111,6 +155,9 @@ if(!is.null(updatedBefore)){
 }
 
 if(!is.null(updatedBy)){
+  deleteTemp <- paste0(deleteTemp, "\nAND ls.updated_by = '", updatedBy, "'")
+  deleteAct <- paste0(deleteAct, "\nAND ls.updated_by = '", updatedBy, "'")
+  deleteLight <- paste0(deleteLight, "\nAND ls.updated_by = '", updatedBy, "'")
   deleteSessions <- paste0(deleteSessions, "\nAND ls.updated_by = '", updatedBy, "'")
   deleteStartups <- paste0(deleteStartups, "\nAND ls.updated_by = '", updatedBy, "'")
   deleteMetadata <- paste0(deleteMetadata, "\nAND m.updated_by = '", updatedBy, "'")
@@ -118,6 +165,9 @@ if(!is.null(updatedBy)){
 }
 
 if(!is.null(sessionId)){
+  deleteTemp <- paste0(deleteTemp, "\nAND ls.session_id = '", sessionId, "'")
+  deleteAct <- paste0(deleteAct, "\nAND ls.session_id = '", sessionId, "'")
+  deleteLight <- paste0(deleteLight, "\nAND ls.session_id = '", sessionId, "'")
   deleteSessions <- paste0(deleteSessions, "\nAND ls.session_id = '", sessionId, "'")
   deleteStartups <- paste0(deleteStartups, "\nAND ls.session_id = '", sessionId, "'")
   deleteMetadata <- paste0(deleteMetadata, "\nAND foo.session_id = '", sessionId, "'")
@@ -129,6 +179,9 @@ noAffectedRows <- DBI::dbGetQuery(con, selectQuery)
 
 if(isTRUE(force)){
   DBI::dbSendQuery(con, deleteMetadata)
+  DBI::dbSendQuery(con, deleteTemp)
+  DBI::dbSendQuery(con, deleteAct)
+  DBI::dbSendQuery(con, deleteLight)
   DBI::dbSendQuery(con, deleteStartups)
   DBI::dbSendQuery(con, deleteSessions)
 
@@ -139,6 +192,9 @@ if(isTRUE(force)){
 
   if(answer == 1){
     DBI::dbSendQuery(con, deleteMetadata)
+    DBI::dbSendQuery(con, deleteTemp)
+    DBI::dbSendQuery(con, deleteAct)
+    DBI::dbSendQuery(con, deleteLight)
     DBI::dbSendQuery(con, deleteStartups)
     DBI::dbSendQuery(con, deleteSessions)
 
