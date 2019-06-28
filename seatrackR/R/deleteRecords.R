@@ -27,7 +27,8 @@ deleteRecords <- function(colony = NULL,
                           updatedBefore = NULL,
                           updatedBy = NULL,
                           sessionId = NULL,
-                          force = F){
+                          force = FALSE,
+                          deleteOnlyRecordings = FALSE){
 
   checkCon()
 
@@ -178,27 +179,37 @@ if(!is.null(sessionId)){
 noAffectedRows <- DBI::dbGetQuery(con, selectQuery)
 
 if(isTRUE(force)){
+   if(isTrue(deleteOnlyRecordings)){
+    DBI::dbSendQuery(con, deleteMetadata)
+    DBI::dbSendQuery(con, deleteTemp)
+    DBI::dbSendQuery(con, deleteAct)
+  } else {
   DBI::dbSendQuery(con, deleteMetadata)
   DBI::dbSendQuery(con, deleteTemp)
   DBI::dbSendQuery(con, deleteAct)
   DBI::dbSendQuery(con, deleteLight)
   DBI::dbSendQuery(con, deleteStartups)
   DBI::dbSendQuery(con, deleteSessions)
-
+  }
 
 } else {
 
   answer <- menu(c("Yes (1)", "No (2)"), title = paste0("You are about to delete ", noAffectedRows[1,1], " records. Are you sure?"))
 
   if(answer == 1){
+
+    if(isTrue(deleteOnlyRecordings)){
+      DBI::dbSendQuery(con, deleteMetadata)
+      DBI::dbSendQuery(con, deleteTemp)
+      DBI::dbSendQuery(con, deleteAct)
+    } else {
     DBI::dbSendQuery(con, deleteMetadata)
     DBI::dbSendQuery(con, deleteTemp)
     DBI::dbSendQuery(con, deleteAct)
     DBI::dbSendQuery(con, deleteLight)
     DBI::dbSendQuery(con, deleteStartups)
     DBI::dbSendQuery(con, deleteSessions)
-
-
+    }
   }
 
 

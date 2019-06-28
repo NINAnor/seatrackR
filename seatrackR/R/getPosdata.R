@@ -109,7 +109,7 @@ getPosdata2 <- function(selectSpecies= NULL,
                        loadGeometries = F,
                        limit = F){
 
-  checkCon()
+  seatrackR:::checkCon()
 
   if(!limit == F & !is.numeric(limit)){
     stop("limit must be FALSE or a numeric value")
