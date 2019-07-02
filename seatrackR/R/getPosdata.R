@@ -106,6 +106,8 @@ getPosdata2 <- function(selectSpecies= NULL,
                        selectDataResponsible = NULL,
                        selectRingnumber = NULL,
                        selectYear = NULL,
+                       selectSession_id = NULL,
+                       selectIndivid_id = NULL,
                        loadGeometries = F,
                        limit = F){
 
@@ -137,6 +139,15 @@ getPosdata2 <- function(selectSpecies= NULL,
   if(!is.null(selectYear)){
     res <- res %>% filter(year_tracked %in% selectYear)
   }
+
+  if(!is.null(selectSession_id)){
+    res <- res %>% filter(session_id %in% selectSession_id)
+  }
+
+  if(!is.null(selectIndivid_id)){
+    res <- res %>% filter(individ_id %in% selectIndivid_id)
+  }
+
 
   if(!limit == F){
     res <- res %>% head(limit)

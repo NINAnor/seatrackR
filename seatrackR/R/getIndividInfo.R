@@ -52,6 +52,7 @@ query <-  sessions %>%
   select(session_id,
          colony,
          year_tracked,
+         individ_id,
          ring_number = ring_number.x,
          euring_code = euring_code.x,
          color_ring = color_ring.x,

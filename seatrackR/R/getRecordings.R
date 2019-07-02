@@ -104,8 +104,8 @@ getRecordings <- function(type = NULL,
 
   }
 
-  out <- dplyr::as_tibble(temp)
-
+  out <- temp %>% dplyr::collect()
+ #out <- dbplyr::sql_render(temp)
   return(out)
 }
 
