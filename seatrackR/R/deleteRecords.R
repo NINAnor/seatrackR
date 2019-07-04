@@ -227,16 +227,16 @@ noAffectedRowsLight <- DBI::dbGetQuery(con, selectQueryLight)
 
 if(isTRUE(force)){
    if(isTrue(deleteOnlyRecordings)){
-    DBI::dbSendQuery(con, deleteMetadata)
-    DBI::dbSendQuery(con, deleteTemp)
-    DBI::dbSendQuery(con, deleteAct)
+    DBI::dbExecute(con, deleteLight)
+    DBI::dbExecute(con, deleteTemp)
+    DBI::dbExecute(con, deleteAct)
   } else {
-  DBI::dbSendQuery(con, deleteMetadata)
-  DBI::dbSendQuery(con, deleteTemp)
-  DBI::dbSendQuery(con, deleteAct)
-  DBI::dbSendQuery(con, deleteLight)
-  DBI::dbSendQuery(con, deleteStartups)
-  DBI::dbSendQuery(con, deleteSessions)
+  DBI::dbExecute(con, deleteMetadata)
+  DBI::dbExecute(con, deleteTemp)
+  DBI::dbExecute(con, deleteAct)
+  DBI::dbExecute(con, deleteLight)
+  DBI::dbExecute(con, deleteStartups)
+  DBI::dbExecute(con, deleteSessions)
   }
 
 } else {
@@ -250,16 +250,16 @@ if(isTRUE(force)){
   if(answer == 1){
 
     if(isTRUE(deleteOnlyRecordings)){
-      DBI::dbSendQuery(con, deleteMetadata)
-      DBI::dbSendQuery(con, deleteTemp)
-      DBI::dbSendQuery(con, deleteAct)
+      DBI::dbExecute(con, deleteLight)
+      DBI::dbExecute(con, deleteTemp)
+      DBI::dbExecute(con, deleteAct)
     } else {
-    DBI::dbSendQuery(con, deleteMetadata)
-    DBI::dbSendQuery(con, deleteTemp)
-    DBI::dbSendQuery(con, deleteAct)
-    DBI::dbSendQuery(con, deleteLight)
-    DBI::dbSendQuery(con, deleteStartups)
-    DBI::dbSendQuery(con, deleteSessions)
+    DBI::dbExecute(con, deleteMetadata)
+    DBI::dbExecute(con, deleteTemp)
+    DBI::dbExecute(con, deleteAct)
+    DBI::dbExecute(con, deleteLight)
+    DBI::dbExecute(con, deleteStartups)
+    DBI::dbExecute(con, deleteSessions)
     }
   }
 
