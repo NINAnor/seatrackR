@@ -32,6 +32,7 @@ connectSeatrack <- function(Username = "testreader",
                             Password = "testreader",
                             host = "seatrack.nina.no",
                             dbname = "seatrack",
+                            bigint = "integer",
                             ...) {
 
 
