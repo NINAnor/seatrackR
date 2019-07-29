@@ -49,7 +49,7 @@ sfGmapPlot <- function(sf,
 
     # Coonvert the bbox to an sf polygon, transform it to 3857,
     # and convert back to a bbox (convoluted, but it works)
-    bbox_3857 <- st_bbox(st_transform(st_as_sfc(st_bbox(map_bbox, crs = 4326)), 3857))
+    bbox_3857 <- sf::st_bbox(sf::st_transform(sf::st_as_sfc(sf::st_bbox(map_bbox, crs = 4326)), 3857))
 
     # Overwrite the bbox of the ggmap object with the transformed coordinates
     attr(map, "bb")$ll.lat <- bbox_3857["ymin"]
@@ -64,10 +64,10 @@ sfGmapPlot <- function(sf,
   #names(bbox_4326) <- c("left", "bottom", "right", "top")
 
   if(sf::st_geometry_type(sf)[1] == "POINT"){
-  center <- apply(st_coordinates(sf), 2, mean)
+  center <- apply(sf::st_coordinates(sf), 2, mean)
   }
   if(sf::st_geometry_type(sf)[1] == "MULTIPOLYGON"){
-    suppressWarnings(center <- st_coordinates(st_centroid(st_union(nc))))
+    suppressWarnings(center <- sf::st_coordinates(sf::st_centroid(sf::st_union(nc))))
   }
 
   names(center) <- c("lon", "lat")
@@ -75,11 +75,11 @@ sfGmapPlot <- function(sf,
   suppressMessages(bg <- ggmap::get_map(location = center, zoom = zoom, maptype = maptype))
   bg <- ggmap_bbox(bg)
 
-  overlay <- st_transform(sf, 3857)
+  overlay <- sf::st_transform(sf, 3857)
 
   suppressMessages(
     ggmap(bg) +
-    coord_sf(crs = st_crs(3857)) + # force the ggplot2 map to be in 3857
+    coord_sf(crs = sf::st_crs(3857)) + # force the ggplot2 map to be in 3857
     geom_sf(data = overlay, col = color, inherit.aes = F)
   )
 

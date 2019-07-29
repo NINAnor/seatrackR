@@ -381,3 +381,25 @@ sampleTemperature <- temperatureRaw %>%
 
 writeRecordings(temperatureData = sampleTemperature)
 
+
+#sampleRingHistory (requires some data in the database)
+
+rn <- getIndividInfo() %>%
+  group_by(individ_id) %>%
+  select(individ_id,
+         current_euring_code = euring_code,
+         current_ring_number = ring_number,
+         current_ring_color = color_ring) %>%
+  slice(1) %>%
+   head(100)
+
+rn <- rn %>%
+  mutate(date_current_ring = "2017-01-01",
+         old_euring_code = "OLD",
+         old_ring_number = paste('OLD', current_ring_number),
+         old_ring_color = "BLACK",
+         date_old_ring = "1999-12-31")
+
+
+sampleRingHistory <- rn
+use_data(sampleRingHistory, overwrite = T)
