@@ -12,11 +12,12 @@
 
 
 
-getIndividInfo <- function(selectColony = NULL,
-               selectYear = NULL){
+getIndividInfo <- function(colony = NULL,
+                           year = NULL){
 
-  checkCon()
-
+  seatrackR:::checkCon()
+  selectColony <- colony
+  selectYear <- year
 
   sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 
@@ -45,7 +46,6 @@ getIndividInfo <- function(selectColony = NULL,
     sessions <- sessions %>% filter(year_tracked %in% selectYear)
   }
 
-##Not done. get only 270 records now. Check join! want to make sure the status updates are linked to the correct sessions.
 query <-  sessions %>%
   inner_join(status, by = c("session_id" = "session_id"))  %>%
   left_join(individs, by = c("individ_id" = "individ_id")) %>%

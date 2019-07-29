@@ -4,7 +4,7 @@
 \alias{getFileArchiveSummary}
 \title{Retrieve summary info on the registered raw-files}
 \usage{
-getFileArchiveSummary(selectColony = NULL, selectYear = NULL)
+getFileArchiveSummary(colony = NULL, year = NULL)
 }
 \value{
 Data frame.

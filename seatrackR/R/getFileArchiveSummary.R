@@ -10,9 +10,9 @@
 #' fileArchive <- getFileArchive()
 #' }
 
-getFileArchiveSummary <- function(selectColony = NULL,
-                           selectYear = NULL){
-  checkCon()
+getFileArchiveSummary <- function(colony = NULL,
+                           year = NULL){
+  seatrackR:::checkCon()
 
   res <- DBI::dbGetQuery(con,
   "SELECT f.file_id, f.session_id, ls.colony, ii.ring_number, ii.euring_code, ls.year_tracked, li.logger_serial_no, li.logger_model, f.filename
@@ -23,12 +23,12 @@ getFileArchiveSummary <- function(selectColony = NULL,
   ORDER BY file_id")  %>% as_tibble()
 
 
-if(!is.null(selectColony)){
-  res <- res %>% filter(colony %in% selectColony)
+if(!is.null(colony)){
+  res <- res %>% filter(colony %in% colony)
 }
 
-if(!is.null(selectYear)){
-  res <- res %>% filter(year_tracked %in% selectYear)
+if(!is.null(year)){
+  res <- res %>% filter(year_tracked %in% year)
 }
 
 return(res)
@@ -36,10 +36,10 @@ return(res)
 }
 
 ##Not finished. Need to code the filetypes into fewer categories
-getFileArchiveSummary2 <- function(selectColony = NULL,
-                                   selectYear = NULL){
+getFileArchiveSummary2 <- function(colony = NULL,
+                                   year = NULL){
 
-  checkCon()
+  seatrackR:::checkCon()
 
   fileQ <- "SELECT li.logger_id, li.logger_serial_no, li.logger_model, ls.year_tracked, date_part('year', r.retrieval_date) as year_retrieved,
   s.logging_mode, ii.ring_number, ii.euring_code, ls.colony, d.deployment_date as date_deployed, r.retrieval_date date_retrieved,
@@ -61,12 +61,12 @@ getFileArchiveSummary2 <- function(selectColony = NULL,
 
   res <- dbGetQuery(con, fileQ)
 
-  if(!is.null(selectColony)){
-    res <- res %>% filter(colony %in% selectColony)
+  if(!is.null(colony)){
+    res <- res %>% filter(colony %in% colony)
   }
 
-  if(!is.null(selectYear)){
-    res <- res %>% filter(year_tracked %in% selectYear)
+  if(!is.null(year)){
+    res <- res %>% filter(year_tracked %in% year)
   }
 
 

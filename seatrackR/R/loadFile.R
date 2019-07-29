@@ -20,8 +20,10 @@
 #' }
 #'
 
-loadFile <- function(filename = NULL, delim = ",", ...){
-  checkCon()
+loadFile <- function(filename = NULL,
+                     delim = ",",
+                     ...){
+  seatrackR:::checkCon()
 
   if(length(filename) != 1){
     stop("Need a single filename to load.")

@@ -4,24 +4,26 @@
 \alias{getRecordings}
 \title{Read logger recordings data}
 \usage{
-getRecordings(type = NULL, session_id = NULL, individ_id = NULL,
-  colony = NULL, species = NULL, year_tracked = NULL)
+getRecordings(type = NULL, sessionId = NULL, individId = NULL,
+  colony = NULL, species = NULL, yearTracked = NULL, asTibble = F)
 }
 \arguments{
 \item{type}{light, temperature, or activity. Default = "light".}
-
-\item{session_id}{subset data for a character vector of session ids}
-
-\item{individ_id}{subset data for a character vector of individual ids}
 
 \item{colony}{subset data for a character vector of colony names (International names)}
 
 \item{species}{subset data for a character vector of species}
 
+\item{asTibble}{Boolean. Return result as Tibble instead of lazy query?}
+
+\item{session_id}{subset data for a character vector of session ids}
+
+\item{individ_id}{subset data for a character vector of individual ids}
+
 \item{year_tracked}{subset data for a character vector of year_tracked (e.g. 2014_15)}
 }
 \value{
-Tibble.
+A Lazy query or optionally a Tibble.
 }
 \description{
 This is a convenience function that reads from the "activity" tables temperature, activity, and light in the schema Recordings

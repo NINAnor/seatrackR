@@ -15,7 +15,9 @@
 #' }
 
 
-writeIndividInfo <- function(individData, append = T, overwrite = FALSE){
+writeIndividInfo <- function(individData,
+                             append = T,
+                             overwrite = FALSE){
   checkCon()
   DBI::dbWithTransaction(
     con,

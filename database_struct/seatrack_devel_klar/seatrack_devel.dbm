@@ -182,13 +182,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<roles names="seatrack_writer,admin,testreader,shinyuser,hallvard_strom,sebastien_descamps,benjamin_merkel,conrad_helgeland,per_fauchald,testwriter,francoise_amelineau,arnaud_tarroux" role-type="member" />
 </role>
 
-<tablespace name="seatrack" directory="'/data/seatrack'">
+<tablespace name="seatrack" directory="'/data/seatrack'" sql-disabled="true">
 	<role name="seatrack_admin"/>
 </tablespace>
 
-<database name="seatrack_devel" encoding="UTF8" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" is-template="false" allow-conns="true">
+<database name="seatrack" encoding="UTF8" template="template0" lc-collate="en_US.UTF-8" lc-ctype="en_US.UTF-8" is-template="false" allow-conns="true">
 	<role name="admin"/>
-	<tablespace name="seatrack"/>
+	<tablespace name="pg_default"/>
 </database>
 
 <schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
@@ -5581,21 +5581,21 @@ END;
 	 src-required="false" dst-required="false"/>
 
 <permission>
-	<object name="seatrack_devel" type="database"/>
+	<object name="seatrack" type="database"/>
 	<privileges connect="true" temporary="true"/>
 </permission>
 <permission>
-	<object name="seatrack_devel" type="database"/>
+	<object name="seatrack" type="database"/>
 	<roles names="admin"/>
 	<privileges create="true" connect="true" temporary="true"/>
 </permission>
 <permission>
-	<object name="seatrack_devel" type="database"/>
+	<object name="seatrack" type="database"/>
 	<roles names="seatrack_reader"/>
 	<privileges connect="true"/>
 </permission>
 <permission>
-	<object name="seatrack_devel" type="database"/>
+	<object name="seatrack" type="database"/>
 	<roles names="seatrack_writer"/>
 	<privileges connect="true"/>
 </permission>

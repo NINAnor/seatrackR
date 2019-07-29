@@ -4,10 +4,13 @@
 \alias{getLoggerInfo}
 \title{View the view info table}
 \usage{
-getLoggerInfo()
+getLoggerInfo(asTibble = F)
+}
+\arguments{
+\item{asTibble}{Boolean. Return result as Tibble instead of Lazy query?}
 }
 \value{
-Data frame.
+Lazy query or optionally a Tibble.
 }
 \description{
 This is a convenience function that reads from the view "views.logger_info". Note that there also exists a table "loggers.logger_info" with more limited information.

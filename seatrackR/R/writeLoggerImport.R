@@ -16,7 +16,9 @@
 #' }
 
 
-writeLoggerImport <- function(loggerImport, append = T, overwrite = FALSE){
+writeLoggerImport <- function(loggerImport,
+                              append = T,
+                              overwrite = FALSE){
  checkCon()
   DBI::dbWithTransaction(
     con,

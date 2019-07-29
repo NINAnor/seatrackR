@@ -8,8 +8,9 @@
 #' @param colony subset data for a character vector of colony names (International names)
 #' @param species subset data for a character vector of species
 #' @param year_tracked subset data for a character vector of year_tracked (e.g. 2014_15)
+#' @param asTibble Boolean. Return result as Tibble instead of lazy query?
 #'
-#' @return Tibble.
+#' @return A Lazy query or optionally a Tibble.
 #' @export
 #' @examples
 #' dontrun{
@@ -20,11 +21,12 @@
 
 
 getRecordings <- function(type = NULL,
-                          session_id = NULL,
-                          individ_id = NULL,
+                          sessionId = NULL,
+                          individId = NULL,
                           colony = NULL,
                           species = NULL,
-                          year_tracked = NULL){
+                          yearTracked = NULL,
+                          asTibble = F){
   seatrackR:::checkCon()
 
   type <- match.arg(type, choices = c("light", "temperature", "activity"))
@@ -36,14 +38,14 @@ getRecordings <- function(type = NULL,
   temp <- sourceTbl %>%
     inner_join(sessionTbl, by = c("session_id" = "session_id"))
 
-  if(!is.null(session_id)){
-    sessionFilter <- as.character(session_id)
+  if(!is.null(sessionId)){
+    sessionFilter <- as.character(sessionId)
     temp <- temp %>%
       filter(session_id %in% sessionFilter)
   }
 
-  if(!is.null(individ_id)){
-    individFilter <- as.character(individ_id)
+  if(!is.null(individId)){
+    individFilter <- as.character(individId)
     temp <- temp %>%
       filter(individ_id.y %in% individFilter)
   }
@@ -60,8 +62,8 @@ getRecordings <- function(type = NULL,
       filter(species %in% speciesFilter)
   }
 
-  if(!is.null(year_tracked)){
-    yearFilter <- as.character(year_tracked)
+  if(!is.null(yearTracked)){
+    yearFilter <- as.character(yearTracked)
     temp <- temp %>%
       filter(year_tracked %in% yearFilter)
   }
@@ -104,9 +106,15 @@ getRecordings <- function(type = NULL,
 
   }
 
-  out <- temp %>% dplyr::collect()
+  res <- temp
+
+  if(asTibble){
+    res <- res %>% dplyr::collect()
+  }
+
+ #out <- temp %>% dplyr::collect()
  #out <- dbplyr::sql_render(temp)
-  return(out)
+  return(res)
 }
 
 

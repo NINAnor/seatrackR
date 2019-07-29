@@ -7,7 +7,7 @@
 getActiveSessions()
 }
 \value{
-Data frame.
+A tibble.
 }
 \description{
 This is a convenience function that reads from the view "views.active_logging_sessions. It simply lists all logging

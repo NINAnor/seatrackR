@@ -4,34 +4,38 @@
 \alias{getPosdata}
 \title{View the postable table}
 \usage{
-getPosdata(selectSpecies = NULL, selectColony = NULL,
-  selectDataResponsible = NULL, selectRingnumber = NULL,
-  selectYear = NULL, selectSession_id = NULL,
-  selectIndivid_id = NULL, loadGeometries = F, limit = F)
+getPosdata(species = NULL, colony = NULL, dataResponsible = NULL,
+  ringnumber = NULL, year = NULL, sessionId = NULL,
+  individId = NULL, loadGeometries = F, loadImportDate = T,
+  asTibble = F, limit = F)
 }
 \arguments{
-\item{selectSpecies}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
+\item{species}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
 The available choices can be seen in the column `species_name_eng` in the result from the function `getSpecies()`.}
 
-\item{selectColony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
+\item{colony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
 choices can be seen in the column `colony_int_name` in the result from the function `getColonies()`.}
 
-\item{selectDataResponsible}{Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
+\item{dataResponsible}{Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
 must conform to the name nomenclature used in the postable. Default is NULL. The available
 choices can be seen in the column `name` in the result from the function `getNames()`.}
 
-\item{selectRingnumber}{Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.}
+\item{ringnumber}{Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.}
 
-\item{selectYear}{Character string. Option to limit selection to one or more years that the logging sessions span. The availablle
+\item{year}{Character string. Option to limit selection to one or more years that the logging sessions span. The availablle
 choices can be found in the `year_tracked` column in the result form the `getYears` function.}
 
 \item{loadGeometries}{True, False. Should geometries be loaded from the columns lon_smooth2 and lat_smooth2?
 If True, the returned object is a simple features object with only rows of eqfilter3 == 1, and with lat_smooth2 and lon_smooth2 values. Default = False}
 
+\item{loadImportDate}{Boolean. Should results include the import date to the database? Default = True.}
+
+\item{asTibble}{Boolean. Should the result be given as a tibble instead of a lazy query? This is slower}
+
 \item{limit}{FALSE or Integer. Limit the number of rows returned to this number. Default = False.}
 }
 \value{
-Tibble of postable records. In the case of loadGeometries = T (default), also of class sf (simple feature) with geometries based on lat lon.
+A lazy query or optionally a tibble of postable records. In the case of loadGeometries = T (default), also of class sf (simple feature) with geometries based on lat lon.
 }
 \description{
 This is a convenience function that reads from the table "positions.postable".
@@ -41,9 +45,9 @@ This table contains the primary positions data.
 dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
 
-positions <- getPosdata(selectColony = "Kongsfjorden",
-                selectDataResponsible = "B_Moe",
-                selectSpecies = "Little auk",
+positions <- getPosdata(colony = "Kongsfjorden",
+                dataResponsible = "Sebastien Descamps",
+                species = "Little auk",
                 limit = F,
                 loadGeometries = F)
 

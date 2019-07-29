@@ -4,7 +4,7 @@
 \alias{getIndividInfo}
 \title{Retrieve info on the individuals}
 \usage{
-getIndividInfo(selectColony = NULL, selectYear = NULL)
+getIndividInfo(colony = NULL, year = NULL)
 }
 \value{
 Data frame.

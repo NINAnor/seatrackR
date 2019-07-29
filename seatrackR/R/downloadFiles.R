@@ -14,7 +14,9 @@
 #'
 
 
-downloadFiles <- function(files = NULL, destFolder = NULL, overwrite = F){
+downloadFiles <- function(files = NULL,
+                          destFolder = NULL,
+                          overwrite = F){
   seatrackR:::checkCon()
 
   if(!tibble::is_tibble(files)) files <- tibble::tibble(filename = files)

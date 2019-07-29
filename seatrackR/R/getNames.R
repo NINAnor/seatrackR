@@ -12,21 +12,22 @@
 #' }
 
 
-getNames <- function(){
-  checkCon()
+getNames <- function(asTibble = F){
+  seatrackR:::checkCon()
 
-  people <- dbReadTable(con, DBI::Id(schema = "metadata", table = "people"))
+  res <- dplyr::tbl(con, dbplyr::in_schema("metadata", "people"))
 
-  out <- as_tibble(people) %>%
+  res <- res %>%
     select(person_id,
            name,
            abbrev_name = abrev_name)
 
-  return(out)
+  if(asTibble){
+    res <- res  %>% as_tibble()
+  }
+
+  return(res)
 }
-
-
-#fileStatus <- listFileArchive()
 
 
 
