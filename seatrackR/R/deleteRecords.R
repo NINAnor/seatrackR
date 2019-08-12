@@ -9,7 +9,7 @@
 #' records that where last updated after this timestamp
 #' @param selectSpecies Character string. Option to limit selection to one or a set of species. Default is NULL.
 #' @param Force True, False (default = False). Skip confirmation check (for non interactive functionality)
-#' @param deleteRecordings True, False. Should activity, temperature, and light data also be deleted? Default it True.
+#'
 #' @return Status message
 #' @import dplyr
 #' @export
@@ -28,7 +28,7 @@ deleteRecords <- function(colony = NULL,
                           updatedBy = NULL,
                           sessionId = NULL,
                           force = FALSE,
-                          deleteRecordings = TRUE){
+                          deleteOnlyRecordings = FALSE){
 
   seatrackR:::checkCon()
 
@@ -226,14 +226,17 @@ noAffectedRowsAct <- DBI::dbGetQuery(con, selectQueryAct)
 noAffectedRowsLight <- DBI::dbGetQuery(con, selectQueryLight)
 
 if(isTRUE(force)){
-  DBI::dbExecute(con, deleteMetadata)
-  DBI::dbExecute(con, deleteStartups)
-  DBI::dbExecute(con, deleteSessions)
-
-  if(isTRUE(deleteRecordings)){
+   if(isTrue(deleteOnlyRecordings)){
     DBI::dbExecute(con, deleteLight)
     DBI::dbExecute(con, deleteTemp)
     DBI::dbExecute(con, deleteAct)
+  } else {
+  DBI::dbExecute(con, deleteMetadata)
+  DBI::dbExecute(con, deleteTemp)
+  DBI::dbExecute(con, deleteAct)
+  DBI::dbExecute(con, deleteLight)
+  DBI::dbExecute(con, deleteStartups)
+  DBI::dbExecute(con, deleteSessions)
   }
 
 } else {
@@ -245,14 +248,18 @@ if(isTRUE(force)){
                                                         "Are you sure?"))
 
   if(answer == 1){
-    DBI::dbExecute(con, deleteMetadata)
-    DBI::dbExecute(con, deleteStartups)
-    DBI::dbExecute(con, deleteSessions)
 
-    if(isTRUE(deleteRecordings)){
+    if(isTRUE(deleteOnlyRecordings)){
       DBI::dbExecute(con, deleteLight)
       DBI::dbExecute(con, deleteTemp)
       DBI::dbExecute(con, deleteAct)
+    } else {
+    DBI::dbExecute(con, deleteMetadata)
+    DBI::dbExecute(con, deleteTemp)
+    DBI::dbExecute(con, deleteAct)
+    DBI::dbExecute(con, deleteLight)
+    DBI::dbExecute(con, deleteStartups)
+    DBI::dbExecute(con, deleteSessions)
     }
   }
 
