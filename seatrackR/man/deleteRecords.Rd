@@ -7,11 +7,9 @@
 deleteRecords(colony = NULL, intendedLocation = NULL, year = NULL,
   species = NULL, updatedAfter = NULL, updatedBefore = NULL,
   updatedBy = NULL, sessionId = NULL, force = FALSE,
-  deleteRecordings = TRUE)
+  deleteActivity = TRUE)
 }
 \arguments{
-\item{deleteRecordings}{True, False. Should activity, temperature, and light data also be deleted? Default it True.}
-
 \item{selectSpecies}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.}
 
 \item{selectColony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL.}
