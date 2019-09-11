@@ -3,6 +3,34 @@
 #'
 #'
 
+
+upstartVersion <- function(){
+
+  pkg = "seatrackR"
+
+  installed_version <- tryCatch(packageVersion(gsub(".*/",
+                                                    "", pkg)), error = function(e) NA)
+
+  url <- "https://github.com/NINAnor/seatrack-db/tree/master/seatrackR/DESCRIPTION"
+
+  x <- readLines(url)
+  remote_version <- gsub("(.*)(Version: )(.*)(<.*)", "\\3", grep("Version:", x, value = T))
+
+  res <- list(package = pkg, installed_version = installed_version,
+              latest_version = remote_version, up_to_date = NA)
+
+  if (remote_version > installed_version) {
+    msg <- paste("##", pkg, "is out of date, latest version is",
+                 remote_version)
+    message(msg)
+    res$up_to_date <- FALSE
+
+
+  }
+}
+
+#upstartVersion
+
 checkCon <- function() {if(!exists("con")){ stop("No connection, run connectSeatrack()")} else{
   if(class(con)!= "PqConnection"){ stop("\"con\" is not of class \"PqConnection\". Have you run connectSeatrack()?")}
   if(!DBI::dbIsValid(con)) { stop("No connection, run connectSeatrack()")}
