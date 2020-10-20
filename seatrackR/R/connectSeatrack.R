@@ -58,6 +58,10 @@ connectSeatrack <- function(Username = "testreader",
   assign("con", tmp, .GlobalEnv)
   assign(".pass", Password, envir = passEnv)
 
+#Set the timezone to correspond to the database timezone
+Sys.setenv(TZ = "Europe/Oslo")
+
+
 }
 
 #' @export

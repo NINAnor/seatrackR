@@ -1,7 +1,7 @@
 Package: seatrackR
 Title: Interface functions for the Seatrack database
-Version: 0.0.2.23
-Date: 2020-10-05
+Version: 0.0.2.24
+Date: 2020-10-20
 Authors@R: person("Jens", "Astrom", email = "jens.astrom@nina.no", role = c("aut", "cre"))
 Description: R utility functions for interaction with the seatrack database. Of
     interest only to the project group.
@@ -20,7 +20,8 @@ Imports:
     ggplot2,
     tibble,
     dplyr (>= 0.7.4),
-    readr
+    readr,
+    lubridate
 Suggests:
     knitr,
     rmarkdown,
