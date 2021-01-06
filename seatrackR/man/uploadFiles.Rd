@@ -4,8 +4,7 @@
 \alias{uploadFiles}
 \title{Write files to the file archive}
 \usage{
-uploadFiles(files = NULL, originFolder = NULL, overwrite = F,
-  verbose = F)
+uploadFiles(files = NULL, originFolder = NULL, overwrite = F, verbose = F)
 }
 \value{
 Status messages on the actions taken for each file.

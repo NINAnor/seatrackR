@@ -4,10 +4,19 @@
 \alias{getPosdata}
 \title{View the postable table}
 \usage{
-getPosdata(species = NULL, colony = NULL, dataResponsible = NULL,
-  ringnumber = NULL, year = NULL, sessionId = NULL,
-  individId = NULL, loadGeometries = F, loadImportDate = T,
-  asTibble = F, limit = F)
+getPosdata(
+  species = NULL,
+  colony = NULL,
+  dataResponsible = NULL,
+  ringnumber = NULL,
+  year = NULL,
+  sessionId = NULL,
+  individId = NULL,
+  loadGeometries = F,
+  loadImportDate = T,
+  asTibble = T,
+  limit = F
+)
 }
 \arguments{
 \item{species}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
@@ -30,7 +39,7 @@ If True, the returned object is a simple features object with only rows of eqfil
 
 \item{loadImportDate}{Boolean. Should results include the import date to the database? Default = True.}
 
-\item{asTibble}{Boolean. Should the result be given as a tibble instead of a lazy query? This is slower}
+\item{asTibble}{Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is slower, but also here forces the timezone to "UTC".}
 
 \item{limit}{FALSE or Integer. Limit the number of rows returned to this number. Default = False.}
 }

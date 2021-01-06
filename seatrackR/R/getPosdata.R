@@ -17,7 +17,7 @@
 #' If True, the returned object is a simple features object with only rows of eqfilter3 == 1, and with lat_smooth2 and lon_smooth2 values. Default = False
 #' @param limit FALSE or Integer. Limit the number of rows returned to this number. Default = False.
 #' @param loadImportDate Boolean. Should results include the import date to the database? Default = True.
-#' @param asTibble Boolean. Should the result be given as a tibble instead of a lazy query? This is slower
+#' @param asTibble Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is slower, but also here forces the timezone to "UTC".
 #' @return A lazy query or optionally a tibble of postable records. In the case of loadGeometries = T (default), also of class sf (simple feature) with geometries based on lat lon.
 #' @import dplyr
 #' @export
@@ -52,7 +52,7 @@ getPosdata <- function(species= NULL,
                        individId = NULL,
                        loadGeometries = F,
                        loadImportDate = T,
-                       asTibble = F,
+                       asTibble = T,
                        limit = F){
 
   seatrackR:::checkCon()
@@ -107,6 +107,11 @@ getPosdata <- function(species= NULL,
 
   if(asTibble){
     res <- res %>% dplyr::collect()
+
+    #Force timezone on date_time to UTC
+    res <- res %>%
+      mutate(date_time = lubridate::force_tz(date_time,
+                                             tzone = "UTC"))
   }
 
   if(loadGeometries == T){
@@ -120,6 +125,8 @@ getPosdata <- function(species= NULL,
                                 crs = 4326,
                                 remove = F)
   }
+
+
 
   return(res)
 

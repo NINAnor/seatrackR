@@ -2,20 +2,20 @@
 #'
 #' This is a convenience function that reads from the "activity" tables temperature, activity, and light in the schema Recordings
 #'
-#' @param type light, temperature, or activity. Default = "light".
+#' @param type light, temperature, or activity as a character. Default = "light".
 #' @param session_id subset data for a character vector of session ids
 #' @param individ_id subset data for a character vector of individual ids
 #' @param colony subset data for a character vector of colony names (International names)
 #' @param species subset data for a character vector of species
 #' @param year_tracked subset data for a character vector of year_tracked (e.g. 2014_15)
-#' @param asTibble Boolean. Return result as Tibble instead of lazy query?
+#' @param asTibble Boolean. Return result as Tibble instead of lazy query? Tibble is slower, but also here forces the timezone to "UTC".
 #'
 #' @return A Lazy query or optionally a Tibble.
 #' @export
 #' @examples
 #' dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
-#' getRecordings(type = temperature,
+#' getRecordings(type = "temperature",
 #'              colony = "Sklinna")
 #' }
 
@@ -26,12 +26,12 @@ getRecordings <- function(type = NULL,
                           colony = NULL,
                           species = NULL,
                           yearTracked = NULL,
-                          asTibble = F){
+                          asTibble = T){
   seatrackR:::checkCon()
 
   type <- match.arg(type, choices = c("light", "temperature", "activity"))
 
-  sourceTbl <- dplyr::tbl(con, dbplyr::in_schema("Recordings", type))
+  sourceTbl <- dplyr::tbl(con, dbplyr::in_schema("recordings", type))
   sessionTbl <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 
 
@@ -110,10 +110,16 @@ getRecordings <- function(type = NULL,
 
   if(asTibble){
     res <- res %>% dplyr::collect()
+
+    #Force timezone on date_time to UTC
+    res <- res %>%
+      mutate(date_time = lubridate::force_tz(date_time,
+                                             tzone = "UTC"))
   }
 
- #out <- temp %>% dplyr::collect()
- #out <- dbplyr::sql_render(temp)
+
+
+
   return(res)
 }
 

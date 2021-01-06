@@ -18,6 +18,6 @@ seatrackR/.Rhistory
 seatrackR/.RData
 seatrackR/.Rdata
 seatrackR/temp
-
+*.tar.gz
 
 

@@ -4,17 +4,24 @@
 \alias{getRecordings}
 \title{Read logger recordings data}
 \usage{
-getRecordings(type = NULL, sessionId = NULL, individId = NULL,
-  colony = NULL, species = NULL, yearTracked = NULL, asTibble = F)
+getRecordings(
+  type = NULL,
+  sessionId = NULL,
+  individId = NULL,
+  colony = NULL,
+  species = NULL,
+  yearTracked = NULL,
+  asTibble = T
+)
 }
 \arguments{
-\item{type}{light, temperature, or activity. Default = "light".}
+\item{type}{light, temperature, or activity as a character. Default = "light".}
 
 \item{colony}{subset data for a character vector of colony names (International names)}
 
 \item{species}{subset data for a character vector of species}
 
-\item{asTibble}{Boolean. Return result as Tibble instead of lazy query?}
+\item{asTibble}{Boolean. Return result as Tibble instead of lazy query? Tibble is slower, but also here forces the timezone to "UTC".}
 
 \item{session_id}{subset data for a character vector of session ids}
 
@@ -31,7 +38,7 @@ This is a convenience function that reads from the "activity" tables temperature
 \examples{
 dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
-getRecordings(type = temperature,
+getRecordings(type = "temperature",
              colony = "Sklinna")
 }
 }
