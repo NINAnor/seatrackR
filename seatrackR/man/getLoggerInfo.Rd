@@ -4,10 +4,10 @@
 \alias{getLoggerInfo}
 \title{View the view info table}
 \usage{
-getLoggerInfo(asTibble = F)
+getLoggerInfo(asTibble = T)
 }
 \arguments{
-\item{asTibble}{Boolean. Return result as Tibble instead of Lazy query?}
+\item{asTibble}{Boolean. Return result as Tibble instead of Lazy query? Tibble is slower, but also here forces the timezone to "UTC".}
 }
 \value{
 Lazy query or optionally a Tibble.

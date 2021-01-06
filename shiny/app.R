@@ -348,7 +348,7 @@ server = (function(input, output,session) {
          input$ring_number =="All" &
          input$daterange[1] == "2010-01-01"
          ) {
-        fetch.q <- "SELECT * FROM positions.postable TABLESAMPLE SYSTEM_ROWS(700)
+        fetch.q <- "SELECT * FROM views.postable TABLESAMPLE SYSTEM_ROWS(700)
                     WHERE eqfilter3 = 1
                     AND lon_smooth2 is not null
                     AND lat_smooth2 is not null"
@@ -398,7 +398,7 @@ server = (function(input, output,session) {
     ##ring_number as name, species, date_time, lat_smooth2 as lat, lon_smooth2 as lon
 
     fetch.q<-paste("SELECT *
-                   FROM positions.postable",
+                   FROM views.postable",
                    group.sub,
                    date_range,
                    colony.sub,

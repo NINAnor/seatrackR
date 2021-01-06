@@ -4,8 +4,13 @@
 \alias{writeRecordings}
 \title{Update light, temperature or activity data}
 \usage{
-writeRecordings(lightData = NULL, activityData = NULL,
-  temperatureData = NULL, append = T, overwrite = FALSE)
+writeRecordings(
+  lightData = NULL,
+  activityData = NULL,
+  temperatureData = NULL,
+  append = T,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{lightData}{A named vector or data frame that fits the light table in schema recordings}
