@@ -4,7 +4,9 @@
 \name{posdata}
 \alias{posdata}
 \title{Example posdata file}
-\format{A data frame with 12246 rows and 39 variables:}
+\format{
+A data frame with 12246 rows and 39 variables:
+}
 \source{
 Vegard Bråthen
 }

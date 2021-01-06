@@ -2,7 +2,7 @@
 #'
 #' This is a convenience function that reads from the "activity" tables temperature, activity, and light in the schema Recordings
 #'
-#' @param type light, temperature, or activity. Default = "light".
+#' @param type light, temperature, or activity as a character. Default = "light".
 #' @param session_id subset data for a character vector of session ids
 #' @param individ_id subset data for a character vector of individual ids
 #' @param colony subset data for a character vector of colony names (International names)
@@ -15,7 +15,7 @@
 #' @examples
 #' dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
-#' getRecordings(type = temperature,
+#' getRecordings(type = "temperature",
 #'              colony = "Sklinna")
 #' }
 
@@ -31,7 +31,7 @@ getRecordings <- function(type = NULL,
 
   type <- match.arg(type, choices = c("light", "temperature", "activity"))
 
-  sourceTbl <- dplyr::tbl(con, dbplyr::in_schema("Recordings", type))
+  sourceTbl <- dplyr::tbl(con, dbplyr::in_schema("recordings", type))
   sessionTbl <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 
 

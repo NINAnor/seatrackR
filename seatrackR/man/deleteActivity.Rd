@@ -4,13 +4,19 @@
 \alias{deleteActivity}
 \title{Delete activity data from the database, based on subselection criteria}
 \usage{
-deleteActivity(colony = NULL, intendedLocation = NULL, year = NULL,
-  species = NULL, updatedAfter = NULL, updatedBefore = NULL,
-  updatedBy = NULL, sessionId = NULL, force = FALSE)
+deleteActivity(
+  colony = NULL,
+  intendedLocation = NULL,
+  year = NULL,
+  species = NULL,
+  updatedAfter = NULL,
+  updatedBefore = NULL,
+  updatedBy = NULL,
+  sessionId = NULL,
+  force = FALSE
+)
 }
 \arguments{
-\item{selectSpecies}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.}
-
 \item{selectColony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL.}
 
 \item{selectUpdateTime}{Timestamp or character string that can be interpreted as a timestamp through as.POSIXct. Delete only

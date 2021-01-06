@@ -4,9 +4,14 @@
 \alias{connectSeatrack}
 \title{Connect to seatrack database}
 \usage{
-connectSeatrack(Username = "testreader", Password = "testreader",
-  host = "seatrack.nina.no", dbname = "seatrack", bigint = "integer",
-  ...)
+connectSeatrack(
+  Username = "testreader",
+  Password = "testreader",
+  host = "seatrack.nina.no",
+  dbname = "seatrack",
+  bigint = "integer",
+  ...
+)
 }
 \arguments{
 \item{Username}{Character. Default = seatrack_reader}
