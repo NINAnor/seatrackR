@@ -29,15 +29,15 @@ This is a collection of functions to check the integrity of the metadata table b
 }
 \section{Functions}{
 \itemize{
-\item \code{checkRetrievedMatchDeployed}: Check loggers to be deployed or retrieved is in an open logging session
+\item \code{checkRetrievedMatchDeployed()}: Check loggers to be deployed or retrieved is in an open logging session
 
-\item \code{checkOpenSession}: Check loggers to be deployed or retrieved is in an open logging session
+\item \code{checkOpenSession()}: Check loggers to be deployed or retrieved is in an open logging session
 
-\item \code{checkLoggers}: Check if loggers are registered in the loggers.logger_info table
+\item \code{checkLoggers()}: Check if loggers are registered in the loggers.logger_info table
 
-\item \code{checkNames}: Check if names in data_responsible exists in the metadata.people table.
+\item \code{checkNames()}: Check if names in data_responsible exists in the metadata.people table.
+
 }}
-
 \examples{
 dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")

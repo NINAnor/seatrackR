@@ -15,8 +15,10 @@
 uploadFiles <- function(files = NULL,
                         originFolder = NULL,
                         overwrite = F,
-                        verbose = F){
-  checkCon()
+                        ...){
+  #Verbose doesn't work
+
+  seatrackR:::checkCon()
 
   current_user <- DBI::dbGetQuery(con, "SELECT current_user")
 
@@ -28,7 +30,7 @@ uploadFiles <- function(files = NULL,
   current_roles <- current_roles[,1]
 
 
-     if(!("admin" %in% current_roles || "seatrack_writer" %in% current_roles)) stop("Connected user needs to be part of seatrack_writer or admin group")
+  if(!("admin" %in% current_roles || "seatrack_writer" %in% current_roles)) stop("Connected user needs to be part of seatrack_writer or admin group")
 
   if(!tibble::is_tibble(files)) files <- tibble::as_tibble(files)
 
@@ -39,110 +41,61 @@ uploadFiles <- function(files = NULL,
   } else {
 
 
-  url <- seatrackR:::.getFtpUrl()
+    url <- seatrackR:::.getFtpUrl()
 
-  writeFile <- function(x,
-                        url,
-                        originFolder = originFolder,
-                        verbose = verbose){
+    writeFile <- function(x,
+                          url,
+                          originFolder = originFolder,
+                          ...){
 
-    if(!is.null(originFolder)){
-      filename <- paste0(originFolder, "/", x)
-    } else {
-      filename <- paste(x)
+      if(!is.null(originFolder)){
+        filename <- paste0(originFolder, "/", x)
+      } else {
+        filename <- paste(x)
+      }
+
+      if(!file.exists(filename)){
+        warning(paste("Cannot find file: ", filename ))
+        return(paste0("File not uploaded: ", filename))
+      } else {
+
+        tmp <- strsplit(url$url, "//")
+        getUrl <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2],"/" , x)
+
+        getHandle <- httr::handle(getUrl)
+        filePkg <- httr::upload_file(filename)
+
+        mess  <- lapply(getUrl, seatrackR:::factory(function(x){
+
+          RCurl::ftpUpload(what = filename,
+                           to = getUrl,
+                           asText = FALSE,
+                           use.ssl = TRUE,
+                           ssl.verifypeer = FALSE,
+                           sslversion = 6L,
+                           ...)
+
+        }
+
+        ))
+
+
+        if(any(grepl("OK", attr(mess[[1]][[1]], "names")))){
+          return(paste0("File uploaded: ", x))
+        }
+
+
+      }
+
     }
 
-    if(!file.exists(filename)){
-      warning(paste("Cannot find file: ", filename ))
-      return(paste0("File not uploaded: ", filename))
-    } else {
-
-    tmp <- strsplit(url$url, "//")
-    getUrl <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2],"/" , x)
-
-    getHandle <- httr::handle(getUrl)
-    filePkg <- httr::upload_file(filename)
-
-    mess  <- lapply(getUrl, factory(function(x){
-      httr::with_config(httr::config(ssl_verifypeer = F,
-                                                    ssl_verifyhost = F,
-                                                    use_ssl = T,
-                                                    upload = T,
-                                                    filetime = F), httr::PUT(getUrl, body = filePkg))
-      }))
 
 
-    if(any(grepl("File successfully transferred", mess[[1]]$warn))){
-      return(paste0("File uploaded: ", x))
-    }
+    apply(files, 1, function(x) writeFile(x = x, url = url, originFolder = originFolder))
 
-
-    }
-
-  }
-
-    # with_config(httr::config(ssl_verifypeer = F,
-    #                           ssl_verifyhost = F,
-    #                           use_ssl = T,
-    #                          upload = T,
-    #                          filetime = F), PUT(getUrl, body = filePkg))
-    #
-  #
-  #   with_config(httr::config(ssl_verifypeer = F,
-  #                            ssl_verifyhost = F,
-  #                            use_ssl = T,
-  #                            upload = T,
-  #                            ftp_use_epsv = TRUE,
-  #                            filetime = F), PUT(
-  #     url = getUrl,
-  #     body = upload_file(
-  #       path =  path.expand("temp/test4.txt"),
-  #       type = 'text/csv'),
-  #     verbose()
-  #   )
-  #   )
-  #
-  #   ##PUT to existing file works, but not to new filename MDTM test4.txt
-  #
-  #   toPut <- form_file(filename)
-  #   put_files <- curl::new_handle()
-  #
-  #   curl::handle_setopt(put_files,
-  #                       ftp_use_epsv = TRUE,
-  #                       upload = TRUE,
-  #                       use_ssl = T,
-  #                       ssl_verifyhost = F,
-  #                       ssl_verifypeer = F,
-  #                       upload = T
-  #                     )
-  #
-  #
-  #
-  #   con <- curl::curl(url = getUrl, toPut, open = "r", handle = put_files)
-  #
-  #   filesInStorage <- readLines(con)
-  #   close(con)
-  #
-  #   ##LOGIN WORKS BUT SOMEHOW retr fails
-  #
-  #   a <- RCurl::ftpUpload(what = filename,
-  #                         to = getUrl,
-  #                         ftpsslauth = T,
-  #                         ftp.ssl = T,
-  #                         ssl.verifypeer = F,
-  #                         ssl.verifyhost = F,
-  #                         verbose = verbose)
-  #
-  #   if(a == 0){
-  #     return(paste0("File uploaded: ", filename))
-  #   } else
-  #   return(a)
-  # }
-
-  apply(files, 1, function(x) writeFile(x = x, url = url, originFolder = originFolder))
-
-  ##Handle messages like in download
+    ##Handle messages like in download, not finished
 
   }
 
 }
+
