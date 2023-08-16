@@ -11,10 +11,11 @@ upstartVersion <- function(){
   installed_version <- tryCatch(packageVersion(gsub(".*/",
                                                     "", pkg)), error = function(e) NA)
 
-  url <- "https://github.com/NINAnor/seatrack-db/tree/master/seatrackR/DESCRIPTION"
-
+  url <- "https://raw.githubusercontent.com/NINAnor/seatrack-db/master/seatrackR/DESCRIPTION"
   x <- readLines(url)
-  remote_version <- gsub("(.*)(Version: )(.*)(<.*)", "\\3", grep("Version:", x, value = T))
+
+  remote_version <- gsub("(Version: )(.*)", "\\2", grep("Version:", x, value = T))
+
 
   res <- list(package = pkg, installed_version = installed_version,
               latest_version = remote_version, up_to_date = NA)

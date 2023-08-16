@@ -23,7 +23,7 @@ connectSeatrack(
 \item{dbname}{Character. Name of database, for testing purposes. Default is "seatrack" which is the production database.}
 
 \item{check_interrupts}{True/False. Should user interrupts be checked during the query execution (before
-first row of data is available)? Setting to `TRUE` allows interruption of queries
+first row of data is available)? Setting to \code{TRUE} allows interruption of queries
 running too long.}
 }
 \value{

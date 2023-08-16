@@ -1,33 +1,31 @@
 Package: seatrackR
 Title: Interface functions for the Seatrack database
 Version: 0.0.2.27
-Date: 2023-08-15
-Authors@R: person("Jens", "Astrom", email = "jens.astrom@nina.no", role = c("aut", "cre"))
-Description: R utility functions for interaction with the seatrack database. Of
-    interest only to the project group.
-Depends:
-    DBI,
-    dplyr,
-    dbplyr
-License: GPL-3
+Authors@R: 
+    person("Jens", "Åström", , "jens.astrom@nina.no", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-6114-0440"))
+Description: R utility functions for interaction with the seatrack database. 
+License: GPL (>= 3)
 Encoding: UTF-8
-LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-Imports:
-    DBI,
-    RPostgres,
-    ggplot2,
-    tibble,
-    dplyr (>= 0.7.4),
-    readr,
-    lubridate
-Suggests:
+Suggests: 
     knitr,
     rmarkdown,
-    tidyverse,
-    dbplyr,
-    R.rsp
+	  tidyverse,
+	  dbplyr,
+  	R.rsp
+Imports:
+  	DBI,
+  	RPostgres,
+  	ggplot2,
+  	tibble,
+  	dbplyr,
+  	readr,
+  	lubridate	
+Depends:
+    rlang
 VignetteBuilder: 
-    R.rsp,
-    knitr
+	  R.scp,
+	  knitr
     

@@ -7,7 +7,7 @@
 writePostable(positionData)
 }
 \arguments{
-\item{positionData}{A list of position data to be read into the postable in the database. Usually created by `loadPosdata`.}
+\item{positionData}{A list of position data to be read into the postable in the database. Usually created by \code{loadPosdata}.}
 }
 \value{
 Data frame.
