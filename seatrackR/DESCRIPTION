@@ -1,12 +1,11 @@
 Package: seatrackR
 Title: Interface functions for the Seatrack database
-Version: 0.2.27
+Version: 0.0.2.27
 Date: 2023-08-15
 Authors@R: person("Jens", "Astrom", email = "jens.astrom@nina.no", role = c("aut", "cre"))
 Description: R utility functions for interaction with the seatrack database. Of
     interest only to the project group.
 Depends:
-    R (>= 3.3.1),
     DBI,
     dplyr,
     dbplyr
@@ -28,4 +27,7 @@ Suggests:
     tidyverse,
     dbplyr,
     R.rsp
-VignetteBuilder: R.rsp
+VignetteBuilder: 
+    R.rsp,
+    knitr
+    
