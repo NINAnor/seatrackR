@@ -374,9 +374,9 @@ sampleTemperature <- temperatureRaw %>%
          date_time = as_datetime(date_time)) %>%
   select(filename,
          date_time,
-         wet_min,
-         wet_max,
-         wet_mean,
+         wet_temp_min,
+         wet_temp_max,
+         wet_temp_mean,
          num_samples)
 
 writeRecordings(temperatureData = sampleTemperature)

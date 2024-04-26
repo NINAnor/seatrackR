@@ -86,9 +86,9 @@ getRecordings <- function(type = NULL,
              individ_id = individ_id.x,
              filename,
              date_time,
-             wet_min,
-             wet_max,
-             wet_mean,
+             wet_temp_min,
+             wet_temp_max,
+             wet_temp_mean,
              num_samples
       )
 
