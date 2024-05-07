@@ -15,6 +15,7 @@
 #'
 #' }
 #'
+
 pruneRecordings <- function(
     pruneLight = TRUE,
     pruneActivity = TRUE,
@@ -74,27 +75,27 @@ pruneRecordings <- function(
                       pruneLightQ)
     }
 
-    if(isTrue(pruneActivity)){
+    if(isTRUE(pruneActivity)){
       message("Deleting orphaned rows in activity table.")
 
       dbSendStatement(con,
                       pruneActivityQ)
     }
 
-    if(isTrue(pruneTemperature)){
+    if(isTRUE(pruneTemperature)){
       message("Deleting orphaned rows in temperature table.")
 
       dbSendStatement(con,
-                      temperatureQ)
+                      pruneTemperatureQ)
     }
 
   } else {
 
-  if(any(pruneLight, pruneActivity)){
+  if(any(pruneLight, pruneActivity, pruneTemperature)){
     answer <- menu(c("Yes (1)", "No (2)"),
-                   title = paste0("Pruning light AND/OR activity will take several minutes, proceed?"))
+                   title = paste0("Pruning will take several minutes, especially if pruning light or activity, proceed?"))
 
-    if(answer == 1){
+    if(answer == 2) {stop("Quitting...")} else {
 
       if(isTRUE(pruneLight)){
         message("Deleting orphaned rows in light table.")
@@ -103,18 +104,18 @@ pruneRecordings <- function(
                         pruneLightQ)
       }
 
-      if(isTrue(pruneActivity)){
+      if(isTRUE(pruneActivity)){
         message("Deleting orphaned rows in activity table.")
 
         dbSendStatement(con,
                         pruneActivityQ)
       }
 
-      if(isTrue(pruneTemperature)){
+      if(isTRUE(pruneTemperature)){
         message("Deleting orphaned rows in temperature table.")
 
         dbSendStatement(con,
-                        temperatureQ)
+                        pruneTemperatureQ)
       }
 
     }
