@@ -1,4 +1,4 @@
-file_name	session_id	individ_id	date_time	wet_min	wet_max	wet_mean	num_samples
+file_name	session_id	individ_id	date_time	wet_temp_min	wet_temp_max	wet_temp_mean	num_samples
 22005_2011_mk15	271257	NA	18/07/2010 10:37	NA	NA	11.875	NA
 22013_2012_mk15	271258	NA	13/07/2010 00:28	NA	NA	12.5	NA
 22020_2011_mk15	271259	NA	13/07/2010 11:24	NA	NA	13	NA
