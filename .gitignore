@@ -20,5 +20,6 @@ seatrackR/.Rdata
 seatrackR/temp
 *.tar.gz
 temp/
+*.xlsx
 
 
