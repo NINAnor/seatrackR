@@ -1,4 +1,4 @@
-#' Update the positions.IRMA
+#' Update the table positions.gps_raw
 #'
 #' This is a convenience function that writes to the "positions.postable" table, the main table for the position data.
 #'
@@ -22,12 +22,12 @@
 #'
 #' summary(toImport)
 #'
-#' writeIRMA(toImport)
+#' writeGPS(toImport)
 #'
 #' }
 
 
-writeIRMA <- function(positionData){
+writeGPS <- function(positionData){
   seatrackR:::checkCon()
 
   nRowsToImport <- sum(unlist(lapply(positionData, nrow)))
@@ -42,15 +42,15 @@ writeIRMA <- function(positionData){
   DBI::dbWithTransaction(
     con,
     {
-      nRowsBefore <- DBI::dbGetQuery(con, "SELECT count(*) FROM positions.irma_raw")
+      nRowsBefore <- DBI::dbGetQuery(con, "SELECT count(*) FROM positions.gps_raw")
       DBI::dbSendQuery(con, "SET search_path TO positions, public")
 
       for(i in 1:length(positionData)){
-        dbWriteTable(con, "irma_raw", positionData[[i]], row.names=F, append=T)
+        dbWriteTable(con, "gps_raw", positionData[[i]], row.names=F, append=T)
       }
 
 
-      nRowsAfter <- DBI::dbGetQuery(con, "SELECT count(*) FROM positions.irma_raw")
+      nRowsAfter <- DBI::dbGetQuery(con, "SELECT count(*) FROM positions.gps_raw")
 
       nRowsImported <- nRowsAfter - nRowsBefore
 
