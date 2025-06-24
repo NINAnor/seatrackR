@@ -36,6 +36,9 @@ updateViews <- function(){
   if(answer == 1){
     upd <- DBI::dbSendStatement(con, "SELECT functions.fn_manual_update_materialized_views_on_postable_update()")
     DBI::dbClearResult(upd)
+
+    upd <- DBI::dbSendStatement(con, "SELECT functions.fn_manual_update_materialized_views_on_postable_update2()")
+    DBI::dbClearResult(upd)
   }
 
 
