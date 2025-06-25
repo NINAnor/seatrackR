@@ -43,6 +43,8 @@
 #'
 #' }
 #' @export
+#'
+
 getPosdata <- function(species= NULL,
                        colony = NULL,
                        dataResponsible = NULL,
@@ -68,11 +70,11 @@ getPosdata <- function(species= NULL,
   postable <- tbl(con, dbplyr::in_schema("views", "postable"))
   res <- postable
 
-  if(!is.null(selectSpecies)){
+  if(!is.null(species)){
     res <- res %>% filter(species %in% selectSpecies)
   }
 
-  if(!is.null(selectColony)){
+  if(!is.null(colony)){
     res <- res %>% filter(colony %in% selectColony)
   }
 
@@ -124,6 +126,93 @@ getPosdata <- function(species= NULL,
       sf::st_as_sf(coords = c("lon_smooth2", "lat_smooth2"),
                                 crs = 4326,
                                 remove = F)
+  }
+
+
+
+  return(res)
+
+}
+
+
+getPosdata2 <- function(species= NULL,
+                       colony = NULL,
+                       dataResponsible = NULL,
+                       ringnumber = NULL,
+                       year = NULL,
+                       sessionId = NULL,
+                       individId = NULL,
+                       loadGeometries = F,
+                       loadLastUpdated = T,
+                       asTibble = T,
+                       limit = F){
+
+  seatrackR:::checkCon()
+
+  selectSpecies <- species
+  selectColony <- colony
+
+
+  if(!limit == F & !is.numeric(limit)){
+    stop("limit must be FALSE or a numeric value")
+  }
+
+  postable <- tbl(con, dbplyr::in_schema("positions", "postable2"))
+  res <- postable
+
+  if(!is.null(selectSpecies)){
+    res <- res %>% filter(species %in% selectSpecies)
+  }
+
+  if(!is.null(selectColony)){
+    res <- res %>% filter(colony %in% selectColony)
+  }
+
+  if(!is.null(dataResponsible)){
+    res <- res %>% filter(data_responsible %in% dataResponsible)
+  }
+
+  if(!is.null(ringnumber)){
+    res <- res %>% filter(ring_number %in% ringnumber)
+  }
+
+  if(!is.null(year)){
+    res <- res %>% filter(year_tracked %in% year)
+  }
+
+  if(!is.null(sessionId)){
+    res <- res %>% filter(session_id %in% sessionId)
+  }
+
+  if(!is.null(individId)){
+    res <- res %>% filter(individ_id %in% individId)
+  }
+
+
+  if(!loadLastUpdated){
+    res <- res %>% select(-c('last_updated', 'updated_by'))
+  }
+
+  if(!limit == F){
+    res <- res %>% head(limit)
+  }
+
+  if(asTibble){
+    res <- res %>% dplyr::collect()
+
+    #Force timezone on date_time to UTC
+    res <- res %>%
+      mutate(date_time = lubridate::force_tz(date_time,
+                                             tzone = "UTC"))
+  }
+
+  if(loadGeometries == T){
+
+    res <- res %>%
+      dplyr::collect() %>%
+      sf::st_as_sf(coords = c("lon", "lat"),
+                   crs = 4326,
+                   remove = F)
   }
 
 
