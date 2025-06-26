@@ -17,7 +17,7 @@
 
 
 deleteGPSPositions <- function(delFiles,
-                           refreshView = TRUE){
+                               refreshView = TRUE){
   seatrackR:::checkCon()
 
   filesInGPSTable <- list()
