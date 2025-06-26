@@ -8,7 +8,6 @@ getGPSdata(
   species = NULL,
   colony = NULL,
   dataResponsible = NULL,
-  ringnumber = NULL,
   year = NULL,
   sessionId = NULL,
   individId = NULL,
@@ -29,8 +28,6 @@ choices can be seen in the column \code{colony_int_name} in the result from the 
 must conform to the name nomenclature used in the postable. Default is NULL. The available
 choices can be seen in the column \code{name} in the result from the function \code{getNames()}.}
 
-\item{ringnumber}{Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.}
-
 \item{year}{Character string. Option to limit selection to one or more years that the logging sessions span. The availablle
 choices can be found in the \code{year_tracked} column in the result form the \code{getYears} function.}
 
@@ -40,6 +37,8 @@ If True, the returned object is a simple features object with only rows of eqfil
 \item{asTibble}{Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is slower, but also here forces the timezone to "UTC".}
 
 \item{limit}{FALSE or Integer. Limit the number of rows returned to this number. Default = False.}
+
+\item{ringnumber}{Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.}
 
 \item{loadImportDate}{Boolean. Should results include the import date to the database? Default = True.}
 }

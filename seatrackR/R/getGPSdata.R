@@ -33,7 +33,6 @@
 getGPSdata <- function(species= NULL,
                        colony = NULL,
                        dataResponsible = NULL,
-                       ringnumber = NULL,
                        year = NULL,
                        sessionId = NULL,
                        individId = NULL,
@@ -65,10 +64,6 @@ getGPSdata <- function(species= NULL,
 
   if(!is.null(dataResponsible)){
     res <- res |> filter(data_responsible %in% dataResponsible)
-  }
-
-  if(!is.null(ringnumber)){
-    res <- res |> filter(ring_number %in% ringnumber)
   }
 
   if(!is.null(year)){
@@ -109,8 +104,6 @@ getGPSdata <- function(species= NULL,
                    crs = 4326,
                    remove = F)
   }
-
-
 
   return(res)
 
