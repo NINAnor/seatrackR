@@ -71,58 +71,58 @@ getPosdata <- function(species= NULL,
   res <- postable
 
   if(!is.null(species)){
-    res <- res %>% filter(species %in% selectSpecies)
+    res <- res |> filter(species %in% selectSpecies)
   }
 
   if(!is.null(colony)){
-    res <- res %>% filter(colony %in% selectColony)
+    res <- res |> filter(colony %in% selectColony)
   }
 
   if(!is.null(dataResponsible)){
-    res <- res %>% filter(data_responsible %in% dataResponsible)
+    res <- res |> filter(data_responsible %in% dataResponsible)
   }
 
   if(!is.null(ringnumber)){
-    res <- res %>% filter(ring_number %in% ringnumber)
+    res <- res |> filter(ring_number %in% ringnumber)
   }
 
   if(!is.null(year)){
-    res <- res %>% filter(year_tracked %in% year)
+    res <- res |> filter(year_tracked %in% year)
   }
 
   if(!is.null(sessionId)){
-    res <- res %>% filter(session_id %in% sessionId)
+    res <- res |> filter(session_id %in% sessionId)
   }
 
   if(!is.null(individId)){
-    res <- res %>% filter(individ_id %in% individId)
+    res <- res |> filter(individ_id %in% individId)
   }
 
 
   if(!loadImportDate){
-    res <- res %>% select(-import_date)
+    res <- res |> select(-import_date)
   }
 
   if(!limit == F){
-    res <- res %>% head(limit)
+    res <- res |> head(limit)
   }
 
   if(asTibble){
-    res <- res %>% dplyr::collect()
+    res <- res |> dplyr::collect()
 
     #Force timezone on date_time to UTC
-    res <- res %>%
+    res <- res |>
       mutate(date_time = lubridate::force_tz(date_time,
                                              tzone = "UTC"))
   }
 
   if(loadGeometries == T){
-    res <- res %>% filter(!is.na(lon_smooth2) &
+    res <- res |> filter(!is.na(lon_smooth2) &
                             !is.na(lat_smooth2) &
                             eqfilter3 == 1)
 
-    res <- res %>%
-     dplyr::collect() %>%
+    res <- res |>
+     dplyr::collect() |>
       sf::st_as_sf(coords = c("lon_smooth2", "lat_smooth2"),
                                 crs = 4326,
                                 remove = F)
@@ -132,4 +132,89 @@ getPosdata <- function(species= NULL,
 
 }
 
+
+getPosdata2 <- function(species= NULL,
+                        colony = NULL,
+                        dataResponsible = NULL,
+                        ringnumber = NULL,
+                        year = NULL,
+                        sessionId = NULL,
+                        individId = NULL,
+                        loadGeometries = F,
+                        loadImportDate = T,
+                        asTibble = T,
+                        limit = F){
+
+  seatrackR:::checkCon()
+
+  selectSpecies <- species
+  selectColony <- colony
+
+
+  if(!limit == F & !is.numeric(limit)){
+    stop("limit must be FALSE or a numeric value")
+  }
+
+  postable <- tbl(con, dbplyr::in_schema("positions", "postable2"))
+  res <- postable |>
+    select(-geom)
+
+  if(!is.null(species)){
+    res <- res |> filter(species %in% selectSpecies)
+  }
+
+  if(!is.null(colony)){
+    res <- res |> filter(colony %in% selectColony)
+  }
+
+  if(!is.null(dataResponsible)){
+    res <- res |> filter(data_responsible %in% dataResponsible)
+  }
+
+  if(!is.null(ringnumber)){
+    res <- res |> filter(ring_number %in% ringnumber)
+  }
+
+  if(!is.null(year)){
+    res <- res |> filter(year_tracked %in% year)
+  }
+
+  if(!is.null(sessionId)){
+    res <- res |> filter(session_id %in% sessionId)
+  }
+
+  if(!is.null(individId)){
+    res <- res |> filter(individ_id %in% individId)
+  }
+
+
+  if(!loadImportDate){
+    res <- res |> select(-import_date)
+  }
+
+  if(!limit == F){
+    res <- res |> head(limit)
+  }
+
+  if(asTibble){
+    res <- res |> dplyr::collect()
+
+    #Force timezone on date_time to UTC
+    res <- res |>
+      mutate(date_time = lubridate::force_tz(date_time,
+                                             tzone = "UTC"))
+  }
+
+  if(loadGeometries == T){
+
+    res <- res |>
+      dplyr::collect() |>
+      sf::st_as_sf(coords = c("lon", "lat"),
+                   crs = 4326,
+                   remove = F)
+  }
+
+  return(res)
+
+}
 
