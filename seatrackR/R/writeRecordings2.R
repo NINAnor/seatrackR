@@ -17,7 +17,7 @@
 #' }
 
 
-writeRecordings <- function(lightData = NULL,
+writeRecordings2 <- function(lightData = NULL,
                             activityData = NULL,
                             temperatureData = NULL,
                             append = T,
@@ -28,7 +28,7 @@ writeRecordings <- function(lightData = NULL,
   DBI::dbWithTransaction(
     con,
     {
-      DBI::dbWriteTable(con, Id(schema = "recordings", table = "light2_raw"), lightData, append = append, overwrite = overwrite)
+      DBI::dbWriteTable(con, Id(schema = "recordings", table = "light_raw"), lightData, append = append, overwrite = overwrite)
     }
   )
   }
@@ -37,7 +37,7 @@ writeRecordings <- function(lightData = NULL,
     DBI::dbWithTransaction(
       con,
       {
-        DBI::dbWriteTable(con, Id(schema = "recordings", table = "activity2_raw"), activityData, append = append, overwrite = overwrite)
+        DBI::dbWriteTable(con, Id(schema = "recordings", table = "activity_raw"), activityData, append = append, overwrite = overwrite)
       }
     )
   }
@@ -46,7 +46,7 @@ writeRecordings <- function(lightData = NULL,
     DBI::dbWithTransaction(
       con,
       {
-        DBI::dbWriteTable(con, Id(schema = "recordings", table = "temperature2_raw"), temperatureData, append = append, overwrite = overwrite)
+        DBI::dbWriteTable(con, Id(schema = "recordings", table = "temperature_raw"), temperatureData, append = append, overwrite = overwrite)
       }
     )
   }
