@@ -1,6 +1,6 @@
 Package: seatrackR
 Title: Interface functions for the Seatrack database
-Version: 0.0.2.32
+Version: 0.0.2.33
 Authors@R:
     person("Jens", "Åström", , "jens.astrom@nina.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6114-0440"))
