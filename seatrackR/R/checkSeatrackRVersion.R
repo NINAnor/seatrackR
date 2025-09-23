@@ -16,15 +16,20 @@ checkSeatrackRVersion <- function(){
   installed_version <- tryCatch(packageVersion(gsub(".*/",
                                                     "", pkg)), error = function(e) NA)
 
-  url <- "https://raw.githubusercontent.com/NINAnor/seatrack-db/master/seatrackR/DESCRIPTION"
-
-  x <- readLines(url)
   #remote_version <- gsub("(.*)(Version: )(.*)(<.*)", "\\3", grep("Version:", x, value = T))
-  remote_version <- gsub("(Version: )(.*)", "\\2", grep("Version:", x, value = T))
+  remote_version <- tryCatch({
+    url <- "https://raw.githubusercontent.com/NINAnor/seatrack-db/master/seatrackR/DESCRIPTION"
+    x <- readLines(url, warn = FALSE)
+    gsub("(Version: )(.*)", "\\2", grep("Version:", x, value = TRUE))
+  }, error = function(e) {
+    message("Could not check for latest package version (connection failed).")
+    NA
+  })
 
   res <- list(package = pkg, installed_version = installed_version,
               latest_version = remote_version, up_to_date = NA)
 
+  if (!is.na(remote_version) && !is.na(installed_version)) {
   if (is.na(installed_version)) {
     message(paste("##", pkg, "is not installed..."))
   } else {
@@ -38,6 +43,7 @@ checkSeatrackRVersion <- function(){
       message("seatrackR is up-to-date")
       res$up_to_date <- TRUE
     }
+  }
   }
   return(res)
 }

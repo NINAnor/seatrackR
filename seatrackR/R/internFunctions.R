@@ -6,31 +6,31 @@
 
 upstartVersion <- function(){
 
-  pkg = "seatrackR"
+  pkg <- "seatrackR"
 
-  installed_version <- tryCatch(packageVersion(gsub(".*/",
-                                                    "", pkg)), error = function(e) NA)
-
-  url <- "https://raw.githubusercontent.com/NINAnor/seatrack-db/master/seatrackR/DESCRIPTION"
-  x <- readLines(url)
-
-  remote_version <- gsub("(Version: )(.*)", "\\2", grep("Version:", x, value = T))
+  installed_version <- tryCatch(packageVersion(pkg), error = function(e) NA)
 
 
-  res <- list(package = pkg, installed_version = installed_version,
-              latest_version = remote_version, up_to_date = NA)
+  remote_version <- tryCatch({
+    url <- "https://raw.githubusercontent.com/NINAnor/seatrack-db/master/seatrackR/DESCRIPTION"
+    x <- readLines(url, warn = FALSE)
+    gsub("(Version: )(.*)", "\\2", grep("Version:", x, value = TRUE))
+  }, error = function(e) {
+    message("Could not check for latest package version (connection failed).")
+    NA
+  })
 
-  if (remote_version > installed_version) {
-    msg <- paste("##", pkg, "is out of date, latest version is",
-                 remote_version)
-    message(msg)
-    res$up_to_date <- FALSE
-
-
+  if (!is.na(remote_version) && !is.na(installed_version)) {
+    if (remote_version > installed_version) {
+      msg <- paste("##", pkg, "is out of date, latest version is", remote_version)
+      message(msg)
+    } else {
+      message(paste("##", pkg, "is up to date."))
+    }
   }
 }
 
-#upstartVersion
+
 
 checkCon <- function() {if(!exists("con")){ stop("No connection, run connectSeatrack()")} else{
   if(class(con)!= "PqConnection"){ stop("\"con\" is not of class \"PqConnection\". Have you run connectSeatrack()?")}
