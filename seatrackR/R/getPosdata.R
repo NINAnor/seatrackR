@@ -13,11 +13,9 @@
 #' @param ringnumber Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.
 #' @param year Character string. Option to limit selection to one or more years that the logging sessions span. The availablle
 #' choices can be found in the `year_tracked` column in the result form the `getYears` function.
-#' @param loadGeometries True, False. Should geometries be loaded from the columns lon_smooth2 and lat_smooth2?
-#' If True, the returned object is a simple features object with only rows of eqfilter3 == 1, and with lat_smooth2 and lon_smooth2 values. Default = False
+#' @param loadGeometries Boolean. If True, the returned object is a simple features object with only rows of eqfilter == TRUE. Default = False
 #' @param limit FALSE or Integer. Limit the number of rows returned to this number. Default = False.
-#' @param loadImportDate Boolean. Should results include the import date to the database? Default = True.
-#' @param asTibble Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is slower, but also here forces the timezone to "UTC".
+#' @param asTibble Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is a little bit slower, but also here forces the timezone to "UTC".
 #' @return A lazy query or optionally a tibble of postable records. In the case of loadGeometries = T (default), also of class sf (simple feature) with geometries based on lat lon.
 #' @import dplyr
 #' @export
@@ -45,6 +43,7 @@
 #' @export
 #'
 
+
 getPosdata <- function(species= NULL,
                        colony = NULL,
                        dataResponsible = NULL,
@@ -67,7 +66,8 @@ getPosdata <- function(species= NULL,
     stop("limit must be FALSE or a numeric value")
   }
 
-  postable <- tbl(con, dbplyr::in_schema("views", "postable"))
+  postable <- tbl(con, dbplyr::in_schema("positions", "postable"))
+
   res <- postable
 
   if(!is.null(species)){
@@ -107,114 +107,33 @@ getPosdata <- function(species= NULL,
     res <- res |> head(limit)
   }
 
-  if(asTibble){
-    res <- res |> dplyr::collect()
 
-    #Force timezone on date_time to UTC
+
+  if(loadGeometries){
+
+    #Alternatively, create a geometry from the lat, lon
+    res <- res |>
+      filter(eqfilter)
+    res <- st_read(dsn = con, query = dbplyr::sql_render(res))
     res <- res |>
       mutate(date_time = lubridate::force_tz(date_time,
                                              tzone = "UTC"))
-  }
-
-  if(loadGeometries == T){
-    res <- res |> filter(!is.na(lon_smooth2) &
-                            !is.na(lat_smooth2) &
-                            eqfilter3 == 1)
+  } else{
 
     res <- res |>
-     dplyr::collect() |>
-      sf::st_as_sf(coords = c("lon_smooth2", "lat_smooth2"),
-                                crs = 4326,
-                                remove = F)
+      select(-geom)
+
+      if(asTibble){
+        res <- res |> dplyr::collect()
+        res <- res |>
+          mutate(date_time = lubridate::force_tz(date_time,
+                                                 tzone = "UTC"))
+      }
   }
 
-  return(res)
-
-}
-
-
-getPosdata2 <- function(species= NULL,
-                        colony = NULL,
-                        dataResponsible = NULL,
-                        ringnumber = NULL,
-                        year = NULL,
-                        sessionId = NULL,
-                        individId = NULL,
-                        loadGeometries = F,
-                        loadImportDate = T,
-                        asTibble = T,
-                        limit = F){
-
-  seatrackR:::checkCon()
-
-  selectSpecies <- species
-  selectColony <- colony
-
-
-  if(!limit == F & !is.numeric(limit)){
-    stop("limit must be FALSE or a numeric value")
-  }
-
-  postable <- tbl(con, dbplyr::in_schema("positions", "postable2"))
-  res <- postable |>
-    select(-geom)
-
-  if(!is.null(species)){
-    res <- res |> filter(species %in% selectSpecies)
-  }
-
-  if(!is.null(colony)){
-    res <- res |> filter(colony %in% selectColony)
-  }
-
-  if(!is.null(dataResponsible)){
-    res <- res |> filter(data_responsible %in% dataResponsible)
-  }
-
-  if(!is.null(ringnumber)){
-    res <- res |> filter(ring_number %in% ringnumber)
-  }
-
-  if(!is.null(year)){
-    res <- res |> filter(year_tracked %in% year)
-  }
-
-  if(!is.null(sessionId)){
-    res <- res |> filter(session_id %in% sessionId)
-  }
-
-  if(!is.null(individId)){
-    res <- res |> filter(individ_id %in% individId)
-  }
-
-
-  if(!loadImportDate){
-    res <- res |> select(-import_date)
-  }
-
-  if(!limit == F){
-    res <- res |> head(limit)
-  }
-
-  if(asTibble){
-    res <- res |> dplyr::collect()
-
-    #Force timezone on date_time to UTC
-    res <- res |>
-      mutate(date_time = lubridate::force_tz(date_time,
-                                             tzone = "UTC"))
-  }
-
-  if(loadGeometries == T){
-
-    res <- res |>
-      dplyr::collect() |>
-      sf::st_as_sf(coords = c("lon", "lat"),
-                   crs = 4326,
-                   remove = F)
-  }
-
-  return(res)
+res <- res |>
+  mutate(date_time_downloaded = now())
+return(res)
 
 }
 

@@ -19,11 +19,11 @@
 
 
 writeRecordings <- function(lightData = NULL,
-                             activityData = NULL,
-                             temperatureData = NULL,
-                             accelerationData = NULL,
-                             append = T,
-                             overwrite = FALSE){
+                            activityData = NULL,
+                            temperatureData = NULL,
+                            accelerationData = NULL,
+                            append = T,
+                            overwrite = FALSE){
   checkCon()
 
   if(!is.null(lightData)){
@@ -58,7 +58,7 @@ writeRecordings <- function(lightData = NULL,
     DBI::dbWithTransaction(
       con,
       {
-        DBI::dbWriteTable(con, Id(schema = "recordings", table = "acceleration_raw"), temperatureData, append = append, overwrite = overwrite)
+        DBI::dbWriteTable(con, Id(schema = "recordings", table = "acceleration_raw"), accelerationData, append = append, overwrite = overwrite)
       }
     )
   }

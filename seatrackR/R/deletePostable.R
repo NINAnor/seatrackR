@@ -166,7 +166,7 @@ deletePostable2 <- function(delFiles,
 
   if(refreshView){
     dbSendQuery(con,
-                "REFRESH MATERIALIZED VIEW positions.postable2;")
+                "REFRESH MATERIALIZED VIEW positions.postable;")
   }
 
   return(paste0("All ", nRowsToDelete, " lines deleted, attributed to ", sumFilesExisting, " posdata files."))

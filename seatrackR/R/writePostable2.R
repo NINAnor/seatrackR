@@ -27,17 +27,11 @@
 #' }
 
 
-writePostable2 <- function(positionData){
+writePostable2 <- function(positionData,
+                           refreshView = TRUE){
   seatrackR:::checkCon()
 
   nRowsToImport <- sum(unlist(lapply(positionData, nrow)))
-
-  # nRowsBefore <- DBI::dbWithTransaction(
-  #   con,
-  #   {
-  #     DBI::dbGetQuery(con, "SELECT count(*) FROM positions.postable")
-  #   }
-  # )
 
   DBI::dbWithTransaction(
     con,
@@ -60,6 +54,11 @@ writePostable2 <- function(positionData){
       }
 
     })
+
+  if(refreshView){
+    dbSendQuery(con,
+                "REFRESH MATERIALIZED VIEW positions.postable;")
+  }
 
 
       return(paste0("All ", nRowsToImport, " lines imported."))
