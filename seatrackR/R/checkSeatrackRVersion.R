@@ -16,9 +16,8 @@ checkSeatrackRVersion <- function(){
   installed_version <- tryCatch(packageVersion(gsub(".*/",
                                                     "", pkg)), error = function(e) NA)
 
-  #remote_version <- gsub("(.*)(Version: )(.*)(<.*)", "\\3", grep("Version:", x, value = T))
   remote_version <- tryCatch({
-    url <- "https://raw.githubusercontent.com/NINAnor/seatrack-db/master/seatrackR/DESCRIPTION"
+    url <- "https://raw.githubusercontent.com/NINAnor/seatrackR/master/DESCRIPTION"
     x <- readLines(url, warn = FALSE)
     gsub("(Version: )(.*)", "\\2", grep("Version:", x, value = TRUE))
   }, error = function(e) {
