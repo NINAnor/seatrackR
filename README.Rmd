@@ -1,0 +1,63 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# seatrackR 
+
+<!--For a hex-sticker, add the png in inst/figures/ and uncomment this:-->
+<!-- <img src="https://github.com/NINAnor/seatrackR/blob/main/inst/figures/seatrackR.png" align="right" width="160px"/> -->
+
+<!-- badges: start -->
+```{r, echo = F}
+library(badger)
+```
+`r badge_lifecycle("stable")` 
+`r badge_devel("NINAnor/seatrackR", "blue")`
+`r badge_cran_release("seatrackR")`
+`r badge_github_actions("NINAnor/seatrackR")` 
+`r badge_code_size("NINAnor/seatrackR")`
+<!-- adapt this after creating a release and registering it at zenodo -->
+<!--[![DOI](https://zenodo.org/badge/508228048.svg)](https://doi.org/10.5281/zenodo.16947368)-->
+<!-- badges: end -->
+
+
+## seatrackR - R package for utilizing the seatrack database
+
+Code to manage and interact with the seatrack database.
+
+
+Main functionality:
+
+*  Connect to the database (seatrackConnect())
+*  Retrieve data (individ info, logger info, GLS-, IRMA-, GPS-positions, recordings, file archive list, active logging session list)
+*  Check the consistency of new data with current database, before inserts. 
+*  Insert data into the database. ("metadata" fieldsheets, GLS-, IRMA-, and GPS-positions)
+*  Interact with the FTP file archive (list files, upload, download, delete)
+
+
+Take a look at the vignettes for a guide to what is available `help(package = "seatrackR")`. 
+
+## Installation
+
+Install the package by:
+
+```
+devtools::install_github("NINAnor/seatrack-db/seatrackR")
+```
+
+Or with vignettes by:
+
+```
+devtools::install_github("NINAnor/seatrack-db/seatrackR", build_vignettes = T)
+```
