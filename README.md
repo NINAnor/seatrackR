@@ -1,4 +1,4 @@
-seatrack-db
+seatrackR
 ==================
 
 Repository for creation, maintenance, and interaction with the seatrack database.
