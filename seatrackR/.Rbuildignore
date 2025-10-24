@@ -1,7 +1,0 @@
-^Meta$
-^doc$
-^.*\.Rproj$
-^\.Rproj\.user$
-^NEWS\.md$
-README.md
-^data-raw$

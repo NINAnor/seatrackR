@@ -1,0 +1,141 @@
+---
+title: "Retrieve standard data from Seatrack"
+author: "Jens Åström"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    toc: true
+    highlight: tango
+  rmarkdown::html_vignette:
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{R.rsp::asis}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = T)
+require(tidyverse)
+```
+
+Connecting to the database
+=======
+Users at NINA and the Polarinstitute (using a computer that is within these networks' IP-addresses) can connect to the Seatrack database. It is a PostgreSQL (9.6) database answering to the address `seatrack.nina.no`, on the standard port 5432. Users should use their individual login user names and passwords. Contact Jens Åström (jens.astrom@nina.no) for details about usernames and passwords.
+
+This instruction deals with the preferred way of connecting to the database, using R and the `seatrackR` package. Another option is to connect through a dedicated database management software, such as Pgadmin3 (or 4), HeidiSQL, or similar. Some users may prefer to use the MS Access interface.
+
+
+To simplify the connection, use the convenience function `connectSeatrack`. This creates a connection named `con` by using the packages `DBI` and `RPostgres`.
+
+
+```{r}
+require(seatrackR)
+
+connectSeatrack(Username =  "testreader", Password = "testreader")
+```
+
+
+Custom queries
+==============
+As of now, 4 functions exist to retreive data from the database through prebuilt queries. Apart from that, users are free to use their own queries through the functions in `DBI` and `dplyr`, using the connection named `con` made by the `connectSeatrack()`-function.
+
+It is perfecty fine to download data through your own custom queries. Creating interesting queries requires some knowledge about the structure of the database however. Pgadmin3(4) would be a useful tool to get further info on that. For now, we show a simple query involving just one table. Here we get the different locations currently recorded from the Faroe Islands (Coordinates not updated).  Note that you have to load the `DBI` package and use its query functions.
+
+```{r}
+require(DBI)
+
+myQuery <- "SELECT * from metadata.location
+              WHERE colony_int_name = 'Faroe Islands'"
+
+faroeLocations <- dbGetQuery(con, myQuery)
+head(faroeLocations)
+
+```
+
+
+Position data
+===============
+The primary data of the positions of the birds is stored in the table `positions.postable`. This includes all entered positions in the database. 
+
+The `getPosdata` function retrieves this table, with options to subselect only specific species, colonies, responsible contact person, specific ring numbers, and years. There is also an option to limit the records to a set number of rows, and to load the position coordinates as a spatial object.
+
+```{r}
+
+eynhallowPositions <- getPosdata(selectColony = "Eynhallow",
+                                 loadGeometries = T)
+eynhallowPositions
+```
+
+
+```{r}
+plot(eynhallowPositions["ring_number"])
+```
+
+
+Position data for export
+==================
+The data sent to the Polar institute also have the subspecies names added to the records. The export ready positions data can be retrieved most easily through a specific export view. Note that this will download all records, and will take some time. Note that this export does not contain information on the used and deleted uuids. 
+
+```{r, eval = F}
+newExport <- dbReadTable(con, Id(schema = "views", table = "export"))
+nrow(newExport)
+write.csv(newExport, file = "seatrack_export_2018-08-09.csv")
+```
+
+If you are interested in knowing separate old, deleted rows, these are found in the table `positions.deleted_uuid`.
+
+```{r, eval = F}
+deletedUuids <- dbReadTable(con, Id(schema = "positions", table =  "deleted_uuid"))
+nrow(deletedUuids)
+write.csv(deletedUuids, file = "deletedUuids_2018-08-09.csv")
+
+```
+
+
+Other functions for download
+================
+There are some more convenience functions for retrieving information from the database as well. Here follows a quich demo. 
+
+The `getFileArchiveSummary` function
+--------------
+This function pulls together data from several tables with focus on the file archive. It should contain enough information to know what the individual raw files contain.
+
+```{r}
+eynhallowFiles <- getFileArchiveSummary(selectColony = "Eynhallow")
+eynhallowFiles
+```
+
+
+The `getIndividInfo` function
+-------------
+This function summarizes all observation data for the individual birds. We can subselect the colony and year interval the bird where tracked.
+
+```{r}
+hornoyaIndivids <- getIndividInfo(selectColony = "Hornoya",
+                                    selectYear = "2014_15")
+hornoyaIndivids
+```
+
+!Note the weird duplicate records here! **TO BE FIXED**
+
+```{r}
+hornoyaIndivids %>% print(width = Inf)
+```
+
+
+Commonly used info
+-------------
+I have made a couple of views for som common information, that are displayed on the shiny app http://view.nina.no/seatrack/. These can be found like this as well.
+
+```{r}
+shorttable <- dbReadTable(con, Id(schema = "views", table = "shorttable"))
+shorttable
+```
+```{r}
+shorttableeqfilter3 <- dbReadTable(con, Id(schema = "views", table = "shorttableeqfilter3"))
+shorttableeqfilter3
+```
+
+
+
+
