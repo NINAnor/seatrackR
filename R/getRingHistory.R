@@ -6,7 +6,7 @@
 #' @return Lazy query, or optionally a tibble
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' getRingHistory()
 #' }
 

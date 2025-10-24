@@ -14,7 +14,7 @@
 #' @import dplyr
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' deleteRecords(selectUpdateTime = "2018-04-20")
 #' }
 

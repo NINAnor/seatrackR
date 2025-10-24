@@ -13,7 +13,7 @@
 #' @import dplyr
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' deleteActivity(selectUpdateTime = "2018-04-20")
 #' }
 

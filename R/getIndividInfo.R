@@ -5,7 +5,7 @@
 #' @return Data frame.
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' seatrackConnect(Username = "testreader", Password = "testreader")
 #' individInfo <- getInfividInfo()
 #' }

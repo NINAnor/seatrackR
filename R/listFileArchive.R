@@ -8,7 +8,7 @@
 #' @return A list.
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' listFileArchive()
 #' }
 #' @seealso \code{\link{getFileArchive}} for a function that summarizes info on the files that should be in the file archive (connected to loggers that have been shut down). )

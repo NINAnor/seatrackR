@@ -7,7 +7,7 @@
 #' @return A tibble of the people id, names and abbreviated names registered in the people table.
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' getNames()
 #' }
 

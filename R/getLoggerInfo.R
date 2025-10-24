@@ -7,7 +7,7 @@
 #' @return Lazy query or optionally a Tibble.
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' loggerInfo <- getLoggerInfo()
 #' }

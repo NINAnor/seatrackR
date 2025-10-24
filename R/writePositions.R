@@ -7,7 +7,7 @@
 #' @return Message of affected rows
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #'
 #'  files<-c("posdata_FULGLA_eynhallow_2014",

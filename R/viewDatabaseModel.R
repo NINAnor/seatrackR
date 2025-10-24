@@ -6,7 +6,7 @@
 #' @return Opens a internet browser window with the database model.
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' viewDatabaseModel()
 #' }
 #'

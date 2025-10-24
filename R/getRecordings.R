@@ -13,7 +13,7 @@
 #' @return A Lazy query or optionally a Tibble.
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' getRecordings(type = "temperature",
 #'              colony = "Sklinna")

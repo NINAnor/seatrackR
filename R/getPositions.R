@@ -20,7 +20,7 @@
 #' @import dplyr
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #'
 #' positions <- getPositions(colony = "Kongsfjorden",

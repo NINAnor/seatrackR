@@ -8,7 +8,7 @@
 #' @return Status messages on the actions taken for each file.
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' ##To download all files in the file storage
 #' myFiles = listFileArchive()$filesInArchive
 #' loadedFile <- loadFile(filename = myFiles[1,])
