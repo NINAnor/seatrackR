@@ -18,14 +18,13 @@ RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     rmarkdown,
-	  tidyverse,
-	  dbplyr,
   	R.rsp
 Imports:
   	DBI,
   	RPostgres,
   	ggplot2,
   	tibble,
+  	dplyr,
   	dbplyr,
   	readr,
   	lubridate	
