@@ -50,7 +50,7 @@ A lazy query or optionally a tibble of postable records. In the case of loadGeom
 This is a convenience function that reads position data from the database. The default datatype is "GLS", which reads data from "positions.postable", which is the primary table position table in the DB. Optionally you can fetch "IRMA" data, which is IRMA processed position data, or "GPS" data.
 }
 \examples{
-dontrun{
+\dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
 
 positions <- getPositions(colony = "Kongsfjorden",

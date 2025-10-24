@@ -27,7 +27,7 @@ refreshViews(
 Update all or optionally single materialized views in the database. Typically done after data imports.
 }
 \examples{
-dontrun{
+\dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
 refreshViews()
 }

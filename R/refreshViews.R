@@ -12,7 +12,7 @@
 #' @return NULL
 #' @export
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' refreshViews()
 #' }
