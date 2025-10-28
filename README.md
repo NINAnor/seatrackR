@@ -40,8 +40,8 @@ Take a look at the vignettes for a guide to what is available
 
 Install the package by:
 
-    devtools::install_github("NINAnor/seatrack-db/seatrackR")
+    devtools::install_github("NINAnor/seatrackR")
 
 Or with vignettes by:
 
-    devtools::install_github("NINAnor/seatrack-db/seatrackR", build_vignettes = T)
+    devtools::install_github("NINAnor/seatrackR", build_vignettes = T)
