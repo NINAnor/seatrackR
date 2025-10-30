@@ -8,7 +8,7 @@
 <!-- badges: start -->
 
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![](https://img.shields.io/badge/devel%20version-0.0.3.0-blue.svg)](https://github.com/NINAnor/seatrackR)
+[![](https://img.shields.io/badge/devel%20version-0.0.3.1-blue.svg)](https://github.com/NINAnor/seatrackR)
 [![](https://www.r-pkg.org/badges/version/seatrackR)](https://cran.r-project.org/package=seatrackR)
 [![R build
 status](https://github.com/NINAnor/seatrackR/workflows/R-CMD-check/badge.svg)](https://github.com/NINAnor/seatrackR/actions)

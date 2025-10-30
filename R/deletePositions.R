@@ -21,6 +21,7 @@
 
 deletePositions <- function(datatype = "GLS",
                             session_ids_to_delete,
+                            idempotent = TRUE,
                             refreshView = TRUE){
   seatrackR:::checkCon()
 
@@ -45,18 +46,22 @@ deletePositions <- function(datatype = "GLS",
     distinct() |>
     pull()
 
+  if(!idempotent){
+  if(length(session_ids_to_delete) != length(unique(sessionsInTable))) {
+    stop("Sessions ", paste0(session_ids_to_delete[!(session_ids_to_delete %in% sessionsInTable)], " not in table!"))
+    }
+  }
 
-  if(length(session_ids_to_delete) != length(unique(sessionsInTable))) stop("Sessions ", paste0(session_ids_to_delete[!(session_ids_to_delete %in% sessionsInTable)], " not in table!"))
 
   nRow_string <- paste0("SELECT count(*) FROM positions.",
                         source_table)
 
   delete_string <- paste0("DELETE FROM positions.",
                           source_table,
-                          " WHERE session_id %in% '",
+                          " WHERE session_id IN ('",
                           paste(session_ids_to_delete,
                                 collapse = "','"),
-                          "'")
+                          "')")
 
   DBI::dbWithTransaction(
     con,

@@ -4,7 +4,12 @@
 \alias{deletePositions}
 \title{deletePositions}
 \usage{
-deletePositions(datatype = "GLS", session_ids_to_delete, refreshView = TRUE)
+deletePositions(
+  datatype = "GLS",
+  session_ids_to_delete,
+  idempotent = TRUE,
+  refreshView = TRUE
+)
 }
 \arguments{
 \item{datatype}{"GLS", "IRMA", or "GPS".}
