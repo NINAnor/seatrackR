@@ -5,35 +5,30 @@
 \title{Delete activity data from the database, based on subselection criteria}
 \usage{
 deleteActivity(
-  colony = NULL,
-  intendedLocation = NULL,
-  year = NULL,
-  species = NULL,
-  updatedAfter = NULL,
-  updatedBefore = NULL,
-  updatedBy = NULL,
   sessionId = NULL,
+  colony = NULL,
+  species = NULL,
+  limit_to_type = NULL,
   force = FALSE
 )
 }
 \arguments{
-\item{selectColony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL.}
+\item{species}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.}
 
-\item{selectUpdateTime}{Timestamp or character string that can be interpreted as a timestamp through as.POSIXct. Delete only
-records that where last updated after this timestamp}
+\item{limit_to_type}{Optional character string of what type of activity data to delete. c("light", "temperature", "activity", "acceleration")}
 
-\item{selectSpecies}{Character string. Option to limit selection to one or a set of species. Default is NULL.}
+\item{force}{True, False (default = False). Skip confirmation check (for non interactive functionality)}
 
-\item{Force}{True, False (default = False). Skip confirmation check (for non interactive functionality)}
+\item{sessionID}{Limit the data to what session(s). Character string.}
 }
 \value{
-Status message
+Currently nothing.
 }
 \description{
 This is a convenience function that deletes records from the activity tables (records.activity, records.light, records.temp)
 }
 \examples{
 \dontrun{
-deleteActivity(selectUpdateTime = "2018-04-20")
+deleteActivity(sessionId = "T220_2015-04-27", limit_to_type = c("temperature", "activity"))
 }
 }
