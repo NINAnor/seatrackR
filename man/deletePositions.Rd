@@ -16,6 +16,8 @@ deletePositions(
 
 \item{session_ids_to_delete}{Character string (or vector of character trings), specifying which session_ids to remove data from.}
 
+\item{idempotent}{Should it silently ignore sessions that are not present?}
+
 \item{refreshView}{Should the materialized position views be refreshed after the deletion? Defaults to TRUE.}
 }
 \value{
