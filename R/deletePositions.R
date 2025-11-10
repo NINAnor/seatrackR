@@ -34,18 +34,22 @@ deletePositions <- function(datatype = "GLS",
                                    datatype == "IRMA" ~ "irma_raw",
                                    datatype == "GPS" ~ "gps_raw")
 
+  associated_view <- dplyr::case_when(datatype == "GLS" ~ "postable",
+                                      datatype == "IRMA" ~ "irma",
+                                      datatype == "GPS" ~ "gps")
+
   res <- dplyr::tbl(con, dbplyr::in_schema("positions", source_table))
 
   nRowsToDelete <- res |>
-    filter(session_id %in% session_ids_to_delete) |>
-    tally() |>
-    pull()
+    dplyr::filter(session_id %in% session_ids_to_delete) |>
+    dplyr::tally() |>
+    dplyr::pull()
 
   sessionsInTable <- res |>
-    filter(session_id %in% session_ids_to_delete) |>
-    select(session_id) |>
-    distinct() |>
-    pull()
+    dplyr::filter(session_id %in% session_ids_to_delete) |>
+    dplyr::select(session_id) |>
+    dplyr::distinct() |>
+    dplyr::pull()
 
   if(!idempotent){
   if(length(session_ids_to_delete) != length(unique(sessionsInTable))) {
@@ -86,7 +90,7 @@ deletePositions <- function(datatype = "GLS",
     })
 
   if(refreshView){
-    refresh_string <- paste0("REFRESH MATERIALIZED VIEW positions.", source_table)
+    refresh_string <- paste0("REFRESH MATERIALIZED VIEW positions.", associated_view)
     dbSendQuery(con,
                 refresh_string)
   }

@@ -8,9 +8,7 @@
 #' @param Password Character.
 #' @param host Character. The host of the database. For testing purposes. There should be no need for the user to change this.
 #' @param dbname Character. Name of database, for testing purposes. Default is "seatrack" which is the production database.
-#' @param check_interrupts True/False. Should user interrupts be checked during the query execution (before
-#'   first row of data is available)? Setting to `TRUE` allows interruption of queries
-#'   running too long.
+#' @param bigint How to handle 64 bit integers from the database (such as bigint). "integer", "character", "numeric", "integer64". Defaults to "integer" which is prone to overflow over '.Machine$integer.max' values. Integer64 works poorly with many base R functions.
 #' @return A DBI connection to the Seatrack database
 #' @import DBI
 #' @export
@@ -53,6 +51,7 @@ connectSeatrack <- function(Username = "testreader",
                         dbname = dbname,
                         user = Username,
                         password = Password,
+                        bigint = bigint,
                         ...)
 
   assign("con", tmp, .GlobalEnv)

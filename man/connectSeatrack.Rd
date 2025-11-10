@@ -22,9 +22,7 @@ connectSeatrack(
 
 \item{dbname}{Character. Name of database, for testing purposes. Default is "seatrack" which is the production database.}
 
-\item{check_interrupts}{True/False. Should user interrupts be checked during the query execution (before
-first row of data is available)? Setting to \code{TRUE} allows interruption of queries
-running too long.}
+\item{bigint}{How to handle 64 bit integers from the database (such as bigint). "integer", "character", "numeric", "integer64". Defaults to "integer" which is prone to overflow over '.Machine$integer.max' values. Integer64 works poorly with many base R functions.}
 }
 \value{
 A DBI connection to the Seatrack database
