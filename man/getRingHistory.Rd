@@ -4,7 +4,10 @@
 \alias{getRingHistory}
 \title{Retrieve info on the ring history table}
 \usage{
-getRingHistory(asTibble = F)
+getRingHistory(asTibble = FALSE)
+}
+\arguments{
+\item{asTibble}{Return result as tibble? Boolean.}
 }
 \value{
 Lazy query, or optionally a tibble

@@ -13,7 +13,8 @@
 #' }
 
 getLoggerInfo <- function(asTibble = T){
-  seatrackR:::checkCon()
+
+  checkCon()
 
   res <-dplyr::tbl(con, dbplyr::in_schema("views", "logger_info"))
 

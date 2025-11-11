@@ -1,6 +1,10 @@
 #' Write files to the file archive
 #'
 #'
+#' @param files Character vector of files to write to file archive.
+#' @param originFolder Character vector of folder to find files in.
+#' @param overwrite Overwrite existing data? Booldean.
+#' @param ... optional additional parameters passed on to RCurl::ftpUpload.
 #'
 #' @return Status messages on the actions taken for each file.
 #' @export
@@ -14,11 +18,11 @@
 
 uploadFiles <- function(files = NULL,
                         originFolder = NULL,
-                        overwrite = F,
+                        overwrite = FALSE,
                         ...){
   #Verbose doesn't work
 
-  seatrackR:::checkCon()
+  checkCon()
 
   current_user <- DBI::dbGetQuery(con, "SELECT current_user")
 
@@ -41,7 +45,7 @@ uploadFiles <- function(files = NULL,
   } else {
 
 
-    url <- seatrackR:::.getFtpUrl()
+    url <- .getFtpUrl()
 
     writeFile <- function(x,
                           url,
@@ -65,7 +69,7 @@ uploadFiles <- function(files = NULL,
         getHandle <- httr::handle(getUrl)
         filePkg <- httr::upload_file(filename)
 
-        mess  <- lapply(getUrl, seatrackR:::factory(function(x){
+        mess  <- lapply(getUrl, factory(function(x){
 
           RCurl::ftpUpload(what = filename,
                            to = getUrl,
@@ -79,17 +83,13 @@ uploadFiles <- function(files = NULL,
 
         ))
 
-
         if(any(grepl("OK", attr(mess[[1]][[1]], "names")))){
           return(paste0("File uploaded: ", x))
         }
 
-
       }
 
     }
-
-
 
     apply(files, 1, function(x) writeFile(x = x, url = url, originFolder = originFolder))
 

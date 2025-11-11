@@ -6,7 +6,7 @@
 #' Together with the table logger_import, this table handles all the routine information about loggers
 #' and the fieldwork.
 #'
-#' @param metadaata A named vector or data frame that fits the metadata_import table in schema imports
+#' @param metadata A named vector or data frame that fits the metadata_import table in schema imports
 #'
 #' @return Data frame.
 #' @export

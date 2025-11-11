@@ -3,6 +3,8 @@
 #' This is a convenience function that reads position data from the database. The default datatype is "GLS", which reads data from "positions.postable", which is the primary table position table in the DB. Optionally you can fetch "IRMA" data, which is IRMA processed position data, or "GPS" data.
 #'
 #' @param datatype "GLS", "IRMA", or "GPS". Which type of position data to fetch. Default is "GLS".
+#' @param sessionId Character string of session ids to limit the selection to.
+#' @param individId Character string of individ ids to limit the selection to.
 #' @param species Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
 #' The available choices can be seen in the column `species_name_eng` in the result from the function `getSpecies()`.
 #' @param colony Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
@@ -46,19 +48,18 @@
 
 
 getPositions <- function(datatype = "GLS",
-                       species= NULL,
-                       colony = NULL,
-                       dataResponsible = NULL,
-                       ringnumber = NULL,
-                       year = NULL,
-                       sessionId = NULL,
-                       individId = NULL,
-                       loadGeometries = F,
-                       loadImportDate = T,
-                       asTibble = T,
-                       limit = F){
+                         species= NULL,
+                         colony = NULL,
+                         dataResponsible = NULL,
+                         ringnumber = NULL,
+                         year = NULL,
+                         sessionId = NULL,
+                         individId = NULL,
+                         loadGeometries = F,
+                         asTibble = T,
+                         limit = F){
 
-  seatrackR:::checkCon()
+  checkCon()
 
   selectSpecies <- species
   selectColony <- colony
@@ -142,7 +143,7 @@ getPositions <- function(datatype = "GLS",
   }
 
 res <- res |>
-  mutate(date_time_downloaded = now())
+  mutate(date_time_downloaded = lubridate::now())
 return(res)
 
 }

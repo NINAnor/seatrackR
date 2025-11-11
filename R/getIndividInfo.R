@@ -2,6 +2,8 @@
 #'
 #' This is a convenience function that pulls together various info on the files in the individuals.individ_info and individuals.individ_status table and other tables
 #'
+#' @param colony Optional character string of colonies limit the selection to.
+#' @param year Optional character string of years limit the selection to.
 #' @return Data frame.
 #' @export
 #' @examples
@@ -15,7 +17,8 @@
 getIndividInfo <- function(colony = NULL,
                            year = NULL){
 
-  seatrackR:::checkCon()
+  checkCon()
+
   selectColony <- colony
   selectYear <- year
 

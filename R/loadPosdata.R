@@ -3,6 +3,7 @@
 #' This function loads posdata files from disk into R for further import to database.
 #'
 #' @param files A character vector of posdata files to import. Should not include file endings, i.e. should have a format like "posdata_FULGLA_eynhallow_2014"
+#' @param originFolder Character vector of folder that holds the files to import. Defaults to "../Rawdata".
 #'
 #' @export
 #'
@@ -45,10 +46,10 @@ loadPosdata <- function(files,
 }
 
 #' @export
-summary.posdata <- function(posdata){
+summary.posdata <- function(object, ...){
   ##Check encodings and posdatafile
   #This is a manual quality check to spot common errors. But it does not spot everything...
-
+  posdata <- object
   outList<-list()
   for(i in 1:length(posdata)){
     outList[[i]]<-data.frame("data_responsible"=unique(posdata[[i]]$data_responsible),

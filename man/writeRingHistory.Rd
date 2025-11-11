@@ -4,7 +4,7 @@
 \alias{writeRingHistory}
 \title{Update the ring history table}
 \usage{
-writeRingHistory(historyData, append = T)
+writeRingHistory(historyData, append = TRUE, overwrite = FALSE)
 }
 \arguments{
 \item{historyData}{A named vector or data frame that fits the ring history table in schema individuals}

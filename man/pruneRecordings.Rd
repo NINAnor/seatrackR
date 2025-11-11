@@ -18,7 +18,7 @@ pruneRecordings(
 
 \item{pruneTemperature}{Prune temperature table. Boolean}
 
-\item{force}{}
+\item{force}{Override the confirmation menu}
 }
 \value{
 Status message

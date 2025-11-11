@@ -1,7 +1,11 @@
 #' deleteFiles
 #'
+#' Delete files on the FTP-server.
 #'
 #'
+#' @param files Character list of filenames to delete.
+#' @param force Optionally override confirmation
+#' @param ... Optional additional parameters passed to the httr configuration.
 #' @return Status messages on the actions taken for each file.
 #' @export
 #' @examples
@@ -15,7 +19,9 @@
 ##Use httr::with_options(...,
 #DELETE())
 
-deleteFiles <- function(files = NULL, force = F, ...){
+deleteFiles <- function(files = NULL,
+                        force = FALSE,
+                        ...){
 
   checkCon()
 
@@ -38,7 +44,7 @@ deleteFiles <- function(files = NULL, force = F, ...){
 
   fileArchive <- listFileArchive()
 
-  url <- seatrackR:::.getFtpUrl()
+  url <- .getFtpUrl()
 
 
   deleteFile <- function(x, url, ...){
@@ -50,7 +56,7 @@ deleteFiles <- function(files = NULL, force = F, ...){
 
     mess  <- lapply(x, factory(function(x){
 
-      httr::with_config(httr::config(ssl_verifypeer = F,
+    httr::with_config(httr::config(ssl_verifypeer = F,
                                    ssl_verifyhost = F,
                                    use_ssl = T,
                                    dirlistonly = T,
@@ -58,12 +64,10 @@ deleteFiles <- function(files = NULL, force = F, ...){
                                    filetime = F,
                                    ...),
                       httr::POST(url = dest, handle = getHandle))
-
-
-
-      }))
+      }
+    )
+    )
   }
-
 
   if(any(!(files$filename %in% fileArchive$filesInArchive$filename))){
 
@@ -88,13 +92,10 @@ deleteFiles <- function(files = NULL, force = F, ...){
 
     }
 
-
-     apply(files, 1, function(x) deleteFile(x = x, url = url))
-
+    apply(files, 1, function(x) deleteFile(x = x, url = url))
 
     newStatus <- listFileArchive()
     deletedFiles <- fileArchive$filesInArchive$filename[!(fileArchive$filesInArchive$filename %in% newStatus$filesInArchive$filename)]
-
 
     if(length(deletedFiles) == 0){
       return("No files deleted")} else {
@@ -103,7 +104,4 @@ deleteFiles <- function(files = NULL, force = F, ...){
 
   }
 }
-
-
-
 

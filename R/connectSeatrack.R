@@ -9,6 +9,7 @@
 #' @param host Character. The host of the database. For testing purposes. There should be no need for the user to change this.
 #' @param dbname Character. Name of database, for testing purposes. Default is "seatrack" which is the production database.
 #' @param bigint How to handle 64 bit integers from the database (such as bigint). "integer", "character", "numeric", "integer64". Defaults to "integer" which is prone to overflow over '.Machine$integer.max' values. Integer64 works poorly with many base R functions.
+#' @param ... additional parameters passed to dbConnect
 #' @return A DBI connection to the Seatrack database
 #' @import DBI
 #' @export
@@ -64,6 +65,7 @@ connectSeatrack <- function(Username = "testreader",
 }
 
 #' @export
+#' @rdname connectSeatrack
 disconnectSeatrack <- function(){
   DBI::dbDisconnect(con)
 }

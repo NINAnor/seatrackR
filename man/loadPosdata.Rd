@@ -8,6 +8,8 @@ loadPosdata(files, originFolder = "../Rawdata")
 }
 \arguments{
 \item{files}{A character vector of posdata files to import. Should not include file endings, i.e. should have a format like "posdata_FULGLA_eynhallow_2014"}
+
+\item{originFolder}{Character vector of folder that holds the files to import. Defaults to "../Rawdata".}
 }
 \description{
 This function loads posdata files from disk into R for further import to database.

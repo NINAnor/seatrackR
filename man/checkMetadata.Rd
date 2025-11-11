@@ -19,7 +19,7 @@ checkLoggers(myTable)
 checkNames(myTable)
 }
 \arguments{
-\item{myTable}{}
+\item{myTable}{A metadata table to check.}
 }
 \value{
 Various errors.

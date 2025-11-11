@@ -17,7 +17,5 @@ This function checks which files are stored in the file archive, which files tha
 \dontrun{
 listFileArchive()
 }
-}
-\seealso{
-\code{\link{getFileArchive}} for a function that summarizes info on the files that should be in the file archive (connected to loggers that have been shut down). )
+#' @seealso \code{\link{getFileArchive}} for a function that summarizes info on the files that should be in the file archive (connected to loggers that have been shut down).
 }

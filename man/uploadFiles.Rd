@@ -4,7 +4,16 @@
 \alias{uploadFiles}
 \title{Write files to the file archive}
 \usage{
-uploadFiles(files = NULL, originFolder = NULL, overwrite = F, ...)
+uploadFiles(files = NULL, originFolder = NULL, overwrite = FALSE, ...)
+}
+\arguments{
+\item{files}{Character vector of files to write to file archive.}
+
+\item{originFolder}{Character vector of folder to find files in.}
+
+\item{overwrite}{Overwrite existing data? Booldean.}
+
+\item{...}{optional additional parameters passed on to RCurl::ftpUpload.}
 }
 \value{
 Status messages on the actions taken for each file.

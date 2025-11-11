@@ -2,7 +2,7 @@
 #'
 #' Zoom in with the browser to see the details
 #'
-#'
+#' @param type Open the database model in either "png" or "svg".
 #' @return Opens a internet browser window with the database model.
 #' @export
 #' @examples

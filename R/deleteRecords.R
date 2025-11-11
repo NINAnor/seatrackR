@@ -3,12 +3,18 @@
 #' This is a convenience function that deletes records from the logging_session table, which cascades to dependent tables
 #' (individ info and status, deployment and retrieval info, startup and shutdown tables, and file archive).
 #'
-#' @param selectSpecies Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
-#' @param selectColony Character string. Option to limit selection to one or a set of colonies. Default is NULL.
-#' @param selectUpdateTime Timestamp or character string that can be interpreted as a timestamp through as.POSIXct. Delete only
+#' @param colony Character string. Option to limit selection to one or a set of colonies. Default is NULL.
+#' @param intendedLocation Optional character string of intended locations (in allocation) to subset on.
+#' @param year Optional character string of years (logging_session.year_tracked) to subset on.
+#' @param species Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
+#' @param updatedAfter Timestamp or character string that can be interpreted as a timestamp through as.POSIXct. Delete only
 #' records that where last updated after this timestamp
-#' @param selectSpecies Character string. Option to limit selection to one or a set of species. Default is NULL.
-#' @param Force True, False (default = False). Skip confirmation check (for non interactive functionality)
+#' @param updatedBefore Timestamp or character string that can be interpreted as a timestamp through as.POSIXct. Delete only
+#' records that where last updated before this timestamp
+#' @param species Character string. Option to limit selection to one or a set of species. Default is NULL.
+#' @param updatedBy Optional character string. Limits selection to person that updated the data.
+#' @param sessionId Optional character string of session ids to limit on.
+#' @param force True, False (default = False). Skip confirmation check (for non interactive functionality)
 #'
 #' @return Status message
 #' @import dplyr
@@ -29,7 +35,7 @@ deleteRecords <- function(colony = NULL,
                           sessionId = NULL,
                           force = FALSE){
 
-  seatrackR:::checkCon()
+  checkCon()
 
 
 
