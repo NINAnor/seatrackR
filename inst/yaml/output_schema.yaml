@@ -1,0 +1,262 @@
+datasets:
+  positional_data:
+    description: Positional data from GLS loggers including locations and metadata.
+    columns:
+      - name: id
+        description: Unique ID of logging session during which record was made.
+        type: string
+      - name: date_time
+        description: Date and time of the calculated position in GMT.
+        type: datetime
+      - name: logger_id
+        description: Unique internal database ID of logger. 
+        type: string
+      - name: logger_model
+        description: GLS logger model (e.g., c65, mk4083, etc.).
+        type: string
+      - name: year_tracked
+        description: Tracking period from one breeding season to the next (e.g., "2013_14") with endpoints defined by analyser (usually 31 May/1 June in SEATRACK).
+        type: string
+      - name: session_id
+        description: Unique ID for each time a logger was deployed.
+        type: string
+      - name: individ_id
+        description: Unique ID for each individual.
+        type: string
+      - name: deployment_date
+        description: Date when the logger was deployed.
+        type: date
+      - name: retrieval_date
+        description: Date when the logger was retrieved.
+        type: date
+      - name: ring_number
+        description: Metal ID ring number.
+      - name: country_code
+        description: Country/local code for metal ring.
+      - name: species
+        description: English name of the species (e.g., "Black-legged kittiwake").
+        type: string
+      - name: colony
+        description: Name of the colony where the logger was deployed and retrieved. Note that a SEATRACK colony name can cover several locations
+        type: string
+      - name: lon_raw
+        description: Longitude calculated from time (GMT) of noon or midnight and date.
+        type: float
+      - name: lat_raw
+        description: Latitude calculated from length of day or night and date (GMT).
+        type: float
+      - name: lon
+        description: Averaged longitude coordinate after moving average.
+        type: float
+      - name: lat
+        description: Averaged latitude coordinate after moving average.
+        type: float
+      - name: eqfilter
+        description:  Filter identifying periods with unreliable latitudes during equinox (TRUE = reliable, FALSE = unreliable).
+        type: boolean
+      - name: sex
+        description: Recorded sex at trapping event.
+        type: string
+      - name: age_deployment
+        description: Age of the bird at the time of deployment.
+        type: string
+      - name: col_lon
+        description: Longitude of the colony.
+        type: float
+      - name: col_lat
+        description: Latitude of the colony.
+        type: float
+      - name: tfirst
+        description: Time of first sun event used for position calculation (GMT).
+        type: datetime
+      - name: tsecond
+        description: Time of second sun event used for position calculation (GMT).
+        type: datetime
+      - name: twl_type
+        description: Identifies whether tfirst is sunrise (1) or sunset (2).
+        type: integer
+      - name: sun
+        description: Sun’s angle to the horizon at the estimated time of twilight.
+        type: float
+      - name: light_threshold
+        description: Selected light threshold used for estimated time of twilights.
+        type: float
+      - name: analyzer
+        description: Person who ran scripts and performed sun angle calibration.
+        type: string
+      - name: data_responsible
+        description: Data owner or responsible person.
+        type: string
+      - name: data_version
+        description: Version of the processing script used.
+        type: integer
+      - name: date_updated
+        description: Date when the record was last updated.
+        type: date
+      - name: updated_by
+        description: Person who last updated the record.
+        type: string
+      - name: date_time_downloaded
+        description: Date and time when this data was downloaed from the database.
+        type: datetime
+
+  immersion_data:
+    description: Logger immersion (wet/dry) data
+    columns:
+      - name: session_id
+        description: Unique ID of the logger deployment session during which this record was made.
+        type: string
+      - name: individ_id
+        description: Unique ID of individual.
+        type: string
+      - name: date_time
+        description: Date and time of each record in GMT (DD.MM.YYYY HH:MM)
+        type: datetime
+      - name: conductivity
+        description: Original conductivity (wet/dry) data; 0 = dry all the time.
+        type: integer
+      - name: std_conductivity
+        description: Normalized conductivity between 0 (dry all the time) and 1 (wet all the time).
+        type: float
+
+  light_data:
+    description: Light intensity records from loggers
+    columns:
+      - name: session_id
+        description: Unique ID of the logger deployment session during which this record was made.
+        type: string
+      - name: individ_id
+        description: Unique ID of individual.
+        type: string
+      - name: date_time
+        description: Date and time of each record in GMT.
+        type: datetime
+      - name: raw_light
+        description: Original light data downloaded from the logger.
+        type: float
+      - name: std_light
+        description: Normalized light values across models (not recommended for use).
+        type: float
+
+  temperature_data:
+    description: Temperature data recorded every 8 hours when wet
+    columns:
+      - name: session_id
+        description: Unique ID of the logger deployment session during which this record was made.
+        type: string
+      - name: individ_id
+        description: Unique ID of individual.
+        type: string
+      - name: date_time
+        description: Date and time of each record in GMT.
+        type: datetime
+      - name: wet_temp_min
+        description: Minimum temperature recorded in degrees Celsius (sampled when continuously wet for ≥20 min).
+        type: float
+      - name: wet_temp_max
+        description: Maximum temperature recorded in degrees Celsius  (sampled when continuously wet for ≥20 min).
+        type: float
+      - name: wet_temp_mean
+        description: Mean temperature recorded in degrees Celsius (sampled when continuously wet for ≥20 min).
+        type: float
+      - name: num_samples
+        description: Number of samples recorded in the last 8 hours
+        type: integer
+
+  individual_data:
+    description: Metadata and biometrics for each tracked individual
+    columns:
+      - name: session_id
+        description: Unique ID for the logger deployment session during which this data was recorded.
+        type: string
+      - name: colony
+        description: Name of the colony where the logger was deployed/retrieved.
+        type: string
+      - name: year_tracked
+        description: Duration that the individual was instrumented with a logger (e.g. 2015_17).
+        type: string
+      - name: individ_id
+        description: Unique ID for each individual.
+        type: string
+      - name: ring_number
+        description: Metal ID ring number.
+        type: string
+      - name: euring_code
+        description: Country/local code for metal ring.
+        type: string
+      - name: colour_ring
+        description: Code and colour for plastic ring.
+        type: string
+      - name: species
+        description: English name of the species.
+        type: string
+      - name: subspecies
+        description: Latin name of the subspecies.
+        type: string
+      - name: morph
+        description: Morphological traits (e.g., bridled guillemot).
+        type: string
+      - name: status_age
+        description: Recorded age at trapping event.
+        type: integer
+      - name: status_sex
+        description: Recorded sex at trapping event.
+        type: string
+      - name: status_sexing_method
+        description: Method used to determine sex.
+        type: string
+      - name: status_date
+        description: Date of trapping event.
+        type: datetime
+      - name: weight
+        description: Weight (grams) at trapping.
+        type: float
+      - name: scull
+        description: Length of head and beak (mm).
+        type: float
+      - name: tarsus
+        description: Length of tarsus (mm).
+        type: float
+      - name: wing
+        description: Length of wing (mm).
+        type: float
+      - name: breeding_stage
+        description: Breeding stage (e.g., nonbreeding, prebreeding, incubating, rearing chicks).
+        type: string
+      - name: eggs
+        description: Number of eggs at trapping.
+        type: integer
+      - name: chicks
+        description: Number of chicks in nest at trapping.
+        type: integer
+      - name: hatching_success
+        description: Hatching success (TRUE = successful, FALSE = failed).
+        type: boolean
+      - name: breeding_success
+        description: Breeding success (TRUE = successful, FALSE = failed).
+        type: boolean
+      - name: breeding_success_criterion
+        description: Definition or criteria used for considering breeding successful.
+        type: string
+      - name: data_responsible
+        description: Data owner or responsible person.
+        type: string
+      - name: back_on_nest
+        description: Whether the bird was observed returning to nest after handling (TRUE/FALSE)
+        type: boolean
+      - name: comment
+        description: Additional comments for the trapping event.
+        type: string
+      - name: latest_sex
+        description: Most recently updated sex information.
+        type: string
+      - name: latest_age
+        description: Most recently updated age information.
+        type: string
+      - name: latest_info_date
+        description: Date when the latest information was updated.
+        type: date
+      - name : eventType
+        description: Type of event recorded for the individual, (e.g. deployment, retrieval, observation).
+        type: string
+

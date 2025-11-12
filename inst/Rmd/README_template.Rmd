@@ -1,0 +1,261 @@
+---
+output: 
+  html_document:
+      toc: true
+      toc_depth: 3
+      toc_float: true
+params:
+  request_name: "myrequest2025"
+  file_list: !r c("locations.parquet")
+  species: !r c("seagull")
+  colonies: !r c("big cliff by the sea")
+  times: !r as.Date(c("2020-01-01","2020-02-02"))
+  data_types: !r c("location")
+  creation_date: !r Sys.Date()
+  data_dir: ""
+  notes: ""
+  additional_files: !r list()
+title: "`r paste(params$request_name, 'README', params$creation_date)`"
+---
+
+```{r, echo = FALSE, message = FALSE}
+library(yaml)
+library(knitr)
+
+data_dir <- file.path(params$data_dir, "data") # to use in the rest of the examples
+
+pos_path <- params$file_list[grepl("posdata", params$file_list)]
+imm_path <- params$file_list[grepl("immersion", params$file_list)]
+temp_path <- params$file_list[grepl("temperature", params$file_list)]
+light_path <- params$file_list[grepl("light", params$file_list)]
+indiv_path <- params$file_list[grepl("morph_and_breeding", params$file_list)]
+
+md_list <- function(values){
+  md_items <- sapply(values, function(value){
+    knitr::knit_expand(text = "| - *{{value}}*")
+    })
+  return(paste(md_items, collapse = "/n"))
+}
+
+has_pos <- has_imm <- has_light <- has_temp <- has_ind <- TRUE
+file_list <- c()
+
+if (length(params$additional_files) > 0) {
+  for (additional_file in params$additional_files){
+    filename <- basename(additional_file$path)
+    file_list <- c(file_list, '| -- {{additional_file$description}} (<span style="color: #ABB2B9;">{{filename}}</span>)')
+  }
+}
+file_list <- c(file_list, "| -- data")
+
+if (length(pos_path) > 0) {
+  has_pos <- TRUE
+  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Positional data (<span style="color: #ABB2B9;">{{pos_path}}</span>)')
+}
+if (length(imm_path) > 0) {
+  has_imm <- TRUE
+  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Standardized immersion data (<span style="color: #ABB2B9;">{{imm_path}}</span>)')
+}
+if (length(light_path) > 0) {
+  has_light <- TRUE
+  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Light data (<span style="color: #ABB2B9;">{{light_path}}</span>)')
+}
+if (length(temp_path) > 0) {
+  has_temp <- TRUE
+  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Temperature data (<span style="color: #ABB2B9;">{{temp_path}}</span>)')
+}
+if (length(indiv_path) > 0) {
+  has_ind <- TRUE
+  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Individual information data (<span style="color: #ABB2B9;">{{indiv_path}}</span>)')
+}
+
+
+
+file_list <- paste(knitr::knit_expand(text = file_list), collapse = "\n")
+
+
+species_list <- md_list(params$species)
+colony_list <- md_list(params$colonies)
+time_span <- knitr::knit_expand(text = "| - *{{params$times[1]}}* - *{{params$times[2]}}*")
+additional_notes <- knitr::knit_expand(text = "| {{params$notes}}")
+
+# Load schema
+schema_dict <- read_yaml(system.file("yaml", "output_schema.yaml", package = "seatrackR"))
+
+render_schema <- function(dataset_key, dict) {
+  dataset <- dict$datasets[[dataset_key]]
+  title <- gsub("_", " ", tools::toTitleCase(dataset_key))
+  header <- knitr::knit_expand(text = "### {{title}} \n\n {{dataset$description}}")
+
+  bullets <- sapply(dataset$columns, function(col) {
+      knitr::knit_expand(text = "- **{{col$name}}** *(type:{{col$type}})* \n  {{col$description}} ")
+    })
+  all_desc <- paste(c(header, bullets), collapse = "\n\n")
+  return(all_desc)
+}
+
+schema_md <- paste(sapply(names(schema_dict$datasets), render_schema, dict = schema_dict), collapse = "\n\n")
+```
+## Description
+| ___________________________________________________________________________________________________
+| This readme contains an overview of the files contained within this data package and instructions on how to use them in R. 
+`r knitr::knit(text = additional_notes)`
+|
+| *For more information about the project, please visit [SEATRACK's website](http://www.seapop.no/en/seatrack/)*
+| *contact re. General data queries: julian.evans@nina.no*
+|
+| *For more information about the processing of GLS data, please see this [report](https://brage.nina.no/nina-xmlui/handle/11250/2735757)*
+| *contact re. GLS data processing: vegard.brathen@nina.no*
+|
+| ___________________________________________________________________________________________________
+## Package overview
+| ___________________________________________________________________________________________________
+| **The dataset consists of:**
+| **Files**:
+| -- This readme (<span style="color: #ABB2B9;">`r paste0("README_", params$request_name, "_", params$creation_date, ".html")`</span>)
+`r knitr::knit(text = file_list)`
+|
+| **Time range**
+`r knitr::knit(text = time_span)`
+|
+| **Species**: 
+`r knitr::knit(text = species_list)`
+| 
+| **Colonies**: 
+`r knitr::knit(text = colony_list)`
+| ___________________________________________________________________________________________________
+
+
+## Examples of use
+
+### Prepare workspace & load data
+
+```{r echo=TRUE, eval = FALSE, message=FALSE}
+# Load libraries
+library(arrow) # for loading parquet files
+library(dplyr) # for easily working with data
+library(lubridate) # for some enhanced date functionality
+library(ggplot2) # for plotting
+library(sf) # for GIS work
+library(maps)
+
+# deactivate spherical geometry (s2) for sf
+sf::sf_use_s2(FALSE)
+
+# point R to the folder where the data is, e.g.
+data_dir <- "path/where/you/unzipped/files/data"
+```
+
+```{r echo=FALSE, message=FALSE}
+# THE ABOVE BLOCK IS FAKE TO SHOW HOW TO SET THE 
+# Load libraries
+library(arrow) # for loading parquet files
+library(dplyr) # for easily working with data
+library(lubridate) # for some enhanced date functionality
+library(ggplot2) # for plotting
+library(sf) # for GIS work
+library(maps)
+
+# deactivate spherical geometry (s2) for sf
+sf::sf_use_s2(FALSE)
+```
+
+The arrow package can be used to load data files
+
+```{r generate_load_files, echo = FALSE}
+
+# MODIFY THIS TO ONLY READ IN THE FILES PRESENT
+load_file_chunk <- knitr::knit_expand(text = c(
+  "```{r load_files}",
+  'mylocs <- read_parquet(file.path(data_dir, "{{pos_path}}"))',
+  'immersion <- read_parquet(file.path(data_dir, "{{imm_path}}"))',
+  'light <- read_parquet(file.path(data_dir, "{{light_path}}"))',
+  'individs <- read_parquet(file.path(data_dir, "{{indiv_path}}"))',
+  "```"
+))
+
+```
+
+`r knitr::knit(text = load_file_chunk)`
+
+### Explore data
+
+Some examples on how to quickly explore your data.
+
+```{r echo=TRUE, message=TRUE}
+mylocs %>%
+  dplyr::group_by(colony, year_tracked, age_deployment) %>%
+  dplyr::summarise(n_birds_tracked = n_distinct(individ_id))
+```
+
+```{r echo = TRUE, message = TRUE}
+immersion %>%
+  dplyr::mutate(year = year(date_time)) %>%
+  dplyr::group_by(year) %>%
+  dplyr::summarise(n_birds_tracked = n_distinct(individ_id))
+```
+
+```{r echo = TRUE, message = TRUE}
+light %>%
+  dplyr::mutate(year = year(date_time)) %>%
+  dplyr::group_by(year) %>%
+  dplyr::summarise(n_birds_tracked = n_distinct(individ_id))
+```
+
+```{r echo=TRUE, message=TRUE}
+individs %>%
+  dplyr::group_by(colony, year_tracked) %>%
+  dplyr::summarise(n_birds_tracked = n_distinct(individ_id))
+```
+### Map positions
+
+Some examples on how to quickly map your data.
+
+```{r echo = TRUE, message = TRUE}
+mylocs %>%
+  dplyr::mutate(year = year(date_time)) %>%
+  sf::st_as_sf(coords = c("lon", "lat"), crs = 4326) ->
+mylocs
+
+worldmap <- ggplot2::map_data("world")
+
+ggplot() +
+  geom_polygon(data = worldmap, aes(x = long, y = lat, group = group)) +
+  geom_sf(data = mylocs[mylocs$eqfilter == 1, ], aes(colour = age_deployment), size = .1) +
+  coord_sf(
+   lims_method = "geometry_bbox"
+  ) +
+  theme_light() +
+  theme(legend.position = "bottom")
+```
+
+
+### Plot immersion data
+
+An example of plotting immersion data.
+```{r echo = TRUE, message = TRUE}
+one_individ <- immersion[immersion$individ_id %in% unique(immersion$individ_id)[1], ]
+one_year <- one_individ[year(one_individ$date_time) %in% unique(year(one_individ$date_time))[2], ]
+one_year$doy <- strftime(one_year$date_time, format = "%j")
+one_year <- aggregate(std_conductivity ~ doy, one_year, mean)
+plot(one_year$doy, one_year$std_conductivity,
+  type = "l", col = "lightblue", lwd = 2,
+  xlab = "day of the year", ylab = "mean daily immersion (0-1)", main = unique(immersion$individ_id)[1]
+)
+``` 
+
+### Plot light data
+
+An example of plotting light data.
+```{r echo = TRUE, message = TRUE}
+one_individ <- light[light$individ_id %in% unique(light$individ_id)[1], ]
+one_year <- one_individ[year(one_individ$date_time) %in% unique(year(one_individ$date_time))[], ]
+one_year$doy <- strftime(one_year$date_time, format = "%j")
+one_year <- aggregate(raw_light ~ doy, one_year, sum)
+plot(one_year$doy, one_year$raw_light, type = "l", col = "lightblue", lwd = 2, xlab = "day of the year", ylab = "sum daily light", main = unique(light$individ_id)[1])
+``` 
+
+## Detailed file description
+
+`r knitr::knit(text = schema_md)`
+
