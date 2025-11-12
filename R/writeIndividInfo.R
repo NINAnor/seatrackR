@@ -13,11 +13,9 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' writeIndividInfo(sampleIndividInfo)
 #' }
-
-
 writeIndividInfo <- function(individData,
                              append = T,
-                             overwrite = FALSE){
+                             overwrite = FALSE) {
   checkCon()
   DBI::dbWithTransaction(
     con,
@@ -27,5 +25,3 @@ writeIndividInfo <- function(individData,
     }
   )
 }
-
-

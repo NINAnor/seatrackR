@@ -16,17 +16,15 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' writeRecordings(lightData = sampleLightData)
 #' }
-
-
 writeRecordings <- function(lightData = NULL,
                             activityData = NULL,
                             temperatureData = NULL,
                             accelerationData = NULL,
                             append = T,
-                            overwrite = FALSE){
+                            overwrite = FALSE) {
   checkCon()
 
-  if(!is.null(lightData)){
+  if (!is.null(lightData)) {
     DBI::dbWithTransaction(
       con,
       {
@@ -35,7 +33,7 @@ writeRecordings <- function(lightData = NULL,
     )
   }
 
-  if(!is.null(activityData)){
+  if (!is.null(activityData)) {
     DBI::dbWithTransaction(
       con,
       {
@@ -44,7 +42,7 @@ writeRecordings <- function(lightData = NULL,
     )
   }
 
-  if(!is.null(temperatureData)){
+  if (!is.null(temperatureData)) {
     DBI::dbWithTransaction(
       con,
       {
@@ -54,7 +52,7 @@ writeRecordings <- function(lightData = NULL,
   }
 
 
-  if(!is.null(accelerationData)){
+  if (!is.null(accelerationData)) {
     DBI::dbWithTransaction(
       con,
       {
@@ -62,6 +60,4 @@ writeRecordings <- function(lightData = NULL,
       }
     )
   }
-
 }
-

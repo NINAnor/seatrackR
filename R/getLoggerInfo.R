@@ -11,31 +11,27 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' loggerInfo <- getLoggerInfo()
 #' }
-
-getLoggerInfo <- function(asTibble = T){
-
+getLoggerInfo <- function(asTibble = T) {
   checkCon()
 
-  res <-dplyr::tbl(con, dbplyr::in_schema("views", "logger_info"))
+  res <- dplyr::tbl(con, dbplyr::in_schema("views", "logger_info"))
 
-  if(asTibble){
-    res <- res  %>% dplyr::collect()
+  if (asTibble) {
+    res <- res %>% dplyr::collect()
 
-    #Forze timezone to be UTC
+    # Forze timezone to be UTC
     res <- res %>%
-      mutate(starttime_gmt = lubridate::force_tz(starttime_gmt,
-                                                 tzone = "UTC"),
-             programmed_gmt_time = lubridate::force_tz(programmed_gmt_time,
-                                                       tzone = "UTC"),
+      mutate(
+        starttime_gmt = lubridate::force_tz(starttime_gmt,
+          tzone = "UTC"
+        ),
+        programmed_gmt_time = lubridate::force_tz(programmed_gmt_time,
+          tzone = "UTC"
+        ),
       )
   }
 
 
 
   return(res)
-
 }
-
-
-
-

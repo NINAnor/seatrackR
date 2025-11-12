@@ -12,31 +12,35 @@
 #' @export
 #'
 #' @examples
-#'
 #' \dontrun{
 #'
-#' deletePositions(datatype = "GLS",
-#'               session_ids_to_delete = c("60171_2022-06-30", "63170_2022-06-30"),
-#'               refreshView = TRUE)
+#' deletePositions(
+#'   datatype = "GLS",
+#'   session_ids_to_delete = c("60171_2022-06-30", "63170_2022-06-30"),
+#'   refreshView = TRUE
+#' )
 #' }
-
 deletePositions <- function(datatype = "GLS",
                             session_ids_to_delete,
                             idempotent = TRUE,
-                            refreshView = TRUE){
+                            refreshView = TRUE) {
   checkCon()
 
   datatype <- match.arg(datatype,
-                        choices = c("GLS", "IRMA", "GPS")
-                        )
+    choices = c("GLS", "IRMA", "GPS")
+  )
 
-  source_table <- dplyr::case_when(datatype == "GLS" ~ "postable_raw",
-                                   datatype == "IRMA" ~ "irma_raw",
-                                   datatype == "GPS" ~ "gps_raw")
+  source_table <- dplyr::case_when(
+    datatype == "GLS" ~ "postable_raw",
+    datatype == "IRMA" ~ "irma_raw",
+    datatype == "GPS" ~ "gps_raw"
+  )
 
-  associated_view <- dplyr::case_when(datatype == "GLS" ~ "postable",
-                                      datatype == "IRMA" ~ "irma",
-                                      datatype == "GPS" ~ "gps")
+  associated_view <- dplyr::case_when(
+    datatype == "GLS" ~ "postable",
+    datatype == "IRMA" ~ "irma",
+    datatype == "GPS" ~ "gps"
+  )
 
   res <- dplyr::tbl(con, dbplyr::in_schema("positions", source_table))
 
@@ -51,51 +55,62 @@ deletePositions <- function(datatype = "GLS",
     dplyr::distinct() |>
     dplyr::pull()
 
-  if(!idempotent){
-  if(length(session_ids_to_delete) != length(unique(sessionsInTable))) {
-    stop("Sessions ", paste0(session_ids_to_delete[!(session_ids_to_delete %in% sessionsInTable)], " not in table!"))
+  if (!idempotent) {
+    if (length(session_ids_to_delete) != length(unique(sessionsInTable))) {
+      stop("Sessions ", paste0(session_ids_to_delete[!(session_ids_to_delete %in% sessionsInTable)], " not in table!"))
     }
   }
 
 
-  nRow_string <- paste0("SELECT count(*) FROM positions.",
-                        source_table)
+  nRow_string <- paste0(
+    "SELECT count(*) FROM positions.",
+    source_table
+  )
 
-  delete_string <- paste0("DELETE FROM positions.",
-                          source_table,
-                          " WHERE session_id IN ('",
-                          paste(session_ids_to_delete,
-                                collapse = "','"),
-                          "')")
+  delete_string <- paste0(
+    "DELETE FROM positions.",
+    source_table,
+    " WHERE session_id IN ('",
+    paste(session_ids_to_delete,
+      collapse = "','"
+    ),
+    "')"
+  )
 
   DBI::dbWithTransaction(
     con,
     {
-      nRowsBefore <- DBI::dbGetQuery(con,
-                                     nRow_string)
+      nRowsBefore <- DBI::dbGetQuery(
+        con,
+        nRow_string
+      )
 
-      DBI::dbSendStatement(con,
-                           delete_string)
+      DBI::dbSendStatement(
+        con,
+        delete_string
+      )
 
-      nRowsAfter <- DBI::dbGetQuery(con,
-                                     nRow_string)
+      nRowsAfter <- DBI::dbGetQuery(
+        con,
+        nRow_string
+      )
 
       nRowsDeleted <- nRowsBefore - nRowsAfter
 
-      if(nRowsDeleted != nRowsToDelete){
+      if (nRowsDeleted != nRowsToDelete) {
         dbBreak()
         return("Not all lines could be deleted, aborted!")
       }
+    }
+  )
 
-    })
-
-  if(refreshView){
+  if (refreshView) {
     refresh_string <- paste0("REFRESH MATERIALIZED VIEW positions.", associated_view)
-    dbSendQuery(con,
-                refresh_string)
+    dbSendQuery(
+      con,
+      refresh_string
+    )
   }
 
   return(paste0("All ", nRowsToDelete, " lines deleted, attributed to ", length(unique(sessionsInTable)), " session IDs."))
-
 }
-

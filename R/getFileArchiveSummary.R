@@ -12,36 +12,35 @@
 #' seatrackConnect(Username = "testreader", Password = "testreader")
 #' fileArchive <- getFileArchive()
 #' }
-
 getFileArchiveSummary <- function(colony = NULL,
-                                  year = NULL){
+                                  year = NULL) {
   checkCon()
 
-  res <- DBI::dbGetQuery(con,
-  "SELECT f.file_id, f.session_id, ls.colony, ii.ring_number, ii.euring_code, ls.year_tracked, li.logger_serial_no, li.logger_model, f.filename
+  res <- DBI::dbGetQuery(
+    con,
+    "SELECT f.file_id, f.session_id, ls.colony, ii.ring_number, ii.euring_code, ls.year_tracked, li.logger_serial_no, li.logger_model, f.filename
   FROM loggers.file_archive f, loggers.logging_session ls, individuals.individ_info ii, loggers.logger_info li
   WHERE f.session_id = ls.session_id
   AND ls.logger_id = li.logger_id
   AND ls.individ_id = ii.individ_id
-  ORDER BY file_id")  %>% as_tibble()
+  ORDER BY file_id"
+  ) %>% as_tibble()
 
 
-if(!is.null(colony)){
-  res <- res %>% filter(colony %in% colony)
+  if (!is.null(colony)) {
+    res <- res %>% filter(colony %in% colony)
+  }
+
+  if (!is.null(year)) {
+    res <- res %>% filter(year_tracked %in% year)
+  }
+
+  return(res)
 }
 
-if(!is.null(year)){
-  res <- res %>% filter(year_tracked %in% year)
-}
-
-return(res)
-
-}
-
-##Not finished. Need to code the filetypes into fewer categories
+## Not finished. Need to code the filetypes into fewer categories
 getFileArchiveSummary2 <- function(colony = NULL,
-                                   year = NULL){
-
+                                   year = NULL) {
   checkCon()
 
   fileQ <- "SELECT li.logger_id, li.logger_serial_no, li.logger_model, ls.year_tracked, date_part('year', r.retrieval_date) as year_retrieved,
@@ -64,20 +63,20 @@ getFileArchiveSummary2 <- function(colony = NULL,
 
   res <- dbGetQuery(con, fileQ)
 
-  if(!is.null(colony)){
+  if (!is.null(colony)) {
     res <- res %>% filter(colony %in% colony)
   }
 
-  if(!is.null(year)){
+  if (!is.null(year)) {
     res <- res %>% filter(year_tracked %in% year)
   }
 
 
   out <- res %>%
-    as_tibble %>%
+    as_tibble() %>%
     select(-file_id) %>%
     group_by(session_id) %>%
-    spread(key = file_basename, val = filename, drop = T)  %>%
+    spread(key = file_basename, val = filename, drop = T) %>%
     arrange(session_id) %>%
     ungroup()
 

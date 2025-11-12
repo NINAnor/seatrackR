@@ -56,22 +56,25 @@ This is a convenience function that reads position data from the database. The d
 \dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
 
-positions <- getPositions(colony = "Kongsfjorden",
-                        dataResponsible = "Sebastien Descamps",
-                        species = "Little auk",
-                        limit = F,
-                        loadGeometries = F)
+positions <- getPositions(
+  colony = "Kongsfjorden",
+  dataResponsible = "Sebastien Descamps",
+  species = "Little auk",
+  limit = F,
+  loadGeometries = F
+)
 
 positions
 
 # get data with geometries (default)
-positions2 <- getPositions(datatype = "GPS",
-                         limit = 500)
+positions2 <- getPositions(
+  datatype = "GPS",
+  limit = 500
+)
 
 positions2
 
-#make a simple plot
+# make a simple plot
 plot(positions2["logger_model"], pch = 16)
-
 }
 }

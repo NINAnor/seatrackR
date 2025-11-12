@@ -2,10 +2,12 @@ require(tidyverse)
 require(DBI)
 require(RPostgres)
 require(lubridate)
-metaRaw <- read.csv("../../database_struct/Standardtabeller/metadata_sklinna_2016.csv", skip = 1,
-                    fileEncoding = "windows-1252", stringsAsFactors =  F)
+metaRaw <- read.csv("../../database_struct/Standardtabeller/metadata_sklinna_2016.csv",
+  skip = 1,
+  fileEncoding = "windows-1252", stringsAsFactors = F
+)
 
-metaRaw <- metaRaw[1:169,]
+metaRaw <- metaRaw[1:169, ]
 
 head(metaRaw)
 tail(metaRaw)
@@ -16,7 +18,7 @@ str(metaRaw)
 
 metaRaw$weight <- as.numeric(metaRaw$weight)
 metaRaw[c(16:19, 22)] <- sapply(metaRaw[c(16:19, 22)], as.numeric)
-metaRaw[c(21, 28, 29)] <- sapply(metaRaw[c(21, 28, 29)] , as.numeric)
+metaRaw[c(21, 28, 29)] <- sapply(metaRaw[c(21, 28, 29)], as.numeric)
 
 metaRaw$hatching_success <- as.logical(as.numeric(metaRaw$hatching_success))
 metaRaw$breeding_success <- as.logical(as.numeric(metaRaw$breeding_success))
@@ -24,13 +26,21 @@ metaRaw$age <- as.numeric(metaRaw$age)
 
 cap <- function(x) {
   paste(toupper(substring(x, 1, 1)), substring(x, 2),
-        sep = "", collapse = " ")
+    sep = "", collapse = " "
+  )
 }
 
 capwords <- function(s, strict = FALSE) {
-  cap <- function(s) paste(toupper(substring(s, 1, 1)),
-                           {s <- substring(s, 2); if(strict) tolower(s) else s},
-                           sep = "", collapse = " " )
+  cap <- function(s) {
+    paste(toupper(substring(s, 1, 1)),
+      {
+        s <- substring(s, 2)
+        if (strict) tolower(s) else s
+      },
+      sep = "",
+      collapse = " "
+    )
+  }
   sapply(strsplit(s, split = "[- ]"), cap, USE.NAMES = !is.null(names(s)))
 }
 
@@ -39,10 +49,10 @@ metaRaw$data_responsible <- gsub("Svein Håkon", "Svein-Håkon", metaRaw$data_re
 
 metaRaw$species <- sapply(metaRaw$species, cap)
 metaRaw$colony <- sapply(metaRaw$colony, cap)
-#require(devtools)
+# require(devtools)
 
 metaRaw$logger_model_retrieved[metaRaw$logger_model_retrieved == "Mk4093"] <- "mk4093"
-#metaRaw$logger_model_retrieved[metaRaw$logger_model_retrieved == "Mk4083"] <- "mk4083"
+# metaRaw$logger_model_retrieved[metaRaw$logger_model_retrieved == "Mk4083"] <- "mk4083"
 
 #
 # metaRaw$subspecies[metaRaw$subspecies == ""] <- NA
@@ -58,13 +68,13 @@ metaRaw[metaRaw == "NA"] <- NA
 metaRaw[metaRaw == ""] <- NA
 
 metaRaw$date <- as.Date(metaRaw$date, format = "%d/%m/%Y")
-#metaRaw <-
-metaRaw <- metaRaw[order(metaRaw$date),]
+# metaRaw <-
+metaRaw <- metaRaw[order(metaRaw$date), ]
 metaRaw$data_responsible[metaRaw$data_responsible == "Signe Christensen Dalsgaard"] <- "Signe Christensen-Dalsgaard"
-metaRaw <-metaRaw[is.na(metaRaw$logger_id_retrieved), ] ##Remove all retrievals in this data, since none of them are deployed. We need to add some retrievals
+metaRaw <- metaRaw[is.na(metaRaw$logger_id_retrieved), ] ## Remove all retrievals in this data, since none of them are deployed. We need to add some retrievals
 metaRaw$date[is.na(metaRaw$date)] <- "2016-03-01"
 
-##Make up some retrievals artificially that matches the deployments
+## Make up some retrievals artificially that matches the deployments
 
 tempRetr <- metaRaw[head(!is.na(metaRaw$logger_id_deployed), 20), ]
 tempRetr$logger_id_retrieved <- tempRetr$logger_id_deployed
@@ -84,10 +94,10 @@ sampleMetadata <- as_tibble(sampleMetadata)
 #
 # sampleMetadata$date[!is.na(sampleMetadata$logger_id_retrieved)] <- sampleMetadata$date[!is.na(sampleMetadata$logger_id_retrieved)] + month(1)
 
-dep <- sampleMetadata %>% filter(date < '2017-01-01')
-ret <- sampleMetadata %>% filter(date >= '2017-01-01')
+dep <- sampleMetadata %>% filter(date < "2017-01-01")
+ret <- sampleMetadata %>% filter(date >= "2017-01-01")
 
-##add deployment data for the duplicate sessions.
+## add deployment data for the duplicate sessions.
 dupDep <- dep[1:2, ]
 dupDep$ring_number <- c("1234", "5678")
 dupDep$date <- as.Date(c("2017-03-04"))
@@ -100,15 +110,15 @@ sampleMetadata <- bind_rows(dep, dupDep, dupRet, ret)
 
 devtools::use_data(sampleMetadata, overwrite = T)
 
-sampleIndividInfo <- sampleMetadata[!duplicated(sampleMetadata[c(2:3)]),c(2:3, 10, 4, 11, 12, 13:15)]
+sampleIndividInfo <- sampleMetadata[!duplicated(sampleMetadata[c(2:3)]), c(2:3, 10, 4, 11, 12, 13:15)]
 sampleIndividInfo <- as_tibble(sampleIndividInfo)
-#devtools::use_data(sampleIndividInfo, overwrite = T)
+# devtools::use_data(sampleIndividInfo, overwrite = T)
 
 tempLoggers <- rbind(sampleMetadata[c(7, 6)], setNames(sampleMetadata[c(9, 8)], names(sampleMetadata[c(7, 6)])))
 
-sampleLoggerInfo <- tempLoggers[!duplicated(tempLoggers),]
-sampleLoggerInfo <- sampleLoggerInfo[sampleLoggerInfo$logger_id_retrieved != "",]
-sampleLoggerInfo <- sampleLoggerInfo[!is.na(sampleLoggerInfo$logger_id_retrieved),]
+sampleLoggerInfo <- tempLoggers[!duplicated(tempLoggers), ]
+sampleLoggerInfo <- sampleLoggerInfo[sampleLoggerInfo$logger_id_retrieved != "", ]
+sampleLoggerInfo <- sampleLoggerInfo[!is.na(sampleLoggerInfo$logger_id_retrieved), ]
 
 sampleLoggerInfo$producer <- "Biotrack"
 sampleLoggerInfo$producer[grep("c", sampleLoggerInfo$logger_model_retrieved)] <- "Migrate Technology"
@@ -123,10 +133,10 @@ sampleLoggerInfo$project <- "seatrack"
 sampleLoggerInfo <- sampleLoggerInfo[c(1, 3, 4, 2, 5)]
 names(sampleLoggerInfo)[c(1, 4)] <- c("logger_serial_no", "logger_model")
 
-##On second thought, we won't write to logger_info, but include this in logger_import instead
+## On second thought, we won't write to logger_info, but include this in logger_import instead
 require(lubridate)
 sampleLoggerImport <- sampleLoggerInfo
-sampleLoggerImport$starttime_gmt <- as.Date('2015-01-01') + years(1)
+sampleLoggerImport$starttime_gmt <- as.Date("2015-01-01") + years(1)
 sampleLoggerImport$logging_mode <- 1
 sampleLoggerImport$started_by <- "Jens Åström"
 sampleLoggerImport$started_where <- "NINA"
@@ -135,7 +145,7 @@ sampleLoggerImport$programmed_gmt_time <- sampleLoggerImport$starttime_gmt + day
 sampleLoggerImport$intended_species <- "Little auk"
 sampleLoggerImport$intended_location <- "Bjørnøya"
 sampleLoggerImport$intended_deployer <- "Vegard Sandøy Bråthen"
-#sampleLoggerImport$data_responsible <- "Jens Åström"
+# sampleLoggerImport$data_responsible <- "Jens Åström"
 sampleLoggerImport$shutdown_session <- F
 sampleLoggerImport$shutdown_date <- NA
 sampleLoggerImport$field_status <- NA
@@ -145,23 +155,25 @@ sampleLoggerImport$download_type <- NA
 sampleLoggerImport$decomissioned <- NA
 sampleLoggerImport$comment <- NA
 
-##Add another startup to test multiple active sessions
+## Add another startup to test multiple active sessions
 temp <- sampleLoggerImport %>%
   filter(logger_serial_no %in% c("Z236", "Z231"))
-temp$starttime_gmt <-  as.Date(c("2017-01-01", "2017-01-01"))
+temp$starttime_gmt <- as.Date(c("2017-01-01", "2017-01-01"))
 temp$programmed_gmt_time <- as.Date(c("2017-01-01", "2017-01-01"))
 
 sampleLoggerImport <- sampleLoggerImport %>%
   bind_rows(temp)
 
 
-sampleLoggerImport <- sampleLoggerImport[c("logger_serial_no", "logger_model", "producer",
-                                           "production_year", "project", "starttime_gmt",
-                                           "logging_mode", "started_by", "started_where",
-                                           "days_delayed", "programmed_gmt_time", "intended_species",
-                                           "intended_location", "intended_deployer",
-                                           "shutdown_session", "shutdown_date","field_status", "downloaded_by", "download_type",
-                                           "download_date", "decomissioned", "comment")]
+sampleLoggerImport <- sampleLoggerImport[c(
+  "logger_serial_no", "logger_model", "producer",
+  "production_year", "project", "starttime_gmt",
+  "logging_mode", "started_by", "started_where",
+  "days_delayed", "programmed_gmt_time", "intended_species",
+  "intended_location", "intended_deployer",
+  "shutdown_session", "shutdown_date", "field_status", "downloaded_by", "download_type",
+  "download_date", "decomissioned", "comment"
+)]
 
 sampleLoggerImport <- as_tibble(sampleLoggerImport)
 
@@ -169,10 +181,10 @@ devtools::use_data(sampleLoggerImport, overwrite = T)
 
 sampleLoggerShutdown <- sampleLoggerImport
 
-sampleLoggerShutdown <-  sampleLoggerShutdown[sampleLoggerShutdown$logger_serial_no %in% sampleMetadata$logger_id_retrieved[!is.na(sampleMetadata$logger_id_retrieved)], ]
+sampleLoggerShutdown <- sampleLoggerShutdown[sampleLoggerShutdown$logger_serial_no %in% sampleMetadata$logger_id_retrieved[!is.na(sampleMetadata$logger_id_retrieved)], ]
 names(sampleLoggerShutdown)
-sampleLoggerShutdown[c(3:5, 7:15)] <- NA ##keep starttime_gmt to allow multiple open sessions
-sampleLoggerShutdown$shutdown_session = T
+sampleLoggerShutdown[c(3:5, 7:15)] <- NA ## keep starttime_gmt to allow multiple open sessions
+sampleLoggerShutdown$shutdown_session <- T
 sampleLoggerShutdown$download_type[1:30] <- "Successfully downloaded"
 sampleLoggerShutdown$download_type[31:nrow(sampleLoggerShutdown)] <- "Nonresponsive"
 sampleLoggerShutdown$field_status[1:30] <- "OK"
@@ -206,9 +218,9 @@ devtools::use_data(sampleLoggerModels, overwrite = T)
 # DBI::dbSendQuery(con, "SET search_path TO imports, public")
 # DBI::dbWriteTable(con, "logger_import", sampleLoggerImport, append = T, overwrite = F)
 
- # oldLoggerInfo <- DBI::dbGetQuery(con, "SELECT * FROM loggers.logger_info")
- # newLoggerInfo <- anti_join(sampleLoggerInfo, oldLoggerInfo)
- # writeLoggerInfo(newLoggerInfo)
+# oldLoggerInfo <- DBI::dbGetQuery(con, "SELECT * FROM loggers.logger_info")
+# newLoggerInfo <- anti_join(sampleLoggerInfo, oldLoggerInfo)
+# writeLoggerInfo(newLoggerInfo)
 
 
 
@@ -241,39 +253,41 @@ devtools::use_data(sampleLoggerModels, overwrite = T)
 
 
 ##########
-##Posdata
+## Posdata
 
 connectSeatrack("testreader", "testreader")
 
 posdata <- getPosdata(limit = 1000)
 use_data(posdata)
 
-#Metadata
-#This is a bit of a hack to save the metadata from the production database to the testing version.
+# Metadata
+# This is a bit of a hack to save the metadata from the production database to the testing version.
 connectSeatrack()
 
-toLoad <- list("breeding_stages",
-            "breeding_success_criterion",
-            "colony",
-            "download_types",
-            "euring_codes",
-            "import_types",
-            "location",
-            "logger_fate",
-            "logger_producers",
-            "logger_models",
-            "logger_files",
-            "logging_modes",
-            "mounting_types",
-            "people",
-            "retrieval_type",
-            "sex",
-            "sexing_method",
-            "species",
-            "subspecies")
+toLoad <- list(
+  "breeding_stages",
+  "breeding_success_criterion",
+  "colony",
+  "download_types",
+  "euring_codes",
+  "import_types",
+  "location",
+  "logger_fate",
+  "logger_producers",
+  "logger_models",
+  "logger_files",
+  "logging_modes",
+  "mounting_types",
+  "people",
+  "retrieval_type",
+  "sex",
+  "sexing_method",
+  "species",
+  "subspecies"
+)
 
-loadFun <- function(x){
-  tmp <- dbReadTable(con,  Id(schema = "metadata", table = x))
+loadFun <- function(x) {
+  tmp <- dbReadTable(con, Id(schema = "metadata", table = x))
   assign(x, tmp, envir = .GlobalEnv)
 }
 
@@ -302,36 +316,37 @@ lapply(toLoad, loadFun)
 
 
 save(breeding_stages,
-     breeding_success_criterion,
-     colony,
-     download_types,
-     euring_codes,
-     import_types,
-     location,
-     logger_fate,
-     logger_models,
-     logger_files,
-     logger_producers,
-     logging_modes,
-     mounting_types,
-     people,
-     retrieval_type,
-     sex,
-     sexing_method,
-     species,
-     subspecies, file = "data/metadata.rda")
+  breeding_success_criterion,
+  colony,
+  download_types,
+  euring_codes,
+  import_types,
+  location,
+  logger_fate,
+  logger_models,
+  logger_files,
+  logger_producers,
+  logging_modes,
+  mounting_types,
+  people,
+  retrieval_type,
+  sex,
+  sexing_method,
+  species,
+  subspecies,
+  file = "data/metadata.rda"
+)
 
-#connectSeatrack(dbname = "seatrack_devel", Username = "seatrack_admin", Password = "")
+# connectSeatrack(dbname = "seatrack_devel", Username = "seatrack_admin", Password = "")
 
-writeFun <- function(x){
-    dbWriteTable(con,  Id(schema = "metadata", table = x), append = T, get(x))
-
+writeFun <- function(x) {
+  dbWriteTable(con, Id(schema = "metadata", table = x), append = T, get(x))
 }
 
 lapply(toLoad, writeFun)
 
 
-##Activity data
+## Activity data
 lightRaw <- read_delim("../../database_struct/Standardtabeller/light_BT_overview.txt", delim = "\t")
 lightRaw
 
@@ -339,13 +354,17 @@ filenames <- dbReadTable(con, Id(schema = "loggers", table = "file_archive"))
 
 sampleLight <- lightRaw %>%
   slice(1:100) %>%
-  mutate(filename = filenames$filename[1],
-         date_time = as_datetime(date_time)) %>%
-  select(filename,
-         date_time,
-         clipped,
-         raw_light,
-         std_light)
+  mutate(
+    filename = filenames$filename[1],
+    date_time = as_datetime(date_time)
+  ) %>%
+  select(
+    filename,
+    date_time,
+    clipped,
+    raw_light,
+    std_light
+  )
 
 
 sampleLight
@@ -356,12 +375,16 @@ writeRecordings(lightData = sampleLight)
 activityRaw <- read_delim("../../database_struct/Standardtabeller/activity_BT_overview.txt", delim = "\t")
 sampleActivity <- activityRaw %>%
   slice(1:100) %>%
-  mutate(filename = filenames$filename[1],
-         date_time = as_datetime(date_time)) %>%
-  select(filename,
-         date_time,
-         conductivity,
-         std_conductivity)
+  mutate(
+    filename = filenames$filename[1],
+    date_time = as_datetime(date_time)
+  ) %>%
+  select(
+    filename,
+    date_time,
+    conductivity,
+    std_conductivity
+  )
 
 writeRecordings(activityData = sampleActivity)
 
@@ -370,35 +393,42 @@ temperatureRaw <- read_delim("../../database_struct/Standardtabeller/temperature
 
 sampleTemperature <- temperatureRaw %>%
   slice(1:100) %>%
-  mutate(filename = filenames$filename[1],
-         date_time = as_datetime(date_time)) %>%
-  select(filename,
-         date_time,
-         wet_temp_min,
-         wet_temp_max,
-         wet_temp_mean,
-         num_samples)
+  mutate(
+    filename = filenames$filename[1],
+    date_time = as_datetime(date_time)
+  ) %>%
+  select(
+    filename,
+    date_time,
+    wet_temp_min,
+    wet_temp_max,
+    wet_temp_mean,
+    num_samples
+  )
 
 writeRecordings(temperatureData = sampleTemperature)
 
 
-#sampleRingHistory (requires some data in the database)
+# sampleRingHistory (requires some data in the database)
 
 rn <- getIndividInfo() %>%
   group_by(individ_id) %>%
   select(individ_id,
-         current_euring_code = euring_code,
-         current_ring_number = ring_number,
-         current_ring_color = color_ring) %>%
+    current_euring_code = euring_code,
+    current_ring_number = ring_number,
+    current_ring_color = color_ring
+  ) %>%
   slice(1) %>%
-   head(100)
+  head(100)
 
 rn <- rn %>%
-  mutate(date_current_ring = "2017-01-01",
-         old_euring_code = "OLD",
-         old_ring_number = paste('OLD', current_ring_number),
-         old_ring_color = "BLACK",
-         date_old_ring = "1999-12-31")
+  mutate(
+    date_current_ring = "2017-01-01",
+    old_euring_code = "OLD",
+    old_ring_number = paste("OLD", current_ring_number),
+    old_ring_color = "BLACK",
+    date_old_ring = "1999-12-31"
+  )
 
 
 sampleRingHistory <- rn

@@ -16,18 +16,16 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' refreshViews()
 #' }
-
 refreshViews <- function(all = TRUE,
                          onlySummaryTables = FALSE,
                          onlyGLS = FALSE,
                          onlyGPS = FALSE,
-                         onlyIrma = FALSE){
-
+                         onlyIrma = FALSE) {
   checkCon()
 
-  if(all & sum(all, onlySummaryTables, onlyGLS, onlyGPS, onlyIrma) > 1) stop("Cannot select particular view if 'all' is TRUE!")
-  if(sum(onlySummaryTables, onlyGLS, onlyGPS, onlyIrma) > 1) stop("Can only select 1 particular view in a time!")
-  if(!all & sum(all, onlySummaryTables, onlyGLS, onlyGPS, onlyIrma) < 1) stop("Well, you've got to select something.")
+  if (all & sum(all, onlySummaryTables, onlyGLS, onlyGPS, onlyIrma) > 1) stop("Cannot select particular view if 'all' is TRUE!")
+  if (sum(onlySummaryTables, onlyGLS, onlyGPS, onlyIrma) > 1) stop("Can only select 1 particular view in a time!")
+  if (!all & sum(all, onlySummaryTables, onlyGLS, onlyGPS, onlyIrma) < 1) stop("Well, you've got to select something.")
 
   specific_table <- dplyr::case_when(
     isTRUE(onlyGLS) ~ "positions.postable",
@@ -42,15 +40,15 @@ refreshViews <- function(all = TRUE,
                                                     join pg_roles on (pg_roles.oid=pg_auth_members.roleid)
                                                     where
                                                     pg_user.usename = '", current_user, "'"))
-  current_roles <- current_roles[,1]
+  current_roles <- current_roles[, 1]
 
-  if(!("admin" %in% current_roles || "seatrack_writer" %in% current_roles)) stop("Connected user needs to be part of seatrack_writer or admin group")
+  if (!("admin" %in% current_roles || "seatrack_writer" %in% current_roles)) stop("Connected user needs to be part of seatrack_writer or admin group")
 
   answer <- menu(c("Yes (1)", "No (2)"), title = paste0("This will take a couple of minutes. Are you sure?"))
 
 
-  if(answer == 1){
-    if(all){
+  if (answer == 1) {
+    if (all) {
       upd <- DBI::dbSendStatement(con, "REFRESH MATERIALIZED VIEW views.categories;")
       DBI::dbClearResult(upd)
       upd <- DBI::dbSendStatement(con, "REFRESH MATERIALIZED VIEW views.longersum;")
@@ -65,7 +63,7 @@ refreshViews <- function(all = TRUE,
       DBI::dbClearResult(upd)
       upd <- DBI::dbSendStatement(con, "REFRESH MATERIALIZED VIEW positions.irma;")
       DBI::dbClearResult(upd)
-    } else if(onlySummaryTables){
+    } else if (onlySummaryTables) {
       upd <- DBI::dbSendStatement(con, "REFRESH MATERIALIZED VIEW views.categories;")
       DBI::dbClearResult(upd)
       upd <- DBI::dbSendStatement(con, "REFRESH MATERIALIZED VIEW views.longersum;")
@@ -79,4 +77,3 @@ refreshViews <- function(all = TRUE,
     }
   }
 }
-

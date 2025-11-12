@@ -21,8 +21,8 @@ Download files from the file archive
 }
 \examples{
 \dontrun{
-##To download all files in the file archive.
-myFiles = listFileArchive()$filesInArchive
+## To download all files in the file archive.
+myFiles <- listFileArchive()$filesInArchive
 downloadFiles(files = myFiles, destFolder = "temp")
 }
 

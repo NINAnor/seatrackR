@@ -26,46 +26,44 @@
 #' DBI::dbGetQuery(con, "SELECT * FROM loggers.logging_session LIMIT 10")
 #' DBI::dbDisconnect(con)
 #' }
-
 connectSeatrack <- function(Username = "testreader",
                             Password = "testreader",
                             host = "seatrack.nina.no",
                             dbname = "seatrack",
                             bigint = "integer",
                             ...) {
-
-
   if (!requireNamespace("DBI", quietly = TRUE)) {
     stop("Pkg needed for this function to work. Please install it using devtools::install_github(\"rstats-db/DBI\") ",
-         call. = FALSE)
+      call. = FALSE
+    )
   }
 
 
   if (!requireNamespace("RPostgres", quietly = TRUE)) {
     stop("Pkg needed for this function to work. Please install it using devtools::install_github(\"rstats-db/RPostgres\") ",
-         call. = FALSE)
+      call. = FALSE
+    )
   }
 
 
   tmp <- DBI::dbConnect(RPostgres::Postgres(),
-                        host = host,
-                        dbname = dbname,
-                        user = Username,
-                        password = Password,
-                        bigint = bigint,
-                        ...)
+    host = host,
+    dbname = dbname,
+    user = Username,
+    password = Password,
+    bigint = bigint,
+    ...
+  )
 
   assign("con", tmp, .GlobalEnv)
   assign(".pass", Password, envir = passEnv)
 
-  #Set the timezone to correspond to the database timezone
+  # Set the timezone to correspond to the database timezone
   Sys.setenv(TZ = "Europe/Oslo")
-
-
 }
 
 #' @export
 #' @rdname connectSeatrack
-disconnectSeatrack <- function(){
+disconnectSeatrack <- function() {
   DBI::dbDisconnect(con)
 }

@@ -16,22 +16,19 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' writeRingHistory(sampleRingHistory)
 #' }
-
-
 writeRingHistory <- function(historyData,
                              append = TRUE,
-                             overwrite = FALSE){
+                             overwrite = FALSE) {
   checkCon()
   DBI::dbWithTransaction(
     con,
     {
       DBI::dbSendQuery(con, "SET search_path TO individuals, public")
       DBI::dbWriteTable(con, "ring_history",
-                        historyData,
-                        append = append,
-                        overwrite = overwrite)
+        historyData,
+        append = append,
+        overwrite = overwrite
+      )
     }
   )
 }
-
-

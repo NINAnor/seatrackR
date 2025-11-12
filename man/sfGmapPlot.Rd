@@ -29,16 +29,16 @@ Plotting function to overlay sf objects on a ggmap
 \dontrun{
 
 connectSeatrack("testreader", "testreader")
-hornoya <- getPosdata(selectColony = "Hornøya",
-                      selectYear = "2015_16",
-                      loadGeometries = T
-                 )
+hornoya <- getPosdata(
+  selectColony = "Hornøya",
+  selectYear = "2015_16",
+  loadGeometries = T
+)
 
 sub <- hornoya[1:500, ]
 
 sfGmapPlot(sub,
-           zoom = 3)
-
-
+  zoom = 3
+)
 }
 }

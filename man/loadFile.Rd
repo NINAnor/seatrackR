@@ -21,14 +21,16 @@ We load the file using read_delim from the readr package, and parameters
 }
 \examples{
 \dontrun{
-##To download all files in the file storage
-myFiles = listFileArchive()$filesInArchive
-loadedFile <- loadFile(filename = myFiles[1,])
+## To download all files in the file storage
+myFiles <- listFileArchive()$filesInArchive
+loadedFile <- loadFile(filename = myFiles[1, ])
 
-#Some files starts funny, this might help:
-loadedFile2 <- loadFile(filename = myFiles[1,],
-                       skip = 1,
-                       col_names = F)
+# Some files starts funny, this might help:
+loadedFile2 <- loadFile(
+  filename = myFiles[1, ],
+  skip = 1,
+  col_names = F
+)
 }
 
 }

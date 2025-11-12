@@ -8,9 +8,7 @@
 #' \dontrun{
 #' getYears()
 #' }
-
-
-getYears <- function(){
+getYears <- function() {
   checkCon()
 
   yearsQ <- "SELECT distinct year_tracked
@@ -22,10 +20,3 @@ getYears <- function(){
 
   return(out)
 }
-
-
-
-
-
-
-

@@ -12,18 +12,13 @@
 #' @examples
 #' \dontrun{
 #' pruneRecords()
-#'
 #' }
 #'
-
 pruneRecordings <- function(
     pruneLight = TRUE,
     pruneActivity = TRUE,
     pruneTemperature = TRUE,
-    force = FALSE
-    ){
-
-
+    force = FALSE) {
   checkCon()
 
   pruneLightQ <- "
@@ -63,64 +58,71 @@ pruneRecordings <- function(
   "
 
 
-  if(isTRUE(force)){
-
+  if (isTRUE(force)) {
     message("This might take a while.")
 
-    if(isTRUE(pruneLight)){
+    if (isTRUE(pruneLight)) {
       message("Deleting orphaned rows in light table.")
 
-      dbSendStatement(con,
-                      pruneLightQ)
+      dbSendStatement(
+        con,
+        pruneLightQ
+      )
     }
 
-    if(isTRUE(pruneActivity)){
+    if (isTRUE(pruneActivity)) {
       message("Deleting orphaned rows in activity table.")
 
-      dbSendStatement(con,
-                      pruneActivityQ)
+      dbSendStatement(
+        con,
+        pruneActivityQ
+      )
     }
 
-    if(isTRUE(pruneTemperature)){
+    if (isTRUE(pruneTemperature)) {
       message("Deleting orphaned rows in temperature table.")
 
-      dbSendStatement(con,
-                      pruneTemperatureQ)
+      dbSendStatement(
+        con,
+        pruneTemperatureQ
+      )
     }
-
   } else {
+    if (any(pruneLight, pruneActivity, pruneTemperature)) {
+      answer <- menu(c("Yes (1)", "No (2)"),
+        title = paste0("Pruning will take several minutes, especially if pruning light or activity, proceed?")
+      )
 
-  if(any(pruneLight, pruneActivity, pruneTemperature)){
-    answer <- menu(c("Yes (1)", "No (2)"),
-                   title = paste0("Pruning will take several minutes, especially if pruning light or activity, proceed?"))
+      if (answer == 2) {
+        stop("Quitting...")
+      } else {
+        if (isTRUE(pruneLight)) {
+          message("Deleting orphaned rows in light table.")
 
-    if(answer == 2) {stop("Quitting...")} else {
+          dbSendStatement(
+            con,
+            pruneLightQ
+          )
+        }
 
-      if(isTRUE(pruneLight)){
-        message("Deleting orphaned rows in light table.")
+        if (isTRUE(pruneActivity)) {
+          message("Deleting orphaned rows in activity table.")
 
-        dbSendStatement(con,
-                        pruneLightQ)
+          dbSendStatement(
+            con,
+            pruneActivityQ
+          )
+        }
+
+        if (isTRUE(pruneTemperature)) {
+          message("Deleting orphaned rows in temperature table.")
+
+          dbSendStatement(
+            con,
+            pruneTemperatureQ
+          )
+        }
       }
-
-      if(isTRUE(pruneActivity)){
-        message("Deleting orphaned rows in activity table.")
-
-        dbSendStatement(con,
-                        pruneActivityQ)
-      }
-
-      if(isTRUE(pruneTemperature)){
-        message("Deleting orphaned rows in temperature table.")
-
-        dbSendStatement(con,
-                        pruneTemperatureQ)
-      }
-
     }
-
   }
-  }
-
-
 }

@@ -23,6 +23,5 @@ This is a convenience function that writes to the "loggers.logger_info"
 \dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
 writeLoggerImport(sampleLoggerImport)
-
 }
 }

@@ -12,13 +12,10 @@
 #' listFileArchive()
 #' }
 #' #' @seealso \code{\link{getFileArchive}} for a function that summarizes info on the files that should be in the file archive (connected to loggers that have been shut down).
-
-
-listFileArchive <- function(){
-
+listFileArchive <- function() {
   checkCon()
 
-  ##Get files in archive, using curl instead of RCurl
+  ## Get files in archive, using curl instead of RCurl
   url <- .getFtpUrl()
   tmp <- strsplit(url$url, "//")
   dest <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2])
@@ -26,12 +23,13 @@ listFileArchive <- function(){
   list_files <- curl::new_handle()
 
   curl::handle_setopt(list_files,
-                      ftp_use_epsv = TRUE,
-                      dirlistonly = TRUE,
-                      use_ssl = T,
-                      ssl_verifyhost = F,
-                      ssl_verifypeer = F,
-                      sslversion = 6L)
+    ftp_use_epsv = TRUE,
+    dirlistonly = TRUE,
+    use_ssl = T,
+    ssl_verifyhost = F,
+    ssl_verifypeer = F,
+    sslversion = 6L
+  )
 
   con <- curl::curl(url = dest, "r", handle = list_files)
 
@@ -55,9 +53,3 @@ listFileArchive <- function(){
 
   return(out)
 }
-
-
-
-
-
-

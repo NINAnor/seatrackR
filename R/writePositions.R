@@ -11,44 +11,46 @@
 #' \dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #'
-#'  files<-c("posdata_FULGLA_eynhallow_2014",
-#'           "posdata_FULGLA_eynhallow_2013",
-#'           "posdata_FULGLA_eynhallow_2012",
-#'           "posdata_FULGLA_eynhallow_2011",
-#'           "posdata_FULGLA_eynhallow_2010",
-#'           "posdata_FULGLA_eynhallow_2009",
-#'           "posdata_FULGLA_eynhallow_2007"
-#'           )
+#' files <- c(
+#'   "posdata_FULGLA_eynhallow_2014",
+#'   "posdata_FULGLA_eynhallow_2013",
+#'   "posdata_FULGLA_eynhallow_2012",
+#'   "posdata_FULGLA_eynhallow_2011",
+#'   "posdata_FULGLA_eynhallow_2010",
+#'   "posdata_FULGLA_eynhallow_2009",
+#'   "posdata_FULGLA_eynhallow_2007"
+#' )
 #'
 #' toImport <- loadPosdata(files)
 #'
 #' summary(toImport)
 #'
 #' writePositions(toImport)
-#'
 #' }
-
-
 writePositions <- function(datatype = "GLS",
                            positionData,
-                           refreshView = TRUE){
+                           refreshView = TRUE) {
   checkCon()
 
   datatype <- match.arg(datatype,
-                        choices = c("GLS", "IRMA", "GPS")
+    choices = c("GLS", "IRMA", "GPS")
   )
 
-  source_table <- dplyr::case_when(datatype == "GLS" ~ "postable_raw",
-                                   datatype == "IRMA" ~ "irma_raw",
-                                   datatype == "GPS" ~ "gps_raw")
+  source_table <- dplyr::case_when(
+    datatype == "GLS" ~ "postable_raw",
+    datatype == "IRMA" ~ "irma_raw",
+    datatype == "GPS" ~ "gps_raw"
+  )
 
 
   nRowsToImport <- sum(unlist(lapply(positionData, nrow)))
 
   res <- dplyr::tbl(con, dbplyr::in_schema("positions", source_table))
 
-  nRow_string <- paste0("SELECT count(*) FROM positions.",
-                        source_table)
+  nRow_string <- paste0(
+    "SELECT count(*) FROM positions.",
+    source_table
+  )
 
   DBI::dbWithTransaction(
     con,
@@ -56,26 +58,25 @@ writePositions <- function(datatype = "GLS",
       nRowsBefore <- DBI::dbGetQuery(con, nRow_string)
       DBI::dbSendQuery(con, "SET search_path TO positions, public")
 
-      for(i in 1:length(positionData)){
+      for (i in 1:length(positionData)) {
         dbWriteTable(con,
-                     source_table,
-                     positionData[[i]],
-                     row.names = F,
-                     append = T)
+          source_table,
+          positionData[[i]],
+          row.names = F,
+          append = T
+        )
       }
 
       nRowsAfter <- DBI::dbGetQuery(con, nRow_string)
 
       nRowsImported <- nRowsAfter - nRowsBefore
 
-      if(nRowsImported != nRowsToImport){
+      if (nRowsImported != nRowsToImport) {
         dbBreak()
         return("Not all lines could be imported, aborted import!")
       }
+    }
+  )
 
-    })
-
-      return(paste0("All ", nRowsToImport, " lines imported."))
+  return(paste0("All ", nRowsToImport, " lines imported."))
 }
-
-

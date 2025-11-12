@@ -25,30 +25,33 @@
 #' \dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #'
-#' positions <- getPositions(colony = "Kongsfjorden",
-#'                         dataResponsible = "Sebastien Descamps",
-#'                         species = "Little auk",
-#'                         limit = F,
-#'                         loadGeometries = F)
+#' positions <- getPositions(
+#'   colony = "Kongsfjorden",
+#'   dataResponsible = "Sebastien Descamps",
+#'   species = "Little auk",
+#'   limit = F,
+#'   loadGeometries = F
+#' )
 #'
 #' positions
 #'
 #' # get data with geometries (default)
-#' positions2 <- getPositions(datatype = "GPS",
-#'                          limit = 500)
+#' positions2 <- getPositions(
+#'   datatype = "GPS",
+#'   limit = 500
+#' )
 #'
 #' positions2
 #'
-#' #make a simple plot
+#' # make a simple plot
 #' plot(positions2["logger_model"], pch = 16)
-#'
 #' }
 #' @export
 #'
 
 
 getPositions <- function(datatype = "GLS",
-                         species= NULL,
+                         species = NULL,
                          colony = NULL,
                          dataResponsible = NULL,
                          ringnumber = NULL,
@@ -57,94 +60,93 @@ getPositions <- function(datatype = "GLS",
                          individId = NULL,
                          loadGeometries = F,
                          asTibble = T,
-                         limit = F){
-
+                         limit = F) {
   checkCon()
 
   selectSpecies <- species
   selectColony <- colony
 
   datatype <- match.arg(datatype,
-                        choices = c("GLS", "IRMA", "GPS")
+    choices = c("GLS", "IRMA", "GPS")
   )
 
-  if(!limit == F & !is.numeric(limit)){
+  if (!limit == F & !is.numeric(limit)) {
     stop("limit must be FALSE or a numeric value")
   }
 
-  source_table <- dplyr::case_when(datatype == "GLS" ~ "postable",
-                             datatype == "IRMA" ~ "irma",
-                             datatype == "GPS" ~ "gps")
+  source_table <- dplyr::case_when(
+    datatype == "GLS" ~ "postable",
+    datatype == "IRMA" ~ "irma",
+    datatype == "GPS" ~ "gps"
+  )
 
   res <- tbl(con, dbplyr::in_schema("positions", source_table))
 
 
-  if(!is.null(species)){
+  if (!is.null(species)) {
     res <- res |> filter(species %in% selectSpecies)
   }
 
-  if(!is.null(colony)){
+  if (!is.null(colony)) {
     res <- res |> filter(colony %in% selectColony)
   }
 
-  if(!is.null(dataResponsible)){
+  if (!is.null(dataResponsible)) {
     res <- res |> filter(data_responsible %in% dataResponsible)
   }
 
-  if(!is.null(ringnumber)){
+  if (!is.null(ringnumber)) {
     res <- res |> filter(ring_number %in% ringnumber)
   }
 
-  if(!is.null(year)){
+  if (!is.null(year)) {
     res <- res |> filter(year_tracked %in% year)
   }
 
-  if(!is.null(sessionId)){
+  if (!is.null(sessionId)) {
     res <- res |> filter(session_id %in% sessionId)
   }
 
-  if(!is.null(individId)){
+  if (!is.null(individId)) {
     res <- res |> filter(individ_id %in% individId)
   }
 
 
-  if(!loadImportDate){
+  if (!loadImportDate) {
     res <- res |> select(-import_date)
   }
 
-  if(!limit == F){
+  if (!limit == F) {
     res <- res |> head(limit)
   }
 
 
 
-  if(loadGeometries){
-
-    if(datatype == "GLS"){
-    res <- res |>
-      filter(eqfilter)
+  if (loadGeometries) {
+    if (datatype == "GLS") {
+      res <- res |>
+        filter(eqfilter)
     }
 
     res <- st_read(dsn = con, query = dbplyr::sql_render(res))
     res <- res |>
       mutate(date_time = lubridate::force_tz(date_time,
-                                             tzone = "UTC"))
-  } else{
-
+        tzone = "UTC"
+      ))
+  } else {
     res <- res |>
       select(-geom)
 
-      if(asTibble){
-        res <- res |> dplyr::collect()
-        res <- res |>
-          mutate(date_time = lubridate::force_tz(date_time,
-                                                 tzone = "UTC"))
-      }
+    if (asTibble) {
+      res <- res |> dplyr::collect()
+      res <- res |>
+        mutate(date_time = lubridate::force_tz(date_time,
+          tzone = "UTC"
+        ))
+    }
   }
 
-res <- res |>
-  mutate(date_time_downloaded = lubridate::now())
-return(res)
-
+  res <- res |>
+    mutate(date_time_downloaded = lubridate::now())
+  return(res)
 }
-

@@ -31,7 +31,7 @@ To simplify the connection, use the convenience function `connectSeatrack`. This
 ```{r}
 require(seatrackR)
 
-connectSeatrack(Username =  "testreader", Password = "testreader")
+connectSeatrack(Username = "testreader", Password = "testreader")
 ```
 
 
@@ -49,7 +49,6 @@ myQuery <- "SELECT * from metadata.location
 
 faroeLocations <- dbGetQuery(con, myQuery)
 head(faroeLocations)
-
 ```
 
 
@@ -60,9 +59,10 @@ The primary data of the positions of the birds is stored in the table `positions
 The `getPosdata` function retrieves this table, with options to subselect only specific species, colonies, responsible contact person, specific ring numbers, and years. There is also an option to limit the records to a set number of rows, and to load the position coordinates as a spatial object.
 
 ```{r}
-
-eynhallowPositions <- getPosdata(selectColony = "Eynhallow",
-                                 loadGeometries = T)
+eynhallowPositions <- getPosdata(
+  selectColony = "Eynhallow",
+  loadGeometries = T
+)
 eynhallowPositions
 ```
 
@@ -85,10 +85,9 @@ write.csv(newExport, file = "seatrack_export_2018-08-09.csv")
 If you are interested in knowing separate old, deleted rows, these are found in the table `positions.deleted_uuid`.
 
 ```{r, eval = F}
-deletedUuids <- dbReadTable(con, Id(schema = "positions", table =  "deleted_uuid"))
+deletedUuids <- dbReadTable(con, Id(schema = "positions", table = "deleted_uuid"))
 nrow(deletedUuids)
 write.csv(deletedUuids, file = "deletedUuids_2018-08-09.csv")
-
 ```
 
 
@@ -111,8 +110,10 @@ The `getIndividInfo` function
 This function summarizes all observation data for the individual birds. We can subselect the colony and year interval the bird where tracked.
 
 ```{r}
-hornoyaIndivids <- getIndividInfo(selectColony = "Hornoya",
-                                    selectYear = "2014_15")
+hornoyaIndivids <- getIndividInfo(
+  selectColony = "Hornoya",
+  selectYear = "2014_15"
+)
 hornoyaIndivids
 ```
 

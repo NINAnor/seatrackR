@@ -42,10 +42,10 @@ This is a collection of functions to check the integrity of the metadata table b
 \dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
 myCheck <- checkMetadata(sampleMetadata)
-plot(myCheck) #quickly see how many problems there are
+plot(myCheck) # quickly see how many problems there are
 myCheck # check the print function for a complete list of the errors
 
-#Or run a single test separately
+# Or run a single test separately
 checkOpenSession(sampleMetadata)
 }
 }

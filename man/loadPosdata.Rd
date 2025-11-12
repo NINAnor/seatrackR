@@ -17,20 +17,19 @@ This function loads posdata files from disk into R for further import to databas
 \examples{
 \dontrun{
 
- files<-c("posdata_FULGLA_eynhallow_2014",
-"posdata_FULGLA_eynhallow_2013",
-"posdata_FULGLA_eynhallow_2012",
-"posdata_FULGLA_eynhallow_2011",
-"posdata_FULGLA_eynhallow_2010",
-"posdata_FULGLA_eynhallow_2009",
-"posdata_FULGLA_eynhallow_2007"
+files <- c(
+  "posdata_FULGLA_eynhallow_2014",
+  "posdata_FULGLA_eynhallow_2013",
+  "posdata_FULGLA_eynhallow_2012",
+  "posdata_FULGLA_eynhallow_2011",
+  "posdata_FULGLA_eynhallow_2010",
+  "posdata_FULGLA_eynhallow_2009",
+  "posdata_FULGLA_eynhallow_2007"
 )
 
 toImport <- loadPosdata(files)
 
 summary(toImport)
 }
-
-
 
 }

@@ -8,24 +8,17 @@
 #' \dontrun{
 #' getSpecies()
 #' }
-
-
-getSpecies <- function(){
+getSpecies <- function() {
   checkCon()
 
   species <- dbReadTable(con, DBI::Id(schema = "metadata", table = "subspecies"))
 
   out <- as_tibble(species) %>%
-    select(species_name_eng,
-           species_name_latin,
-           sub_species)
+    select(
+      species_name_eng,
+      species_name_latin,
+      sub_species
+    )
 
   return(out)
 }
-
-
-
-
-
-
-
