@@ -7,9 +7,9 @@
 getIndividInfo(colony = NULL, year = NULL)
 }
 \arguments{
-\item{colony}{Optional character string of colonies limit the selection to.}
+\item{colony}{Optional character string of colonies limit the selection to. Available choices are found in "colony_int_name", from getColonies()}
 
-\item{year}{Optional character string of years limit the selection to.}
+\item{year}{Optional character string of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.}
 }
 \value{
 Data frame.
