@@ -3,7 +3,7 @@
 #' The database only accepts people names that are registered in the "metadata.people" table. This should contain all people that are relevant to the project.
 #'
 #'
-#'
+#' @param asTibble Return the result as a tibble? Boolean
 #' @return A tibble of the people id, names and abbreviated names registered in the people table.
 #' @export
 #' @examples
@@ -12,8 +12,9 @@
 #' }
 
 
-getNames <- function(asTibble = F){
-  seatrackR:::checkCon()
+getNames <- function(asTibble = FALSE){
+
+  checkCon()
 
   res <- dplyr::tbl(con, dbplyr::in_schema("metadata", "people"))
 

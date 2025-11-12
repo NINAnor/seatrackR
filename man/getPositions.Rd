@@ -14,7 +14,6 @@ getPositions(
   sessionId = NULL,
   individId = NULL,
   loadGeometries = F,
-  loadImportDate = T,
   asTibble = T,
   limit = F
 )
@@ -36,6 +35,10 @@ choices can be seen in the column \code{name} in the result from the function \c
 
 \item{year}{Character string. Option to limit selection to one or more years that the logging sessions span. The availablle
 choices can be found in the \code{year_tracked} column in the result form the \code{getYears} function.}
+
+\item{sessionId}{Character string of session ids to limit the selection to.}
+
+\item{individId}{Character string of individ ids to limit the selection to.}
 
 \item{loadGeometries}{Boolean. If True, the returned object is a simple features object with only rows of eqfilter == TRUE. Default = False}
 

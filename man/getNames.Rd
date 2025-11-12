@@ -4,7 +4,10 @@
 \alias{getNames}
 \title{Retrieve info on the registered names (people) in the database}
 \usage{
-getNames(asTibble = F)
+getNames(asTibble = FALSE)
+}
+\arguments{
+\item{asTibble}{Return the result as a tibble? Boolean}
 }
 \value{
 A tibble of the people id, names and abbreviated names registered in the people table.

@@ -7,11 +7,11 @@
 writeIndividInfo(individData, append = T, overwrite = FALSE)
 }
 \arguments{
+\item{individData}{A named vector or data frame that fits the individ_info table in schema individuals}
+
 \item{append}{Logical, default True. If True, the line(s) is appended to the end of the table.}
 
 \item{overwrite}{Logical, default False. WARNING!! If True, the function overwrites the current content of the logger_info table.}
-
-\item{loggerData}{A named vector or data frame that fits the individ_info table in schema individuals}
 }
 \value{
 Data frame.

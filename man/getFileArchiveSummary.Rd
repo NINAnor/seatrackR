@@ -6,6 +6,11 @@
 \usage{
 getFileArchiveSummary(colony = NULL, year = NULL)
 }
+\arguments{
+\item{colony}{Optional character string of colonies limit the selection to.}
+
+\item{year}{Optional character string of years limit the selection to.}
+}
 \value{
 Data frame.
 }

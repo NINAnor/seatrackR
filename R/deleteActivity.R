@@ -1,8 +1,9 @@
 #' Delete activity data from the database, based on subselection criteria
 #'
 #' This is a convenience function that deletes records from the activity tables (records.activity, records.light, records.temp)
-#' @param sessionID Limit the data to what session(s). Character string.
-#' @param species Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
+#' @param sessionId Limit the data to what session(s). Character string.
+#' @param species Optional character string to subset data to one or a set of species. Default is NULL, indicating all species.
+#' @param colony Optional character string of colonies to subset the data.
 #' @param limit_to_type Optional character string of what type of activity data to delete. c("light", "temperature", "activity", "acceleration")
 #' @param force True, False (default = False). Skip confirmation check (for non interactive functionality)
 #'
@@ -11,7 +12,10 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' deleteActivity(sessionId = "T220_2015-04-27", limit_to_type = c("temperature", "activity"))
+#' deleteActivity(sessionId = "T220_2015-04-27",
+#' species = "Glaucus gull",
+#' colony = "Anda",
+#' limit_to_type = c("temperature", "activity"))
 #' }
 
 
@@ -21,7 +25,7 @@ deleteActivity <- function(sessionId = NULL,
                            limit_to_type = NULL,
                            force = FALSE){
 
-  seatrackR:::checkCon()
+  checkCon()
 
 
  if(!is.null(limit_to_type)){

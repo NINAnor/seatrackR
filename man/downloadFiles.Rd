@@ -6,6 +6,13 @@
 \usage{
 downloadFiles(files = NULL, destFolder = NULL, overwrite = F)
 }
+\arguments{
+\item{files}{Character vector of files to download.}
+
+\item{destFolder}{Character of the folder to put files in. Relative paths work (at least on linux).}
+
+\item{overwrite}{Overwrite existing files on disk? Boolean.}
+}
 \value{
 Status messages on the actions taken for each file.
 }

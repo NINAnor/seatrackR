@@ -3,7 +3,7 @@
 #' This is a collection of functions to check the integrity of the metadata table before importing it.
 #'
 #'
-#' @param myTable
+#' @param myTable A metadata table to check.
 #'
 #' @return Various errors.
 #' @export
@@ -182,7 +182,7 @@ checkNames <- function(myTable){
 }
 
 #' @export
-print.metadataErrors <- function(x){
+print.metadataErrors <- function(x, ...){
 
   if (length(unlist(x)) == 0){
     cat("No errors found (through the available checking functions)")
@@ -253,7 +253,8 @@ plot.metadataErrors <- function(x, ...){
 
 
 #' @export
-summary.metadataErrors <- function(x, ...){
+summary.metadataErrors <- function(object, ...){
+    x <- object
 
     out <- tibble("reason" = unlist(lapply(x, names)),
                      "errorCount" = c(unlist(lapply(x[[1]], nrow)),

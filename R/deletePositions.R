@@ -24,7 +24,7 @@ deletePositions <- function(datatype = "GLS",
                             session_ids_to_delete,
                             idempotent = TRUE,
                             refreshView = TRUE){
-  seatrackR:::checkCon()
+  checkCon()
 
   datatype <- match.arg(datatype,
                         choices = c("GLS", "IRMA", "GPS")

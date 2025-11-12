@@ -6,6 +6,9 @@
 \usage{
 viewDatabaseModel(type = c("png", "svg"))
 }
+\arguments{
+\item{type}{Open the database model in either "png" or "svg".}
+}
 \value{
 Opens a internet browser window with the database model.
 }

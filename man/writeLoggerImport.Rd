@@ -7,11 +7,11 @@
 writeLoggerImport(loggerImport, append = T, overwrite = FALSE)
 }
 \arguments{
+\item{loggerImport}{A named vector or data frame that fits the logger_info table in schema loggers}
+
 \item{append}{Logical, default True. If True, the line(s) is appended to the end of the table.}
 
 \item{overwrite}{Logical, default False. WARNING!! If True, the function overwrites the current content of the logger_info table.}
-
-\item{loggerData}{A named vector or data frame that fits the logger_info table in schema loggers}
 }
 \value{
 Data frame.

@@ -4,13 +4,20 @@
 \alias{deleteFiles}
 \title{deleteFiles}
 \usage{
-deleteFiles(files = NULL, force = F, ...)
+deleteFiles(files = NULL, force = FALSE, ...)
+}
+\arguments{
+\item{files}{Character list of filenames to delete.}
+
+\item{force}{Optionally override confirmation}
+
+\item{...}{Optional additional parameters passed to the httr configuration.}
 }
 \value{
 Status messages on the actions taken for each file.
 }
 \description{
-deleteFiles
+Delete files on the FTP-server.
 }
 \examples{
 \dontrun{

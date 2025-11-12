@@ -13,13 +13,15 @@ deleteActivity(
 )
 }
 \arguments{
-\item{species}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.}
+\item{sessionId}{Limit the data to what session(s). Character string.}
+
+\item{colony}{Optional character string of colonies to subset the data.}
+
+\item{species}{Optional character string to subset data to one or a set of species. Default is NULL, indicating all species.}
 
 \item{limit_to_type}{Optional character string of what type of activity data to delete. c("light", "temperature", "activity", "acceleration")}
 
 \item{force}{True, False (default = False). Skip confirmation check (for non interactive functionality)}
-
-\item{sessionID}{Limit the data to what session(s). Character string.}
 }
 \value{
 Currently nothing.
@@ -29,6 +31,9 @@ This is a convenience function that deletes records from the activity tables (re
 }
 \examples{
 \dontrun{
-deleteActivity(sessionId = "T220_2015-04-27", limit_to_type = c("temperature", "activity"))
+deleteActivity(sessionId = "T220_2015-04-27",
+species = "Glaucus gull",
+colony = "Anda",
+limit_to_type = c("temperature", "activity"))
 }
 }

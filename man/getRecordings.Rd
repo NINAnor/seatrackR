@@ -17,17 +17,17 @@ getRecordings(
 \arguments{
 \item{type}{light, temperature, or activity as a character. Default = "light".}
 
+\item{sessionId}{subset data for a character vector of session ids}
+
+\item{individId}{subset data for a character vector of individual ids}
+
 \item{colony}{subset data for a character vector of colony names (International names)}
 
 \item{species}{subset data for a character vector of species}
 
+\item{yearTracked}{subset data for a character vector of year_tracked (e.g. 2014_15)}
+
 \item{asTibble}{Boolean. Return result as Tibble instead of lazy query? Tibble is slower, but also here forces the timezone to "UTC".}
-
-\item{session_id}{subset data for a character vector of session ids}
-
-\item{individ_id}{subset data for a character vector of individual ids}
-
-\item{year_tracked}{subset data for a character vector of year_tracked (e.g. 2014_15)}
 }
 \value{
 A Lazy query or optionally a Tibble.

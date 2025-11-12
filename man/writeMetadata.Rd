@@ -7,7 +7,7 @@
 writeMetadata(metadata)
 }
 \arguments{
-\item{metadaata}{A named vector or data frame that fits the metadata_import table in schema imports}
+\item{metadata}{A named vector or data frame that fits the metadata_import table in schema imports}
 }
 \value{
 Data frame.

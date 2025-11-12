@@ -23,7 +23,7 @@ refreshViews <- function(all = TRUE,
                          onlyGPS = FALSE,
                          onlyIrma = FALSE){
 
-  seatrackR:::checkCon()
+  checkCon()
 
   if(all & sum(all, onlySummaryTables, onlyGLS, onlyGPS, onlyIrma) > 1) stop("Cannot select particular view if 'all' is TRUE!")
   if(sum(onlySummaryTables, onlyGLS, onlyGPS, onlyIrma) > 1) stop("Can only select 1 particular view in a time!")

@@ -20,16 +20,23 @@ Suggests:
     rmarkdown,
   	R.rsp
 Imports:
-  	DBI,
-  	RPostgres,
-  	ggplot2,
-  	tibble,
-  	dplyr,
-  	dbplyr,
-  	readr,
-  	lubridate	
-Depends:
+    DBI,
+    RPostgres,
+    ggplot2,
+    tibble,
+    dplyr,
+    dbplyr,
+    readr,
+    lubridate,
+    RCurl,
+    curl,
+    ggmap,
+    httr,
+    sf,
     rlang
+Depends:
+    R (>= 4.1)
 VignetteBuilder: 
 	  R.rsp,
 	  knitr
+LazyData: true

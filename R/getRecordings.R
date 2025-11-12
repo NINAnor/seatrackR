@@ -3,11 +3,11 @@
 #' This is a convenience function that reads from the "activity" tables temperature, activity, and light in the schema Recordings
 #'
 #' @param type light, temperature, or activity as a character. Default = "light".
-#' @param session_id subset data for a character vector of session ids
-#' @param individ_id subset data for a character vector of individual ids
+#' @param sessionId subset data for a character vector of session ids
+#' @param individId subset data for a character vector of individual ids
 #' @param colony subset data for a character vector of colony names (International names)
 #' @param species subset data for a character vector of species
-#' @param year_tracked subset data for a character vector of year_tracked (e.g. 2014_15)
+#' @param yearTracked subset data for a character vector of year_tracked (e.g. 2014_15)
 #' @param asTibble Boolean. Return result as Tibble instead of lazy query? Tibble is slower, but also here forces the timezone to "UTC".
 #'
 #' @return A Lazy query or optionally a Tibble.
@@ -27,7 +27,7 @@ getRecordings <- function(type = NULL,
                           species = NULL,
                           yearTracked = NULL,
                           asTibble = T){
-  seatrackR:::checkCon()
+  checkCon()
 
   type <- match.arg(type, choices = c("light", "temperature", "activity", "accelerometer"))
 

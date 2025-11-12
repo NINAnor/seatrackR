@@ -2,6 +2,7 @@
 % Please edit documentation in R/connectSeatrack.R
 \name{connectSeatrack}
 \alias{connectSeatrack}
+\alias{disconnectSeatrack}
 \title{Connect to seatrack database}
 \usage{
 connectSeatrack(
@@ -12,6 +13,8 @@ connectSeatrack(
   bigint = "integer",
   ...
 )
+
+disconnectSeatrack()
 }
 \arguments{
 \item{Username}{Character. Default = seatrack_reader}
@@ -23,6 +26,8 @@ connectSeatrack(
 \item{dbname}{Character. Name of database, for testing purposes. Default is "seatrack" which is the production database.}
 
 \item{bigint}{How to handle 64 bit integers from the database (such as bigint). "integer", "character", "numeric", "integer64". Defaults to "integer" which is prone to overflow over '.Machine$integer.max' values. Integer64 works poorly with many base R functions.}
+
+\item{...}{additional parameters passed to dbConnect}
 }
 \value{
 A DBI connection to the Seatrack database

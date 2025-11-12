@@ -2,7 +2,7 @@
 #'
 #' Read from the table of the history of ring numbers for birds that have had their rings changed.
 #'
-#'
+#' @param asTibble Return result as tibble? Boolean.
 #' @return Lazy query, or optionally a tibble
 #' @export
 #' @examples
@@ -11,8 +11,9 @@
 #' }
 
 
-getRingHistory <- function(asTibble = F){
-  seatrackR:::checkCon()
+getRingHistory <- function(asTibble = FALSE){
+
+  checkCon()
 
   res <- dplyr::tbl(con, dbplyr::in_schema("individuals", "ring_history"))  %>% select(-id)
 

@@ -19,7 +19,8 @@
 
 
 writeRingHistory <- function(historyData,
-                             append = T){
+                             append = TRUE,
+                             overwrite = FALSE){
   checkCon()
   DBI::dbWithTransaction(
     con,
@@ -27,7 +28,8 @@ writeRingHistory <- function(historyData,
       DBI::dbSendQuery(con, "SET search_path TO individuals, public")
       DBI::dbWriteTable(con, "ring_history",
                         historyData,
-                        append = append)
+                        append = append,
+                        overwrite = overwrite)
     }
   )
 }

@@ -10,12 +10,14 @@ writePositions(datatype = "GLS", positionData, refreshView = TRUE)
 \item{datatype}{"GLS", "IRMA", or "GPS" data}
 
 \item{positionData}{A list of position data to be read into the postable in the database. Usually created by \code{loadPosdata}.}
+
+\item{refreshView}{Should the views be updated? Boolean. Note that this takes time, and only needs to be done after all changes have been made.}
 }
 \value{
 Message of affected rows
 }
 \description{
-This is a convenience function that writes to the "positions.postable" table, the main table for the position data.
+This is a convenience function that writes to the "positions.postable_raw/gps_raw/irma_raw" table, the main tables for the position data. It then by default updates the views which links up this data to the logger session data in the database.
 }
 \examples{
 \dontrun{

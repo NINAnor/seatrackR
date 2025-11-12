@@ -2,6 +2,9 @@
 #'
 #' This is a convenience function that pulls together various info on the files in the loggers.file_archive table and other tables
 #'
+#'
+#' @param colony Optional character string of colonies limit the selection to.
+#' @param year Optional character string of years limit the selection to.
 #' @return Data frame.
 #' @export
 #' @examples
@@ -11,8 +14,8 @@
 #' }
 
 getFileArchiveSummary <- function(colony = NULL,
-                           year = NULL){
-  seatrackR:::checkCon()
+                                  year = NULL){
+  checkCon()
 
   res <- DBI::dbGetQuery(con,
   "SELECT f.file_id, f.session_id, ls.colony, ii.ring_number, ii.euring_code, ls.year_tracked, li.logger_serial_no, li.logger_model, f.filename
@@ -39,7 +42,7 @@ return(res)
 getFileArchiveSummary2 <- function(colony = NULL,
                                    year = NULL){
 
-  seatrackR:::checkCon()
+  checkCon()
 
   fileQ <- "SELECT li.logger_id, li.logger_serial_no, li.logger_model, ls.year_tracked, date_part('year', r.retrieval_date) as year_retrieved,
   s.logging_mode, ii.ring_number, ii.euring_code, ls.colony, d.deployment_date as date_deployed, r.retrieval_date date_retrieved,

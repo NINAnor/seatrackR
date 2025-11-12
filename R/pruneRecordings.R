@@ -4,7 +4,7 @@
 #' @param pruneLight Prune light table (slow). Boolean
 #' @param pruneActivity Prune activity table (slow). Boolean
 #' @param pruneTemperature Prune temperature table. Boolean
-#' @param force
+#' @param force Override the confirmation menu
 #'
 #' @return Status message
 #' @export
@@ -24,8 +24,7 @@ pruneRecordings <- function(
     ){
 
 
-  seatrackR:::checkCon()
-
+  checkCon()
 
   pruneLightQ <- "
   DELETE FROM recordings.light t
