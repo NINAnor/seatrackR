@@ -38,7 +38,9 @@ This is a convenience function that reads from the "activity" tables temperature
 \examples{
 \dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
-getRecordings(type = "temperature",
-             colony = "Sklinna")
+getRecordings(
+  type = "temperature",
+  colony = "Sklinna"
+)
 }
 }

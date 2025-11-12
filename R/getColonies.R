@@ -12,64 +12,59 @@
 #' \dontrun{
 #' colony <- getColonies(loadGeometries = T)
 #' plot(colony["colony_int_name"],
-#' pch = 16)
+#'   pch = 16
+#' )
 #' }
-
-
 getColonies <- function(allLocations = F,
-                        loadGeometries = F){
+                        loadGeometries = F) {
   checkCon()
 
-  if(allLocations == T &
-   loadGeometries == F){
-
-  locations <- dbReadTable(con, DBI::Id(schema = "metadata", table = "location"))
-  out <- as_tibble(locations) %>%
-    select(location_name,
-           colony_int_name,
-           colony_nat_name)
-  return(out)
+  if (allLocations == T &
+    loadGeometries == F) {
+    locations <- dbReadTable(con, DBI::Id(schema = "metadata", table = "location"))
+    out <- as_tibble(locations) %>%
+      select(
+        location_name,
+        colony_int_name,
+        colony_nat_name
+      )
+    return(out)
   }
 
-  if(allLocations == F &
-     loadGeometries == F){
-
+  if (allLocations == F &
+    loadGeometries == F) {
     locations <- dbReadTable(con, DBI::Id(schema = "metadata", table = "colony"))
     out <- as_tibble(locations) %>%
-      select(colony_int_name,
-             colony_nat_name)
+      select(
+        colony_int_name,
+        colony_nat_name
+      )
     return(out)
   }
 
 
-  if(allLocations == T &
-     loadGeometries == T){
-
+  if (allLocations == T &
+    loadGeometries == T) {
     locations <- sf::st_read(con, DBI::Id(schema = "metadata", table = "location"))
     out <- as_tibble(locations) %>%
       sf::st_as_sf() %>%
-      select(location_name,
-             colony_int_name,
-             colony_nat_name)
+      select(
+        location_name,
+        colony_int_name,
+        colony_nat_name
+      )
     return(out)
   }
 
-  if(allLocations == F &
-     loadGeometries == T){
-
+  if (allLocations == F &
+    loadGeometries == T) {
     locations <- sf::st_read(con, DBI::Id(schema = "metadata", table = "colony"))
     out <- as_tibble(locations) %>%
       sf::st_as_sf() %>%
-      select(colony_int_name,
-             colony_nat_name)
+      select(
+        colony_int_name,
+        colony_nat_name
+      )
     return(out)
   }
-
 }
-
-
-
-
-
-
-

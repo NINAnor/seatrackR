@@ -11,11 +11,9 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' activeSessions <- getActiveSessions()
 #' }
-
 getActiveSessions <- function() {
   checkCon()
 
-  DBI::dbGetQuery(con, "SELECT * FROM views.active_logging_sessions")  %>%
+  DBI::dbGetQuery(con, "SELECT * FROM views.active_logging_sessions") %>%
     as_tibble()
 }
-

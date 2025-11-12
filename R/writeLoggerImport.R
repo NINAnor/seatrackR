@@ -12,14 +12,11 @@
 #' \dontrun{
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' writeLoggerImport(sampleLoggerImport)
-#'
 #' }
-
-
 writeLoggerImport <- function(loggerImport,
                               append = T,
-                              overwrite = FALSE){
- checkCon()
+                              overwrite = FALSE) {
+  checkCon()
   DBI::dbWithTransaction(
     con,
     {
@@ -28,5 +25,3 @@ writeLoggerImport <- function(loggerImport,
     }
   )
 }
-
-

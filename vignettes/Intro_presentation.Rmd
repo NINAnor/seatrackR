@@ -20,7 +20,7 @@ vignette: >
 # A lot of options can be tweaked through the knitr::opts_chunk, like below.
 # The use of 'tikz' is optional, and is used here to specify the font used
 # in figures, and to get figure text rendered nicely. 'Tikz' is a little bit slower
-# to render though and therefore we use 'cache=T'. Set this to false to force the 
+# to render though and therefore we use 'cache=T'. Set this to false to force the
 # figures to render.
 # pdf is also a good choice instead of 'tikz', but won't create as nice figure texts.
 
@@ -32,26 +32,28 @@ vignette: >
 
 
 
-knitr::opts_chunk$set(comment=NA, collapse=T, cache=T, autodep=T,
-               dev="pdf", fig.width = 4.5,
-               dpi = 300,
-               fig.height = 4,
-               out.width = '0.6\\linewidth',
-               size ='tiny',
-               dev.args=list(pointsize=12),
-               message=F, warning=F,
-               fig.align = 'center',
-               tidy = "styler")
-options(tikzDefaultEngine="xetex")
-options(tikzXelatexPackages=c(
-    "\\usepackage{tikz}\n",
-    "\\usepackage[active,tightpage,xetex]{preview}\n",
-    "\\usepackage{fontspec,xunicode}\n",
-    "\\setmainfont{Verdana}\n",
-    "\\PreviewEnvironment{pgfpicture}\n",
-    "\\setlength\\PreviewBorder{0pt}\n"))
+knitr::opts_chunk$set(
+  comment = NA, collapse = T, cache = T, autodep = T,
+  dev = "pdf", fig.width = 4.5,
+  dpi = 300,
+  fig.height = 4,
+  out.width = "0.6\\linewidth",
+  size = "tiny",
+  dev.args = list(pointsize = 12),
+  message = F, warning = F,
+  fig.align = "center",
+  tidy = "styler"
+)
+options(tikzDefaultEngine = "xetex")
+options(tikzXelatexPackages = c(
+  "\\usepackage{tikz}\n",
+  "\\usepackage[active,tightpage,xetex]{preview}\n",
+  "\\usepackage{fontspec,xunicode}\n",
+  "\\setmainfont{Verdana}\n",
+  "\\PreviewEnvironment{pgfpicture}\n",
+  "\\setlength\\PreviewBorder{0pt}\n"
+))
 options(width = 80)
-
 ```
 
 ## Database description
@@ -73,8 +75,9 @@ cat("\\scriptsize")
 
 Install:
 ```{r, eval = F}
-devtools::install_github("NINAnor/seatrack-db/seatrackR", 
-                         build_vignettes = True)
+devtools::install_github("NINAnor/seatrack-db/seatrackR",
+  build_vignettes = True
+)
 ```
 * When in trouble, update the package first and restart R. If the problem persists, notify jens.astrom@nina.no.
 
@@ -92,8 +95,10 @@ cat("\\scriptsize")
 
 ```{r}
 require(seatrackR)
-connectSeatrack(Username = "testreader", 
-                Password = "testreader")
+connectSeatrack(
+  Username = "testreader",
+  Password = "testreader"
+)
 ```
 
 ## Connecting
@@ -146,8 +151,8 @@ cat("\\fvset{fontsize=\\tiny}")
 Simple operations like this could also be done using dplyr/dbplyr. The filtering here actually happens on the database side, but you can specify it using dplyr commands in R.
 
 ```{r}
-BASLoggers <- dbReadTable(con, Id(schema = "loggers", table = "logger_info")) %>% 
-  filter(producer == 'BAS')
+BASLoggers <- dbReadTable(con, Id(schema = "loggers", table = "logger_info")) %>%
+  filter(producer == "BAS")
 
 head(BASLoggers)
 ```
@@ -166,12 +171,14 @@ require(dbplyr)
 status <- tbl(con, in_schema("individuals", "individ_status"))
 loggers <- tbl(con, in_schema("loggers", "logger_info"))
 
-loggerEggs <- status %>% 
-  inner_join(loggers, by = c("logger_id" = "logger_id")) %>% 
-  group_by(producer) %>% 
-  filter(!is.na(eggs)) %>% 
-  select(producer,
-         eggs)
+loggerEggs <- status %>%
+  inner_join(loggers, by = c("logger_id" = "logger_id")) %>%
+  group_by(producer) %>%
+  filter(!is.na(eggs)) %>%
+  select(
+    producer,
+    eggs
+  )
 ```
 
 ## Querying the database
@@ -183,7 +190,6 @@ cat("\\fvset{fontsize=\\tiny}")
 ```{r}
 ggplot(loggerEggs, aes(eggs, producer)) +
   geom_boxplot()
-  
 ```
 
 
@@ -265,8 +271,10 @@ cat("\\fvset{fontsize=\\tiny}")
 Getting position data:
 
 ```{r}
-lbbg2015 <- getPosdata(selectSpecies = "Lesser black-backed gull",
-                        selectYear = "2015_16")
+lbbg2015 <- getPosdata(
+  selectSpecies = "Lesser black-backed gull",
+  selectYear = "2015_16"
+)
 lbbg2015
 ```
 
@@ -280,9 +288,11 @@ cat("\\fvset{fontsize=\\tiny}")
 Loading it with geometries as an sf object
 
 ```{r}
-lbbg2015sf <- getPosdata(selectSpecies = "Lesser black-backed gull",
-                        selectYear = "2015_16",
-                        loadGeometries = T)
+lbbg2015sf <- getPosdata(
+  selectSpecies = "Lesser black-backed gull",
+  selectYear = "2015_16",
+  loadGeometries = T
+)
 
 lbbg2015sf
 ```
@@ -298,8 +308,9 @@ cat("\\fvset{fontsize=\\tiny}")
 
 ```{r}
 plot(lbbg2015sf["colony"],
-     pch = 16,
-     key.width = lcm(6))
+  pch = 16,
+  key.width = lcm(6)
+)
 ```
 
 ## Working with the database through the R-package
@@ -316,11 +327,12 @@ require("rnaturalearth")
 world <- ne_countries(scale = "medium", returnclass = "sf")
 p <- ggplot(world) +
   geom_sf() +
-  geom_sf(data = lbbg2015sf, aes(color = colony,
-                                 fill = colony)) +
+  geom_sf(data = lbbg2015sf, aes(
+    color = colony,
+    fill = colony
+  )) +
   coord_sf(xlim = c(-30, 60), ylim = c(-10, 80), expand = FALSE) +
   ggtitle("Lesser black-backed gulls in 2015-2016")
-
 ```
 ## Working with the database through the R-package
 
@@ -394,14 +406,16 @@ cat("\\fvset{fontsize=\\tiny}")
 To get a summary of the expected files and their related info:
 ```{r, eval = F}
 filesSummary <- getFileArchiveSummary()
-filesSummary 
+filesSummary
 ```
 
 
 ```{r, echo = F}
 filesSummary <- getFileArchiveSummary()
-filesSummary %>% print(n = 5,
-                       width = Inf) 
+filesSummary %>% print(
+  n = 5,
+  width = Inf
+)
 ```
 
 ## File archive
@@ -414,16 +428,17 @@ Example: get the raw files from Røst in season 2014 - 2015.
 
 First we check which files contains this information and see which ones exists in the file archive
 ```{r}
-rost2014ExpectedFiles <- filesSummary %>% 
-  filter(colony == "Rost", 
-         year_tracked == "2014_15")
-#merge with available files
-rost2014AvailableFiles <- rost2014ExpectedFiles  %>% 
+rost2014ExpectedFiles <- filesSummary %>%
+  filter(
+    colony == "Rost",
+    year_tracked == "2014_15"
+  )
+# merge with available files
+rost2014AvailableFiles <- rost2014ExpectedFiles %>%
   inner_join(fileArchive$filesInArchive)
-#all there?
+# all there?
 nrow(rost2014ExpectedFiles)
 nrow(rost2014AvailableFiles)
-
 ```
 
 ## File archive
@@ -435,9 +450,10 @@ cat("\\fvset{fontsize=\\tiny}")
 
 Downloading the files into a local folder.
 ```{r, eval = F}
-downloadFiles(files = rost2014AvailableFiles$filename,
-              destFolder = "rostRawFiles")
-
+downloadFiles(
+  files = rost2014AvailableFiles$filename,
+  destFolder = "rostRawFiles"
+)
 ```
 
 ## File archive
@@ -451,7 +467,8 @@ We can also load the contents of a file into R using the `loadFile` function. He
 
 ```{r}
 M970_2015Trn <- loadFile(rost2014AvailableFiles$filename[2],
-                      col_names = F)
+  col_names = F
+)
 
 M970_2015Trn
 ```
@@ -466,7 +483,8 @@ Note that some files have some initial information in a header and special forma
 
 ```{r}
 M970_2015Sst <- loadFile(rost2014AvailableFiles$filename[1],
-                      col_names = F)
+  col_names = F
+)
 
 M970_2015Sst %>% print(n = 12)
 ```
@@ -481,9 +499,10 @@ Specifying rows to skip and custom column delimination.
 
 ```{r}
 M970_2015Sst <- loadFile(rost2014AvailableFiles$filename[1],
-                      col_names = T,
-                      skip = 19,
-                      delim = "\t")
+  col_names = T,
+  skip = 19,
+  delim = "\t"
+)
 
 M970_2015Sst
 ```

@@ -13,9 +13,7 @@
 #' changeSeatrackPassword("newPassword")
 #' }
 #'
-
-changeSeatrackPassword <- function(password = NULL){
-
+changeSeatrackPassword <- function(password = NULL) {
   checkCon()
 
   current_user <- DBI::dbGetQuery(con, "SELECT current_user")
@@ -27,5 +25,4 @@ changeSeatrackPassword <- function(password = NULL){
   disconnectSeatrack()
 
   return("Password changed, you need to connect again using connectSeatrack()")
-
 }

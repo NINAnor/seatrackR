@@ -23,20 +23,20 @@ This is a convenience function that writes to the "positions.postable_raw/gps_ra
 \dontrun{
 connectSeatrack(Username = "testreader", Password = "testreader")
 
- files<-c("posdata_FULGLA_eynhallow_2014",
-          "posdata_FULGLA_eynhallow_2013",
-          "posdata_FULGLA_eynhallow_2012",
-          "posdata_FULGLA_eynhallow_2011",
-          "posdata_FULGLA_eynhallow_2010",
-          "posdata_FULGLA_eynhallow_2009",
-          "posdata_FULGLA_eynhallow_2007"
-          )
+files <- c(
+  "posdata_FULGLA_eynhallow_2014",
+  "posdata_FULGLA_eynhallow_2013",
+  "posdata_FULGLA_eynhallow_2012",
+  "posdata_FULGLA_eynhallow_2011",
+  "posdata_FULGLA_eynhallow_2010",
+  "posdata_FULGLA_eynhallow_2009",
+  "posdata_FULGLA_eynhallow_2007"
+)
 
 toImport <- loadPosdata(files)
 
 summary(toImport)
 
 writePositions(toImport)
-
 }
 }

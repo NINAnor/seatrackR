@@ -4,45 +4,54 @@
 #'
 
 
-upstartVersion <- function(){
-
+upstartVersion <- function() {
   pkg <- "seatrackR"
 
   installed_version <- tryCatch(packageVersion(pkg), error = function(e) NA)
 
 
-  remote_version <- tryCatch({
-    url <- "https://raw.githubusercontent.com/NINAnor/seatrack-db/master/seatrackR/DESCRIPTION"
-    x <- readLines(url, warn = FALSE)
-    gsub("(Version: )(.*)", "\\2", grep("Version:", x, value = TRUE))
-  }, error = function(e) {
-    message("Could not check for latest package version (connection failed).")
-    NA
-  })
+  remote_version <- tryCatch(
+    {
+      url <- "https://raw.githubusercontent.com/NINAnor/seatrack-db/master/seatrackR/DESCRIPTION"
+      x <- readLines(url, warn = FALSE)
+      gsub("(Version: )(.*)", "\\2", grep("Version:", x, value = TRUE))
+    },
+    error = function(e) {
+      packageStartupMessage("Could not check for latest package version (connection failed).")
+      NA
+    }
+  )
 
   if (!is.na(remote_version) && !is.na(installed_version)) {
     if (remote_version > installed_version) {
       msg <- paste("##", pkg, "is out of date, latest version is", remote_version)
-      message(msg)
+      packageStartupMessage(msg)
     } else {
-      message(paste("##", pkg, "is up to date."))
+      packageStartupMessage(paste("##", pkg, "is up to date."))
     }
   }
 }
 
 
 
-checkCon <- function() {if(!exists("con")){ stop("No connection, run connectSeatrack()")} else{
-  if(class(con)!= "PqConnection"){ stop("\"con\" is not of class \"PqConnection\". Have you run connectSeatrack()?")}
-  if(!DBI::dbIsValid(con)) { stop("No connection, run connectSeatrack()")}
+checkCon <- function() {
+  if (!exists("con")) {
+    stop("No connection, run connectSeatrack()")
+  } else {
+    if (class(con) != "PqConnection") {
+      stop("\"con\" is not of class \"PqConnection\". Have you run connectSeatrack()?")
+    }
+    if (!DBI::dbIsValid(con)) {
+      stop("No connection, run connectSeatrack()")
+    }
   }
 }
 
 
-compareNA <- function(v1,v2) {
+compareNA <- function(v1, v2) {
   # This function returns TRUE wherever elements are the same, including NA's,
   # and false everywhere else.
-  same <- (v1 == v2)  |  (is.na(v1) & is.na(v2))
+  same <- (v1 == v2) | (is.na(v1) & is.na(v2))
   same[is.na(same)] <- FALSE
   return(same)
 }
@@ -50,10 +59,10 @@ compareNA <- function(v1,v2) {
 passEnv <- new.env()
 
 
-.getFtpUrl <- function(){
+.getFtpUrl <- function() {
   checkCon()
 
-  password = get(".pass", envir = passEnv)
+  password <- get(".pass", envir = passEnv)
   current_user <- DBI::dbGetQuery(con, "SELECT current_user")
 
   pwd <- paste0(password, current_user)
@@ -62,10 +71,11 @@ passEnv <- new.env()
 
   url <- "ftp://seatrack.nina.no"
 
-  out <- list("url" = url,
-              "pwd" = pwd)
+  out <- list(
+    "url" = url,
+    "pwd" = pwd
+  )
   return(out)
-
 }
 
 # .getFtpUrl <- function(write = F){
@@ -110,50 +120,53 @@ passEnv <- new.env()
 # }
 
 
-reakHavoc <- function(){
-
+reakHavoc <- function() {
   checkCon()
 
-  answer <- menu(c("Yes (1)", "No (2)"), title ="You are about to delete all logger records!!! Are you sure?")
+  answer <- menu(c("Yes (1)", "No (2)"), title = "You are about to delete all logger records!!! Are you sure?")
 
   havoc1 <- "TRUNCATE TABLE loggers.logger_info RESTART IDENTITY CASCADE;"
   havoc2 <- "TRUNCATE TABLE individuals.individ_info RESTART IDENTITY CASCADE;"
 
 
 
-  if(answer == 1){
+  if (answer == 1) {
     dbSendStatement(con, havoc1)
     dbSendStatement(con, havoc2)
     return("Things are gone, database should be clean!")
-    } else return("Nothing")
-
+  } else {
+    return("Nothing")
+  }
 }
 
 
-##Error handling from stackoverflow user Martin Morgan, Q: 4948361
+## Error handling from stackoverflow user Martin Morgan, Q: 4948361
 
-factory <- function(fun)
+factory <- function(fun) {
   function(...) {
     warn <- err <- mess <- NULL
     res <- withCallingHandlers(
-      tryCatch(fun(...), error=function(e) {
+      tryCatch(fun(...), error = function(e) {
         err <<- conditionMessage(e)
         NULL
-      }), warning=function(w) {
+      }),
+      warning = function(w) {
         warn <<- append(warn, conditionMessage(w))
         invokeRestart("muffleWarning")
       },
-      message = function(m){
+      message = function(m) {
         mess <<- append(mess, conditionMessage(m))
-      })
-    list(res, warn=warn, err=err, mess = mess)
+      }
+    )
+    list(res, warn = warn, err = err, mess = mess)
   }
+}
 
-.has <- function(x, what)
+.has <- function(x, what) {
   !sapply(lapply(x, "[[", what), is.null)
+}
 hasWarning <- function(x) .has(x, "warn")
 hasError <- function(x) .has(x, "err")
 isClean <- function(x) !(hasError(x) | hasWarning(x))
 value <- function(x) sapply(x, "[[", 1)
 cleanv <- function(x) sapply(x[isClean(x)], "[[", 1)
-

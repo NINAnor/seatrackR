@@ -74,7 +74,7 @@ connectSeatrack(Username = "testwriter", Password = "testwriter")
 # changePassword("newpassword")
 # connectSeatrack("testwriter", "newpassword")
 
-#This shouldn't be needed, but I will use dplyr and pipes in the following code.
+# This shouldn't be needed, but I will use dplyr and pipes in the following code.
 library(tidyverse)
 library(stringr)
 ```
@@ -82,15 +82,13 @@ library(stringr)
 Internally, `connectSeatrack` creates a connection to the database called `con` through the package `DBI` using the driver `Rpostgres::Postgres()`. Most functions used later checks that this connection is active and trows an error if it is not. Although you probably won't ever have to, you check the connection and also disconnect manually. Normally, you don't need to disconnect.
 
 ```{r disconnect, error = T}
-
 disconnectSeatrack()
 
-seatrackR:::checkCon() ##produces error if not connected
+seatrackR:::checkCon() ## produces error if not connected
 
 connectSeatrack(Username = "testwriter", Password = "testwriter")
 
-seatrackR:::checkCon() ##returns nothing if the connection exists
-
+seatrackR:::checkCon() ## returns nothing if the connection exists
 ```
 
 
@@ -139,7 +137,7 @@ We can check how many of the rows in the table about to be imported that has sta
 
 
 ```{r}
-noStartups <- sampleLoggerImport %>% 
+noStartups <- sampleLoggerImport %>%
   summarize("no_startups" = sum(!is.na(starttime_gmt)))
 noStartups
 ```
@@ -159,18 +157,19 @@ loggerInfo
 We see that we have `r nrow(loggerInfo)` registered loggers. Next, we can have a look at the current active sessions, most easily through the `getActiveSessions` function.
 
 ```{r}
-activeSessions <- getActiveSessions() # This reads from the table loggers.logging_session. 
+activeSessions <- getActiveSessions() # This reads from the table loggers.logging_session.
 activeSessions
-
 ```
 
 We see that there are `r nrow(activeSessions)` open sessions, meaning they have been started up but not shut down.
 We can se how many of these have been deployed and retrieved by counting the number of rows with deployment id and a retrieval id. Note that we exclude the rows with NAs, which signifies missing data and is read as `NULL` in the database.
 
 ```{r}
-activeSessions %>% 
-    summarise("no_deployed" = sum(!is.na(deployment_id)), 
-              "no_retrieved" = sum(!is.na(retrieval_id)))
+activeSessions %>%
+  summarise(
+    "no_deployed" = sum(!is.na(deployment_id)),
+    "no_retrieved" = sum(!is.na(retrieval_id))
+  )
 ```
 
 At this point all `r nrow(activeSessions)` loggers are started up, but none is registered as deployed or retrieved.
@@ -185,9 +184,11 @@ sampleMetadata
 In this test case, the metadata file contains both deployment, retrieval and measurement info. We can see how many deployments and retrievals we have.
 
 ```{r}
-noDepRetr <- sampleMetadata %>% 
-  summarise("noDeployments" = sum(!is.na(logger_id_deployed)), 
-            "noRetrievals" = sum(!is.na(logger_id_retrieved)))
+noDepRetr <- sampleMetadata %>%
+  summarise(
+    "noDeployments" = sum(!is.na(logger_id_deployed)),
+    "noRetrievals" = sum(!is.na(logger_id_retrieved))
+  )
 noDepRetr
 ```
 
@@ -195,11 +196,9 @@ So, `r noDepRetr$noDeployments` deployment events, and `r noDepRetr$noRetrievals
 
 
 ```{r, include = F}
-
 sampleMetadata$data_responsible[20] <- "Alkekungen himself"
-sampleMetadata$logger_id_retrieved[107:109] <- "scraped off!" #"Z231" "Z236" "Z234"
+sampleMetadata$logger_id_retrieved[107:109] <- "scraped off!" # "Z231" "Z236" "Z234"
 sampleMetadata$ring_number[110] <- "5175149" # "5175140"
-
 ```
 
 ```{r}
@@ -231,38 +230,34 @@ We fix these errors and run another check.
 ```{r}
 ringsOfErrors <- sampleMetadata$ring_number[107:109]
 sampleMetadata[sampleMetadata$ring_number %in% ringsOfErrors, ]
-
 ```
 Going by the data on the deployments, it seems that the missing logger serial numbers where "Z231", "Z236", and "Z234".
 
 ```{r}
-sampleMetadata$logger_id_retrieved[107:109] <- c("Z231", "Z236", "Z234")  
+sampleMetadata$logger_id_retrieved[107:109] <- c("Z231", "Z236", "Z234")
 ```
 
 Now we look at the name that was not registered.
 
 ```{r}
-sampleMetadata %>% 
-  select(date, colony, species, data_responsible) %>% 
+sampleMetadata %>%
+  select(date, colony, species, data_responsible) %>%
   filter(row_number() %in% 18:22)
 
-##Looks like it should be Svein-Håkon
+## Looks like it should be Svein-Håkon
 sampleMetadata$data_responsible[20] <- sampleMetadata$data_responsible[19]
 ```
 Next, we take a look at the non-matching ring numbers for the deployment and retrievals
 
 ```{r}
-
-sampleMetadata %>% 
+sampleMetadata %>%
   filter(logger_id_deployed == "Z232" | logger_id_retrieved == "Z232")
 
 ## Looks like there might be a typo on the retrieval data. The last digit should be a 0 and not a 9.
-
 ```
 
 ```{r}
 sampleMetadata$ring_number[which(sampleMetadata$logger_id_retrieved == "Z232")] <- 5175140
-
 ```
 Time for a new check of the data.
 
@@ -285,15 +280,17 @@ And check the new status of the number of deployed and retrieved loggers.
 activeSessions <- getActiveSessions()
 
 
-activeSessions %>% 
-    summarise("no_deployed" = sum(!is.na(deployment_id)), 
-              "no_retrieved" = sum(!is.na(retrieval_id)))
+activeSessions %>%
+  summarise(
+    "no_deployed" = sum(!is.na(deployment_id)),
+    "no_retrieved" = sum(!is.na(retrieval_id))
+  )
 ```
 
 We see that the logger_session table has been filled with data on deployments and retrievals. Data on the colony, species, and individ_id the logger was deployed on is also added to the table. The rows with retrieval data also contains data on the year tracked.
 
 ```{r}
-activeSessions %>% 
+activeSessions %>%
   filter(!is.na(retrieval_id))
 ```
 
@@ -308,20 +305,19 @@ We use the logger_import table again to shut the logging sessions down. For all 
 Here the startup and allocation info is empty.
 ```{r}
 sampleLoggerShutdown
-
 ```
 And we only have shutdown info.
 
 ```{r}
-sampleLoggerShutdown %>% 
+sampleLoggerShutdown %>%
   select(logger_serial_no, logger_model, shutdown_session:comment)
 ```
 
 Remember that filenames will only be produced in the case when the `download_type` is either "Successfully downloaded" or "Reconstructed". Let's have a look at the types of downloads we are about to import.
 
 ```{r}
-downloadTypes <- sampleLoggerShutdown %>% 
-  group_by(download_type) %>% 
+downloadTypes <- sampleLoggerShutdown %>%
+  group_by(download_type) %>%
   tally()
 downloadTypes
 ```
@@ -360,11 +356,11 @@ databaseFileArchive
 You could use this table to get some bookkeeping info. Currently, we have shut down 5 different logger models, some of which produces 7 and some that produces 4 files. For example see how the recorded file names group into individual logger models.
 
 ```{r}
-databaseFileArchive %>% 
-  group_by(logger_model, session_id) %>% 
-  tally() %>%  
-  group_by(logger_model) %>% 
-  summarise(mean(n)) 
+databaseFileArchive %>%
+  group_by(logger_model, session_id) %>%
+  tally() %>%
+  group_by(logger_model) %>%
+  summarise(mean(n))
 ```
 
 
@@ -373,7 +369,7 @@ Currently, we have shut down 5 different logger models, some of which produces 7
 
 
 ```{r}
-databaseFileArchive %>% 
+databaseFileArchive %>%
   summarise("noShutdownLoggers" = n_distinct(logger_serial_no, logger_model))
 ```
 So out of the 57 shutdowns we performed, only 40 of them resulted in files in the table loggers.file_archive. This is as predicted since only 40 was successfully downloaded or had their download data reconstructed.
@@ -418,7 +414,7 @@ fileArchive
 We can download files from the storage using the function `downloadFiles`. This is available for everyone that can login to the database (members of the group "seatrack_reader"). Here, we download all the files. 
 
 ```{r}
-filesToGet = listFileArchive()$filesInArchive
+filesToGet <- listFileArchive()$filesInArchive
 downloadFiles(files = filesToGet, destFolder = "../temp", overwrite = T)
 ```
 
@@ -432,18 +428,16 @@ In case a wrong file has been uploaded to the file archive, or for testing purpo
 filesInArchive <- listFileArchive()$filesInArchive
 filesInArchive
 
-filesToDelete <- filesInArchive %>% 
-  filter(str_detect(filename, "test") )
+filesToDelete <- filesInArchive %>%
+  filter(str_detect(filename, "test"))
 filesToDelete
 
 deleteFiles(files = filesToDelete, force = T)
-
 ```
 We can double check that the test files are gone.
 
 ```{r}
 listFileArchive()$filesInArchive
-
 ```
 
 

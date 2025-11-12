@@ -29,7 +29,6 @@ Delete activity, light and temperature recording data that is lacking an existin
 \examples{
 \dontrun{
 pruneRecords()
-
 }
 
 }

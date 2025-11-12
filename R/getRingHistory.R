@@ -9,22 +9,14 @@
 #' \dontrun{
 #' getRingHistory()
 #' }
-
-
-getRingHistory <- function(asTibble = FALSE){
-
+getRingHistory <- function(asTibble = FALSE) {
   checkCon()
 
-  res <- dplyr::tbl(con, dbplyr::in_schema("individuals", "ring_history"))  %>% select(-id)
+  res <- dplyr::tbl(con, dbplyr::in_schema("individuals", "ring_history")) %>% select(-id)
 
-  if(asTibble){
-    res <- res  %>% dplyr::collect()
+  if (asTibble) {
+    res <- res %>% dplyr::collect()
   }
 
   return(res)
 }
-
-
-
-
-

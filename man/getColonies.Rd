@@ -22,6 +22,7 @@ If
 \dontrun{
 colony <- getColonies(loadGeometries = T)
 plot(colony["colony_int_name"],
-pch = 16)
+  pch = 16
+)
 }
 }

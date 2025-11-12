@@ -31,9 +31,11 @@ This is a convenience function that deletes records from the activity tables (re
 }
 \examples{
 \dontrun{
-deleteActivity(sessionId = "T220_2015-04-27",
-species = "Glaucus gull",
-colony = "Anda",
-limit_to_type = c("temperature", "activity"))
+deleteActivity(
+  sessionId = "T220_2015-04-27",
+  species = "Glaucus gull",
+  colony = "Anda",
+  limit_to_type = c("temperature", "activity")
+)
 }
 }

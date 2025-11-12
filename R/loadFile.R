@@ -9,49 +9,48 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' ##To download all files in the file storage
-#' myFiles = listFileArchive()$filesInArchive
-#' loadedFile <- loadFile(filename = myFiles[1,])
+#' ## To download all files in the file storage
+#' myFiles <- listFileArchive()$filesInArchive
+#' loadedFile <- loadFile(filename = myFiles[1, ])
 #'
-#' #Some files starts funny, this might help:
-#' loadedFile2 <- loadFile(filename = myFiles[1,],
-#'                        skip = 1,
-#'                        col_names = F)
+#' # Some files starts funny, this might help:
+#' loadedFile2 <- loadFile(
+#'   filename = myFiles[1, ],
+#'   skip = 1,
+#'   col_names = F
+#' )
 #' }
 #'
-
 loadFile <- function(filename = NULL,
                      delim = ",",
-                     ...){
+                     ...) {
   checkCon()
 
-  if(length(filename) != 1){
+  if (length(filename) != 1) {
     stop("Need a single filename to load.")
-    }
+  }
 
-    url <- .getFtpUrl()
+  url <- .getFtpUrl()
 
-    tmp <- strsplit(url$url, "//")
-    getUrl <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2],"/" , filename)
-    getHandle <- httr::handle(getUrl)
-
-
-    suppressWarnings(rawOut <- httr::with_config(httr::config(ssl_verifypeer = F,
-                                             ssl_verifyhost = F,
-                                               use_ssl = T),
-                                  httr::GET(url = getUrl, handle = getHandle)))
+  tmp <- strsplit(url$url, "//")
+  getUrl <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2], "/", filename)
+  getHandle <- httr::handle(getUrl)
 
 
-    out <- readr::read_delim(httr::content(rawOut, type = "raw"),
-                             delim = delim,
-                             ...)
+  suppressWarnings(rawOut <- httr::with_config(
+    httr::config(
+      ssl_verifypeer = F,
+      ssl_verifyhost = F,
+      use_ssl = T
+    ),
+    httr::GET(url = getUrl, handle = getHandle)
+  ))
 
-      return(out)
 
+  out <- readr::read_delim(httr::content(rawOut, type = "raw"),
+    delim = delim,
+    ...
+  )
 
+  return(out)
 }
-
-
-
-
-
