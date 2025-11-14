@@ -13,7 +13,7 @@
 #'
 #' uploadFiles(files = c("test_file.txt", "test_file2.txt"), originFolder = "temp")
 #' }
-#'
+#' @concept files
 uploadFiles <- function(files = NULL,
                         originFolder = NULL,
                         overwrite = FALSE,

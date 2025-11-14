@@ -10,6 +10,7 @@
 #' \dontrun{
 #' getNames()
 #' }
+#' @concept metadata
 getNames <- function(asTibble = FALSE) {
   checkCon()
 

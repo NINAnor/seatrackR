@@ -4,6 +4,7 @@
 #' @keywords datasets
 #' @name sampleMetadata
 #' @usage data(sampleMetadata)
+#' @concept data
 NULL
 
 
@@ -13,6 +14,7 @@ NULL
 #' @keywords datasets
 #' @name samplePosdata
 #' @usage data(samplePosdata)
+#' @concept data
 NULL
 
 
@@ -22,6 +24,7 @@ NULL
 #' @keywords datasets
 #' @name sampleLoggerImport
 #' @usage data(sampleLoggerImport)
+#' @concept data
 NULL
 
 
@@ -31,6 +34,7 @@ NULL
 #' @keywords datasets
 #' @name sampleLoggerModels
 #' @usage data(sampleLoggerModels)
+#' @concept data
 NULL
 
 #' sampleLoggerShutdown
@@ -39,6 +43,7 @@ NULL
 #' @keywords datasets
 #' @name sampleLoggerShutdown
 #' @usage data(sampleLoggerShutdown)
+#' @concept data
 NULL
 
 # Fix the commenting error here too
@@ -48,4 +53,5 @@ NULL
 #' @keywords datasets
 #' @name sampleRingHistory
 #' @usage data(sampleRingHistory)
+#' @concept data
 NULL

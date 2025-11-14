@@ -6,7 +6,7 @@
 #'
 #'
 #'
-#' @export
+#' @concept general_db
 
 
 checkSeatrackRVersion <- function() {

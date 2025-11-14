@@ -19,6 +19,7 @@
 #'   limit_to_type = c("temperature", "activity")
 #' )
 #' }
+#' @concept activity
 deleteActivity <- function(sessionId = NULL,
                            colony = NULL,
                            species = NULL,

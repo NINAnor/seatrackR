@@ -10,4 +10,5 @@ data(samplePosdata)
 \description{
 samplePosdata
 }
+\concept{data}
 \keyword{datasets}

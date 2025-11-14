@@ -8,6 +8,7 @@
 #' \dontrun{
 #' getYears()
 #' }
+#' @concept positions
 getYears <- function() {
   checkCon()
 

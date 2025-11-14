@@ -1,20 +1,20 @@
 Package: seatrackR
 Title: Interface functions for the Seatrack database
-Version: 0.0.3.2
+Version: 0.0.3.5
 Authors@R: c(person(given = "Jens", 
                     family = "Åström", 
                     email = "jens.astrom@nina.no", 
-                    role = c("aut", "cre"),
-                    comment = c(ORCID = "0000-0002-6114-0440")),
+                    role = c("aut"),
+                    comment = c(ORCID = "0000-0002-6114-0440", note="Original creator")),
              person(given = "Julian", 
                     family = "Evans", 
-                    role = "aut", 
+                    role = c("aut", "cre"), 
                     email = "julian.evans@nina.no"))
 Description: R utility functions for interaction with the seatrack database. 
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests: 
   	R.rsp
 Imports:
@@ -44,3 +44,4 @@ VignetteBuilder:
 	  R.rsp,
 	  knitr
 LazyData: true
+URL: https://ninanor.github.io/seatrackR/

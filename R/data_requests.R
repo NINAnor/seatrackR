@@ -1,4 +1,3 @@
-#' @title Export Data Request Package
 #' Export a data request package
 #'
 #' This function will create a zip file of seatrack data. This includes:
@@ -137,12 +136,14 @@ create_readme <- function(request_name, file_list, species, colonies, times, dat
 #' }
 #' @export
 #' @concept data_requests
-data_request <- function(request_name, start_year, end_year = format(Sys.Date(), "%Y"), species = NULL, colony = NULL, export = TRUE, output_dir = NULL, additional_notes = "", additional_files = list()) {
+data_request <- function(request_name, data_types = c("GLS", ""), start_year, end_year = format(Sys.Date(), "%Y"), species = NULL, colony = NULL, export = TRUE, output_dir = NULL, additional_notes = "", additional_files = list()) {
     start_date <- as.Date(paste0(start_year, "-01-01"))
     end_date <- as.Date(paste0(end_year, "-12-31")) + 1
     all_data <- list()
 
-    print("Fetching position data...")
+    if ("GLS") {
+        print("Fetching GLS position data...")
+    }
     all_pos <- getPositions(species = species, colony = colony)
     all_data$seatrackGLS_posdata <- all_pos[all_pos$date_time >= start_date & all_pos$date_time < end_date, ]
 

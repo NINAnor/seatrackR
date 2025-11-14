@@ -10,4 +10,5 @@ data(sampleLoggerImport)
 \description{
 sampleLoggerImport
 }
+\concept{data}
 \keyword{datasets}

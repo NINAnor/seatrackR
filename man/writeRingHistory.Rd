@@ -28,3 +28,4 @@ connectSeatrack(Username = "testreader", Password = "testreader")
 writeRingHistory(sampleRingHistory)
 }
 }
+\concept{metadata}

@@ -1,1 +1,5 @@
 library(devtools)
+library(formatR)
+library(badger)
+library(styler)
+library(NinaR)

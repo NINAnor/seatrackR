@@ -23,6 +23,7 @@
 #' \dontrun{
 #' deleteRecords(selectUpdateTime = "2018-04-20")
 #' }
+#' @concept general_db
 deleteRecords <- function(colony = NULL,
                           intendedLocation = NULL,
                           year = NULL,

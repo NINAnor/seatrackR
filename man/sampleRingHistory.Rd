@@ -10,4 +10,5 @@ data(sampleRingHistory)
 \description{
 sampleRingHistory
 }
+\concept{data}
 \keyword{datasets}

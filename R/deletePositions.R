@@ -20,6 +20,7 @@
 #'   refreshView = TRUE
 #' )
 #' }
+#' @concept positions
 deletePositions <- function(datatype = "GLS",
                             session_ids_to_delete,
                             idempotent = TRUE,

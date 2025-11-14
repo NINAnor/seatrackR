@@ -19,5 +19,5 @@ Zoom in with the browser to see the details
 \dontrun{
 viewDatabaseModel()
 }
-
 }
+\concept{general_db}

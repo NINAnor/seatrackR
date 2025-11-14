@@ -1,0 +1,78 @@
+url: https://ninanor.github.io/seatrackR/
+template:
+  bootstrap: 5
+navbar:
+  structure:
+    left:
+    - intro
+    - reference
+    - articles
+    - data_ref
+    - tutorials
+    - news
+    right:
+    - search
+    - github
+    - lightswitch
+  components:
+    articles:
+      text: Articles
+      menu:
+        Retrieve standard data from Seatrack:
+          text: Retrieve standard data from Seatrack
+          href: articles/articles/Data_extraction.html
+        The Seatrack database and R:
+          text: The Seatrack database and R
+          href: articles/articles/Intro_presentation.html
+    data_ref:
+      text: Data reference
+      menu:
+        Positional data reference:
+          text: Positional data reference
+          href: articles/data_reference/positional_data.html
+        Immersion data reference:
+          text: Immersion data reference
+          href: articles/data_reference/immersion_data.html
+        Light data reference:
+          text: Light data reference
+          href: articles/data_reference/light_data.html
+        Temperature data reference:
+          text: Temperature data reference
+          href: articles/data_reference/temperature_data.html
+        Individual data reference:
+          text: Individual data reference
+          href: articles/data_reference/individual_data.html
+reference:
+- title: Positions
+  desc: Functions for reading and writing positional data to the database.
+  contents: has_concept("positions")
+- title: Metadata
+- desc: Functions for reading and writing metadata to the database.
+  contents: has_concept("metadata")
+- title: Database Connections
+  desc: Functions for connecting to and disconnecting from the Seatrack database.
+  contents: has_concept("db_connection")
+- title: activity
+  desc: Functions for reading and writing activity data to the database.
+  contents: has_concept("activity")
+- title: logger_info
+  desc: Functions for reading and writing logger information to the database.
+  contents: has_concept("logger_info")
+- title: Data request handling
+  desc: Functions for managing data requests in the database.
+  contents: has_concept("data_requests")
+- title: Files
+  desc: Functions for reading and writing file information to the database and FTP
+    server.
+  contents: has_concept("files")
+- title: Utility functions
+  desc: Various utility functions included in the package.
+- subtitle: General Database Functions
+  desc: General functions related to the SEATRACK database.
+  contents: has_concept("general_db")
+- subtitle: Data
+  desc: Example datasets included in the package.
+  contents: has_concept("data")
+- subtitle: Plotting functions
+  desc: Shortcuts for plotting SEATRACK data.
+  contents: has_concept("plotting")

@@ -9,6 +9,7 @@
 #' \dontrun{
 #' getRingHistory()
 #' }
+#' @concept metadata
 getRingHistory <- function(asTibble = FALSE) {
   checkCon()
 

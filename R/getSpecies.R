@@ -8,6 +8,7 @@
 #' \dontrun{
 #' getSpecies()
 #' }
+#' @concept metadata
 getSpecies <- function() {
   checkCon()
 

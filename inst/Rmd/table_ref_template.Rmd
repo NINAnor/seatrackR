@@ -1,0 +1,25 @@
+---
+title: "`r params$title`"
+subtitle: Generated from [output_schema.yaml](../../assetsyaml/output_schema.yaml)
+---
+
+```{r, echo = FALSE, message = FALSE}
+# Load schema
+schema_dict <- yaml::read_yaml(system.file("yaml", "output_schema.yaml", package = "seatrackR"))
+
+dataset <- schema_dict$datasets[[params$key]]
+
+render_schema <- function(dataset) {
+    bullets <- sapply(dataset$columns, function(col) {
+        knitr::knit_expand(text = "- #### **{{col$name}}** \n *type:{{col$type}}* \n  {{col$description}} ")
+    })
+    all_desc <- paste(bullets, collapse = "\n\n")
+    return(all_desc)
+}
+
+schema_md <- render_schema(dataset)
+```
+
+`r dataset$description`
+
+`r knitr::knit(text = schema_md)`

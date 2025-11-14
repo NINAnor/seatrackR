@@ -14,6 +14,7 @@
 #' pruneRecords()
 #' }
 #'
+#' @concept activity
 pruneRecordings <- function(
     pruneLight = TRUE,
     pruneActivity = TRUE,

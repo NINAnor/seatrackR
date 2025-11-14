@@ -49,3 +49,4 @@ This is a convenience function that deletes records from the logging_session tab
 deleteRecords(selectUpdateTime = "2018-04-20")
 }
 }
+\concept{general_db}

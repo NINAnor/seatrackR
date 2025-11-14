@@ -49,3 +49,4 @@ myCheck # check the print function for a complete list of the errors
 checkOpenSession(sampleMetadata)
 }
 }
+\concept{metadata}

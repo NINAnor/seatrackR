@@ -20,6 +20,7 @@
 #'   colony = "Sklinna"
 #' )
 #' }
+#' @concept activity
 getRecordings <- function(type = NULL,
                           sessionId = NULL,
                           individId = NULL,

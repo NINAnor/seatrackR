@@ -42,3 +42,4 @@ sfGmapPlot(sub,
 )
 }
 }
+\concept{plotting}

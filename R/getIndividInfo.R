@@ -11,6 +11,7 @@
 #' seatrackConnect(Username = "testreader", Password = "testreader")
 #' individInfo <- getInfividInfo()
 #' }
+#' @concept metadata
 getIndividInfo <- function(colony = NULL,
                            year = NULL) {
   checkCon()

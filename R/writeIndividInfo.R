@@ -13,6 +13,7 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' writeIndividInfo(sampleIndividInfo)
 #' }
+#' @concept metadata
 writeIndividInfo <- function(individData,
                              append = T,
                              overwrite = FALSE) {

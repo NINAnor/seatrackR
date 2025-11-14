@@ -12,6 +12,7 @@
 #' seatrackConnect(Username = "testreader", Password = "testreader")
 #' fileArchive <- getFileArchive()
 #' }
+#' @concept files
 getFileArchiveSummary <- function(colony = NULL,
                                   year = NULL) {
   checkCon()

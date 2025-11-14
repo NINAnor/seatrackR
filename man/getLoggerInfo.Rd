@@ -22,3 +22,4 @@ connectSeatrack(Username = "testreader", Password = "testreader")
 loggerInfo <- getLoggerInfo()
 }
 }
+\concept{logger_info}

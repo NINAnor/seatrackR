@@ -24,6 +24,5 @@ Delete files on the FTP-server.
 
 deleteFiles(files = c("test.txt", "test_file2.txt"), originFolder = "temp")
 }
-
-
 }
+\concept{files}

@@ -13,6 +13,7 @@
 #' downloadFiles(files = myFiles, destFolder = "temp")
 #' }
 #'
+#' @concept files
 downloadFiles <- function(files = NULL,
                           destFolder = NULL,
                           overwrite = F) {

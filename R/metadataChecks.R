@@ -17,6 +17,7 @@
 #' # Or run a single test separately
 #' checkOpenSession(sampleMetadata)
 #' }
+#' @concept metadata
 checkMetadata <- function(myTable) {
   checkCon()
   sessionErrors <- checkOpenSession(myTable)

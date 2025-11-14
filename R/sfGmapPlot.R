@@ -26,6 +26,7 @@
 #'   zoom = 3
 #' )
 #' }
+#' @concept plotting
 sfGmapPlot <- function(sf,
                        maptype = c(
                          "terrain", "terrain-background", "satellite",

@@ -32,3 +32,4 @@ connectSeatrack(Username = "testreader", Password = "testreader")
 refreshViews()
 }
 }
+\concept{general_db}

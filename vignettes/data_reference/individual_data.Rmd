@@ -1,0 +1,132 @@
+---
+title: "Individual data reference"
+subtitle: Generated from [output_schema.yaml](../../assetsyaml/output_schema.yaml)
+---
+
+
+
+Metadata and biometrics for each tracked individual
+
+- #### **session_id** 
+ *type:string* 
+  Unique ID for the logger deployment session during which this data was recorded. 
+
+- #### **colony** 
+ *type:string* 
+  Name of the colony where the logger was deployed/retrieved. 
+
+- #### **year_tracked** 
+ *type:string* 
+  Duration that the individual was instrumented with a logger (e.g. 2015_17). 
+
+- #### **individ_id** 
+ *type:string* 
+  Unique ID for each individual. 
+
+- #### **ring_number** 
+ *type:string* 
+  Metal ID ring number. 
+
+- #### **euring_code** 
+ *type:string* 
+  Country/local code for metal ring. 
+
+- #### **colour_ring** 
+ *type:string* 
+  Code and colour for plastic ring. 
+
+- #### **species** 
+ *type:string* 
+  English name of the species. 
+
+- #### **subspecies** 
+ *type:string* 
+  Latin name of the subspecies. 
+
+- #### **morph** 
+ *type:string* 
+  Morphological traits (e.g., bridled guillemot). 
+
+- #### **status_age** 
+ *type:integer* 
+  Recorded age at trapping event. 
+
+- #### **status_sex** 
+ *type:string* 
+  Recorded sex at trapping event. 
+
+- #### **status_sexing_method** 
+ *type:string* 
+  Method used to determine sex. 
+
+- #### **status_date** 
+ *type:datetime* 
+  Date of trapping event. 
+
+- #### **weight** 
+ *type:float* 
+  Weight (grams) at trapping. 
+
+- #### **scull** 
+ *type:float* 
+  Length of head and beak (mm). 
+
+- #### **tarsus** 
+ *type:float* 
+  Length of tarsus (mm). 
+
+- #### **wing** 
+ *type:float* 
+  Length of wing (mm). 
+
+- #### **breeding_stage** 
+ *type:string* 
+  Breeding stage (e.g., nonbreeding, prebreeding, incubating, rearing chicks). 
+
+- #### **eggs** 
+ *type:integer* 
+  Number of eggs at trapping. 
+
+- #### **chicks** 
+ *type:integer* 
+  Number of chicks in nest at trapping. 
+
+- #### **hatching_success** 
+ *type:boolean* 
+  Hatching success (TRUE = successful, FALSE = failed). 
+
+- #### **breeding_success** 
+ *type:boolean* 
+  Breeding success (TRUE = successful, FALSE = failed). 
+
+- #### **breeding_success_criterion** 
+ *type:string* 
+  Definition or criteria used for considering breeding successful. 
+
+- #### **data_responsible** 
+ *type:string* 
+  Data owner or responsible person. 
+
+- #### **back_on_nest** 
+ *type:boolean* 
+  Whether the bird was observed returning to nest after handling (TRUE/FALSE) 
+
+- #### **comment** 
+ *type:string* 
+  Additional comments for the trapping event. 
+
+- #### **latest_sex** 
+ *type:string* 
+  Most recently updated sex information. 
+
+- #### **latest_age** 
+ *type:string* 
+  Most recently updated age information. 
+
+- #### **latest_info_date** 
+ *type:date* 
+  Date when the latest information was updated. 
+
+- #### **eventType** 
+ *type:string* 
+  Type of event recorded for the individual, (e.g. deployment, retrieval, observation). 

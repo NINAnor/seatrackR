@@ -1,0 +1,140 @@
+---
+title: "Positional data reference"
+subtitle: Generated from [output_schema.yaml](../../assetsyaml/output_schema.yaml)
+---
+
+
+
+Positional data from GLS loggers including locations and metadata.
+
+- #### **id** 
+ *type:string* 
+  Unique ID of logging session during which record was made. 
+
+- #### **date_time** 
+ *type:datetime* 
+  Date and time of the calculated position in GMT. 
+
+- #### **logger_id** 
+ *type:string* 
+  Unique internal database ID of logger. 
+
+- #### **logger_model** 
+ *type:string* 
+  GLS logger model (e.g., c65, mk4083, etc.). 
+
+- #### **year_tracked** 
+ *type:string* 
+  Tracking period from one breeding season to the next (e.g., "2013_14") with endpoints defined by analyser (usually 31 May/1 June in SEATRACK). 
+
+- #### **session_id** 
+ *type:string* 
+  Unique ID for each time a logger was deployed. 
+
+- #### **individ_id** 
+ *type:string* 
+  Unique ID for each individual. 
+
+- #### **deployment_date** 
+ *type:date* 
+  Date when the logger was deployed. 
+
+- #### **retrieval_date** 
+ *type:date* 
+  Date when the logger was retrieved. 
+
+- #### **ring_number** 
+ *type:* 
+  Metal ID ring number. 
+
+- #### **country_code** 
+ *type:* 
+  Country/local code for metal ring. 
+
+- #### **species** 
+ *type:string* 
+  English name of the species (e.g., "Black-legged kittiwake"). 
+
+- #### **colony** 
+ *type:string* 
+  Name of the colony where the logger was deployed and retrieved. Note that a SEATRACK colony name can cover several locations 
+
+- #### **lon_raw** 
+ *type:float* 
+  Longitude calculated from time (GMT) of noon or midnight and date. 
+
+- #### **lat_raw** 
+ *type:float* 
+  Latitude calculated from length of day or night and date (GMT). 
+
+- #### **lon** 
+ *type:float* 
+  Averaged longitude coordinate after moving average. 
+
+- #### **lat** 
+ *type:float* 
+  Averaged latitude coordinate after moving average. 
+
+- #### **eqfilter** 
+ *type:boolean* 
+  Filter identifying periods with unreliable latitudes during equinox (TRUE = reliable, FALSE = unreliable). 
+
+- #### **sex** 
+ *type:string* 
+  Recorded sex at trapping event. 
+
+- #### **age_deployment** 
+ *type:string* 
+  Age of the bird at the time of deployment. 
+
+- #### **col_lon** 
+ *type:float* 
+  Longitude of the colony. 
+
+- #### **col_lat** 
+ *type:float* 
+  Latitude of the colony. 
+
+- #### **tfirst** 
+ *type:datetime* 
+  Time of first sun event used for position calculation (GMT). 
+
+- #### **tsecond** 
+ *type:datetime* 
+  Time of second sun event used for position calculation (GMT). 
+
+- #### **twl_type** 
+ *type:integer* 
+  Identifies whether tfirst is sunrise (1) or sunset (2). 
+
+- #### **sun** 
+ *type:float* 
+  Sun’s angle to the horizon at the estimated time of twilight. 
+
+- #### **light_threshold** 
+ *type:float* 
+  Selected light threshold used for estimated time of twilights. 
+
+- #### **analyzer** 
+ *type:string* 
+  Person who ran scripts and performed sun angle calibration. 
+
+- #### **data_responsible** 
+ *type:string* 
+  Data owner or responsible person. 
+
+- #### **data_version** 
+ *type:integer* 
+  Version of the processing script used. 
+
+- #### **date_updated** 
+ *type:date* 
+  Date when the record was last updated. 
+
+- #### **updated_by** 
+ *type:string* 
+  Person who last updated the record. 
+
+- #### **date_time_downloaded** 
+ *type:datetime* 
+  Date and time when this data was downloaed from the database. 

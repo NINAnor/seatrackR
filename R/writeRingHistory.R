@@ -16,6 +16,7 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' writeRingHistory(sampleRingHistory)
 #' }
+#' @concept metadata
 writeRingHistory <- function(historyData,
                              append = TRUE,
                              overwrite = FALSE) {

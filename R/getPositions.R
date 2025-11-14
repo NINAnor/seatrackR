@@ -47,7 +47,7 @@
 #' plot(positions2["logger_model"], pch = 16)
 #' }
 #' @export
-#'
+#' @concept positions
 
 
 getPositions <- function(datatype = "GLS",

@@ -9,7 +9,7 @@
 #' \dontrun{
 #' viewDatabaseModel()
 #' }
-#'
+#' @concept general_db
 viewDatabaseModel <- function(type = c("png", "svg")) {
   type <- match.arg(type, c("png", "svg"))
 

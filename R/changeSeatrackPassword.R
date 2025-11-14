@@ -13,6 +13,7 @@
 #' changeSeatrackPassword("newPassword")
 #' }
 #'
+#' @concept general_db
 changeSeatrackPassword <- function(password = NULL) {
   checkCon()
 

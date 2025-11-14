@@ -26,5 +26,5 @@ Write files to the file archive
 
 uploadFiles(files = c("test_file.txt", "test_file2.txt"), originFolder = "temp")
 }
-
 }
+\concept{files}

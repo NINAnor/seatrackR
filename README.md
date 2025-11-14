@@ -4,11 +4,13 @@
 # seatrackR
 
 <!--For a hex-sticker, add the png in inst/figures/ and uncomment this:-->
+
 <!-- <img src="https://github.com/NINAnor/seatrackR/blob/main/inst/figures/seatrackR.png" align="right" width="160px"/> -->
+
 <!-- badges: start -->
 
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![](https://img.shields.io/badge/devel%20version-0.0.3.1-blue.svg)](https://github.com/NINAnor/seatrackR)
+[![](https://img.shields.io/badge/devel%20version-0.0.3.2-blue.svg)](https://github.com/NINAnor/seatrackR)
 [![](https://www.r-pkg.org/badges/version/seatrackR)](https://cran.r-project.org/package=seatrackR)
 [![R build
 status](https://github.com/NINAnor/seatrackR/workflows/R-CMD-check/badge.svg)](https://github.com/NINAnor/seatrackR/actions)
@@ -41,7 +43,3 @@ Take a look at the vignettes for a guide to what is available
 Install the package by:
 
     devtools::install_github("NINAnor/seatrackR")
-
-Or with vignettes by:
-
-    devtools::install_github("NINAnor/seatrackR", build_vignettes = T)

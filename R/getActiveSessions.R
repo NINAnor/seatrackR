@@ -11,6 +11,7 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' activeSessions <- getActiveSessions()
 #' }
+#' @concept logger_info
 getActiveSessions <- function() {
   checkCon()
 

@@ -25,3 +25,4 @@ connectSeatrack(Username = "testreader", Password = "testreader")
 writeLoggerImport(sampleLoggerImport)
 }
 }
+\concept{logger_info}

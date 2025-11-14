@@ -1,9 +1,3 @@
-#' Internal functions
-#'
-#'
-#'
-
-
 upstartVersion <- function() {
   pkg <- "seatrackR"
 

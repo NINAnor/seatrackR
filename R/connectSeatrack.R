@@ -26,6 +26,7 @@
 #' DBI::dbGetQuery(con, "SELECT * FROM loggers.logging_session LIMIT 10")
 #' DBI::dbDisconnect(con)
 #' }
+#' @concept db_connection
 connectSeatrack <- function(Username = "testreader",
                             Password = "testreader",
                             host = "seatrack.nina.no",
@@ -64,6 +65,7 @@ connectSeatrack <- function(Username = "testreader",
 
 #' @export
 #' @rdname connectSeatrack
+#' @concept db_connection
 disconnectSeatrack <- function() {
   DBI::dbDisconnect(con)
 }

@@ -26,6 +26,7 @@
 #' summary(toImport)
 #' }
 #'
+#' @concept positions
 loadPosdata <- function(files,
                         originFolder = "../Rawdata") {
   stripnames <- gsub("(posdata_)(.*)", "\\2", files)

@@ -13,8 +13,7 @@
 #'
 #' deleteFiles(files = c("test.txt", "test_file2.txt"), originFolder = "temp")
 #' }
-#'
-#'
+#' @concept files
 ## Use httr::with_options(...,
 # DELETE())
 deleteFiles <- function(files = NULL,

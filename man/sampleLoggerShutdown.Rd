@@ -10,4 +10,5 @@ data(sampleLoggerShutdown)
 \description{
 sampleLoggerShutdown
 }
+\concept{data}
 \keyword{datasets}

@@ -23,3 +23,4 @@ seatrackConnect(Username = "testreader", Password = "testreader")
 fileArchive <- getFileArchive()
 }
 }
+\concept{files}

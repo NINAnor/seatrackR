@@ -39,3 +39,4 @@ deleteActivity(
 )
 }
 }
+\concept{activity}

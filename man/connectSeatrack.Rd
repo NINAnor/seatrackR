@@ -52,3 +52,4 @@ DBI::dbGetQuery(con, "SELECT * FROM loggers.logging_session LIMIT 10")
 DBI::dbDisconnect(con)
 }
 }
+\concept{db_connection}

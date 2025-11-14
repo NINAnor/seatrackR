@@ -20,3 +20,4 @@ Read from the table of the history of ring numbers for birds that have had their
 getRingHistory()
 }
 }
+\concept{metadata}

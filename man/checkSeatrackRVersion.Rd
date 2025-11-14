@@ -9,3 +9,4 @@ checkSeatrackRVersion()
 \description{
 Search the github repository to compare the current installed version of the package
 }
+\concept{general_db}

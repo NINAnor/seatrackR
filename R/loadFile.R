@@ -21,6 +21,7 @@
 #' )
 #' }
 #'
+#' @concept files
 loadFile <- function(filename = NULL,
                      delim = ",",
                      ...) {

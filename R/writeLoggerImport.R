@@ -13,6 +13,7 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' writeLoggerImport(sampleLoggerImport)
 #' }
+#' @concept logger_info
 writeLoggerImport <- function(loggerImport,
                               append = T,
                               overwrite = FALSE) {

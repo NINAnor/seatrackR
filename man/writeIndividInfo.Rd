@@ -25,3 +25,4 @@ connectSeatrack(Username = "testreader", Password = "testreader")
 writeIndividInfo(sampleIndividInfo)
 }
 }
+\concept{metadata}

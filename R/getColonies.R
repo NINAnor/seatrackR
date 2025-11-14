@@ -15,6 +15,7 @@
 #'   pch = 16
 #' )
 #' }
+#' @concept metadata
 getColonies <- function(allLocations = F,
                         loadGeometries = F) {
   checkCon()

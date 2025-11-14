@@ -10,4 +10,5 @@ data(sampleMetadata)
 \description{
 sampleMetadata
 }
+\concept{data}
 \keyword{datasets}

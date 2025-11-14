@@ -17,3 +17,4 @@ Retrieve info on the registered species in the database
 getSpecies()
 }
 }
+\concept{metadata}
