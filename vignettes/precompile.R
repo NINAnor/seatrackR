@@ -6,6 +6,7 @@ src_dir <- file.path("vignettes", "src")
 main_dir <- "vignettes"
 
 article_path <- file.path(main_dir, "articles")
+unlink(article_path)
 dir.create(article_path, recursive = TRUE, showWarnings = FALSE)
 
 curr_menu <- pkgdown_dict$navbar$components$articles$menu <- list()
@@ -23,6 +24,7 @@ for (vignette in all_vignettes) {
 }
 
 data_ref_path <- file.path(main_dir, "data_reference")
+unlink(data_ref_path)
 dir.create(data_ref_path, recursive = TRUE, showWarnings = FALSE)
 
 # Copy yaml file into pkgdown assets folder
