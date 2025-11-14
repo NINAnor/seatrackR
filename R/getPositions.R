@@ -70,7 +70,7 @@ getPositions <- function(datatype = "GLS",
     choices = c("GLS", "IRMA", "GPS")
   )
 
-  if (!limit == F & !is.numeric(limit)) {
+  if (!limit == F && !is.numeric(limit)) {
     stop("limit must be FALSE or a numeric value")
   }
 
@@ -111,15 +111,9 @@ getPositions <- function(datatype = "GLS",
     res <- res |> filter(individ_id %in% individId)
   }
 
-
-  if (!loadImportDate) {
-    res <- res |> select(-import_date)
-  }
-
   if (!limit == F) {
     res <- res |> head(limit)
   }
-
 
 
   if (loadGeometries) {
