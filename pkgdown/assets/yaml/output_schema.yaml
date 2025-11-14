@@ -1,5 +1,5 @@
 datasets:
-  positional_data:
+  GLS_positional_data:
     description: Positional data from GLS loggers including locations and metadata.
     columns:
       - name: id
@@ -260,3 +260,9 @@ datasets:
         description: Type of event recorded for the individual, (e.g. deployment, retrieval, observation).
         type: string
 
+  population_maps:
+    description: PLACEHOLDER
+    columns:
+      - name: session_id
+        description: Unique ID for the logger deployment session during which this data was recorded.
+        type: string

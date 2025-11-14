@@ -6,6 +6,8 @@
 \usage{
 data_request(
   request_name,
+  data_types = c("GLS_positional_data", "individual_data", "light", "temperature",
+    "activity"),
   start_year,
   end_year = format(Sys.Date(), "\%Y"),
   species = NULL,
@@ -13,11 +15,14 @@ data_request(
   export = TRUE,
   output_dir = NULL,
   additional_notes = "",
+  additional_data_files = list(),
   additional_files = list()
 )
 }
 \arguments{
 \item{request_name}{A string representing the name of the data request.}
+
+\item{data_types}{A character vector specifying the types of data to include in the request. Possible values are "GLS", "GLS_positional_data", "individual_data", "light", "temperature", and "activity". Defaults to all types.}
 
 \item{start_year}{An integer representing the start year for the data request.}
 
@@ -33,6 +38,8 @@ data_request(
 
 \item{additional_notes}{An optional string containing additional notes to be included in the README file in the export.}
 
+\item{additional_data_files}{An optional list of additional data files to include in the data directory of the exported zip file. Each element of the list should contain the file path to the file to be included and a description.}
+
 \item{additional_files}{An optional list of additional files to include in the exported zip file. Each element of the list should contain the file path to the file to be included and a description.
 If NULL, it will be saved in a default location based on the current year.}
 }
@@ -45,7 +52,7 @@ This function retrieves SEATRACK data for a specified request, including positio
 If \code{export} is TRUE the \code{export_data_package} function is used to create a zip file containing the data. This includes writing each data type as a compressed parquet file and creating a README file with metadata about the data request.
 If \code{export} is FALSE the function returns a named list of data.frames containing the requested data. This can be edited and passed to \code{export_data_package} later if desired.
 Requires an active connection to the SEATRACK database.
-TODO: Currently there is no way of specifying the types of data, so it will always export the data types stated above.
+Currently netCDF files are not included in the data request package, so these have to be injected using \code{additional_data_files} if needed.
 }
 \examples{
 \dontrun{

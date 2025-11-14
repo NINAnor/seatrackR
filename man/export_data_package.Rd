@@ -8,7 +8,11 @@ export_data_package(
   all_data,
   request_name,
   output_dir = NULL,
+  species = NULL,
+  colonies = NULL,
+  times = NULL,
   additional_notes = "",
+  additional_data_files = list(),
   additional_files = list()
 )
 }
@@ -17,11 +21,19 @@ export_data_package(
 
 \item{request_name}{A string representing the name of the data request.}
 
-\item{output_dir}{An optional string specifying the directory where the zip file will be saved.}
+\item{output_dir}{An optional string specifying the directory where the zip file will be saved. Defaults to \verb{requested_data_packages/<current_year>}.}
+
+\item{species}{A character vector of species included in the data request. If NULL, it will be inferred from the data.}
+
+\item{colonies}{A character vector of colonies included in the data request. If NULL, it will be inferred from the data.}
+
+\item{times}{A vector of two dates representing the start and end of the data request. If NULL, it will be inferred from the data.}
 
 \item{additional_notes}{An optional string containing additional notes to be included in the README file.}
 
-\item{additional_files}{An optional list of additional files to include in the exported zip file. Each element of the list should contain the file path to the file to be included and a description.
+\item{additional_data_files}{An optional list of additional data files to include in the data directory of the exported zip file. Each element of the list should contain the file path to the file to be included and a description.}
+
+\item{additional_files}{An optional list of additional files to include in the base directory of the exported zip file. Each element of the list should contain the file path to the file to be included and a description.
 If NULL, it will be saved in a default location based on the current year.}
 }
 \value{

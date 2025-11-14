@@ -20,28 +20,31 @@ navbar:
       menu:
         Retrieve standard data from Seatrack:
           text: Retrieve standard data from Seatrack
-          href: articles/articles/Data_extraction.html
+          href: articles/Data_extraction.html
         The Seatrack database and R:
           text: The Seatrack database and R
-          href: articles/articles/Intro_presentation.html
+          href: articles/Intro_presentation.html
     data_ref:
       text: Data reference
       menu:
-        Positional data reference:
-          text: Positional data reference
-          href: articles/data_reference/positional_data.html
+        GLS positional data reference:
+          text: GLS positional data reference
+          href: articles/GLS_positional_data.html
         Immersion data reference:
           text: Immersion data reference
-          href: articles/data_reference/immersion_data.html
+          href: articles/immersion_data.html
         Light data reference:
           text: Light data reference
-          href: articles/data_reference/light_data.html
+          href: articles/light_data.html
         Temperature data reference:
           text: Temperature data reference
-          href: articles/data_reference/temperature_data.html
+          href: articles/temperature_data.html
         Individual data reference:
           text: Individual data reference
-          href: articles/data_reference/individual_data.html
+          href: articles/individual_data.html
+        Population maps reference:
+          text: Population maps reference
+          href: articles/population_maps.html
 reference:
 - title: Positions
   desc: Functions for reading and writing positional data to the database.

@@ -12,3 +12,6 @@ README.md
 ^pkgdown$
 ^\.github$
 ^README\.Rmd$
+^\cache$
+scratch.R
+scaffolding.R

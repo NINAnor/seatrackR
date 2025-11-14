@@ -1,0 +1,12 @@
+---
+title: "Population maps reference"
+subtitle: Generated from [output_schema.yaml](../../assetsyaml/output_schema.yaml)
+---
+
+
+
+PLACEHOLDER
+
+- #### **session_id** 
+ *type:string* 
+  Unique ID for the logger deployment session during which this data was recorded. 
