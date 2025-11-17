@@ -261,8 +261,80 @@ datasets:
         type: string
 
   population_maps:
-    description: PLACEHOLDER
+    description: Population maps as in Fauchald et al. (2021). 
     columns:
-      - name: session_id
-        description: Unique ID for the logger deployment session during which this data was recorded.
+      - name: predictedAbundanceMean
+        description: Variable - Mean predicted abundance (birds/pixel). Dimensions are [lon,lat,month,colonyCode]
+        type: float
+      - name: PredictedAbundance95%CILow
+        description: Variable -  Lower bounds of 95% confidence interval of predicted abundance (birds/pixel). Dimensions are [lon,lat,month,colonyCode]
+        type: float
+      - name: PredictedAbundance95%CIHight
+        description: Variable -  Upper bounds of 95% confidence interval of predicted abundance (birds/pixel). Dimensions are [lon,lat,month,colonyCode]
+        type: float
+      - name: colonyName
+        description: Variable -  Name of the subcolony for which abundance is estimated. Dimensions are [colonyCode]
         type: string
+      - name: colonyLatitude
+        description: Variable -  Latitude of the subcolony for which abundance is estimated (dd.mmmm). Dimensions are [colonyCode]
+        type: float
+      - name: colonyLongitude
+        description: Variable -  Longitude of the subcolony for which abundance is estimated (dd.mmmm). Dimensions are [colonyCode]
+        type: float
+      - name: colonyRegion
+        description: Variable -  Region of the subcolony for which abundance is estimated. Dimensions are [colonyCode]
+        type: string
+      - name: colonyCountry
+        description: Variable -  Country of the subcolony for which abundance is estimated. Dimensions are [colonyCode]
+        type: string
+      - name: colonyOceanArea
+        description: Variable -  Large marine ecosystem (LME) of the subcolony for which abundance is estimated. Dimensions are [colonyCode]
+        type: string
+      - name: colonyNpairs
+        type: integer
+        description: Variable -  Number of breeding pairs of subcolony for which abundance is estimated. Dimensions are [colonyCode]
+      - name: SmcolName
+        description: Variable - Name of the corresponding SEATRACK model colony of the subcolony for which abundance is estimated. Dimensions are [colonyCode]
+        type: string
+      - name: SmcolDistance
+        description: Variable -  Distance to the corresponding SEATRACK model colony of the subcolony for which abundance is estimated. Dimensions are [colonyCode]
+        type: float
+      - name: lon
+        description: Dimension - Longitude (degrees east)
+        type: integer
+      - name: lat
+        description: Dimension - Latitude (degrees north)
+        type: integer
+      - name: Month
+        description: Dimension - Month of the year.
+        type: integer
+      - name: colonyCode
+        description: Dimension - Subcolony identification code.
+        type: integer
+      - name: Dataset source
+        type: string
+        description: Global attribute - Source of this dataset, e.g. "SEATRACK - distribution and abundance model outputs - Alle alle"
+      - name: Dataset version
+        type: string
+        description: Global attribute - Version of this dataset.
+      - name: Dataset last updated.
+        type: date
+        description: Global attribute - Date dataset was updated.
+      - name: CRS
+        type: string
+        description: Global attribute - CRS code of this dataset.
+      - name: Created with
+        type: string
+        description: Global attribute - Software version the dataset was created with.
+      - name: Authors
+        type: string
+        description: Global attribute - Creators of this dataset.
+      - name: Citation
+        type: string
+        description: Global attribute - Citation for this dataset.
+
+
+
+
+
+

@@ -18,7 +18,7 @@ params:
 title: "`r paste(params$request_name, 'README', params$creation_date)`"
 ---
 
-```{r, setup , echo = FALSE, message = FALSE}
+```{r, setup , echo = FALSE, message = FALSE, warning = FALSE}
 data_dir <- file.path(params$data_dir, "data") # to use in the rest of the examples
 
 # Detect paths
@@ -29,11 +29,16 @@ light_path <- params$file_list[grepl("light", params$file_list)]
 indiv_path <- params$file_list[grepl("individual_data", params$file_list)]
 pop_map_paths <- params$file_list[grepl("Abundance_Model", params$file_list)]
 
+colonies <- params$colonies
+
 md_list <- function(values) {
+  if(is.null(values)){
+    return("")
+  }
   md_items <- sapply(values, function(value) {
     knitr::knit_expand(text = "| - *{{value}}*")
   })
-  return(paste(md_items, collapse = "/n"))
+  return(paste(md_items, collapse = "\n"))
 }
 
 has_pos <- has_imm <- has_light <- has_temp <- has_ind <- has_pop <- FALSE
@@ -74,16 +79,38 @@ if (length(indiv_path) > 0) {
   file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Individual information data (<span style="color: #ABB2B9;">{{indiv_path}}</span>)')
 }
 if (length(pop_map_paths) > 0) {
+
+
+  species_names <- data.frame(latin = c(
+  "Alle alle", 
+  "Fratercula arctica", 
+  "Fulmarus glacialis", 
+  "Rissa tridactyla", 
+  "Uria aalge", 
+  "Uria lomvia"), 
+  common = c(
+    "Little auk",
+   "Atlantic puffin", 
+   "Northern fulmar", 
+   "Black-legged kittiwake", 
+   "Common guillemot",
+   "Brünnich's guillemot"))
+  included_data <- c(included_data, "population_maps")
+  if(is.null(colonies)){
+    colonies <- c()
+  }
   has_pop <- TRUE
   for (pop_map_path in pop_map_paths) {
     file_name <- basename(pop_map_path)
     split_file_name <- strsplit(file_name, "_")[[1]]
     latin <- paste(split_file_name[c(4, 5)], collapse = " ")
-    common <- sci2comm(latin)
-    version <- paste(split_file_name[c(4, 5)], collapse = ".")
-    popmap_text <- '| &nbsp;&nbsp;&nbsp;&nbsp;|-- SEATRACK population map {{version}} - {{common}} (<span style="color: #ABB2B9;">{{indiv_path}}</span>)'
-    # taxize::sci2comm
+    common <- species_names$common[species_names$latin == latin]
+    version <- paste(split_file_name[c(7, 8)], collapse = ".")
+    popmap_text <- '| &nbsp;&nbsp;&nbsp;&nbsp;|-- SEATRACK population map {{version}} - {{common}} (<span style="color: #ABB2B9;">{{pop_map_path}}</span>)'
     file_list <- c(file_list, knitr::knit_expand(text = popmap_text))
+    loaded_netcdf <- nc_open(file.path(data_dir, pop_map_path))
+    colony_names <- ncvar_get(loaded_netcdf, "SmcolName")
+    colonies <- c(colonies, colony_names)
   }
 }
 
@@ -91,9 +118,8 @@ if (length(pop_map_paths) > 0) {
 
 file_list <- paste(knitr::knit_expand(text = file_list), collapse = "\n")
 
-
 species_list <- md_list(params$species)
-colony_list <- md_list(params$colonies)
+colony_list <- md_list(unique(colonies))
 time_span <- knitr::knit_expand(text = "| - *{{params$times[1]}}* - *{{params$times[2]}}*")
 additional_notes <- knitr::knit_expand(text = "| {{params$notes}}")
 
@@ -106,7 +132,7 @@ render_schema <- function(dataset_key, dict) {
   header <- knitr::knit_expand(text = "### {{title}} \n\n {{dataset$description}}")
 
   bullets <- sapply(dataset$columns, function(col) {
-    knitr::knit_expand(text = "- **{{col$name}}** *(type:{{col$type}})* \n  {{col$description}} ")
+    knitr::knit_expand(text = "- **{{col$name}}** *(type: {{col$type}})* \n  {{col$description}} ")
   })
   all_desc <- paste(c(header, bullets), collapse = "\n\n")
   return(all_desc)
@@ -115,7 +141,16 @@ render_schema <- function(dataset_key, dict) {
 included_schema <- names(schema_dict$datasets)[names(schema_dict$datasets) %in% included_data]
 
 schema_md <- paste(sapply(included_schema, render_schema, dict = schema_dict), collapse = "\n\n")
+
+image_path <- system.file("img", "SEATRACK logo landscape.jpg", package = "seatrackR")
+
+
 ```
+
+```{r include-package-image, echo=FALSE}
+    knitr::include_graphics(image_path)
+```
+
 ## Description
 | ___________________________________________________________________________________________________
 | This readme contains an overview of the files contained within this data package and instructions on how to use them in R. 
@@ -124,9 +159,11 @@ schema_md <- paste(sapply(included_schema, render_schema, dict = schema_dict), c
 | *For more information about the project, please visit [SEATRACK's website](http://www.seapop.no/en/seatrack/)*
 | *contact re. General data queries: julian.evans@nina.no*
 |
-| *For more information about the processing of GLS data, please see this [report](https://brage.nina.no/nina-xmlui/handle/11250/2735757)*
-| *contact re. GLS data processing: vegard.brathen@nina.no*
+`r if(has_pos) {"| *For more information about the processing of GLS data, please see this [report](https://brage.nina.no/nina-xmlui/handle/11250/2735757)*"}`
+`r if(has_pos) {"| *contact re. GLS data processing: vegard.brathen@nina.no*"}`
 |
+`r if(has_pop) {"| *For more information about the creation of population maps, please see this [paper](https://www.int-res.com/articles/meps_oa/m676p255.pdf)*"}`
+`r if(has_pop) {"| *contact re. Population maps/IRMA: arnaud.tarroux@nina.no*"}`
 | ___________________________________________________________________________________________________
 ## Package overview
 | ___________________________________________________________________________________________________
@@ -172,6 +209,13 @@ if (has_light) {
 
 if (has_imm) {
   res <- knitr::knit_child(system.file("Rmd", "EXAMPLES_immersion.Rmd", package = "seatrackR"),
+    quiet = TRUE, envir = environment()
+  )
+  cat(res, sep = "\n")
+}
+
+if (has_pop) {
+  res <- knitr::knit_child(system.file("Rmd", "EXAMPLES_popmap.Rmd", package = "seatrackR"),
     quiet = TRUE, envir = environment()
   )
   cat(res, sep = "\n")

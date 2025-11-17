@@ -11,7 +11,7 @@ dataset <- schema_dict$datasets[[params$key]]
 
 render_schema <- function(dataset) {
     bullets <- sapply(dataset$columns, function(col) {
-        knitr::knit_expand(text = "- #### **{{col$name}}** \n *type:{{col$type}}* \n  {{col$description}} ")
+        knitr::knit_expand(text = "- #### **{{col$name}}** \n *type: {{col$type}}* \n\n  {{col$description}} ")
     })
     all_desc <- paste(bullets, collapse = "\n\n")
     return(all_desc)

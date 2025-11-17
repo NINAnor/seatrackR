@@ -2,7 +2,7 @@
 title: "The Seatrack database and R"
 subtitle: "A short intro"
 author: "Jens Åström"
-date: "14 Nov, 2025"
+date: 2019-02-23
 output:
   NinaR::ninaBeamer:
     fig_cap: FALSE

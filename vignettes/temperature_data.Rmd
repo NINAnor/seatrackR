@@ -8,29 +8,36 @@ subtitle: Generated from [output_schema.yaml](../../assetsyaml/output_schema.yam
 Temperature data recorded every 8 hours when wet
 
 - #### **session_id** 
- *type:string* 
+ *type: string* 
+
   Unique ID of the logger deployment session during which this record was made. 
 
 - #### **individ_id** 
- *type:string* 
+ *type: string* 
+
   Unique ID of individual. 
 
 - #### **date_time** 
- *type:datetime* 
+ *type: datetime* 
+
   Date and time of each record in GMT. 
 
 - #### **wet_temp_min** 
- *type:float* 
+ *type: float* 
+
   Minimum temperature recorded in degrees Celsius (sampled when continuously wet for ≥20 min). 
 
 - #### **wet_temp_max** 
- *type:float* 
+ *type: float* 
+
   Maximum temperature recorded in degrees Celsius  (sampled when continuously wet for ≥20 min). 
 
 - #### **wet_temp_mean** 
- *type:float* 
+ *type: float* 
+
   Mean temperature recorded in degrees Celsius (sampled when continuously wet for ≥20 min). 
 
 - #### **num_samples** 
- *type:integer* 
+ *type: integer* 
+
   Number of samples recorded in the last 8 hours 

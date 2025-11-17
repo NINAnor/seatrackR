@@ -38,7 +38,9 @@ Imports:
     zip,
     arrow,
     yaml,
-    maps
+    maps,
+    terra,
+    ncdf4
 Depends:
     R (>= 4.1)
 VignetteBuilder: 

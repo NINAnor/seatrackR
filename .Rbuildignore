@@ -15,3 +15,5 @@ README.md
 ^\cache$
 scratch.R
 scaffolding.R
+get_netcdf_meta.R
+precompile_vignettes.R

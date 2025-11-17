@@ -19,14 +19,14 @@ get_col_from_list <- function(data_list, col_name) {
 #' @param additional_notes An optional string containing additional notes to be included in the README file.
 #' @param species A character vector of species included in the data request. If NULL, it will be inferred from the data.
 #' @param times A vector of two dates representing the start and end of the data request. If NULL, it will be inferred from the data.
-#' @param colonies A character vector of colonies included in the data request. If NULL, it will be inferred from the data.
+#' @param colony A character vector of colonies included in the data request. If NULL, it will be inferred from the data.
 #' @param additional_data_files An optional list of additional data files to include in the data directory of the exported zip file. Each element of the list should contain the file path to the file to be included and a description.
 #' @param additional_files An optional list of additional files to include in the base directory of the exported zip file. Each element of the list should contain the file path to the file to be included and a description.
 #' If NULL, it will be saved in a default location based on the current year.
 #' @return None. The function creates a zip file in the specified output directory.
 #' @concept data_requests
 #' @export
-export_data_package <- function(all_data, request_name, output_dir = NULL, species = NULL, colonies = NULL, times = NULL, additional_notes = "", additional_data_files = list(), additional_files = list()) {
+export_data_package <- function(all_data, request_name, output_dir = NULL, species = NULL, colony = NULL, times = NULL, additional_notes = "", additional_data_files = list(), additional_files = list()) {
     creation_date <- Sys.Date()
 
     tmp_dir <- tempfile(pattern = paste0(request_name, "_"))
@@ -43,28 +43,22 @@ export_data_package <- function(all_data, request_name, output_dir = NULL, speci
     }
     if (is.null(species)) {
         species <- get_col_from_list(all_data, "species")
-        if (is.null(species)) {
-            species <- "Cannot infer from data."
-        } else {
+        if (!is.null(species)) {
             species <- unique(species)
         }
     }
 
     if (is.null(times)) {
         times <- get_col_from_list(all_data, "date_time")
-        if (is.null(times)) {
-            times <- rep("Cannot infer from data.", 2)
-        } else {
+        if (!is.null(times)) {
             times <- c(min(as.Date(times)), max(as.Date(times)))
         }
     }
 
-    if (is.null(species)) {
-        colonies <- get_col_from_list(all_data, "colony")
-        if (is.null(colonies)) {
-            colonies <- "Cannot infer from data."
-        } else {
-            colonies <- unique(colonies)
+    if (is.null(colony)) {
+        colony <- get_col_from_list(all_data, "colony")
+        if (!is.null(colony)) {
+            colony <- unique(colony)
         }
     }
 
@@ -100,7 +94,7 @@ export_data_package <- function(all_data, request_name, output_dir = NULL, speci
         request_name = request_name,
         file_list = file_list,
         species = species,
-        colonies = colonies,
+        colonies = colony,
         times = times,
         data_types = names(all_data),
         data_dir = tmp_dir,
@@ -110,7 +104,7 @@ export_data_package <- function(all_data, request_name, output_dir = NULL, speci
     )
 
     if (is.null(output_dir)) {
-        output_dir <- file.path("requsted_data_packages", format(creation_date, "%Y"))
+        output_dir <- file.path("requested_data_packages", format(creation_date, "%Y"))
     }
     dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
     print(paste0("Creating zip file in output directory: ", output_dir))
@@ -159,7 +153,8 @@ create_readme <- function(request_name, file_list, species, colonies, times, dat
             additional_files = additional_files
         ),
         output_file = output_file,
-        envir = new.env()
+        envir = new.env(),
+        encoding = "UTF-8"
     )
 }
 
@@ -192,14 +187,18 @@ create_readme <- function(request_name, file_list, species, colonies, times, dat
 #' @export
 #' @concept data_requests
 data_request <- function(
-  request_name, data_types = c("GLS_positional_data", "individual_data", "light", "temperature", "activity"), start_year, end_year = format(Sys.Date(), "%Y"), species = NULL, colony = NULL, export = TRUE, output_dir = NULL,
+  request_name, data_types = c("GLS_positional_data", "individual_data", "light", "temperature", "activity", "population_maps"), start_year, end_year = format(Sys.Date(), "%Y"), species = NULL, colony = NULL, export = TRUE, output_dir = NULL,
   additional_notes = "", additional_data_files = list(), additional_files = list()
 ) {
     start_date <- as.Date(paste0(start_year, "-01-01"))
     end_date <- as.Date(paste0(end_year, "-12-31")) + 1
     all_data <- list()
-
+    if (!is.vector(data_types)) {
+        data_types <-c(data_types)
+    }
     data_types <- match.arg(data_types, several.ok = TRUE)
+
+    print(paste("Starting data request, datatypes are", paste(data_types, collapse = " ")))
 
     if ("GLS_positional_data" %in% data_types || "GLS" %in% data_types) {
         print("Fetching GLS position data...")
@@ -207,15 +206,16 @@ data_request <- function(
         all_data$GLS_positional_data <- all_pos[all_pos$date_time >= start_date & all_pos$date_time < end_date, ]
     }
 
-
-    print("Fetching individual data...")
-    individuals <- getIndividInfo(colony = colony, year = NULL)
-    if ("individual_data" %in% data_types || "individuals" %in% data_types) {
-        if ("GLS_positional_data" %in% names(all_data)) {
-            indiv_ids <- unique(all_data$GLS_positional_data$individ_id)
-            individuals <- individuals[individuals$individ_id %in% indiv_ids, ]
+    if(any(c("GLS_positional_data", "individual_data", "light", "temperature", "activity") %in% data_types)){
+        print("Fetching individual data...")
+        individuals <- getIndividInfo(colony = colony, year = NULL)
+        if ("individual_data" %in% data_types || "individuals" %in% data_types) {
+            if ("GLS_positional_data" %in% names(all_data)) {
+                indiv_ids <- unique(all_data$GLS_positional_data$individ_id)
+                individuals <- individuals[individuals$individ_id %in% indiv_ids, ]
+            }
+            all_data$individual_data <- individuals
         }
-        all_data$individual_data <- individuals
     }
 
     types <- data_types[data_types %in% c("light", "temperature", "activity")]
@@ -241,7 +241,7 @@ data_request <- function(
 
     if (any(c("GLS_positional_data", "individual_data") %in% names(all_data))) {
         species <- NULL
-        colonies <- NULL
+        colony <- NULL
     }
 
     if (export) {
@@ -251,7 +251,7 @@ data_request <- function(
             request_name,
             output_dir,
             species,
-            colonies,
+            colony,
             times,
             additional_notes,
             additional_data_files,

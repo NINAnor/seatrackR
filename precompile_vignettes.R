@@ -17,7 +17,13 @@ for (vignette in all_vignettes) {
     new_name <- gsub(".orig", "", vignette)
     curr_path <- file.path(src_dir, vignette)
     metadata <- rmarkdown::yaml_front_matter(curr_path)
-    knitr::knit(curr_path, output = file.path(article_path, new_name))
+    rmd_content <- readLines(curr_path)
+    # In case we need to inject some text into the vignette, do it here
+    knitr::knit(text = rmd_content, output = file.path(article_path, new_name))
+    if (dir.exists("figure")) {
+        dest <- file.path(article_path, "figure")
+        file.copy("figure", article_path, recursive = TRUE)
+    }
     title <- metadata$title
     pkgdown_dict$navbar$components$articles$menu[[title]] <- list(text = title, href = paste0("articles/", gsub("Rmd", "html", new_name)))
 }
