@@ -9,7 +9,7 @@ export_data_package(
   request_name,
   output_dir = NULL,
   species = NULL,
-  colonies = NULL,
+  colony = NULL,
   times = NULL,
   additional_notes = "",
   additional_data_files = list(),
@@ -17,7 +17,7 @@ export_data_package(
 )
 }
 \arguments{
-\item{all_data}{A named list of data.frames containing the data to be exported. Each name corresponds to a data type.}
+\item{all_data}{A named list of lists containing \code{data}: a data.frame to be exported and \code{description}: A string description. Each name corresponds to a data type.}
 
 \item{request_name}{A string representing the name of the data request.}
 
@@ -25,7 +25,7 @@ export_data_package(
 
 \item{species}{A character vector of species included in the data request. If NULL, it will be inferred from the data.}
 
-\item{colonies}{A character vector of colonies included in the data request. If NULL, it will be inferred from the data.}
+\item{colony}{A character vector of colonies included in the data request. If NULL, it will be inferred from the data.}
 
 \item{times}{A vector of two dates representing the start and end of the data request. If NULL, it will be inferred from the data.}
 

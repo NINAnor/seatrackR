@@ -10,7 +10,7 @@ params:
   species: !r c("seagull")
   colonies: !r c("big cliff by the sea")
   times: !r as.Date(c("2020-01-01","2020-02-02"))
-  data_types: !r c("location")
+  data_responsible: !r data.frame()
   creation_date: !r Sys.Date()
   data_dir: ""
   notes: ""
@@ -21,18 +21,8 @@ title: "`r paste(params$request_name, 'README', params$creation_date)`"
 ```{r, setup , echo = FALSE, message = FALSE, warning = FALSE}
 data_dir <- file.path(params$data_dir, "data") # to use in the rest of the examples
 
-# Detect paths
-pos_path <- params$file_list[grepl("GLS_positional_data", params$file_list)]
-imm_path <- params$file_list[grepl("immersion", params$file_list)]
-temp_path <- params$file_list[grepl("temperature", params$file_list)]
-light_path <- params$file_list[grepl("light", params$file_list)]
-indiv_path <- params$file_list[grepl("individual_data", params$file_list)]
-pop_map_paths <- params$file_list[grepl("Abundance_Model", params$file_list)]
-
-colonies <- params$colonies
-
 md_list <- function(values) {
-  if(is.null(values)){
+  if (is.null(values)) {
     return("")
   }
   md_items <- sapply(values, function(value) {
@@ -40,91 +30,6 @@ md_list <- function(values) {
   })
   return(paste(md_items, collapse = "\n"))
 }
-
-has_pos <- has_imm <- has_light <- has_temp <- has_ind <- has_pop <- FALSE
-file_list <- c()
-
-if (length(params$additional_files) > 0) {
-  for (additional_file in params$additional_files) {
-    filename <- basename(additional_file$path)
-    file_list <- c(file_list, '| -- {{additional_file$description}} (<span style="color: #ABB2B9;">{{filename}}</span>)')
-  }
-}
-file_list <- c(file_list, "| -- data")
-
-included_data <- c()
-if (length(pos_path) > 0) {
-  has_pos <- TRUE
-  included_data <- c(included_data, "GLS_positional_data")
-  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Positional data (<span style="color: #ABB2B9;">{{pos_path}}</span>)')
-}
-if (length(imm_path) > 0) {
-  has_imm <- TRUE
-  included_data <- c(included_data, "immersion_data")
-  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Standardized immersion data (<span style="color: #ABB2B9;">{{imm_path}}</span>)')
-}
-if (length(light_path) > 0) {
-  has_light <- TRUE
-  included_data <- c(included_data, "light_data")
-  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Light data (<span style="color: #ABB2B9;">{{light_path}}</span>)')
-}
-if (length(temp_path) > 0) {
-  has_temp <- TRUE
-  included_data <- c(included_data, "temperature_data")
-  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Temperature data (<span style="color: #ABB2B9;">{{temp_path}}</span>)')
-}
-if (length(indiv_path) > 0) {
-  has_ind <- TRUE
-  included_data <- c(included_data, "individual_data")
-  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- Individual information data (<span style="color: #ABB2B9;">{{indiv_path}}</span>)')
-}
-if (length(pop_map_paths) > 0) {
-
-
-  species_names <- data.frame(latin = c(
-  "Alle alle", 
-  "Fratercula arctica", 
-  "Fulmarus glacialis", 
-  "Rissa tridactyla", 
-  "Uria aalge", 
-  "Uria lomvia"), 
-  common = c(
-    "Little auk",
-   "Atlantic puffin", 
-   "Northern fulmar", 
-   "Black-legged kittiwake", 
-   "Common guillemot",
-   "Brünnich's guillemot"))
-  included_data <- c(included_data, "population_maps")
-  if(is.null(colonies)){
-    colonies <- c()
-  }
-  has_pop <- TRUE
-  for (pop_map_path in pop_map_paths) {
-    file_name <- basename(pop_map_path)
-    split_file_name <- strsplit(file_name, "_")[[1]]
-    latin <- paste(split_file_name[c(4, 5)], collapse = " ")
-    common <- species_names$common[species_names$latin == latin]
-    version <- paste(split_file_name[c(7, 8)], collapse = ".")
-    popmap_text <- '| &nbsp;&nbsp;&nbsp;&nbsp;|-- SEATRACK population map {{version}} - {{common}} (<span style="color: #ABB2B9;">{{pop_map_path}}</span>)'
-    file_list <- c(file_list, knitr::knit_expand(text = popmap_text))
-    loaded_netcdf <- nc_open(file.path(data_dir, pop_map_path))
-    colony_names <- ncvar_get(loaded_netcdf, "SmcolName")
-    colonies <- c(colonies, colony_names)
-  }
-}
-
-
-
-file_list <- paste(knitr::knit_expand(text = file_list), collapse = "\n")
-
-species_list <- md_list(params$species)
-colony_list <- md_list(unique(colonies))
-time_span <- knitr::knit_expand(text = "| - *{{params$times[1]}}* - *{{params$times[2]}}*")
-additional_notes <- knitr::knit_expand(text = "| {{params$notes}}")
-
-# Load schema
-schema_dict <- yaml::read_yaml(system.file("yaml", "output_schema.yaml", package = "seatrackR"))
 
 render_schema <- function(dataset_key, dict) {
   dataset <- dict$datasets[[dataset_key]]
@@ -138,17 +43,50 @@ render_schema <- function(dataset_key, dict) {
   return(all_desc)
 }
 
+file_list <- c()
+
+if (length(params$additional_files) > 0) {
+  for (additional_file in params$additional_files) {
+    filename <- basename(additional_file$path)
+    file_list <- c(file_list, '| -- {{additional_file$description}} (<span style="color: #ABB2B9;">{{filename}}</span>)')
+  }
+}
+file_list <- c(file_list, "| -- data")
+
+included_data <- c()
+for (i in seq_along(file_list)) {
+  included_data <- c(included_data, names(params$file_list)[i])
+  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- {{params$file_list[[i]]$description}} (<span style="color: #ABB2B9;">{{params$file_list[[i]]$path}}</span>)')
+}
+
+file_list <- paste(knitr::knit_expand(text = file_list), collapse = "\n")
+
+species_list <- md_list(unique(params$species))
+colony_list <- md_list(unique(params$colonies))
+time_span <- knitr::knit_expand(text = "| - *{{params$times[1]}}* - *{{params$times[2]}}*")
+additional_notes <- knitr::knit_expand(text = "| {{params$notes}}")
+
+has_pop <- any(grepl("Abundance_model", included_data))
+has_pos <- "GLS_positional_data" %in% included_data
+if (has_pop) {
+  # To pull the generic overview from the YAML
+  included_data <- c(included_data, "population_maps")
+}
+
+# Load schema
+schema_dict <- yaml::read_yaml(system.file("yaml", "output_schema.yaml", package = "seatrackR"))
+
 included_schema <- names(schema_dict$datasets)[names(schema_dict$datasets) %in% included_data]
 
 schema_md <- paste(sapply(included_schema, render_schema, dict = schema_dict), collapse = "\n\n")
 
-image_path <- system.file("img", "SEATRACK logo landscape.jpg", package = "seatrackR")
+image_path <- system.file("img", "SEATRACK_logo_landscape.jpg", package = "seatrackR")
 
 
 ```
 
 ```{r include-package-image, echo=FALSE}
-    knitr::include_graphics(image_path)
+knitr::include_graphics(image_path)
 ```
 
 ## Description
@@ -180,6 +118,14 @@ image_path <- system.file("img", "SEATRACK logo landscape.jpg", package = "seatr
 | 
 | **Colonies**: 
 `r knitr::knit(text = colony_list)`
+|
+| **Data responsible**:
+`r knitr::kable(params$data_responsible, col.names = c("Species", "Colony", "Responsible persons"))`
+|
+| Depending on how you intend to use the data, please contact data responsible individuals early and include them in the process.
+| 
+| **Disclaimer**
+| Birds are nice. But Arnaud thinks they are nasty, mostly.
 | ___________________________________________________________________________________________________
 
 
@@ -187,27 +133,31 @@ image_path <- system.file("img", "SEATRACK logo landscape.jpg", package = "seatr
 
 ```{r, show_examples, echo=FALSE, results='asis'}
 if (has_pos) {
+  pos_path <- params$file_list[["GLS_positional_data"]]$path
   res <- knitr::knit_child(system.file("Rmd", "EXAMPLES_locations.Rmd", package = "seatrackR"),
     quiet = TRUE, envir = environment()
   )
   cat(res, sep = "\n")
 }
 
-if (has_ind) {
+if ("individual_data" %in% included_data) {
+  indiv_path <- params$file_list[["individual_data"]]$path
   res <- knitr::knit_child(system.file("Rmd", "EXAMPLES_individuals.Rmd", package = "seatrackR"),
     quiet = TRUE, envir = environment()
   )
   cat(res, sep = "\n")
 }
 
-if (has_light) {
+if ("light_data" %in% included_data) {
+  light_path <- params$file_list[["light_data"]]$path
   res <- knitr::knit_child(system.file("Rmd", "EXAMPLES_light.Rmd", package = "seatrackR"),
     quiet = TRUE, envir = environment()
   )
   cat(res, sep = "\n")
 }
 
-if (has_imm) {
+if ("immersion_data" %in% included_data) {
+  imm_path <- params$file_list[["immersion_data"]]$path
   res <- knitr::knit_child(system.file("Rmd", "EXAMPLES_immersion.Rmd", package = "seatrackR"),
     quiet = TRUE, envir = environment()
   )
@@ -215,6 +165,9 @@ if (has_imm) {
 }
 
 if (has_pop) {
+  pop_map_paths <- sapply(params$file_list[grepl("Abundance_model", names(params$file_list))], function(x) {
+    x$path
+  })
   res <- knitr::knit_child(system.file("Rmd", "EXAMPLES_popmap.Rmd", package = "seatrackR"),
     quiet = TRUE, envir = environment()
   )

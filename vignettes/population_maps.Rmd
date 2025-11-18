@@ -1,6 +1,11 @@
 ---
 title: "Population maps reference"
 subtitle: Generated from [output_schema.yaml](../../assetsyaml/output_schema.yaml)
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Population maps reference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 

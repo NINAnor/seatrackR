@@ -79,3 +79,6 @@ reference:
 - subtitle: Plotting functions
   desc: Shortcuts for plotting SEATRACK data.
   contents: has_concept("plotting")
+- subtitle: Database conversion functions
+  desc: Functions to prepare R data for queries
+  contents: has_concept("db_utility")

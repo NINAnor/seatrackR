@@ -1,14 +1,13 @@
 ---
 title: "Retrieve standard data from Seatrack"
 author: "Jens Åström"
-date: "2025-11-17"
+date: 2019-02-23
 output: 
   pdf_document:
     toc: true
     highlight: tango
-  rmarkdown::html_vignette:
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Retrieve standard data from Seatrack}
   %\VignetteEngine{R.rsp::asis}
   %\VignetteEncoding{UTF-8}
 ---
@@ -42,13 +41,7 @@ It is perfecty fine to download data through your own custom queries. Creating i
 
 ``` r
 require(DBI)
-```
 
-```
-## Loading required package: DBI
-```
-
-``` r
 myQuery <- "SELECT * from metadata.location
               WHERE colony_int_name = 'Faroe Islands'"
 
@@ -167,16 +160,16 @@ eynhallowPositions
 ## 9  Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
 ## 10 Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
 ##                          geom date_time_downloaded
-## 1  POINT (-4.281711 58.47849)  2025-11-17 11:29:57
-## 2  POINT (-4.327839 58.52735)  2025-11-17 11:29:57
-## 3  POINT (-4.403921 58.53352)  2025-11-17 11:29:57
-## 4  POINT (-5.521901 58.77193)  2025-11-17 11:29:57
-## 5  POINT (-7.583115 59.26862)  2025-11-17 11:29:57
-## 6  POINT (-8.051732 59.35962)  2025-11-17 11:29:57
-## 7  POINT (-6.110182 59.25882)  2025-11-17 11:29:57
-## 8  POINT (-3.537622 59.42004)  2025-11-17 11:29:57
-## 9   POINT (-2.20944 59.37146)  2025-11-17 11:29:57
-## 10 POINT (-2.076425 59.09146)  2025-11-17 11:29:57
+## 1  POINT (-4.281711 58.47849)  2025-11-17 13:45:30
+## 2  POINT (-4.327839 58.52735)  2025-11-17 13:45:30
+## 3  POINT (-4.403921 58.53352)  2025-11-17 13:45:30
+## 4  POINT (-5.521901 58.77193)  2025-11-17 13:45:30
+## 5  POINT (-7.583115 59.26862)  2025-11-17 13:45:30
+## 6  POINT (-8.051732 59.35962)  2025-11-17 13:45:30
+## 7  POINT (-6.110182 59.25882)  2025-11-17 13:45:30
+## 8  POINT (-3.537622 59.42004)  2025-11-17 13:45:30
+## 9   POINT (-2.20944 59.37146)  2025-11-17 13:45:30
+## 10 POINT (-2.076425 59.09146)  2025-11-17 13:45:30
 ```
 
 

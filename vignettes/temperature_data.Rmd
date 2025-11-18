@@ -1,6 +1,11 @@
 ---
 title: "Temperature data reference"
 subtitle: Generated from [output_schema.yaml](../../assetsyaml/output_schema.yaml)
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Temperature data reference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 

@@ -10,7 +10,7 @@ create_readme(
   species,
   colonies,
   times,
-  data_types,
+  data_responsible,
   data_dir,
   additional_notes = "",
   additional_files = list(),
@@ -28,7 +28,7 @@ create_readme(
 
 \item{times}{A vector of two dates representing the start and end of the data request}
 
-\item{data_types}{A character vector of data types included in the data request.}
+\item{data_responsible}{Table of people responsible for the data}
 
 \item{data_dir}{A string representing the directory where the data files are located.}
 
@@ -36,7 +36,7 @@ create_readme(
 
 \item{additional_files}{An optional list of additional files to include in the README file. Each element of the list should contain the file path to the file to be included and a description.}
 
-\item{creation_date}{A date object representing the creation date of the data request.}
+\item{output_file}{A string representing the name and path under which the README file will be saved.}
 }
 \value{
 None. The function creates a README file in the specified data directory.

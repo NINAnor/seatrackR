@@ -1,14 +1,13 @@
 ---
 title: "Retrieve standard data from Seatrack"
 author: "Jens Åström"
-date: "`r Sys.Date()`"
+date: 2019-02-23
 output: 
   pdf_document:
     toc: true
     highlight: tango
-  rmarkdown::html_vignette:
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Retrieve standard data from Seatrack}
   %\VignetteEngine{R.rsp::asis}
   %\VignetteEncoding{UTF-8}
 ---

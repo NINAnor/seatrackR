@@ -10,7 +10,7 @@ output:
     incremental: FALSE
     toc: FALSE
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{The Seatrack database and R}
   %\VignetteEngine{R.rsp::asis}
   %\VignetteEncoding{UTF-8}
 ---

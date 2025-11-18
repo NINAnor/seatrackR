@@ -1,6 +1,11 @@
 ---
 title: "`r params$title`"
 subtitle: Generated from [output_schema.yaml](../../assetsyaml/output_schema.yaml)
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{`r params$title`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, echo = FALSE, message = FALSE}

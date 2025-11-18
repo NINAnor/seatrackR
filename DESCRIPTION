@@ -18,7 +18,6 @@ RoxygenNote: 7.3.3
 Suggests: 
   	R.rsp
 Imports:
-    taxize,
     DBI,
     RPostgres,
     ggplot2,
@@ -40,6 +39,7 @@ Imports:
     yaml,
     maps,
     terra,
+    glue,
     ncdf4
 Depends:
     R (>= 4.1)

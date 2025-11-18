@@ -7,13 +7,51 @@ get_col_from_list <- function(data_list, col_name) {
     return(NULL)
 }
 
+popmap_latin_to_english <- function(latin) {
+    # For now. Better to have this in the database.
+    species_names <- data.frame(
+        latin = c(
+            "Alle alle",
+            "Fratercula arctica",
+            "Fulmarus glacialis",
+            "Rissa tridactyla",
+            "Uria aalge",
+            "Uria lomvia"
+        ),
+        common = c(
+            "Little auk",
+            "Atlantic puffin",
+            "Northern fulmar",
+            "Black-legged kittiwake",
+            "Common guillemot",
+            "Br\u00FCnnich's guillemot"
+        )
+    )
+    return(species_names$common[species_names$latin == latin])
+}
+
+popmap_colonies_to_db <- function(popmap_colony, colony_list = getColonies()) {
+    if (popmap_colony %in% colony_list$colony_int_name) {
+        return(popmap_colony)
+    }
+    # Fuzzy match popmap colony names to SEATRACK colony names
+    matched_colonies <- colony_list$colony_int_name[agrep(popmap_colony, colony_list$colony_int_name, max.distance = 4)]
+    if (length(matched_colonies) == 0) {
+        warning(paste0("No matching colony found for popmap colony: ", popmap_colony))
+        return(popmap_colony)
+    } else if (length(matched_colonies) > 1) {
+        warning(paste0("Multiple matching colonies found for popmap colony: ", popmap_colony, ". Using first match: ", matched_colonies[1]))
+    }
+    return(matched_colonies[1])
+}
+
 #' Export a data request package
 #'
 #' This function will create a zip file of seatrack data. This includes:
 #' - Writing each data type as a compressed parquet file
 #' - Creating a README file with metadata about the data request
 #'
-#' @param all_data A named list of data.frames containing the data to be exported. Each name corresponds to a data type.
+#' @param all_data A named list of lists containing `data`: a data.frame to be exported and `description`: A string description. Each name corresponds to a data type.
 #' @param request_name A string representing the name of the data request.
 #' @param output_dir An optional string specifying the directory where the zip file will be saved. Defaults to `requested_data_packages/<current_year>`.
 #' @param additional_notes An optional string containing additional notes to be included in the README file.
@@ -33,36 +71,50 @@ export_data_package <- function(all_data, request_name, output_dir = NULL, speci
     dir.create(tmp_dir, showWarnings = FALSE, recursive = TRUE)
     dir.create(file.path(tmp_dir, "data"), recursive = TRUE)
     print(paste0("Creating data package in temporary directory: ", tmp_dir))
-    file_list <- c()
+    file_list <- list()
 
     for (type in names(all_data)) {
         print(paste0("Writing data type: ", type))
         file_name <- paste0(request_name, "_", type, "_", creation_date, ".gz.parquet")
-        file_list <- c(file_list, file_name)
-        arrow::write_parquet(all_data[[type]], file.path(tmp_dir, "data", file_name), compression = "gzip")
+        file_list[[type]] <- list(path = file_name, description = all_data[[type]]$description)
+        arrow::write_parquet(all_data[[type]]$data, file.path(tmp_dir, "data", file_name), compression = "gzip")
     }
+    all_data_data_only <- lapply(all_data, function(x) {
+        x$data
+    })
+
     if (is.null(species)) {
-        species <- get_col_from_list(all_data, "species")
+        species <- get_col_from_list(all_data_data_only, "species")
         if (!is.null(species)) {
             species <- unique(species)
         }
     }
 
     if (is.null(times)) {
-        times <- get_col_from_list(all_data, "date_time")
+        times <- get_col_from_list(all_data_data_only, "date_time")
         if (!is.null(times)) {
             times <- c(min(as.Date(times)), max(as.Date(times)))
         }
     }
 
     if (is.null(colony)) {
-        colony <- get_col_from_list(all_data, "colony")
+        colony <- get_col_from_list(all_data_data_only, "colony")
         if (!is.null(colony)) {
             colony <- unique(colony)
         }
     }
 
+    sessions <- unique(get_col_from_list(all_data_data_only, "session_id"))
+    if (!is.null(sessions)) {
+        data_responsible <- get_responsible(session = sessions)
+    } else if (!is.null(species) && !is.null(colony)) {
+        data_responsible <- get_responsible(species = species, colony = colony)
+    } else {
+        data_responsible <- NULL
+    }
+
     if (length(additional_data_files) > 0) {
+        db_colonies <- getColonies()
         for (additional_file in additional_data_files) {
             if (!file.exists(additional_file$path)) {
                 warning(paste0("Additional file not found, skipping: ", additional_file$path))
@@ -70,9 +122,43 @@ export_data_package <- function(all_data, request_name, output_dir = NULL, speci
             }
             print(paste0("Adding additional data file to data package: ", additional_file$path))
             current_path <- additional_file$path
+            current_description <- additional_file$description
             new_path <- file.path(tmp_dir, "data", basename(current_path))
             file.copy(current_path, new_path)
-            file_list <- c(file_list, basename(current_path))
+            # Try to extract metadata from additional_data_file
+            # Check if this is a pop map
+            if (grepl("Abundance_Model", additional_file$path)) {
+                if (is.null(colony)) {
+                    colony <- c()
+                }
+                if (is.null(species)) {
+                    species <- c()
+                }
+                if (is.null(data_responsible)) {
+                    data_responsible <- data.frame()
+                }
+
+                file_name <- basename(current_path)
+                split_file_name <- strsplit(file_name, "_")[[1]]
+                latin <- paste(split_file_name[c(4, 5)], collapse = " ")
+                version <- paste(split_file_name[c(7, 8)], collapse = ".")
+                common <- popmap_latin_to_english(latin)
+
+                species <- c(species, common)
+                loaded_netcdf <- ncdf4::nc_open(new_path)
+                colony_names <- ncdf4::ncvar_get(loaded_netcdf, "SmcolName")
+                ncdf4::nc_close(loaded_netcdf)
+                colony_names <- gsub(" ", "_", colony_names)
+                colony_names <- sapply(colony_names, popmap_colonies_to_db, colony_list = db_colonies)
+
+                colony <- c(colony, colony_names)
+
+                current_description <- glue::glue("SEATRACK population map {version} - {common}")
+
+                popmap_responsible <- get_responsible(colony = colony_names, species = common)
+                data_responsible <- rbind(data_responsible, popmap_responsible)
+            }
+            file_list[[paste("Abundance_model", version, common, sep = "_")]] <- list(path = basename(current_path), description = current_description)
         }
     }
 
@@ -89,6 +175,7 @@ export_data_package <- function(all_data, request_name, output_dir = NULL, speci
         }
     }
 
+
     # render markdown template to the temp dir
     create_readme(
         request_name = request_name,
@@ -96,7 +183,7 @@ export_data_package <- function(all_data, request_name, output_dir = NULL, speci
         species = species,
         colonies = colony,
         times = times,
-        data_types = names(all_data),
+        data_responsible = data_responsible,
         data_dir = tmp_dir,
         additional_notes = additional_notes,
         additional_files = additional_files,
@@ -129,16 +216,17 @@ export_data_package <- function(all_data, request_name, output_dir = NULL, speci
 #' @param species A character vector of species included in the data request.
 #' @param colonies A character vector of colonies included in the data request.
 #' @param times A vector of two dates representing the start and end of the data request
-#' @param data_types A character vector of data types included in the data request.
-#' @param creation_date A date object representing the creation date of the data request.
+#' @param data_responsible Table of people responsible for the data
 #' @param data_dir A string representing the directory where the data files are located.
 #' @param additional_notes An optional string containing additional notes to be included in the README file
 #' @param additional_files An optional list of additional files to include in the README file. Each element of the list should contain the file path to the file to be included and a description.
+#' @param output_file A string representing the name and path under which the README file will be saved.
 #' @return None. The function creates a README file in the specified data directory.
 #' @concept data_requests
 #' @export
-create_readme <- function(request_name, file_list, species, colonies, times, data_types, data_dir, additional_notes = "", additional_files = list(), output_file = "README.html") {
+create_readme <- function(request_name, file_list, species, colonies, times, data_responsible, data_dir, additional_notes = "", additional_files = list(), output_file = "README.html") {
     print("Creating README file...")
+    print(file_list)
     rmarkdown::render(
         system.file("rmd", "README_template.Rmd", package = "seatrackR"),
         params = list(
@@ -147,7 +235,7 @@ create_readme <- function(request_name, file_list, species, colonies, times, dat
             species = species,
             colonies = colonies,
             times = times,
-            data_types = data_types,
+            data_responsible = data_responsible,
             data_dir = data_dir,
             notes = additional_notes,
             additional_files = additional_files
@@ -194,7 +282,7 @@ data_request <- function(
     end_date <- as.Date(paste0(end_year, "-12-31")) + 1
     all_data <- list()
     if (!is.vector(data_types)) {
-        data_types <-c(data_types)
+        data_types <- c(data_types)
     }
     data_types <- match.arg(data_types, several.ok = TRUE)
 
@@ -203,21 +291,24 @@ data_request <- function(
     if ("GLS_positional_data" %in% data_types || "GLS" %in% data_types) {
         print("Fetching GLS position data...")
         all_pos <- getPositions(species = species, colony = colony)
-        all_data$GLS_positional_data <- all_pos[all_pos$date_time >= start_date & all_pos$date_time < end_date, ]
+        all_data$GLS_positional_data <- list(data = all_pos[all_pos$date_time >= start_date & all_pos$date_time < end_date, ], description = "Positional data")
     }
 
-    if(any(c("GLS_positional_data", "individual_data", "light", "temperature", "activity") %in% data_types)){
+    if (any(c("GLS_positional_data", "individual_data", "light", "temperature", "activity") %in% data_types)) {
         print("Fetching individual data...")
         individuals <- getIndividInfo(colony = colony, year = NULL)
+
         if ("individual_data" %in% data_types || "individuals" %in% data_types) {
             if ("GLS_positional_data" %in% names(all_data)) {
-                indiv_ids <- unique(all_data$GLS_positional_data$individ_id)
+                indiv_ids <- unique(all_data$GLS_positional_data$data$individ_id)
                 individuals <- individuals[individuals$individ_id %in% indiv_ids, ]
             }
-            all_data$individual_data <- individuals
+            all_data$individual_data <- list(data = individuals, description = "Individual information data")
         }
     }
-
+    descriptions <- c(
+        light = "Light data", temperature = "Temperature data", activity = "Standardized immersion data"
+    )
     types <- data_types[data_types %in% c("light", "temperature", "activity")]
     if (length(types) > 0) {
         activity_light_temp <- lapply(types, function(type) {
@@ -225,7 +316,7 @@ data_request <- function(
             all_indivs <- lapply(individuals$individ_id, function(indiv_id) {
                 getRecordings(type = type, individId = indiv_id)
             })
-            do.call(rbind, all_indivs)
+            return(list(data = do.call(rbind, all_indivs), description = descriptions[type]))
         })
         names(activity_light_temp) <- types
         names(activity_light_temp)[names(activity_light_temp) == "activity"] <- "immersion"
