@@ -54,9 +54,9 @@ if (length(params$additional_files) > 0) {
 file_list <- c(file_list, "| -- data")
 
 included_data <- c()
-for (i in seq_along(file_list)) {
+for (i in seq_along(params$file_list)) {
   included_data <- c(included_data, names(params$file_list)[i])
-  file_list <- c(file_list, '| &nbsp;&nbsp;&nbsp;&nbsp;|-- {{params$file_list[[i]]$description}} (<span style="color: #ABB2B9;">{{params$file_list[[i]]$path}}</span>)')
+  file_list <- c(file_list, knitr::knit_expand(text = '| &nbsp;&nbsp;&nbsp;&nbsp;|-- {{params$file_list[[i]]$description}} (<span style="color: #ABB2B9;">{{params$file_list[[i]]$path}}</span>)'))
 }
 
 file_list <- paste(knitr::knit_expand(text = file_list), collapse = "\n")
