@@ -16,7 +16,8 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Suggests: 
-  	R.rsp
+  	R.rsp,
+    NinaR
 Imports:
     DBI,
     RPostgres,
@@ -46,5 +47,7 @@ Depends:
 VignetteBuilder: 
 	  R.rsp,
 	  knitr
+Remotes:
+    seatrackR=github::NINAnor/NinaR
 LazyData: true
 URL: https://ninanor.github.io/seatrackR/

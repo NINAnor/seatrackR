@@ -6,7 +6,7 @@
 #' @param return_string Logical indicating whether to return responsible as a formatted string. Default is TRUE.
 #' @return A data frame with species, colony, and distinct responsible persons.
 #' @export
-#' @concept metadatapkg
+#' @concept metadata
 get_responsible <- function(session = NULL, species = NULL, colony = NULL, return_string = TRUE) {
     # ensure args are vectors
     if (!is.null(species) && !is.vector(species)) species <- c(species)
