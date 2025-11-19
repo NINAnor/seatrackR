@@ -1,6 +1,6 @@
 ---
 title: "Individual data reference"
-subtitle: Generated from [output_schema.yaml](../../assetsyaml/output_schema.yaml)
+subtitle: Generated from [output_schema.yaml](https://github.com/NINAnor/seatrackR/blob/development/inst/yaml/output_schema.yaml)
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Individual data reference}
@@ -37,7 +37,7 @@ Metadata and biometrics for each tracked individual
 
   Metal ID ring number. 
 
-- #### **euring_code** 
+- #### **country_code** 
  *type: string* 
 
   Country/local code for metal ring. 

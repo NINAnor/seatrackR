@@ -26,4 +26,4 @@ A data frame with species, colony, and distinct responsible persons.
 \description{
 Get responsible species and colony
 }
-\concept{metadata}
+\concept{metadatapkg}

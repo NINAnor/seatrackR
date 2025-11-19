@@ -181,7 +181,7 @@ datasets:
       - name: ring_number
         description: Metal ID ring number.
         type: string
-      - name: euring_code
+      - name: country_code
         description: Country/local code for metal ring.
         type: string
       - name: colour_ring

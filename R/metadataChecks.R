@@ -111,7 +111,7 @@ date_part('year', starttime_gmt) as \"startYear\"
     filter(ring_number.y.x != ring_number.y.y) %>%
     select(individ_id,
       ring_number = ring_number.y.x,
-      euring_code = euring_code.y.x,
+      country_code = euring_code.y.x,
       session_id,
       logger_model,
       logger_serial_no,

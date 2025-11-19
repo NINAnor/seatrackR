@@ -1,6 +1,6 @@
 ---
 title: "Population maps reference"
-subtitle: Generated from [output_schema.yaml](../../assetsyaml/output_schema.yaml)
+subtitle: Generated from [output_schema.yaml](https://github.com/NINAnor/seatrackR/blob/development/inst/yaml/output_schema.yaml)
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Population maps reference}

@@ -41,7 +41,13 @@ It is perfecty fine to download data through your own custom queries. Creating i
 
 ``` r
 require(DBI)
+```
 
+```
+## Loading required package: DBI
+```
+
+``` r
 myQuery <- "SELECT * from metadata.location
               WHERE colony_int_name = 'Faroe Islands'"
 
@@ -83,93 +89,18 @@ The `getPosdata` function retrieves this table, with options to subselect only s
 
 ``` r
 eynhallowPositions <- getPositions(colony = "Eynhallow", loadGeometries = TRUE)
+```
+
+```
+## Error in st_read(dsn = con, query = dbplyr::sql_render(res)): could not find function "st_read"
+```
+
+``` r
 eynhallowPositions
 ```
 
 ```
-## Simple feature collection with 183671 features and 33 fields
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: -67.63588 ymin: 33.60978 xmax: 81.41287 ymax: 82.72977
-## Geodetic CRS:  WGS 84
-## First 10 features:
-##                                      id           date_time logger_id
-## 1  a44b5db8-51c0-11f0-a694-005056b165f3 2021-06-23 12:19:49     14209
-## 2  a44b6056-51c0-11f0-a694-005056b165f3 2021-06-24 00:19:34     14209
-## 3  a44b629a-51c0-11f0-a694-005056b165f3 2021-06-24 12:19:54     14209
-## 4  a44b64ca-51c0-11f0-a694-005056b165f3 2021-06-25 00:21:08     14209
-## 5  a44b68e4-51c0-11f0-a694-005056b165f3 2021-06-25 12:36:46     14209
-## 6  a44b6b3c-51c0-11f0-a694-005056b165f3 2021-06-26 00:37:40     14209
-## 7  a44b6e5c-51c0-11f0-a694-005056b165f3 2021-06-26 12:28:04     14209
-## 8  a44b7096-51c0-11f0-a694-005056b165f3 2021-06-27 00:15:39     14209
-## 9  a44b72d0-51c0-11f0-a694-005056b165f3 2021-06-27 12:09:19     14209
-## 10 a44b755a-51c0-11f0-a694-005056b165f3 2021-06-28 00:13:38     14209
-##    logger_model year_tracked       session_id  individ_id deployment_date
-## 1        mk3006      2021_22 B4282_2021-06-15 GBT_FH89135      2021-06-17
-## 2        mk3006      2021_22 B4282_2021-06-15 GBT_FH89135      2021-06-17
-## 3        mk3006      2021_22 B4282_2021-06-15 GBT_FH89135      2021-06-17
-## 4        mk3006      2021_22 B4282_2021-06-15 GBT_FH89135      2021-06-17
-## 5        mk3006      2021_22 B4282_2021-06-15 GBT_FH89135      2021-06-17
-## 6        mk3006      2021_22 B4282_2021-06-15 GBT_FH89135      2021-06-17
-## 7        mk3006      2021_22 B4282_2021-06-15 GBT_FH89135      2021-06-17
-## 8        mk3006      2021_22 B4282_2021-06-15 GBT_FH89135      2021-06-17
-## 9        mk3006      2021_22 B4282_2021-06-15 GBT_FH89135      2021-06-17
-## 10       mk3006      2021_22 B4282_2021-06-15 GBT_FH89135      2021-06-17
-##    retrieval_date ring_number country_code         species    colony   lon_raw
-## 1      2022-06-01     FH89135          GBT Northern fulmar Eynhallow -4.380698
-## 2      2022-06-01     FH89135          GBT Northern fulmar Eynhallow -4.291339
-## 3      2022-06-01     FH89135          GBT Northern fulmar Eynhallow -4.347963
-## 4      2022-06-01     FH89135          GBT Northern fulmar Eynhallow -4.628326
-## 5      2022-06-01     FH89135          GBT Northern fulmar Eynhallow -8.512228
-## 6      2022-06-01     FH89135          GBT Northern fulmar Eynhallow -8.709984
-## 7      2022-06-01     FH89135          GBT Northern fulmar Eynhallow -6.285175
-## 8      2022-06-01     FH89135          GBT Northern fulmar Eynhallow -3.151895
-## 9      2022-06-01     FH89135          GBT Northern fulmar Eynhallow -1.545966
-## 10     2022-06-01     FH89135          GBT Northern fulmar Eynhallow -2.596462
-##     lat_raw       lon      lat eqfilter    sex age_deployment col_lon col_lat
-## 1  58.49406 -4.281711 58.47849     TRUE female  adult_unknown  -3.115  59.142
-## 2  58.52893 -4.327839 58.52735     TRUE female  adult_unknown  -3.115  59.142
-## 3  58.55747 -4.403921 58.53352     TRUE female  adult_unknown  -3.115  59.142
-## 4  58.49011 -5.521901 58.77193     TRUE female  adult_unknown  -3.115  59.142
-## 5  59.53326 -7.583115 59.26862     TRUE female  adult_unknown  -3.115  59.142
-## 6  59.50188 -8.051732 59.35962     TRUE female  adult_unknown  -3.115  59.142
-## 7  58.89673 -6.110182 59.25882     TRUE female  adult_unknown  -3.115  59.142
-## 8  59.71033 -3.537622 59.42004     TRUE female  adult_unknown  -3.115  59.142
-## 9  59.34131 -2.209440 59.37146     TRUE female  adult_unknown  -3.115  59.142
-## 10 59.09263 -2.076425 59.09146     TRUE female  adult_unknown  -3.115  59.142
-##                 tfirst             tsecond twl_type sun light_threshold
-## 1  2021-06-23 02:25:59 2021-06-23 22:13:39        1  -4               9
-## 2  2021-06-23 22:13:39 2021-06-24 02:25:29        2  -4               9
-## 3  2021-06-24 02:25:29 2021-06-24 22:14:19        1  -4               9
-## 4  2021-06-24 22:14:19 2021-06-25 02:27:56        2  -4               9
-## 5  2021-06-25 02:27:56 2021-06-25 22:45:36        1  -4               9
-## 6  2021-06-25 22:45:36 2021-06-26 02:29:44        2  -4               9
-## 7  2021-06-26 02:29:44 2021-06-26 22:26:25        1  -4               9
-## 8  2021-06-26 22:26:25 2021-06-27 02:04:52        2  -4               9
-## 9  2021-06-27 02:04:52 2021-06-27 22:13:46        1  -4               9
-## 10 2021-06-27 22:13:46 2021-06-28 02:13:29        2  -4               9
-##          analyzer data_responsible data_version last_updated     updated_by
-## 1  Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
-## 2  Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
-## 3  Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
-## 4  Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
-## 5  Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
-## 6  Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
-## 7  Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
-## 8  Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
-## 9  Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
-## 10 Ida Ward Myran    Paul Thompson           75   2025-10-23 seatrack_admin
-##                          geom date_time_downloaded
-## 1  POINT (-4.281711 58.47849)  2025-11-17 13:45:30
-## 2  POINT (-4.327839 58.52735)  2025-11-17 13:45:30
-## 3  POINT (-4.403921 58.53352)  2025-11-17 13:45:30
-## 4  POINT (-5.521901 58.77193)  2025-11-17 13:45:30
-## 5  POINT (-7.583115 59.26862)  2025-11-17 13:45:30
-## 6  POINT (-8.051732 59.35962)  2025-11-17 13:45:30
-## 7  POINT (-6.110182 59.25882)  2025-11-17 13:45:30
-## 8  POINT (-3.537622 59.42004)  2025-11-17 13:45:30
-## 9   POINT (-2.20944 59.37146)  2025-11-17 13:45:30
-## 10 POINT (-2.076425 59.09146)  2025-11-17 13:45:30
+## Error: object 'eynhallowPositions' not found
 ```
 
 
@@ -178,7 +109,9 @@ eynhallowPositions
 plot(eynhallowPositions["ring_number"])
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+```
+## Error: object 'eynhallowPositions' not found
+```
 
 
 Position data for export
