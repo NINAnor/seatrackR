@@ -1,8 +1,8 @@
 on:
   push:
-    branches: [main, master, badges_test]
+    branches: [main, master, development]
   pull_request:
-    branches: [main, master, badges_test]
+    branches: [main, master, development]
 
 name: R-CMD-check
 
@@ -39,7 +39,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck any::R.rsp
+          extra-packages: any::rcmdcheck github::NINAnor/NinaR any::R.rsp
           needs: check
 
 
