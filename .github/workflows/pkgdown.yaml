@@ -33,13 +33,11 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::.
+          extra-packages: any::devtools, any::badger, any::pkgdown, local::.
           needs: website
 
       - name: Render README
         run: Rscript -e 'devtools::build_readme()'
-        with:
-          extra-packages: any::devtools, local::.
 
       - name: Commit results
         run: |
