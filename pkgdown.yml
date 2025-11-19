@@ -1,0 +1,16 @@
+pandoc: 3.1.11
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  Data_extraction: Data_extraction.html
+  GLS_positional_data: GLS_positional_data.html
+  immersion_data: immersion_data.html
+  individual_data: individual_data.html
+  Intro_presentation: Intro_presentation.html
+  light_data: light_data.html
+  population_maps: population_maps.html
+  temperature_data: temperature_data.html
+last_built: 2025-11-19T08:41Z
+urls:
+  reference: https://ninanor.github.io/seatrackR/reference
+  article: https://ninanor.github.io/seatrackR/articles

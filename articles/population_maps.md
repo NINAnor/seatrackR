@@ -1,0 +1,156 @@
+# Population maps reference
+
+Population maps as in Fauchald et al. (2021).
+
+- #### **predictedAbundanceMean**
+
+  *type: float*
+
+  Variable - Mean predicted abundance (birds/pixel). Dimensions are
+  \[lon,lat,month,colonyCode\]
+
+- #### **PredictedAbundance95%CILow**
+
+  *type: float*
+
+  Variable - Lower bounds of 95% confidence interval of predicted
+  abundance (birds/pixel). Dimensions are \[lon,lat,month,colonyCode\]
+
+- #### **PredictedAbundance95%CIHight**
+
+  *type: float*
+
+  Variable - Upper bounds of 95% confidence interval of predicted
+  abundance (birds/pixel). Dimensions are \[lon,lat,month,colonyCode\]
+
+- #### **colonyName**
+
+  *type: string*
+
+  Variable - Name of the subcolony for which abundance is estimated.
+  Dimensions are \[colonyCode\]
+
+- #### **colonyLatitude**
+
+  *type: float*
+
+  Variable - Latitude of the subcolony for which abundance is estimated
+  (dd.mmmm). Dimensions are \[colonyCode\]
+
+- #### **colonyLongitude**
+
+  *type: float*
+
+  Variable - Longitude of the subcolony for which abundance is estimated
+  (dd.mmmm). Dimensions are \[colonyCode\]
+
+- #### **colonyRegion**
+
+  *type: string*
+
+  Variable - Region of the subcolony for which abundance is estimated.
+  Dimensions are \[colonyCode\]
+
+- #### **colonyCountry**
+
+  *type: string*
+
+  Variable - Country of the subcolony for which abundance is estimated.
+  Dimensions are \[colonyCode\]
+
+- #### **colonyOceanArea**
+
+  *type: string*
+
+  Variable - Large marine ecosystem (LME) of the subcolony for which
+  abundance is estimated. Dimensions are \[colonyCode\]
+
+- #### **colonyNpairs**
+
+  *type: integer*
+
+  Variable - Number of breeding pairs of subcolony for which abundance
+  is estimated. Dimensions are \[colonyCode\]
+
+- #### **SmcolName**
+
+  *type: string*
+
+  Variable - Name of the corresponding SEATRACK model colony of the
+  subcolony for which abundance is estimated. Dimensions are
+  \[colonyCode\]
+
+- #### **SmcolDistance**
+
+  *type: float*
+
+  Variable - Distance to the corresponding SEATRACK model colony of the
+  subcolony for which abundance is estimated. Dimensions are
+  \[colonyCode\]
+
+- #### **lon**
+
+  *type: integer*
+
+  Dimension - Longitude (degrees east)
+
+- #### **lat**
+
+  *type: integer*
+
+  Dimension - Latitude (degrees north)
+
+- #### **Month**
+
+  *type: integer*
+
+  Dimension - Month of the year.
+
+- #### **colonyCode**
+
+  *type: integer*
+
+  Dimension - Subcolony identification code.
+
+- #### **Dataset source**
+
+  *type: string*
+
+  Global attribute - Source of this dataset, e.g. “SEATRACK -
+  distribution and abundance model outputs - Alle alle”
+
+- #### **Dataset version**
+
+  *type: string*
+
+  Global attribute - Version of this dataset.
+
+- #### **Dataset last updated.**
+
+  *type: date*
+
+  Global attribute - Date dataset was updated.
+
+- #### **CRS**
+
+  *type: string*
+
+  Global attribute - CRS code of this dataset.
+
+- #### **Created with**
+
+  *type: string*
+
+  Global attribute - Software version the dataset was created with.
+
+- #### **Authors**
+
+  *type: string*
+
+  Global attribute - Creators of this dataset.
+
+- #### **Citation**
+
+  *type: string*
+
+  Global attribute - Citation for this dataset.

@@ -1,0 +1,34 @@
+# Light data reference
+
+Light intensity records from loggers
+
+- #### **session_id**
+
+  *type: string*
+
+  Unique ID of the logger deployment session during which this record
+  was made.
+
+- #### **individ_id**
+
+  *type: string*
+
+  Unique ID of individual.
+
+- #### **date_time**
+
+  *type: datetime*
+
+  Date and time of each record in GMT.
+
+- #### **raw_light**
+
+  *type: float*
+
+  Original light data downloaded from the logger.
+
+- #### **std_light**
+
+  *type: float*
+
+  Normalized light values across models (not recommended for use).

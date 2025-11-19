@@ -1,0 +1,81 @@
+# Connect to seatrack database
+
+This function establishes a connection to the Seatrack database. It is a
+simple convenience function that uses the packages DBI and RPostgres
+(available from github via devtools::install_github("rstats-db/DBI") and
+devtools::install_github("rstats-db/DBI"). Note that connections are
+only accepted from a limited IP-adresses.
+
+## Usage
+
+``` r
+connectSeatrack(
+  Username = "testreader",
+  Password = "testreader",
+  host = "seatrack.nina.no",
+  dbname = "seatrack",
+  bigint = "integer",
+  ...
+)
+
+disconnectSeatrack()
+```
+
+## Arguments
+
+- Username:
+
+  Character. Default = seatrack_reader
+
+- Password:
+
+  Character.
+
+- host:
+
+  Character. The host of the database. For testing purposes. There
+  should be no need for the user to change this.
+
+- dbname:
+
+  Character. Name of database, for testing purposes. Default is
+  "seatrack" which is the production database.
+
+- bigint:
+
+  How to handle 64 bit integers from the database (such as bigint).
+  "integer", "character", "numeric", "integer64". Defaults to "integer"
+  which is prone to overflow over '.Machine\$integer.max' values.
+  Integer64 works poorly with many base R functions.
+
+- ...:
+
+  additional parameters passed to dbConnect
+
+## Value
+
+A DBI connection to the Seatrack database
+
+## Note
+
+The password is stored within the R session in a somewhat hidden
+environment, to be used in the interface with the FTP server. It is
+therefore not saved in the session if you do that when closing R. The
+password is not stored in cleartext within the database either, and the
+admins have no way of seeing it. The handshake between R and the FTP
+server is encrypted, as well as the actual data transfers. However, it
+is difficult to guarantee that it is totally safe from all
+eventualities. For example, I don't know what would happen if R would
+crash and store something in a crash logfile. So best practice would be
+to use a separate password for Seatrack, that you don't share with other
+sites or applications.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+connectSeatrack(Username = "testreader", Password = "testreader")
+DBI::dbGetQuery(con, "SELECT * FROM loggers.logging_session LIMIT 10")
+DBI::dbDisconnect(con)
+} # }
+```

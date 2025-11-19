@@ -1,0 +1,35 @@
+# Immersion data reference
+
+Logger immersion (wet/dry) data
+
+- #### **session_id**
+
+  *type: string*
+
+  Unique ID of the logger deployment session during which this record
+  was made.
+
+- #### **individ_id**
+
+  *type: string*
+
+  Unique ID of individual.
+
+- #### **date_time**
+
+  *type: datetime*
+
+  Date and time of each record in GMT.
+
+- #### **conductivity**
+
+  *type: integer*
+
+  Original conductivity (wet/dry) data; 0 = dry all the time.
+
+- #### **std_conductivity**
+
+  *type: float*
+
+  Normalized conductivity between 0 (dry all the time) and 1 (wet all
+  the time).
