@@ -27,7 +27,6 @@ library(badger)
 `r badge_cran_release("seatrackR")`
 `r badge_github_actions("NINAnor/seatrackR")` 
 `r badge_code_size("NINAnor/seatrackR")`
-`r badge_
 <!-- adapt this after creating a release and registering it at zenodo -->
 <!--[![DOI](https://zenodo.org/badge/508228048.svg)](https://doi.org/10.5281/zenodo.16947368)-->
 <!-- badges: end -->
