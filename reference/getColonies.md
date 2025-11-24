@@ -6,7 +6,7 @@ metadata.location table, depending on the parameter allLocations. If
 ## Usage
 
 ``` r
-getColonies(allLocations = F, loadGeometries = F)
+getColonies(allLocations = FALSE, loadGeometries = FALSE)
 ```
 
 ## Arguments
