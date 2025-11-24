@@ -256,7 +256,7 @@ create_readme <- function(request_name, file_list, species, colonies, times, dat
 #' Requires an active connection to the SEATRACK database.
 #' Currently netCDF files are not included in the data request package, so these have to be injected using `additional_data_files` if needed.
 #' @param request_name A string representing the name of the data request.
-#' @param data_types A character vector specifying the types of data to include in the request. Possible values are "GLS", "GLS_positional_data", "individual_data", "light", "temperature", and "activity". Defaults to all types.
+#' @param data_types A character vector specifying the types of data to include in the request. Possible values are "GLS_positional_data", "IRMA_positional_data", "individual_data", "light", "temperature", "activity", "population_maps" and "logger_info". Defaults to all types.
 #' @param start_year An integer representing the start year for the data request.
 #' @param end_year An integer representing the end year for the data request. Defaults to the current year.
 #' @param species An optional string specifying the species to filter the data. If NULL, data for all species will be retrieved.
@@ -276,8 +276,8 @@ create_readme <- function(request_name, file_list, species, colonies, times, dat
 #' @export
 #' @concept data_requests
 data_request <- function(
-  request_name, 
-  data_types = c("GLS_positional_data", "IRMA_positional_data", "individual_data", "light", "temperature", "activity", "population_maps", "logger_info"), 
+  request_name,
+  data_types = c("GLS_positional_data", "IRMA_positional_data", "individual_data", "light", "temperature", "activity", "population_maps", "logger_info"),
   start_year, end_year = format(Sys.Date(), "%Y"), species = NULL, colony = NULL, export = TRUE, output_dir = NULL,
   additional_notes = "", additional_data_files = list(), additional_files = list()
 ) {
