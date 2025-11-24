@@ -67,6 +67,7 @@ popmap_colonies_to_db <- function(popmap_colony, colony_list = getColonies()) {
 export_data_package <- function(all_data, request_name, output_dir = NULL, species = NULL, colony = NULL, times = NULL, additional_notes = "", additional_data_files = list(), additional_files = list()) {
     creation_date <- Sys.Date()
 
+
     tmp_dir <- tempfile(pattern = paste0(request_name, "_"))
     dir.create(tmp_dir, showWarnings = FALSE, recursive = TRUE)
     dir.create(file.path(tmp_dir, "data"), recursive = TRUE)
@@ -255,7 +256,7 @@ create_readme <- function(request_name, file_list, species, colonies, times, dat
 #' Requires an active connection to the SEATRACK database.
 #' Currently netCDF files are not included in the data request package, so these have to be injected using `additional_data_files` if needed.
 #' @param request_name A string representing the name of the data request.
-#' @param data_types A character vector specifying the types of data to include in the request. Possible values are "GLS", "GLS_positional_data", "individual_data", "light", "temperature", and "activity". Defaults to all types.
+#' @param data_types A character vector specifying the types of data to include in the request. Possible values are "GLS_positional_data", "IRMA_positional_data", "individual_data", "light", "temperature", "activity", "population_maps" and "logger_info". Defaults to all types.
 #' @param start_year An integer representing the start year for the data request.
 #' @param end_year An integer representing the end year for the data request. Defaults to the current year.
 #' @param species An optional string specifying the species to filter the data. If NULL, data for all species will be retrieved.
@@ -275,7 +276,9 @@ create_readme <- function(request_name, file_list, species, colonies, times, dat
 #' @export
 #' @concept data_requests
 data_request <- function(
-  request_name, data_types = c("GLS_positional_data", "individual_data", "light", "temperature", "activity", "population_maps"), start_year, end_year = format(Sys.Date(), "%Y"), species = NULL, colony = NULL, export = TRUE, output_dir = NULL,
+  request_name,
+  data_types = c("GLS_positional_data", "IRMA_positional_data", "individual_data", "light", "temperature", "activity", "population_maps", "logger_info"),
+  start_year, end_year = format(Sys.Date(), "%Y"), species = NULL, colony = NULL, export = TRUE, output_dir = NULL,
   additional_notes = "", additional_data_files = list(), additional_files = list()
 ) {
     start_date <- as.Date(paste0(start_year, "-01-01"))
@@ -288,24 +291,56 @@ data_request <- function(
 
     print(paste("Starting data request, datatypes are", paste(data_types, collapse = " ")))
 
-    if ("GLS_positional_data" %in% data_types || "GLS" %in% data_types) {
+    if ("GLS_positional_data" %in% data_types) {
         print("Fetching GLS position data...")
         all_pos <- getPositions(species = species, colony = colony)
-        all_data$GLS_positional_data <- list(data = all_pos[all_pos$date_time >= start_date & all_pos$date_time < end_date, ], description = "Positional data")
+        all_data$GLS_positional_data <- list(
+            data = all_pos[all_pos$date_time >= start_date & all_pos$date_time < end_date, ],
+            description = "GLS Positional data"
+        )
     }
 
-    if (any(c("GLS_positional_data", "individual_data", "light", "temperature", "activity") %in% data_types)) {
+    if ("IRMA_positional_data" %in% data_types) {
+        print("Fetching IRMA position data...")
+        irma_pos <- getPositions(datatype = "IRMA", species = species, colony = colony)
+        all_data$IRMA_positional_data <- list(
+            data = irma_pos[irma_pos$date_time >= start_date & irma_pos$date_time < end_date, ],
+            description = "IRMA Positional data"
+        )
+    }
+
+
+    if (any(c("GLS_positional_data", "IRMA_positional_data", "individual_data", "light", "temperature", "activity") %in% data_types)) {
         print("Fetching individual data...")
         individuals <- getIndividInfo(colony = colony, year = NULL)
+        if (!is.null(species)) {
+            individuals <- individuals[individuals$species %in% species, ]
+        }
 
-        if ("individual_data" %in% data_types || "individuals" %in% data_types) {
+        if ("individual_data" %in% data_types) {
             if ("GLS_positional_data" %in% names(all_data)) {
                 indiv_ids <- unique(all_data$GLS_positional_data$data$individ_id)
+                individuals <- individuals[individuals$individ_id %in% indiv_ids, ]
+            } else if ("IRMA_positional_data" %in% names(all_data)) {
+                indiv_ids <- unique(all_data$IRMA_positional_data$data$individ_id)
                 individuals <- individuals[individuals$individ_id %in% indiv_ids, ]
             }
             all_data$individual_data <- list(data = individuals, description = "Individual information data")
         }
     }
+    if ("logger_info" %in% data_types) {
+        print("Fetching logger data...")
+        logger_info <- getLoggerInfo()
+        logger_info <- logger_info[logger_info$deployment_date >= start_date & logger_info$retrieval_date < end_date, ]
+        if (!is.null(colony)) {
+            logger_info <- logger_info[logger_info$colony %in% colony, ]
+        }
+        if (!is.null(species)) {
+            logger_info <- logger_info[logger_info$deployment_species %in% species, ]
+        }
+        all_data$logger_info <- list(data = individuals, description = "Logger info")
+    }
+
     descriptions <- c(
         light = "Light data", temperature = "Temperature data", activity = "Standardized immersion data"
     )

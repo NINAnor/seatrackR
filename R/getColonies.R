@@ -16,56 +16,21 @@
 #' )
 #' }
 #' @concept metadata
-getColonies <- function(allLocations = F,
-                        loadGeometries = F) {
+getColonies <- function(allLocations = FALSE,
+                        loadGeometries = FALSE) {
   checkCon()
 
-  if (allLocations == T &
-    loadGeometries == F) {
+  if (allLocations) {
     locations <- dbReadTable(con, DBI::Id(schema = "metadata", table = "location"))
-    out <- as_tibble(locations) %>%
-      select(
-        location_name,
-        colony_int_name,
-        colony_nat_name
-      )
-    return(out)
-  }
-
-  if (allLocations == F &
-    loadGeometries == F) {
+  } else {
     locations <- dbReadTable(con, DBI::Id(schema = "metadata", table = "colony"))
-    out <- as_tibble(locations) %>%
-      select(
-        colony_int_name,
-        colony_nat_name
-      )
-    return(out)
   }
 
-
-  if (allLocations == T &
-    loadGeometries == T) {
-    locations <- sf::st_read(con, DBI::Id(schema = "metadata", table = "location"))
-    out <- as_tibble(locations) %>%
-      sf::st_as_sf() %>%
-      select(
-        location_name,
-        colony_int_name,
-        colony_nat_name
-      )
-    return(out)
+  if (loadGeometries) {
+    locations <- locations[!is.na(locations$geom),]
+    locations <- sf::st_as_sf(coords = c("lon", "lat"), locations, remove = FALSE)
   }
+  locations$geom <- NULL
+  return(locations)
 
-  if (allLocations == F &
-    loadGeometries == T) {
-    locations <- sf::st_read(con, DBI::Id(schema = "metadata", table = "colony"))
-    out <- as_tibble(locations) %>%
-      sf::st_as_sf() %>%
-      select(
-        colony_int_name,
-        colony_nat_name
-      )
-    return(out)
-  }
 }

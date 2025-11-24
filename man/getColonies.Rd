@@ -4,7 +4,7 @@
 \alias{getColonies}
 \title{Retrieve info on the registered colonies and locations within colonies in the database}
 \usage{
-getColonies(allLocations = F, loadGeometries = F)
+getColonies(allLocations = FALSE, loadGeometries = FALSE)
 }
 \arguments{
 \item{allLocations}{True, False. Should all locations within colonies be loaded. Default = False.}

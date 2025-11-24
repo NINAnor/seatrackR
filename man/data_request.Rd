@@ -6,8 +6,8 @@
 \usage{
 data_request(
   request_name,
-  data_types = c("GLS_positional_data", "individual_data", "light", "temperature",
-    "activity", "population_maps"),
+  data_types = c("GLS_positional_data", "IRMA_positional_data", "individual_data",
+    "light", "temperature", "activity", "population_maps", "logger_info"),
   start_year,
   end_year = format(Sys.Date(), "\%Y"),
   species = NULL,
@@ -22,7 +22,7 @@ data_request(
 \arguments{
 \item{request_name}{A string representing the name of the data request.}
 
-\item{data_types}{A character vector specifying the types of data to include in the request. Possible values are "GLS", "GLS_positional_data", "individual_data", "light", "temperature", and "activity". Defaults to all types.}
+\item{data_types}{A character vector specifying the types of data to include in the request. Possible values are "GLS_positional_data", "IRMA_positional_data", "individual_data", "light", "temperature", "activity", "population_maps" and "logger_info". Defaults to all types.}
 
 \item{start_year}{An integer representing the start year for the data request.}
 
