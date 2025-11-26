@@ -2,8 +2,15 @@
 #'
 #' This is a convenience function that pulls together various info on the files in the individuals.individ_info and individuals.individ_status table and other tables
 #'
-#' @param colony Optional character string of colonies limit the selection to. Available choices are found in "colony_int_name", from getColonies()
-#' @param year Optional character string of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.
+#' @param colony Optional vector of character string of colonies limit the selection to. Available choices are found in "colony_int_name", from getColonies()
+#' @param deployment_year Optional integer of years, to limit the selection to the year a logger was deployed.
+#' @param retrieval_year Optional integer of years, to limit the selection to the year a logger was retrieved.
+#' @param year_tracked Optional vector of character strings of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.
+#' @param species Optional vector of character strings of species to limit the selection to. Available choices are found in "species", from getSpecies()
+#' @param sex Optional vector of character strings of sex to limit the selection to.
+#' @param age Optional vector of character strings of age to limit the selection to.
+#' @param event_type Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".
+#' @param last_only Logical. If TRUE, only the most recent status info per individual is returned. Default is FALSE.
 #' @return Data frame.
 #' @export
 #' @examples
@@ -13,92 +20,141 @@
 #' }
 #' @concept metadata
 getIndividInfo <- function(colony = NULL,
-                           year = NULL) {
+                           year_tracked = NULL,
+                           deployment_year = NULL,
+                           retrieval_year = NULL,
+                           species = NULL,
+                           age = NULL,
+                           sex = NULL,
+                           event_type = NULL,
+                           last_only = FALSE) {
   checkCon()
 
-  selectColony <- colony
-  selectYear <- year
+  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age)
 
   sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 
   individs <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_info"))
 
+  sessions <- left_join(sessions, individs, by = c("individ_id" = "individ_id"), suffix = c("", ".y"))
+  sessions <- select(sessions, -ends_with(".y"))
+
+  for (i in seq_along(arg_list)) {
+    val_name <- names(arg_list)[i]
+    value <- arg_list[[i]]
+    if (!is.null(value)) {
+      sessions <- filter(sessions, !!rlang::sym(val_name) %in% value)
+    }
+  }
   status <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_status"))
 
-  deployments <- dplyr::tbl(con, dbplyr::in_schema("loggers", "deployment")) %>%
-    select(session_id,
-           status_date = deployment_date
-    ) %>%
-    mutate(eventType = "Deployment")
+  sessions <- inner_join(sessions, status, by = c("session_id" = "session_id"))
 
-  retrievals <- dplyr::tbl(con, dbplyr::in_schema("loggers", "retrieval")) %>%
-    select(session_id,
-           status_date = retrieval_date
-    ) %>%
-    mutate(eventType = "Retrieval")
+  query <- select(sessions, session_id,
+    colony,
+    year_tracked,
+    individ_id,
+    ring_number = ring_number.x,
+    country_code = euring_code.x,
+    color_ring = color_ring.x,
+    species = species.x,
+    subspecies = subspecies.x,
+    morph = morph.x,
+    status_age = age.x,
+    status_sex = sex.x,
+    status_sexing_method = sexing_method.x,
+    status_date,
+    weight,
+    skull = scull,
+    tarsus,
+    wing,
+    breeding_stage,
+    eggs,
+    chicks,
+    hatching_success,
+    breeding_success,
+    breeding_success_criterion,
+    data_responsible = data_responsible.x,
+    back_on_nest,
+    comment,
+    latest_sex = sex.y,
+    latest_sexing_method = sexing_method.y,
+    latest_age = age.y,
+    latest_info_date,
+    deployment_id,
+    retrieval_id
+  )
 
-  events <- as_tibble(deployments) %>%
-    bind_rows(as_tibble(retrievals))
+  deployments <- dplyr::tbl(con, dbplyr::in_schema("loggers", "deployment"))
+  deployments <- dplyr::mutate(deployments, eventType = "Deployment", status_date = deployment_date)
+  deployments <- dplyr::mutate(deployments, year_deployed = lubridate::year(status_date))
 
-  if (!is.null(selectColony)) {
-    sessions <- sessions %>% filter(colony %in% selectColony)
+  if (!is.null(deployment_year)) {
+    deployments <- dplyr::filter(deployments, year_deployed %in% deployment_year)
   }
 
-  if (!is.null(selectYear)) {
-    sessions <- sessions %>% filter(year_tracked %in% selectYear)
+  deployment_ids <- dplyr::distinct(select(query, deployment_id))
+  deployments <- dplyr::inner_join(deployments, deployment_ids,
+    by = "deployment_id"
+  )
+  deployments <- dplyr::select(deployments, -year_deployed)
+  deployment_session_ids <- dplyr::distinct(select(deployments, session_id))
+
+  retrievals <- dplyr::tbl(con, dbplyr::in_schema("loggers", "retrieval"))
+  retrievals <- dplyr::mutate(retrievals, eventType = "Retrieval", status_date = retrieval_date)
+
+  retrievals <- dplyr::mutate(retrievals, year_retrieved = lubridate::year(status_date))
+
+  if (!is.null(retrieval_year)) {
+    retrievals <- dplyr::filter(retrievals, year_retrieved %in% retrieval_year)
+    retrieval_session_ids <- dplyr::distinct(select(retrievals, session_id))
+    deployments <- dplyr::inner_join(deployments, retrieval_session_ids,
+      by = "session_id"
+    )
+    deployment_session_ids <- dplyr::distinct(select(deployments, session_id))
   }
 
-  query <- sessions %>%
-    inner_join(status, by = c("session_id" = "session_id")) %>%
-    left_join(individs, by = c("individ_id" = "individ_id")) %>%
-    select(session_id,
-      colony,
-      year_tracked,
-      individ_id,
-      ring_number = ring_number.x,
-      country_code = euring_code.x,
-      color_ring = color_ring.x,
-      species = species.x,
-      subspecies = subspecies.x,
-      morph = morph.x,
-      status_age = age.x,
-      status_sex = sex.x,
-      status_sexing_method = sexing_method.x,
-      status_date,
-      weight,
-      scull,
-      tarsus,
-      wing,
-      breeding_stage,
-      eggs,
-      chicks,
-      hatching_success,
-      breeding_success,
-      breeding_success_criterion,
-      data_responsible = data_responsible.x,
-      back_on_nest,
-      comment,
-      latest_sex = sex.y,
-      latest_sexing_method = sexing_method.y,
-      latest_age = age.y,
-      latest_info_date
-    )
-
-  out <- as_tibble(query) %>%
-    left_join(events,
-      by = c(
-        "session_id" = "session_id",
-        "status_date" = "status_date"
-      )
-    ) %>%
-    arrange(
-      colony,
-      species,
-      year_tracked,
-      ring_number,
-      status_date
-    )
+  retrievals <- dplyr::inner_join(retrievals, deployment_session_ids,
+    by = "session_id"
+  )
+  retrievals <- dplyr::select(retrievals, -year_retrieved)
 
 
-  return(out)
+
+  events <- dplyr::union(deployments, retrievals)
+  if (!is.null(event_type)) {
+    events <- dplyr::filter(events, eventType %in% event_type)
+  }
+  events <- dplyr::select(events, -dplyr::starts_with("deployment"), -dplyr::starts_with("retrieval"))
+  query <- dplyr::select(query, -retrieval_id, -deployment_id)
+
+  out <- dplyr::inner_join(query, events,
+    by = c(
+      "session_id" = "session_id",
+      "status_date" = "status_date"
+    ),
+    suffix = c("", ".y"),
+  )
+  out <- dplyr::select(out, -dplyr::ends_with(".y"))
+
+  if (last_only) {
+    out <- dplyr::group_by(out, session_id) %>%
+      dplyr::filter(status_date == max(status_date, na.rm = TRUE)) %>%
+      dplyr::ungroup()
+  }
+
+  out <- dplyr::arrange(
+    out,
+    colony,
+    species,
+    year_tracked,
+    ring_number,
+    status_date
+  )
+  
+  out <- dplyr::select(out, -id, -logger_fate, -attribute_name)
+
+  return_query <- tibble::as_tibble(out)
+
+  return(return_query)
 }
