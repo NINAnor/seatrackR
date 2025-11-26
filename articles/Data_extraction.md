@@ -191,7 +191,7 @@ shorttable
 ```
 
     ##   Antall.arter Antall.kolonier Antall.år Antall.positions Antall.individer
-    ## 1           17             100       104          7525519             7427
+    ## 1           17             100       104          7504533             7412
     ##   Antall.tracks..year_tracked.
     ## 1                          104
 
@@ -201,6 +201,6 @@ shorttableeqfilter3
 ```
 
     ##   Antall.arter Antall.kolonier Antall.år Antall.positions Antall.individer
-    ## 1           17             100       104          5574341             7427
+    ## 1           17             100       104          5558527             7412
     ##   Antall.tracks..year_tracked.
     ## 1                          104

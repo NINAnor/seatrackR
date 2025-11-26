@@ -29,6 +29,8 @@ Functions for reading and writing positional data to the database.
   colonies in the database
 - [`getIndividInfo()`](https://ninanor.github.io/seatrackR/reference/getIndividInfo.md)
   : Retrieve info on the individuals
+- [`getLoggerModels()`](https://ninanor.github.io/seatrackR/reference/getLoggerModels.md)
+  : Get logger models
 - [`getNames()`](https://ninanor.github.io/seatrackR/reference/getNames.md)
   : Retrieve info on the registered names (people) in the database
 - [`getRingHistory()`](https://ninanor.github.io/seatrackR/reference/getRingHistory.md)

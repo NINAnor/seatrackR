@@ -51,7 +51,17 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getIndividInfo</span><span class="op">(</span>colony <span class="op">=</span> <span class="cn">NULL</span>, year <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getIndividInfo</span><span class="op">(</span></span>
+<span>  colony <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  year_tracked <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  deployment_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  retrieval_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  species <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  age <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sex <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  event_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  last_only <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -59,11 +69,39 @@
 
 
 <dl><dt id="arg-colony">colony<a class="anchor" aria-label="anchor" href="#arg-colony"></a></dt>
-<dd><p>Optional character string of colonies limit the selection to. Available choices are found in "colony_int_name", from getColonies()</p></dd>
+<dd><p>Optional vector of character string of colonies limit the selection to. Available choices are found in "colony_int_name", from getColonies()</p></dd>
 
 
-<dt id="arg-year">year<a class="anchor" aria-label="anchor" href="#arg-year"></a></dt>
-<dd><p>Optional character string of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.</p></dd>
+<dt id="arg-year-tracked">year_tracked<a class="anchor" aria-label="anchor" href="#arg-year-tracked"></a></dt>
+<dd><p>Optional vector of character strings of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.</p></dd>
+
+
+<dt id="arg-deployment-year">deployment_year<a class="anchor" aria-label="anchor" href="#arg-deployment-year"></a></dt>
+<dd><p>Optional integer of years, to limit the selection to the year a logger was deployed.</p></dd>
+
+
+<dt id="arg-retrieval-year">retrieval_year<a class="anchor" aria-label="anchor" href="#arg-retrieval-year"></a></dt>
+<dd><p>Optional integer of years, to limit the selection to the year a logger was retrieved.</p></dd>
+
+
+<dt id="arg-species">species<a class="anchor" aria-label="anchor" href="#arg-species"></a></dt>
+<dd><p>Optional vector of character strings of species to limit the selection to. Available choices are found in "species", from getSpecies()</p></dd>
+
+
+<dt id="arg-age">age<a class="anchor" aria-label="anchor" href="#arg-age"></a></dt>
+<dd><p>Optional vector of character strings of age to limit the selection to.</p></dd>
+
+
+<dt id="arg-sex">sex<a class="anchor" aria-label="anchor" href="#arg-sex"></a></dt>
+<dd><p>Optional vector of character strings of sex to limit the selection to.</p></dd>
+
+
+<dt id="arg-event-type">event_type<a class="anchor" aria-label="anchor" href="#arg-event-type"></a></dt>
+<dd><p>Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".</p></dd>
+
+
+<dt id="arg-last-only">last_only<a class="anchor" aria-label="anchor" href="#arg-last-only"></a></dt>
+<dd><p>Logical. If TRUE, only the most recent status info per individual is returned. Default is FALSE.</p></dd>
 
 </dl></div>
     <div class="section level2">

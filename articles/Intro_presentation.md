@@ -215,7 +215,7 @@ active logger sessions (logger started up, but not yet shut down.):
 ``` r
 activeSessions <- getActiveSessions()
 activeSessions
-# A tibble: 16,211 × 12
+# A tibble: 16,197 × 12
    id      session_id logger_id deployment_id retrieval_id active colony species
    <chr>   <chr>          <int>         <int>        <int> <lgl>  <chr>  <chr>  
  1 476057… C102_2015…     11600        366896           NA TRUE   Alkef… Northe…
@@ -228,7 +228,7 @@ activeSessions
  8 a6be71… B696_2017…     16034        370295           NA TRUE   Grind… Common…
  9 fdbd65… G0086_202…     41161        406512           NA TRUE   Chris… Razorb…
 10 b6e967… C3658_201…     16481        370741           NA TRUE   Hjelm… Atlant…
-# ℹ 16,201 more rows
+# ℹ 16,187 more rows
 # ℹ 4 more variables: year_tracked <chr>, individ_id <chr>,
 #   last_updated <dttm>, updated_by <chr>
 ```
@@ -349,7 +349,7 @@ fileArchive$filesInArchive
 
 ``` r
 fileArchive$filesNotInArchive
-# A tibble: 12,387 × 1
+# A tibble: 12,323 × 1
    filename             
    <chr>                
  1 B1141_2019_mk3006.trn
@@ -362,7 +362,7 @@ fileArchive$filesNotInArchive
  8 B3222_2019_mk3006.trn
  9 B3223_2019_mk3006.trn
 10 B3228_2019_mk3006.trn
-# ℹ 12,377 more rows
+# ℹ 12,313 more rows
 ```
 
 ``` r
@@ -392,7 +392,7 @@ filesSummary <- getFileArchiveSummary()
 filesSummary
 ```
 
-    # A tibble: 47,352 × 9
+    # A tibble: 47,288 × 9
       file_id session_id      colony      ring_number euring_code year_tracked
         <int> <chr>           <chr>       <chr>       <chr>       <chr>       
     1  606955 C101_2015-04-10 Alkefjellet 4182654     NOS         2015_16     
@@ -407,7 +407,7 @@ filesSummary
     3 C101             mk4083       C101_2016_mk4083.act
     4 C101             mk4083       C101_2016_mk4083.lig
     5 C104             mk4083       C104_2016_mk4083.txt
-    # ℹ 47,347 more rows
+    # ℹ 47,283 more rows
 
 ## File archive
 

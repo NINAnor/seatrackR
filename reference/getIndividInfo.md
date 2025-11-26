@@ -7,20 +7,65 @@ table and other tables
 ## Usage
 
 ``` r
-getIndividInfo(colony = NULL, year = NULL)
+getIndividInfo(
+  colony = NULL,
+  year_tracked = NULL,
+  deployment_year = NULL,
+  retrieval_year = NULL,
+  species = NULL,
+  age = NULL,
+  sex = NULL,
+  event_type = NULL,
+  last_only = FALSE
+)
 ```
 
 ## Arguments
 
 - colony:
 
-  Optional character string of colonies limit the selection to.
-  Available choices are found in "colony_int_name", from getColonies()
+  Optional vector of character string of colonies limit the selection
+  to. Available choices are found in "colony_int_name", from
+  getColonies()
 
-- year:
+- year_tracked:
 
-  Optional character string of year_tracked to limit the selection to.
-  This has the form "2020_21", see getYears for available choices.
+  Optional vector of character strings of year_tracked to limit the
+  selection to. This has the form "2020_21", see getYears for available
+  choices.
+
+- deployment_year:
+
+  Optional integer of years, to limit the selection to the year a logger
+  was deployed.
+
+- retrieval_year:
+
+  Optional integer of years, to limit the selection to the year a logger
+  was retrieved.
+
+- species:
+
+  Optional vector of character strings of species to limit the selection
+  to. Available choices are found in "species", from getSpecies()
+
+- age:
+
+  Optional vector of character strings of age to limit the selection to.
+
+- sex:
+
+  Optional vector of character strings of sex to limit the selection to.
+
+- event_type:
+
+  Optional vector of character strings of event types to limit the
+  selection to. Available choices are "Deployment" and "Retrieval".
+
+- last_only:
+
+  Logical. If TRUE, only the most recent status info per individual is
+  returned. Default is FALSE.
 
 ## Value
 
