@@ -87,7 +87,7 @@ Metadata and biometrics for each tracked individual
 
   Weight (grams) at trapping. 
 
-- #### **scull** 
+- #### **skull** 
  *type: float* 
 
   Length of head and beak (mm). 
@@ -162,7 +162,32 @@ Metadata and biometrics for each tracked individual
 
   Date when the latest information was updated. 
 
+- #### **logger_id** 
+ *type: integer* 
+
+  Unique internal identifier of logger. 
+
+- #### **logger_mount_method** 
+ *type: string* 
+
+  If a deployment event, how was the logger attached to the bird. 
+
+- #### **nest_id** 
+ *type: string* 
+
+  Identifier for the nest on which trapping event took place. 
+
+- #### **nest_latitude** 
+ *type: float* 
+
+  Latitude of nest on which trapping event took place. 
+
+- #### **nest_longitude** 
+ *type: float* 
+
+  Longitude of nest on which trapping event took place. 
+
 - #### **eventType** 
  *type: string* 
 
-  Type of event recorded for the individual, (e.g. deployment, retrieval, observation). 
+  Type of event recorded for the individual, (e.g. deployment, retrieval). 
