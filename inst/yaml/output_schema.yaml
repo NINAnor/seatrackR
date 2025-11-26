@@ -211,7 +211,7 @@ datasets:
       - name: weight
         description: Weight (grams) at trapping.
         type: float
-      - name: scull
+      - name: skull
         description: Length of head and beak (mm).
         type: float
       - name: tarsus
@@ -256,8 +256,23 @@ datasets:
       - name: latest_info_date
         description: Date when the latest information was updated.
         type: date
+      - name: logger_id
+        type: integer
+        description: Unique internal identifier of logger.
+      - name: logger_mount_method
+        type: string
+        description: If a deployment event, how was the logger attached to the bird.
+      - name: nest_id
+        type: string
+        description: Identifier for the nest on which trapping event took place.
+      - name: nest_latitude
+        type: float
+        description: Latitude of nest on which trapping event took place.
+      - name: nest_longitude
+        type: float
+        description: Longitude of nest on which trapping event took place.
       - name : eventType
-        description: Type of event recorded for the individual, (e.g. deployment, retrieval, observation).
+        description: Type of event recorded for the individual, (e.g. deployment, retrieval).
         type: string
 
   population_maps:

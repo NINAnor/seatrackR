@@ -43,6 +43,9 @@ render_schema <- function(dataset_key, dict) {
   return(all_desc)
 }
 
+description_list <- sapply(params$file_list, function(file_item) file_item$description)
+description_string <- paste(paste(description_list[1:(length(description_list) - 1)], collapse = ", "), description_list[description_list], collapse = " and ")
+
 file_list <- c()
 
 if (length(params$additional_files) > 0) {
@@ -92,11 +95,12 @@ knitr::include_graphics(image_path)
 
 ## Description
 | ___________________________________________________________________________________________________
-| This readme contains an overview of the files contained within this data package and instructions on how to use them in R. 
+| This readme contains an overview of the files contained within this data package and instructions on how to use them in R. The data package contains `r description_string` data.
 `r knitr::knit(text = additional_notes)`
 |
-| *For more information about the project, please visit [SEATRACK's website](http://www.seapop.no/en/seatrack/)*
-| *contact re. General data queries: julian.evans@nina.no*
+| *For more information about the project, please visit [SEATRACK's website](https://seatrack.net/)*
+| *contact re. General data queries: julian.evans@nina.no & Svenja.Neumann@npolar.no*
+| *contact re. For general queries about the contents and creation of this data package: julian.evans@nina.no*
 |
 `r if(has_pos) {"| *For more information about the processing of GLS data, please see this [report](https://brage.nina.no/nina-xmlui/handle/11250/2735757)*"}`
 `r if(has_pos) {"| *contact re. GLS data processing: vegard.brathen@nina.no*"}`
@@ -106,7 +110,7 @@ knitr::include_graphics(image_path)
 `r if(has_irma_pos) {"| *contact re. IRMA: arnaud.tarroux@nina.no*"}`
 | ___________________________________________________________________________________________________
 ## Package overview
-| ___________________________________________________________________________________________________
+| __________________________________________________________________________________________________
 | **The dataset consists of:**
 | **Files**:
 | -- This readme (<span style="color: #ABB2B9;">`r paste0("README_", params$request_name, "_", params$creation_date, ".html")`</span>)
@@ -123,15 +127,13 @@ knitr::include_graphics(image_path)
 |
 | **Data responsible**:
 `r knitr::kable(params$data_responsible, col.names = c("Species", "Colony", "Responsible persons"))`
-|
-| 
-| **Disclaimer**
+| ___________________________________________________________________________________________________
+## Disclaimer
+| ___________________________________________________________________________________________________
 | Data is shared under the [Agreement of Understanding](https://seatrack.net/wp-content/uploads/2024/11/SEATRACK_Agreement-of-understanding_2024.pdf).
-| Depending on the intended use of the data, include data responsible individuals early in the process. 
+| Depending on the intended use of the data, include the SEATRACK program group and data responsible individuals early in the process. 
 | Follow the guidelines in the [Agreement of Understanding](https://seatrack.net/wp-content/uploads/2024/11/SEATRACK_Agreement-of-understanding_2024.pdf).
 | ___________________________________________________________________________________________________
-
-
 ## Examples of use
 
 ```{r, show_examples, echo=FALSE, results='asis'}

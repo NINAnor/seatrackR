@@ -4,12 +4,36 @@
 \alias{getIndividInfo}
 \title{Retrieve info on the individuals}
 \usage{
-getIndividInfo(colony = NULL, year = NULL)
+getIndividInfo(
+  colony = NULL,
+  year_tracked = NULL,
+  deployment_year = NULL,
+  retrieval_year = NULL,
+  species = NULL,
+  age = NULL,
+  sex = NULL,
+  event_type = NULL,
+  last_only = FALSE
+)
 }
 \arguments{
-\item{colony}{Optional character string of colonies limit the selection to. Available choices are found in "colony_int_name", from getColonies()}
+\item{colony}{Optional vector of character string of colonies limit the selection to. Available choices are found in "colony_int_name", from getColonies()}
 
-\item{year}{Optional character string of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.}
+\item{year_tracked}{Optional vector of character strings of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.}
+
+\item{deployment_year}{Optional integer of years, to limit the selection to the year a logger was deployed.}
+
+\item{retrieval_year}{Optional integer of years, to limit the selection to the year a logger was retrieved.}
+
+\item{species}{Optional vector of character strings of species to limit the selection to. Available choices are found in "species", from getSpecies()}
+
+\item{age}{Optional vector of character strings of age to limit the selection to.}
+
+\item{sex}{Optional vector of character strings of sex to limit the selection to.}
+
+\item{event_type}{Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".}
+
+\item{last_only}{Logical. If TRUE, only the most recent status info per individual is returned. Default is FALSE.}
 }
 \value{
 Data frame.
