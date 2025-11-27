@@ -39,7 +39,7 @@ getSessionInfo <- function(
     sessions <- dplyr::left_join(sessions, pos_sessions, by = "session_id")
     sessions <- dplyr::mutate(sessions, pos_data = !is.na(pos_data))
     if (!is.null(has_pos_data)) {
-        sessions <- dplyr::filter(sessions, pos_data == pos_data)
+        sessions <- dplyr::filter(sessions, pos_data == has_pos_data)
     }
     if (!is.null(logger_deployed)) {
         sessions <- dplyr::filter(sessions, !is.na(deployment_id) == logger_deployed)
