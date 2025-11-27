@@ -106,6 +106,8 @@ Functions for reading and writing logger information to the database.
   : View the active logger sessions
 - [`getLoggerInfo()`](https://ninanor.github.io/seatrackR/reference/getLoggerInfo.md)
   : View the view info table
+- [`getSessionInfo()`](https://ninanor.github.io/seatrackR/reference/getSessionInfo.md)
+  : Retrieve logger session information
 - [`writeLoggerImport()`](https://ninanor.github.io/seatrackR/reference/writeLoggerImport.md)
   : Update the logger info table
 
