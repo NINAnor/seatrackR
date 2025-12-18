@@ -1,34 +1,22 @@
 #' Connect to seatrack database
 #'
-#' This function establishes a connection to the Seatrack database. It is a simple convenience function that uses the
-#' packages DBI and RPostgres (available from github via devtools::install_github("rstats-db/DBI") and
-#' devtools::install_github("rstats-db/DBI"). Note that connections are only accepted from a limited IP-adresses.
+#' This function establishes a connection to the Seatrack database. Note that connections are only accepted from limited IP-adresses.
+#' Ideally, credentials should first be set using `set_credentials_renviron()`. This should only have to be done once per project.
+#' After this, credentials will be loaded automatically.
 #'
-#' @param Username Character. Default = seatrack_reader
-#' @param Password Character.
+#' The function opens a connection to the database, which other functions in seatrackRdb will use.
+#' @param Username Character. If not provided, first attempts to check environmental variables then calls set_credentials_renviron()
+#' @param Password Character. If not provided, first attempts to check environmental variables then calls set_credentials_renviron()
 #' @param host Character. The host of the database. For testing purposes. There should be no need for the user to change this.
 #' @param dbname Character. Name of database, for testing purposes. Default is "seatrack" which is the production database.
-#' @param bigint How to handle 64 bit integers from the database (such as bigint). "integer", "character", "numeric", "integer64". Defaults to "integer" which is prone to overflow over '.Machine$integer.max' values. Integer64 works poorly with many base R functions.
-#' @param ... additional parameters passed to dbConnect
-#' @return A DBI connection to the Seatrack database
+#' @param bigint Character. How to handle big integers. Default is "integer". Other options are "numeric" and "character".
+#' @param ... Additional arguments passed to DBI::dbConnect()
+#' @return Assigns a connection object to the global variable `con`.
 #' @import DBI
 #' @export
-#'
-#' @note The password is stored within the R session in a somewhat hidden environment, to be used in the interface with the FTP server.
-#' It is therefore not saved in the session if you do that when closing R. The password is not stored in cleartext within the database either, and the admins have no way of seeing it.
-#' The handshake between R and the FTP server is encrypted, as well as the actual data transfers.
-#' However, it is difficult to guarantee that it is totally safe from all eventualities.
-#' For example, I don't know what would happen if R would crash and store something in a crash logfile. So best practice would be to use a separate password for
-#' Seatrack, that you don't share with other sites or applications.
-#' @examples
-#' \dontrun{
-#' connectSeatrack(Username = "testreader", Password = "testreader")
-#' DBI::dbGetQuery(con, "SELECT * FROM loggers.logging_session LIMIT 10")
-#' DBI::dbDisconnect(con)
-#' }
 #' @concept db_connection
-connectSeatrack <- function(Username = "testreader",
-                            Password = "testreader",
+connectSeatrack <- function(Username = NULL,
+                            Password = NULL,
                             host = "seatrack.nina.no",
                             dbname = "seatrack",
                             bigint = "integer",
@@ -45,6 +33,25 @@ connectSeatrack <- function(Username = "testreader",
       call. = FALSE
     )
   }
+
+  if (is.null(Username)) {
+    Username <- Sys.getenv("SEATRACK_DB_USER", NA)
+    if (is.na(Username)) {
+      Username <- NULL
+    }
+  }
+  if (is.null(Password)) {
+    Password <- Sys.getenv("SEATRACK_DB_PWD", NA)
+    if (is.na(Password)) {
+      Password <- NULL
+    }
+  }
+
+
+  set_credentials_renviron(Username, Password)
+
+  Username <- Sys.getenv("SEATRACK_DB_USER", NA)
+  Password <- Sys.getenv("SEATRACK_DB_PWD", NA)
 
 
   tmp <- DBI::dbConnect(RPostgres::Postgres(),
