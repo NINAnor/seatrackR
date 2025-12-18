@@ -40,7 +40,6 @@ listFileArchive <- function() {
   filesInStorage <- as_tibble(filesInStorage)
   names(filesInStorage) <- "filename"
 
-
   filesInDatabase <- getFileArchiveSummary()
 
   filesNotInStorage <- filesInDatabase %>%

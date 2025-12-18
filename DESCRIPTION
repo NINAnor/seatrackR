@@ -1,6 +1,6 @@
 Package: seatrackR
 Title: Interface functions for the Seatrack database
-Version: 0.0.3.7
+Version: 0.0.3.8
 Authors@R: c(person(given = "Jens", 
                     family = "Åström", 
                     email = "jens.astrom@nina.no", 
@@ -41,7 +41,9 @@ Imports:
     maps,
     terra,
     glue,
-    ncdf4
+    ncdf4,
+    getPass,
+    git2r
 Depends:
     R (>= 4.1)
 VignetteBuilder: 
