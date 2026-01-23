@@ -82,6 +82,8 @@ database.
 - [`connectSeatrack()`](https://ninanor.github.io/seatrackR/reference/connectSeatrack.md)
   [`disconnectSeatrack()`](https://ninanor.github.io/seatrackR/reference/connectSeatrack.md)
   : Connect to seatrack database
+- [`set_credentials_renviron()`](https://ninanor.github.io/seatrackR/reference/set_credentials_renviron.md)
+  : Set up SEATRACK DB credentials for this project
 
 ## activity
 
@@ -110,17 +112,6 @@ Functions for reading and writing logger information to the database.
   : Retrieve logger session information
 - [`writeLoggerImport()`](https://ninanor.github.io/seatrackR/reference/writeLoggerImport.md)
   : Update the logger info table
-
-## Data request handling
-
-Functions for managing data requests in the database.
-
-- [`create_readme()`](https://ninanor.github.io/seatrackR/reference/create_readme.md)
-  : Create SEATRACK documentation README
-- [`data_request()`](https://ninanor.github.io/seatrackR/reference/data_request.md)
-  : Get SEATRACK data request
-- [`export_data_package()`](https://ninanor.github.io/seatrackR/reference/export_data_package.md)
-  : Export a data request package
 
 ## Files
 
@@ -175,6 +166,8 @@ Example datasets included in the package.
   : samplePosdata
 - [`sampleRingHistory`](https://ninanor.github.io/seatrackR/reference/sampleRingHistory.md)
   : sampleRingHistory
+- [`schema_dict`](https://ninanor.github.io/seatrackR/reference/schema_dict.md)
+  : schema_dict
 
 ### Plotting functions
 

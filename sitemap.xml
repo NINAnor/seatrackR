@@ -18,14 +18,11 @@
 <url><loc>https://ninanor.github.io/seatrackR/reference/checkMetadata.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/checkSeatrackRVersion.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/connectSeatrack.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/reference/create_readme.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/reference/data_request.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/deleteActivity.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/deleteFiles.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/deletePositions.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/deleteRecords.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/downloadFiles.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/reference/export_data_package.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/getActiveSessions.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/getColonies.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/getFileArchiveSummary.html</loc></url>
@@ -52,6 +49,8 @@
 <url><loc>https://ninanor.github.io/seatrackR/reference/sampleMetadata.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/samplePosdata.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/sampleRingHistory.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/reference/schema_dict.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/reference/set_credentials_renviron.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/sfGmapPlot.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/uploadFiles.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/viewDatabaseModel.html</loc></url>
