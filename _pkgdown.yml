@@ -61,9 +61,6 @@ reference:
 - title: logger_info
   desc: Functions for reading and writing logger information to the database.
   contents: has_concept("logger_info")
-- title: Data request handling
-  desc: Functions for managing data requests in the database.
-  contents: has_concept("data_requests")
 - title: Files
   desc: Functions for reading and writing file information to the database and FTP
     server.

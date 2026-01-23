@@ -10,7 +10,7 @@ vignette: >
 
 ```{r, echo = FALSE, message = FALSE}
 # Load schema
-schema_dict <- yaml::read_yaml(system.file("yaml", "output_schema.yaml", package = "seatrackR"))
+schema_dict <- seatrackR::schema_dict
 
 dataset <- schema_dict$datasets[[params$key]]
 

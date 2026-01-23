@@ -55,3 +55,12 @@ NULL
 #' @usage data(sampleRingHistory)
 #' @concept data
 NULL
+
+# Fix the commenting error here too
+#' schema_dict
+#'
+#' @docType data
+#' @name schema_dict
+#' @usage data(schema_dict)
+#' @concept data
+NULL

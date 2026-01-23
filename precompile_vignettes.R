@@ -42,7 +42,7 @@ file.copy(system.file("yaml", "output_schema.yaml", package = "seatrackR"),
 
 curr_menu <- pkgdown_dict$navbar$components$data_ref$menu <- list()
 # Generate individual references from yaml
-schema_dict <- yaml::read_yaml(system.file("yaml", "output_schema.yaml", package = "seatrackR"))
+schema_dict <- seatrackR::schema_dict
 for (key in names(schema_dict$datasets)) {
     print(paste("Generating reference for", key))
     title <- paste(gsub("_", " ", tools::toTitleCase(key)), "reference")

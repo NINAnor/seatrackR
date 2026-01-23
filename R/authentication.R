@@ -9,11 +9,13 @@
 #' @param user_name Username to access the seatrack database. If not provided, user will be prompted.
 #' @param password Password to access the seatrack database If not provided, user will be prompted.
 #'
-#' @example \dontrun{
+#' @examples
+#'  \dontrun{
 #'  set_credentials_renviron() # will prompt
 #'  set_credentials_renviron("foo","bar") #only do this in the console
 #' }
 #' @export
+#' @concept db_connection
 set_credentials_renviron <- function(user_name = NULL, password = NULL) {
     if (is.null(user_name)) {
         user_name <- readline("Enter your username:")
