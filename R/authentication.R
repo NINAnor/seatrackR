@@ -31,6 +31,8 @@ set_credentials_renviron <- function(user_name = NULL, password = NULL) {
     }
     if (Sys.getenv("SEATRACK_DB_USER", "") != user_name ||
         Sys.getenv("SEATRACK_DB_PWD", "") != password) {
+        environ_lines <- environ_lines[!grepl("SEATRACK_DB_USER", environ_lines, fixed = TRUE)]
+        environ_lines <- environ_lines[!grepl("SEATRACK_DB_PWD", environ_lines, fixed = TRUE)]
         environ_lines <- c(environ_lines, paste0("SEATRACK_DB_USER = '", user_name, "'"), paste0("SEATRACK_DB_PWD = '", password, "'"))
         writeLines(unique(environ_lines), ".Renviron")
         print("Wrote credentials to .Renviron")

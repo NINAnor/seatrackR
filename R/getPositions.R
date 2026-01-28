@@ -58,9 +58,9 @@ getPositions <- function(datatype = "GLS",
                          year = NULL,
                          sessionId = NULL,
                          individId = NULL,
-                         loadGeometries = F,
-                         asTibble = T,
-                         limit = F) {
+                         loadGeometries = FALSE,
+                         asTibble = TRUE,
+                         limit = FALSE) {
   checkCon()
 
   selectSpecies <- species
