@@ -21,7 +21,7 @@ R_value_to_db_value <- function(r_value, force_type = "") {
     } else if ("character" %in% class(r_value)) {
         db_value <- glue::glue("'{r_value}'")
     } else {
-        db_value <- r_value
+        db_value <- as.character(r_value)
     }
     return(db_value)
 }
