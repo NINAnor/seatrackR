@@ -32,57 +32,70 @@ uploadFiles <- function(files = NULL,
   current_roles <- current_roles[, 1]
 
 
-  if (!("admin" %in% current_roles || "seatrack_writer" %in% current_roles)) stop("Connected user needs to be part of seatrack_writer or admin group")
-
-  if (!tibble::is_tibble(files)) files <- tibble::as_tibble(files)
+  if (!("admin" %in% current_roles || "seatrack_writer" %in% current_roles)) {
+    stop("Connected user needs to be part of seatrack_writer or admin group")
+  }
 
   fileArchive <- listFileArchive()
-
-  if (any(files$value %in% fileArchive$filesInArchive$filename) & overwrite == F) {
-    stop(paste("At least one file already exists in the file archive, use overwrite = True to overwrite"))
+  if(overwrite == FALSE){
+    to_upload <- files[!basename(files) %in% fileArchive$filesInArchive$filename]
+    print(paste(length(files) - length(to_upload) , "files already exist in the file archive and will not be uploaded, use overwrite = TRUE to overwrite"))
   } else {
-    url <- .getFtpUrl()
+    to_upload <- files
+  }
+  print(paste(length(to_upload), "files to upload"))
+  if(length(to_upload) == 0) {
+    return(invisible())
+  }
+  url <- .getFtpUrl()
 
-    writeFile <- function(x,
+  for(x in to_upload) {
+    result <- writeFile(x = x, url = url, originFolder = originFolder)
+    if(result == TRUE) {
+      print(paste("Successfully uploaded file: ", x))
+    } else {
+      print(paste("Failed to upload file: ", x))
+    }
+  }
+}
+
+
+writeFile <- function(x,
                           url,
                           originFolder = originFolder,
                           ...) {
       if (!is.null(originFolder)) {
-        filename <- paste0(originFolder, "/", x)
+        filename <- file.path(originFolder, x)
       } else {
         filename <- paste(x)
       }
 
       if (!file.exists(filename)) {
         warning(paste("Cannot find file: ", filename))
-        return(paste0("File not uploaded: ", filename))
-      } else {
-        tmp <- strsplit(url$url, "//")
-        getUrl <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2], "/", x)
+        return(FALSE)
+      } 
+        
+      tmp <- strsplit(url$url, "//")
+      getUrl <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2], "/", basename(x))
 
-        getHandle <- httr::handle(getUrl)
-        filePkg <- httr::upload_file(filename)
+      getHandle <- httr::handle(getUrl)
+      filePkg <- httr::upload_file(filename)
 
-        mess <- lapply(getUrl, factory(function(x) {
-          RCurl::ftpUpload(
-            what = filename,
-            to = getUrl,
-            asText = FALSE,
-            use.ssl = TRUE,
-            ssl.verifypeer = FALSE,
-            sslversion = 6L,
-            ...
-          )
-        }))
+      mess <- lapply(getUrl, factory(function(x) {
+        RCurl::ftpUpload(
+          what = filename,
+          to = getUrl,
+          asText = FALSE,
+          use.ssl = TRUE,
+          ssl.verifypeer = FALSE,
+          sslversion = 6L
+        )
+      }))
 
-        if (any(grepl("OK", attr(mess[[1]][[1]], "names")))) {
-          return(paste0("File uploaded: ", x))
-        }
+      if (any(grepl("OK", attr(mess[[1]][[1]], "names")))) {
+        return(TRUE)
+      }else{
+        return(FALSE)
       }
+      
     }
-
-    apply(files, 1, function(x) writeFile(x = x, url = url, originFolder = originFolder))
-
-    ## Handle messages like in download, not finished
-  }
-}

@@ -6,10 +6,7 @@
 #' @param activityData A named vector or data frame that fits the activity_raw table in schema recordings
 #' @param temperatureData A named vector or data frame that fits the temperature_raw table in schema recordings
 #' @param accelerationData A named vector or data frame that fits the acceleration_raw table in schema recordings
-#' @param append Logical, default True. If True, the line(s) is appended to the end of the table.
-#' @param overwrite Logical, default False. WARNING!! If True, the function overwrites the current content of the logger_info table.
-#'
-#' @return Data frame.
+
 #' @export
 #' @examples
 #' \dontrun{
@@ -20,11 +17,12 @@
 writeRecordings <- function(lightData = NULL,
                             activityData = NULL,
                             temperatureData = NULL,
-                            accelerationData = NULL,
-                            append = T,
-                            overwrite = FALSE) {
+                            accelerationData = NULL
+                            ) {
   checkCon()
-
+  # Hardcoding these, we don't want to accidentally overwrite data, and we want to make sure that we append to the tables instead of overwriting them
+  append <- TRUE
+  overwrite <- FALSE
   if (!is.null(lightData)) {
     DBI::dbWithTransaction(
       con,

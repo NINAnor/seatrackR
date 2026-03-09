@@ -9,6 +9,7 @@
 #' The available choices can be seen in the column `species_name_eng` in the result from the function `getSpecies()`.
 #' @param colony Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
 #' choices can be seen in the column `colony_int_name` in the result from the function `getColonies()`.
+#' @param age_deployment_class Character string. Option to limit selection to one or a set of age classes. Default is NULL.
 #' @param dataResponsible Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
 #' must conform to the name nomenclature used in the postable. Default is NULL. The available
 #' choices can be seen in the column `name` in the result from the function `getNames()`.
@@ -53,6 +54,7 @@
 getPositions <- function(datatype = "GLS",
                          species = NULL,
                          colony = NULL,
+                         age_deployment_class = NULL,
                          dataResponsible = NULL,
                          ringnumber = NULL,
                          year = NULL,
@@ -65,6 +67,7 @@ getPositions <- function(datatype = "GLS",
 
   selectSpecies <- species
   selectColony <- colony
+  selectAge <- age_deployment_class
 
   datatype <- match.arg(datatype,
     choices = c("GLS", "IRMA", "GPS")
@@ -91,6 +94,15 @@ getPositions <- function(datatype = "GLS",
     res <- res |> filter(colony %in% selectColony)
   }
 
+  if (!is.null(selectAge)) {
+    res <- res |>
+      mutate(
+        age_deployment_class = ifelse(!is.na(age_deployment) & tolower(age_deployment) %in% c("pullus", "chick", "pull", "juvenile"), "C", "A")
+      ) %>%
+      filter(age_deployment_class %in% selectAge) %>%
+      select(-age_deployment_class)
+  }
+
   if (!is.null(dataResponsible)) {
     res <- res |> filter(data_responsible %in% dataResponsible)
   }
@@ -111,7 +123,7 @@ getPositions <- function(datatype = "GLS",
     res <- res |> filter(individ_id %in% individId)
   }
 
-  if (!limit == F) {
+  if (!limit == FALSE) {
     res <- res |> head(limit)
   }
 
