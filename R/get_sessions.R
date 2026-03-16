@@ -81,7 +81,7 @@ getSessionInfo <- function(
     sessions <- dplyr::mutate(sessions, deployment_year = lubridate::year(deployment_date), retrieval_year = lubridate::year(retrieval_date))
 
     if (!is.null(posdata_filename)) {
-        sessions <- dplyr::mutate(sessions, logger_id_year = paste(logger_serial_no, retrieval_year, sep = "_"))
+        sessions <- dplyr::mutate(sessions, logger_id_year = paste(logger_serial_no, retrieval_year, logger_model, sep = "_"))
         sessions <- dplyr::filter(sessions, logger_id_year %in% posdata_filename)
     }
 

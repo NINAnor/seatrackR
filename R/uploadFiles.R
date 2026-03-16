@@ -37,65 +37,65 @@ uploadFiles <- function(files = NULL,
   }
 
   fileArchive <- listFileArchive()
-  if(overwrite == FALSE){
+  if (overwrite == FALSE) {
     to_upload <- files[!basename(files) %in% fileArchive$filesInArchive$filename]
-    print(paste(length(files) - length(to_upload) , "files already exist in the file archive and will not be uploaded, use overwrite = TRUE to overwrite"))
+    print(paste(length(files) - length(to_upload), "files already exist in the file archive and will not be uploaded, use overwrite = TRUE to overwrite"))
   } else {
     to_upload <- files
   }
   print(paste(length(to_upload), "files to upload"))
-  if(length(to_upload) == 0) {
+  if (length(to_upload) == 0) {
     return(invisible())
   }
   url <- .getFtpUrl()
 
-  for(x in to_upload) {
+  for (x in to_upload) {
     result <- writeFile(x = x, url = url, originFolder = originFolder)
-    if(result == TRUE) {
+    if (result == TRUE) {
       print(paste("Successfully uploaded file: ", x))
     } else {
       print(paste("Failed to upload file: ", x))
     }
   }
+  return(invisible())
 }
 
 
 writeFile <- function(x,
-                          url,
-                          originFolder = originFolder,
-                          ...) {
-      if (!is.null(originFolder)) {
-        filename <- file.path(originFolder, x)
-      } else {
-        filename <- paste(x)
-      }
+                      url,
+                      originFolder = originFolder,
+                      ...) {
+  if (!is.null(originFolder)) {
+    filename <- file.path(originFolder, x)
+  } else {
+    filename <- paste(x)
+  }
 
-      if (!file.exists(filename)) {
-        warning(paste("Cannot find file: ", filename))
-        return(FALSE)
-      } 
-        
-      tmp <- strsplit(url$url, "//")
-      getUrl <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2], "/", basename(x))
+  if (!file.exists(filename)) {
+    warning(paste("Cannot find file: ", filename))
+    return(FALSE)
+  }
 
-      getHandle <- httr::handle(getUrl)
-      filePkg <- httr::upload_file(filename)
+  tmp <- strsplit(url$url, "//")
+  getUrl <- paste0(tmp[[1]][1], "//", url$pwd, "@", tmp[[1]][2], "/", basename(x))
 
-      mess <- lapply(getUrl, factory(function(x) {
-        RCurl::ftpUpload(
-          what = filename,
-          to = getUrl,
-          asText = FALSE,
-          use.ssl = TRUE,
-          ssl.verifypeer = FALSE,
-          sslversion = 6L
-        )
-      }))
+  getHandle <- httr::handle(getUrl)
+  filePkg <- httr::upload_file(filename)
 
-      if (any(grepl("OK", attr(mess[[1]][[1]], "names")))) {
-        return(TRUE)
-      }else{
-        return(FALSE)
-      }
-      
-    }
+  mess <- lapply(getUrl, factory(function(x) {
+    RCurl::ftpUpload(
+      what = filename,
+      to = getUrl,
+      asText = FALSE,
+      use.ssl = TRUE,
+      ssl.verifypeer = FALSE,
+      sslversion = 6L
+    )
+  }))
+
+  if (any(grepl("OK", attr(mess[[1]][[1]], "names")))) {
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
+}
