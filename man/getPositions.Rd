@@ -8,14 +8,15 @@ getPositions(
   datatype = "GLS",
   species = NULL,
   colony = NULL,
+  age_deployment_class = NULL,
   dataResponsible = NULL,
   ringnumber = NULL,
   year = NULL,
   sessionId = NULL,
   individId = NULL,
-  loadGeometries = F,
-  asTibble = T,
-  limit = F
+  loadGeometries = FALSE,
+  asTibble = TRUE,
+  limit = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ The available choices can be seen in the column \code{species_name_eng} in the r
 
 \item{colony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
 choices can be seen in the column \code{colony_int_name} in the result from the function \code{getColonies()}.}
+
+\item{age_deployment_class}{Character string. Option to limit selection to one or a set of age classes. Default is NULL.}
 
 \item{dataResponsible}{Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
 must conform to the name nomenclature used in the postable. Default is NULL. The available
