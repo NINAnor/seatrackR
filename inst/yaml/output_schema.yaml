@@ -348,13 +348,13 @@ datasets:
         type: string
         description: Global attribute - Citation for this dataset.
   IRMA_positional_data:
-    description: FOO
+    description: Processed GLS data with missing locatations interpolated based on the Informed Random Movement Algorithm (IRMA) 
     columns:
       - name: id
         type: string
         description: Unique ID of position
       - name: date_time
-        type: Date time at which posiiton was recorded
+        type: Date time at which position was recorded
         description:
       - name: logger_id
         type: integer
@@ -411,8 +411,8 @@ datasets:
         description: Age of the bird at the time of deployment.
         type: string
       - name: age_class_irma
-        type: ??
-        description: ??
+        type: string
+        description: age_deployment reclassifed to be either "A" for an adult or "C" otherwise.
       - name: data_responsible
         description: Data owner or responsible person.
         type: string
