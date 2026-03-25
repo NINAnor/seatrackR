@@ -10,9 +10,7 @@ writeRecordings(
   lightData = NULL,
   activityData = NULL,
   temperatureData = NULL,
-  accelerationData = NULL,
-  append = T,
-  overwrite = FALSE
+  accelerationData = NULL
 )
 ```
 
@@ -37,20 +35,6 @@ writeRecordings(
 
   A named vector or data frame that fits the acceleration_raw table in
   schema recordings
-
-- append:
-
-  Logical, default True. If True, the line(s) is appended to the end of
-  the table.
-
-- overwrite:
-
-  Logical, default False. WARNING!! If True, the function overwrites the
-  current content of the logger_info table.
-
-## Value
-
-Data frame.
 
 ## Examples
 

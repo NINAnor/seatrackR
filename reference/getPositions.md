@@ -13,14 +13,15 @@ getPositions(
   datatype = "GLS",
   species = NULL,
   colony = NULL,
+  age_deployment_class = NULL,
   dataResponsible = NULL,
   ringnumber = NULL,
   year = NULL,
   sessionId = NULL,
   individId = NULL,
-  loadGeometries = F,
-  asTibble = T,
-  limit = F
+  loadGeometries = FALSE,
+  asTibble = TRUE,
+  limit = FALSE
 )
 ```
 
@@ -45,6 +46,11 @@ getPositions(
   colonies. Default is NULL. The available choices can be seen in the
   column `colony_int_name` in the result from the function
   [`getColonies()`](https://ninanor.github.io/seatrackR/reference/getColonies.md).
+
+- age_deployment_class:
+
+  Character string. Option to limit selection to one or a set of age
+  classes. Default is NULL.
 
 - dataResponsible:
 

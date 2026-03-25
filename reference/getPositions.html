@@ -55,14 +55,15 @@
 <span>  datatype <span class="op">=</span> <span class="st">"GLS"</span>,</span>
 <span>  species <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colony <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  age_deployment_class <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dataResponsible <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ringnumber <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sessionId <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  individId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  loadGeometries <span class="op">=</span> <span class="cn">F</span>,</span>
-<span>  asTibble <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>  limit <span class="op">=</span> <span class="cn">F</span></span>
+<span>  loadGeometries <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  asTibble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  limit <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -82,6 +83,10 @@ The available choices can be seen in the column <code>species_name_eng</code> in
 <dt id="arg-colony">colony<a class="anchor" aria-label="anchor" href="#arg-colony"></a></dt>
 <dd><p>Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
 choices can be seen in the column <code>colony_int_name</code> in the result from the function <code><a href="getColonies.html">getColonies()</a></code>.</p></dd>
+
+
+<dt id="arg-age-deployment-class">age_deployment_class<a class="anchor" aria-label="anchor" href="#arg-age-deployment-class"></a></dt>
+<dd><p>Character string. Option to limit selection to one or a set of age classes. Default is NULL.</p></dd>
 
 
 <dt id="arg-dataresponsible">dataResponsible<a class="anchor" aria-label="anchor" href="#arg-dataresponsible"></a></dt>
