@@ -32,7 +32,7 @@ getIndividInfo <- function(colony = NULL,
                            last_only = FALSE) {
   checkCon()
 
-  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age, age_at_deployment = age_at_deployment)
+  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age, age_deployment_class = age_at_deployment)
 
   sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 
