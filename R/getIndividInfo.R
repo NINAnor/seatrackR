@@ -8,6 +8,7 @@
 #' @param year_tracked Optional vector of character strings of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.
 #' @param species Optional vector of character strings of species to limit the selection to. Available choices are found in "species", from getSpecies()
 #' @param sex Optional vector of character strings of sex to limit the selection to.
+#' @param age_at_deployment Optional vector of character strings of age at deployment to limit the selection to. Available choices are "A" for adult and "C" for chick. Default is "A", meaning that by default only individuals that were adults at the time of deployment are included.
 #' @param age Optional vector of character strings of age to limit the selection to.
 #' @param event_type Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".
 #' @param last_only Logical. If TRUE, only the most recent status info per individual is returned. Default is FALSE.
@@ -25,28 +26,42 @@ getIndividInfo <- function(colony = NULL,
                            retrieval_year = NULL,
                            species = NULL,
                            age = NULL,
+                           age_at_deployment = "A",
                            sex = NULL,
                            event_type = NULL,
                            last_only = FALSE) {
   checkCon()
 
-  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age)
+  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age, age_at_deployment = age_at_deployment)
 
   sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 
   individs <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_info"))
+  status <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_status"))
 
   sessions <- left_join(sessions, individs, by = c("individ_id" = "individ_id"), suffix = c("", ".y"))
-  sessions <- select(sessions, -ends_with(".y"))
+  sessions <- select(sessions, -dplyr::ends_with(".y"))
+
+  db_deployments <- dplyr::tbl(con, dbplyr::in_schema("loggers", "deployment"))
+  db_deployments <- dplyr::left_join(db_deployments, status, dplyr::join_by("session_id", deployment_date == status_date), suffix = c("", ".status"))
+  db_deployments <- dplyr::mutate(db_deployments,
+    age_deployment = age,
+  )
+  sessions <- dplyr::left_join(sessions, db_deployments, by = "deployment_id", suffix = c("", ".deployment"))
+
+  sessions <- sessions |>
+    mutate(
+      age_deployment_class = ifelse(!is.na(age_deployment) & tolower(age_deployment) %in% c("pullus", "chick", "pull", "juvenile"), "C", "A")
+    )
 
   for (i in seq_along(arg_list)) {
     val_name <- names(arg_list)[i]
     value <- arg_list[[i]]
     if (!is.null(value)) {
-      sessions <- filter(sessions, !!rlang::sym(val_name) %in% value)
+      sessions <- dplyr::filter(sessions, !!rlang::sym(val_name) %in% value)
     }
   }
-  status <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_status"))
+  sessions <- select(sessions, -age_deployment_class, -age_deployment, -ends_with(".deployment"))
 
   sessions <- inner_join(sessions, status, by = c("session_id" = "session_id"))
 
@@ -118,8 +133,6 @@ getIndividInfo <- function(colony = NULL,
     by = "session_id"
   )
   retrievals <- dplyr::select(retrievals, -year_retrieved)
-
-
 
   events <- dplyr::union(deployments, retrievals)
   if (!is.null(event_type)) {

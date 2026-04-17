@@ -11,6 +11,7 @@ getIndividInfo(
   retrieval_year = NULL,
   species = NULL,
   age = NULL,
+  age_at_deployment = "A",
   sex = NULL,
   event_type = NULL,
   last_only = FALSE
@@ -28,6 +29,8 @@ getIndividInfo(
 \item{species}{Optional vector of character strings of species to limit the selection to. Available choices are found in "species", from getSpecies()}
 
 \item{age}{Optional vector of character strings of age to limit the selection to.}
+
+\item{age_at_deployment}{Optional vector of character strings of age at deployment to limit the selection to. Available choices are "A" for adult and "C" for chick. Default is "A", meaning that by default only individuals that were adults at the time of deployment are included.}
 
 \item{sex}{Optional vector of character strings of sex to limit the selection to.}
 

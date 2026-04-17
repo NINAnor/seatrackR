@@ -418,6 +418,6 @@ datasets:
         type: string
       - name: data_version
         description: Version of the processing script used.
-        type: integer
+        type: float
 
 
