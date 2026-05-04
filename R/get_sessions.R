@@ -14,7 +14,7 @@
 #' @param has_pos_data Optional boolean to filter sessions based on whether they have associated position data.
 #' @param logger_download_type Optional vector of character strings representing the download types of the loggers to filter the sessions.
 #' @param posdata_filename Optional vector of character strings representing position data filenames to filter the sessions (without extension).
-#' @param session_id Optional vector of character strings representing session IDs to filter the sessions.
+#' @param session_ids Optional vector of character strings representing session IDs to filter the sessions.
 #' @return A tibble containing the filtered logger session information.
 #' @export
 #' @concept logger_info
@@ -31,8 +31,7 @@ getSessionInfo <- function(
   logger_retrieved = NULL,
   has_pos_data = NULL,
   logger_download_type = NULL,
-  posdata_filename = NULL,
-  session_id = NULL
+  posdata_filename = NULL,  session_ids = NULL
 ) {
     sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
     postable <- dplyr::tbl(con, dbplyr::in_schema("positions", "postable_raw"))
@@ -40,8 +39,8 @@ getSessionInfo <- function(
     pos_sessions <- dplyr::mutate(pos_sessions, pos_data = TRUE)
     sessions <- dplyr::left_join(sessions, pos_sessions, by = "session_id")
     sessions <- dplyr::mutate(sessions, pos_data = !is.na(pos_data))
-    if (!is.null(session_id)) {
-        sessions <- dplyr::filter(sessions, session_id %in% session_id)
+    if (!is.null(session_ids)) {
+        sessions <- dplyr::filter(sessions, session_id %in% session_ids)
     }
     if (!is.null(has_pos_data)) {
         sessions <- dplyr::filter(sessions, pos_data == has_pos_data)

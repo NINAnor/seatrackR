@@ -63,8 +63,8 @@ writePositions <- function(datatype = "GLS",
         dbWriteTable(con,
           source_table,
           positionData[[i]],
-          row.names = F,
-          append = T
+          row.names = FALSE,
+          append = TRUE
         )
       }
 
@@ -79,5 +79,16 @@ writePositions <- function(datatype = "GLS",
     }
   )
 
-  return(paste0("All ", nRowsToImport, " lines imported."))
+  view_name <- dplyr::case_when(
+    datatype == "GLS" ~ "postable",
+    datatype == "IRMA" ~ "irma",
+    datatype == "GPS" ~ "gps"
+  )
+
+  if (refreshView) {
+    DBI::dbSendQuery(con, paste0("REFRESH MATERIALIZED VIEW positions.", view_name))
+  }
+
+  print(paste0(nRowsImported, " rows imported to positions.", source_table))
+  return()
 }
