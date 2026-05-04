@@ -18,6 +18,7 @@
 Install:
 
 ``` r
+
 devtools::install_github("NINAnor/seatrack-db/seatrackR",
   build_vignettes = True
 )
@@ -36,6 +37,7 @@ devtools::install_github("NINAnor/seatrack-db/seatrackR",
   - seatrack_metadata_writer (can alter lookup-tables)
 
 ``` r
+
 require(seatrackR)
 connectSeatrack(
   Username = "testreader",
@@ -51,6 +53,7 @@ Don’t use a sensitive password, e.g. something you use on another
 important places. I can’t swear that noone will be able to see it!
 
 ``` r
+
 changeSeatrackPassword(password = "hunter2")
 ```
 
@@ -136,6 +139,7 @@ head(BASLoggers)
 Dplyr can also do joins using “dbplyr”. A silly example:
 
 ``` r
+
 require(dbplyr)
 status <- tbl(con, in_schema("individuals", "individ_status"))
 loggers <- tbl(con, in_schema("loggers", "logger_info"))
@@ -171,6 +175,7 @@ Error in ggplot(loggerEggs, aes(eggs, producer)): could not find function "ggplo
 - The database structural model can be viewed by the command:
 
 ``` r
+
 viewDatabaseModel()
 ```
 
@@ -179,6 +184,7 @@ viewDatabaseModel()
 - The database structural model can be viewed by the command:
 
 ``` r
+
 viewDatabaseModel()
 ```
 
@@ -326,6 +332,7 @@ Error in ggplot(world): could not find function "ggplot"
 To see what the file archive contains (and not contains):
 
 ``` r
+
 fileArchive <- listFileArchive()
 ```
 
@@ -388,6 +395,7 @@ fileArchive$filesNotInDatabase
 To get a summary of the expected files and their related info:
 
 ``` r
+
 filesSummary <- getFileArchiveSummary()
 filesSummary
 ```
@@ -437,6 +445,7 @@ nrow(rost2014AvailableFiles)
 Downloading the files into a local folder.
 
 ``` r
+
 downloadFiles(
   files = rost2014AvailableFiles$filename,
   destFolder = "rostRawFiles"

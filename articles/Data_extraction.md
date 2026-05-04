@@ -20,6 +20,7 @@ To simplify the connection, use the convenience function
 packages `DBI` and `RPostgres`.
 
 ``` r
+
 require(seatrackR)
 
 connectSeatrack(Username = "testreader", Password = "testreader")
@@ -42,12 +43,14 @@ Faroe Islands (Coordinates not updated). Note that you have to load the
 `DBI` package and use its query functions.
 
 ``` r
+
 require(DBI)
 ```
 
     ## Loading required package: DBI
 
 ``` r
+
 myQuery <- "SELECT * from metadata.location
               WHERE colony_int_name = 'Faroe Islands'"
 
@@ -90,18 +93,21 @@ records to a set number of rows, and to load the position coordinates as
 a spatial object.
 
 ``` r
+
 eynhallowPositions <- getPositions(colony = "Eynhallow", loadGeometries = TRUE)
 ```
 
     ## Error in st_read(dsn = con, query = dbplyr::sql_render(res)): could not find function "st_read"
 
 ``` r
+
 eynhallowPositions
 ```
 
     ## Error: object 'eynhallowPositions' not found
 
 ``` r
+
 plot(eynhallowPositions["ring_number"])
 ```
 
@@ -116,6 +122,7 @@ all records, and will take some time. Note that this export does not
 contain information on the used and deleted uuids.
 
 ``` r
+
 newExport <- dbReadTable(con, Id(schema = "views", table = "export"))
 nrow(newExport)
 write.csv(newExport, file = "seatrack_export_2018-08-09.csv")
@@ -125,6 +132,7 @@ If you are interested in knowing separate old, deleted rows, these are
 found in the table `positions.deleted_uuid`.
 
 ``` r
+
 deletedUuids <- dbReadTable(con, Id(schema = "positions", table = "deleted_uuid"))
 nrow(deletedUuids)
 write.csv(deletedUuids, file = "deletedUuids_2018-08-09.csv")
@@ -142,12 +150,14 @@ file archive. It should contain enough information to know what the
 individual raw files contain.
 
 ``` r
+
 eynhallowFiles <- getFileArchiveSummary(selectColony = "Eynhallow")
 ```
 
     ## Error in getFileArchiveSummary(selectColony = "Eynhallow"): unused argument (selectColony = "Eynhallow")
 
 ``` r
+
 eynhallowFiles
 ```
 
@@ -159,12 +169,14 @@ This function summarizes all observation data for the individual birds.
 We can subselect the colony and year interval the bird where tracked.
 
 ``` r
+
 hornoyaIndivids <- getIndividInfo(selectColony = "Hornoya", selectYear = "2014_15")
 ```
 
     ## Error in getIndividInfo(selectColony = "Hornoya", selectYear = "2014_15"): unused arguments (selectColony = "Hornoya", selectYear = "2014_15")
 
 ``` r
+
 hornoyaIndivids
 ```
 
@@ -173,6 +185,7 @@ hornoyaIndivids
 !Note the weird duplicate records here! **TO BE FIXED**
 
 ``` r
+
 hornoyaIndivids %>%
     print(width = Inf)
 ```
@@ -186,6 +199,7 @@ displayed on the shiny app <http://view.nina.no/seatrack/>. These can be
 found like this as well.
 
 ``` r
+
 shorttable <- dbReadTable(con, Id(schema = "views", table = "shorttable"))
 shorttable
 ```
@@ -196,6 +210,7 @@ shorttable
     ## 1                          104
 
 ``` r
+
 shorttableeqfilter3 <- dbReadTable(con, Id(schema = "views", table = "shorttableeqfilter3"))
 shorttableeqfilter3
 ```
