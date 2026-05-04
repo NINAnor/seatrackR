@@ -20,7 +20,7 @@ getSessionInfo(
   has_pos_data = NULL,
   logger_download_type = NULL,
   posdata_filename = NULL,
-  session_id = NULL
+  session_ids = NULL
 )
 ```
 
@@ -91,7 +91,7 @@ getSessionInfo(
   Optional vector of character strings representing position data
   filenames to filter the sessions (without extension).
 
-- session_id:
+- session_ids:
 
   Optional vector of character strings representing session IDs to
   filter the sessions.
