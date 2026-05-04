@@ -17,7 +17,8 @@ getSessionInfo(
   logger_retrieved = NULL,
   has_pos_data = NULL,
   logger_download_type = NULL,
-  posdata_filename = NULL
+  posdata_filename = NULL,
+  session_id = NULL
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ getSessionInfo(
 \item{logger_download_type}{Optional vector of character strings representing the download types of the loggers to filter the sessions.}
 
 \item{posdata_filename}{Optional vector of character strings representing position data filenames to filter the sessions (without extension).}
+
+\item{session_id}{Optional vector of character strings representing session IDs to filter the sessions.}
 }
 \value{
 A tibble containing the filtered logger session information.
