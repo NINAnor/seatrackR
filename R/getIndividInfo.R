@@ -12,6 +12,7 @@
 #' @param age Optional vector of character strings of age to limit the selection to.
 #' @param event_type Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".
 #' @param last_only Logical. If TRUE, only the most recent status info per individual is returned. Default is FALSE.
+#' @param session_id Optional vector of character strings of session_id to limit the selection to.
 #' @return Data frame.
 #' @export
 #' @examples
@@ -29,10 +30,11 @@ getIndividInfo <- function(colony = NULL,
                            age_at_deployment = "A",
                            sex = NULL,
                            event_type = NULL,
-                           last_only = FALSE) {
+                           last_only = FALSE,
+                           session_id = NULL) {
   checkCon()
 
-  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age, age_deployment_class = age_at_deployment)
+  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age, age_deployment_class = age_at_deployment, session_id = session_id)
 
   sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 

@@ -1,6 +1,6 @@
 Package: seatrackR
 Title: Interface functions for the Seatrack database
-Version: 0.0.3.92
+Version: 0.0.3.93
 Authors@R: c(person(given = "Jens", 
                     family = "Åström", 
                     email = "jens.astrom@nina.no", 

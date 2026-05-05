@@ -14,7 +14,8 @@ getIndividInfo(
   age_at_deployment = "A",
   sex = NULL,
   event_type = NULL,
-  last_only = FALSE
+  last_only = FALSE,
+  session_id = NULL
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ getIndividInfo(
 \item{event_type}{Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".}
 
 \item{last_only}{Logical. If TRUE, only the most recent status info per individual is returned. Default is FALSE.}
+
+\item{session_id}{Optional vector of character strings of session_id to limit the selection to.}
 }
 \value{
 Data frame.
