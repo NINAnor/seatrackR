@@ -17,7 +17,8 @@ getIndividInfo(
   age_at_deployment = "A",
   sex = NULL,
   event_type = NULL,
-  last_only = FALSE
+  last_only = FALSE,
+  session_id = NULL
 )
 ```
 
@@ -74,6 +75,11 @@ getIndividInfo(
 
   Logical. If TRUE, only the most recent status info per individual is
   returned. Default is FALSE.
+
+- session_id:
+
+  Optional vector of character strings of session_id to limit the
+  selection to.
 
 ## Value
 
