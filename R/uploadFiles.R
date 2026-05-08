@@ -39,7 +39,9 @@ uploadFiles <- function(files = NULL,
   fileArchive <- listFileArchive()
   if (overwrite == FALSE) {
     to_upload <- files[!basename(files) %in% fileArchive$filesInArchive$filename]
-    print(paste(length(files) - length(to_upload), "files already exist in the file archive and will not be uploaded, use overwrite = TRUE to overwrite"))
+    if (length(files) - length(to_upload) > 0) {
+      print(paste(length(files) - length(to_upload), "files already exist in the file archive and will not be uploaded, use overwrite = TRUE to overwrite"))
+    }
   } else {
     to_upload <- files
   }
