@@ -24,10 +24,10 @@ uploadFiles <- function(files = NULL,
 
   current_user <- DBI::dbGetQuery(con, "SELECT current_user")
 
-  current_roles <- DBI::dbGetQuery(con, paste0("select rolname from pg_user
-                                                    join pg_auth_members on (pg_user.usesysid=pg_auth_members.member)
-                                                    join pg_roles on (pg_roles.oid=pg_auth_members.roleid)
-                                                    where
+  current_roles <- DBI::dbGetQuery(con, paste0("SELECT rolname FROM pg_user
+                                                    JOIN pg_auth_members on (pg_user.usesysid=pg_auth_members.member)
+                                                    JOIN pg_roles on (pg_roles.oid=pg_auth_members.roleid)
+                                                    WHERE
                                                     pg_user.usename = '", current_user, "'"))
   current_roles <- current_roles[, 1]
 
@@ -89,7 +89,7 @@ writeFile <- function(x,
       what = filename,
       to = getUrl,
       asText = FALSE,
-      use.ssl = TRUE,
+      use.ssl = FALSE,
       ssl.verifypeer = FALSE,
       sslversion = 6L
     )

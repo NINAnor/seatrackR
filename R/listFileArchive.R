@@ -26,9 +26,9 @@ listFileArchive <- function() {
   curl::handle_setopt(list_files,
     ftp_use_epsv = TRUE,
     dirlistonly = TRUE,
-    use_ssl = T,
-    ssl_verifyhost = F,
-    ssl_verifypeer = F,
+    use_ssl = FALSE,
+    ssl_verifyhost = FALSE,
+    ssl_verifypeer = FALSE,
     sslversion = 6L
   )
 
