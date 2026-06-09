@@ -54,7 +54,7 @@ listFileArchive <- function() {
         date_object <- as.POSIXct(date_string, format = date_format)
         data.frame(
           size = trimws(x[2]),
-          date = date_format,
+          date = date_object,
           filename = trimws(x[4]),
           stringsAsFactors = FALSE
         )
