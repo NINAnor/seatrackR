@@ -10,13 +10,13 @@
 ## Citation
 
 Åström J, Evans J (2026). *seatrackR: Interface functions for the
-Seatrack database*. R package version 0.0.3.94,
+Seatrack database*. R package version 0.0.3.95,
 <https://ninanor.github.io/seatrackR/>.
 
     @Manual{,
       title = {seatrackR: Interface functions for the Seatrack database},
       author = {Jens Åström and Julian Evans},
       year = {2026},
-      note = {R package version 0.0.3.94},
+      note = {R package version 0.0.3.95},
       url = {https://ninanor.github.io/seatrackR/},
     }
