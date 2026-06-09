@@ -60,6 +60,7 @@ getPositions <- function(datatype = "GLS",
                          year = NULL,
                          sessionId = NULL,
                          individId = NULL,
+                         project = "SEATRACK",
                          loadGeometries = FALSE,
                          asTibble = TRUE,
                          limit = FALSE) {
@@ -121,6 +122,14 @@ getPositions <- function(datatype = "GLS",
 
   if (!is.null(individId)) {
     res <- res |> filter(individ_id %in% individId)
+  }
+
+  if (!is.null(project)) {
+    # join to allocation table
+    allocation <- tbl(con, dbplyr::in_schema("loggers", "allocation"))
+    res <- res |> left_join(select(allocation, session_id, project), by = "session_id")
+    res <- res |> filter(project %in% {{ project }})
+    res <- res |> select(-"project")
   }
 
   if (!limit == FALSE) {

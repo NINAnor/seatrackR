@@ -27,7 +27,8 @@ getRecordings <- function(type = NULL,
                           colony = NULL,
                           species = NULL,
                           yearTracked = NULL,
-                          asTibble = T) {
+                          project = "SEATRACK",
+                          asTibble = TRUE) {
   checkCon()
 
   type <- match.arg(type, choices = c("light", "temperature", "activity", "accelerometer"))
@@ -67,6 +68,13 @@ getRecordings <- function(type = NULL,
     yearFilter <- as.character(yearTracked)
     temp <- temp |>
       filter(year_tracked %in% yearFilter)
+  }
+
+  if (!is.null(project)) {
+    allocation <- tbl(con, dbplyr::in_schema("loggers", "allocation"))
+    temp <- temp |> left_join(select(allocation, session_id, project), by = "session_id")
+    temp <- temp |>
+      filter(project %in% {{ project }})
   }
 
   if (type == "light") {

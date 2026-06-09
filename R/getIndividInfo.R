@@ -29,12 +29,13 @@ getIndividInfo <- function(colony = NULL,
                            age = NULL,
                            age_at_deployment = "A",
                            sex = NULL,
+                           project = "SEATRACK",
                            event_type = NULL,
                            last_only = FALSE,
                            session_id = NULL) {
   checkCon()
 
-  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age, age_deployment_class = age_at_deployment, session_id = session_id)
+  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age, age_deployment_class = age_at_deployment, session_id = session_id, project = project)
 
   sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 
@@ -56,6 +57,9 @@ getIndividInfo <- function(colony = NULL,
       age_deployment_class = ifelse(!is.na(age_deployment) & tolower(age_deployment) %in% c("pullus", "chick", "pull", "juvenile"), "C", "A")
     )
 
+  allocation <- tbl(con, dbplyr::in_schema("loggers", "allocation"))
+  sessions <- dplyr::left_join(sessions, select(allocation, session_id, project), by = "session_id", suffix = c("", ".allocation"))
+
   for (i in seq_along(arg_list)) {
     val_name <- names(arg_list)[i]
     value <- arg_list[[i]]
@@ -63,7 +67,7 @@ getIndividInfo <- function(colony = NULL,
       sessions <- dplyr::filter(sessions, !!rlang::sym(val_name) %in% value)
     }
   }
-  sessions <- select(sessions, -age_deployment_class, -age_deployment, -ends_with(".deployment"))
+  sessions <- select(sessions, -age_deployment_class, -age_deployment, -ends_with(".deployment"), -project)
 
   sessions <- inner_join(sessions, status, by = c("session_id" = "session_id"), suffix = c("", ".y"))
 
