@@ -58,7 +58,8 @@
 <span>  colony <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  species <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  yearTracked <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  asTibble <span class="op">=</span> <span class="cn">T</span></span>
+<span>  project <span class="op">=</span> <span class="st">"SEATRACK"</span>,</span>
+<span>  asTibble <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -88,6 +89,10 @@
 
 <dt id="arg-yeartracked">yearTracked<a class="anchor" aria-label="anchor" href="#arg-yeartracked"></a></dt>
 <dd><p>subset data for a character vector of year_tracked (e.g. 2014_15)</p></dd>
+
+
+<dt id="arg-project">project<a class="anchor" aria-label="anchor" href="#arg-project"></a></dt>
+<dd><p>subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.</p></dd>
 
 
 <dt id="arg-astibble">asTibble<a class="anchor" aria-label="anchor" href="#arg-astibble"></a></dt>

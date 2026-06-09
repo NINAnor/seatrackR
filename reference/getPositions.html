@@ -61,6 +61,7 @@
 <span>  year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sessionId <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  individId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  project <span class="op">=</span> <span class="st">"SEATRACK"</span>,</span>
 <span>  loadGeometries <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  asTibble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  limit <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -105,11 +106,15 @@ choices can be found in the <code>year_tracked</code> column in the result form 
 
 
 <dt id="arg-sessionid">sessionId<a class="anchor" aria-label="anchor" href="#arg-sessionid"></a></dt>
-<dd><p>Character string of session ids to limit the selection to.</p></dd>
+<dd><p>Character string. Option to limit selection to one or a set of session ids. Default is NULL.</p></dd>
 
 
 <dt id="arg-individid">individId<a class="anchor" aria-label="anchor" href="#arg-individid"></a></dt>
-<dd><p>Character string of individ ids to limit the selection to.</p></dd>
+<dd><p>Character string. Option to limit selection to one or a set of individual ids. Default is NULL.</p></dd>
+
+
+<dt id="arg-project">project<a class="anchor" aria-label="anchor" href="#arg-project"></a></dt>
+<dd><p>subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.</p></dd>
 
 
 <dt id="arg-loadgeometries">loadGeometries<a class="anchor" aria-label="anchor" href="#arg-loadgeometries"></a></dt>

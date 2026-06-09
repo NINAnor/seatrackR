@@ -19,6 +19,7 @@ getPositions(
   year = NULL,
   sessionId = NULL,
   individId = NULL,
+  project = "SEATRACK",
   loadGeometries = FALSE,
   asTibble = TRUE,
   limit = FALSE
@@ -74,11 +75,19 @@ getPositions(
 
 - sessionId:
 
-  Character string of session ids to limit the selection to.
+  Character string. Option to limit selection to one or a set of session
+  ids. Default is NULL.
 
 - individId:
 
-  Character string of individ ids to limit the selection to.
+  Character string. Option to limit selection to one or a set of
+  individual ids. Default is NULL.
+
+- project:
+
+  subset data for a character vector of project names. Default is
+  "SEATRACK", which means that by default only data from the SEATRACK
+  project are included. Set to NULL to include all projects.
 
 - loadGeometries:
 

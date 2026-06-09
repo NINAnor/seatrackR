@@ -16,6 +16,7 @@ getIndividInfo(
   age = NULL,
   age_at_deployment = "A",
   sex = NULL,
+  project = "SEATRACK",
   event_type = NULL,
   last_only = FALSE,
   session_id = NULL
@@ -65,6 +66,12 @@ getIndividInfo(
 - sex:
 
   Optional vector of character strings of sex to limit the selection to.
+
+- project:
+
+  subset data for a character vector of project names. Default is
+  "SEATRACK", which means that by default only data from the SEATRACK
+  project are included. Set to NULL to include all projects.
 
 - event_type:
 
