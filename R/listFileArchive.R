@@ -44,9 +44,17 @@ listFileArchive <- function() {
     lapply(
       stringr::str_match_all(size_date_and_name, "^([[:space:][:digit:]]+)[[:space:]]+(.+?[[:space:]].+?[[:space:]].+)[[:space:]]+(.*)$"),
       function(x) {
+        date_string <- trimws(x[3])
+        has_time <- grepl(":", date_string)
+        if (has_time) {
+          date_format <- "%b %e %H:%M"
+        } else {
+          date_format <- "%b %e  %Y"
+        }
+        date_object <- as.POSIXct(date_string, format = date_format)
         data.frame(
           size = trimws(x[2]),
-          date = as.Date(trimws(x[3]), format = "%b %e  %Y"),
+          date = date_format,
           filename = trimws(x[4]),
           stringsAsFactors = FALSE
         )
