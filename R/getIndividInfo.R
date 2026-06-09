@@ -3,13 +3,14 @@
 #' This is a convenience function that pulls together various info on the files in the individuals.individ_info and individuals.individ_status table and other tables
 #'
 #' @param colony Optional vector of character string of colonies limit the selection to. Available choices are found in "colony_int_name", from getColonies()
+#' @param year_tracked Optional vector of character strings of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.
 #' @param deployment_year Optional integer of years, to limit the selection to the year a logger was deployed.
 #' @param retrieval_year Optional integer of years, to limit the selection to the year a logger was retrieved.
-#' @param year_tracked Optional vector of character strings of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.
 #' @param species Optional vector of character strings of species to limit the selection to. Available choices are found in "species", from getSpecies()
-#' @param sex Optional vector of character strings of sex to limit the selection to.
-#' @param age_at_deployment Optional vector of character strings of age at deployment to limit the selection to. Available choices are "A" for adult and "C" for chick. Default is "A", meaning that by default only individuals that were adults at the time of deployment are included.
 #' @param age Optional vector of character strings of age to limit the selection to.
+#' @param age_at_deployment Optional vector of character strings of age at deployment to limit the selection to. Available choices are "A" for adult and "C" for chick. Default is "A", meaning that by default only individuals that were adults at the time of deployment are included.
+#' @param sex Optional vector of character strings of sex to limit the selection to.
+#' @param project subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.
 #' @param event_type Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".
 #' @param last_only Logical. If TRUE, only the most recent status info per individual is returned. Default is FALSE.
 #' @param session_id Optional vector of character strings of session_id to limit the selection to.

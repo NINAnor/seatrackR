@@ -14,6 +14,7 @@ getPositions(
   year = NULL,
   sessionId = NULL,
   individId = NULL,
+  project = "SEATRACK",
   loadGeometries = FALSE,
   asTibble = TRUE,
   limit = FALSE
@@ -39,9 +40,11 @@ choices can be seen in the column \code{name} in the result from the function \c
 \item{year}{Character string. Option to limit selection to one or more years that the logging sessions span. The availablle
 choices can be found in the \code{year_tracked} column in the result form the \code{getYears} function.}
 
-\item{sessionId}{Character string of session ids to limit the selection to.}
+\item{sessionId}{Character string. Option to limit selection to one or a set of session ids. Default is NULL.}
 
-\item{individId}{Character string of individ ids to limit the selection to.}
+\item{individId}{Character string. Option to limit selection to one or a set of individual ids. Default is NULL.}
+
+\item{project}{subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.}
 
 \item{loadGeometries}{Boolean. If True, the returned object is a simple features object with only rows of eqfilter == TRUE. Default = False}
 

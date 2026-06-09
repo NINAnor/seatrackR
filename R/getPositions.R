@@ -16,6 +16,9 @@
 #' @param ringnumber Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.
 #' @param year Character string. Option to limit selection to one or more years that the logging sessions span. The availablle
 #' choices can be found in the `year_tracked` column in the result form the `getYears` function.
+#' @param sessionId Character string. Option to limit selection to one or a set of session ids. Default is NULL.
+#' @param individId Character string. Option to limit selection to one or a set of individual ids. Default is NULL.
+#' @param project subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.
 #' @param loadGeometries Boolean. If True, the returned object is a simple features object with only rows of eqfilter == TRUE. Default = False
 #' @param limit FALSE or Integer. Limit the number of rows returned to this number. Default = False.
 #' @param asTibble Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is a little bit slower, but also here forces the timezone to "UTC".

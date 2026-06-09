@@ -8,6 +8,7 @@
 #' @param colony subset data for a character vector of colony names (International names)
 #' @param species subset data for a character vector of species
 #' @param yearTracked subset data for a character vector of year_tracked (e.g. 2014_15)
+#' @param project subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.
 #' @param asTibble Boolean. Return result as Tibble instead of lazy query? Tibble is slower, but also here forces the timezone to "UTC".
 #'
 #' @return A Lazy query or optionally a Tibble.

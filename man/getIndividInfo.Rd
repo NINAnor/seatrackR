@@ -13,6 +13,7 @@ getIndividInfo(
   age = NULL,
   age_at_deployment = "A",
   sex = NULL,
+  project = "SEATRACK",
   event_type = NULL,
   last_only = FALSE,
   session_id = NULL
@@ -34,6 +35,8 @@ getIndividInfo(
 \item{age_at_deployment}{Optional vector of character strings of age at deployment to limit the selection to. Available choices are "A" for adult and "C" for chick. Default is "A", meaning that by default only individuals that were adults at the time of deployment are included.}
 
 \item{sex}{Optional vector of character strings of sex to limit the selection to.}
+
+\item{project}{subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.}
 
 \item{event_type}{Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".}
 
