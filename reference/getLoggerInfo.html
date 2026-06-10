@@ -54,14 +54,41 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getLoggerInfo</span><span class="op">(</span>asTibble <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getLoggerInfo</span><span class="op">(</span></span>
+<span>  species <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colony <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  session <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  individ_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  project <span class="op">=</span> <span class="st">"SEATRACK"</span>,</span>
+<span>  asTibble <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-astibble">asTibble<a class="anchor" aria-label="anchor" href="#arg-astibble"></a></dt>
+<dl><dt id="arg-species">species<a class="anchor" aria-label="anchor" href="#arg-species"></a></dt>
+<dd><p>Optional vector of character strings of species to limit the selection to.</p></dd>
+
+
+<dt id="arg-colony">colony<a class="anchor" aria-label="anchor" href="#arg-colony"></a></dt>
+<dd><p>Optional vector of character strings of colonies limit the selection to.</p></dd>
+
+
+<dt id="arg-session">session<a class="anchor" aria-label="anchor" href="#arg-session"></a></dt>
+<dd><p>Optional vector of character strings of session_id to limit the selection to.</p></dd>
+
+
+<dt id="arg-individ-id">individ_id<a class="anchor" aria-label="anchor" href="#arg-individ-id"></a></dt>
+<dd><p>Optional vector of character strings of individ_id to limit the selection to.</p></dd>
+
+
+<dt id="arg-project">project<a class="anchor" aria-label="anchor" href="#arg-project"></a></dt>
+<dd><p>subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.</p></dd>
+
+
+<dt id="arg-astibble">asTibble<a class="anchor" aria-label="anchor" href="#arg-astibble"></a></dt>
 <dd><p>Boolean. Return result as Tibble instead of Lazy query? Tibble is slower, but also here forces the timezone to "UTC".</p></dd>
 
 </dl></div>
