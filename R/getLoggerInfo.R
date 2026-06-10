@@ -12,10 +12,19 @@
 #' loggerInfo <- getLoggerInfo()
 #' }
 #' @concept logger_info
-getLoggerInfo <- function(asTibble = T) {
+getLoggerInfo <- function(species = NULL, colony = NULL, session = NULL, individ_id = NULL, project = "SEATRACK", asTibble = TRUE) {
   checkCon()
 
   res <- dplyr::tbl(con, dbplyr::in_schema("views", "logger_info"))
+  arg_list <- list(species = species, colony = colony, session_id = session, individ_id = individ_id, project = project)
+  for (i in seq_along(arg_list)) {
+    val_name <- names(arg_list)[i]
+    value <- arg_list[[i]]
+    if (!is.null(value)) {
+      res <- dplyr::filter(res, !!rlang::sym(val_name) %in% value)
+    }
+  }
+
 
   if (asTibble) {
     res <- res %>% dplyr::collect()
