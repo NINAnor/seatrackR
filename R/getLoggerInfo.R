@@ -2,8 +2,12 @@
 #'
 #' This is a convenience function that reads from the view "views.logger_info". Note that there also exists a table "loggers.logger_info" with more limited information.
 #' #'
+#' @param species Optional vector of character strings of species to limit the selection to.
+#' @param colony Optional vector of character strings of colonies limit the selection to.
+#' @param session Optional vector of character strings of session_id to limit the selection to.
+#' @param individ_id Optional vector of character strings of individ_id to limit the selection to.
+#' @param project subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.
 #' @param asTibble Boolean. Return result as Tibble instead of Lazy query? Tibble is slower, but also here forces the timezone to "UTC".
-#'
 #' @return Lazy query or optionally a Tibble.
 #' @export
 #' @examples
