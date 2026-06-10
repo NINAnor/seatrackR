@@ -20,7 +20,7 @@ getLoggerInfo <- function(species = NULL, colony = NULL, session = NULL, individ
   checkCon()
 
   res <- dplyr::tbl(con, dbplyr::in_schema("views", "logger_info"))
-  arg_list <- list(species = species, colony = colony, session_id = session, individ_id = individ_id, project = project)
+  arg_list <- list(deployment_species = species, colony = colony, session_id = session, individ_id = individ_id, project = project)
   for (i in seq_along(arg_list)) {
     val_name <- names(arg_list)[i]
     value <- arg_list[[i]]
