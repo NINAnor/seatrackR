@@ -19,7 +19,8 @@ getPositions(
   year = NULL,
   sessionId = NULL,
   individId = NULL,
-  project = "SEATRACK",
+  project = NULL,
+  exclude_embargoed = TRUE,
   loadGeometries = FALSE,
   asTibble = TRUE,
   limit = FALSE
@@ -85,9 +86,12 @@ getPositions(
 
 - project:
 
-  subset data for a character vector of project names. Default is
-  "SEATRACK", which means that by default only data from the SEATRACK
-  project are included. Set to NULL to include all projects.
+  subset data for a character vector of project names. Default is NULL.
+
+- exclude_embargoed:
+
+  Boolean. If TRUE, records from embargoed projects are not included.
+  Default is TRUE.
 
 - loadGeometries:
 

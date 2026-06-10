@@ -12,7 +12,8 @@ getLoggerInfo(
   colony = NULL,
   session = NULL,
   individ_id = NULL,
-  project = "SEATRACK",
+  project = NULL,
+  exclude_embargoed = TRUE,
   asTibble = TRUE
 )
 ```
@@ -41,9 +42,12 @@ getLoggerInfo(
 
 - project:
 
-  subset data for a character vector of project names. Default is
-  "SEATRACK", which means that by default only data from the SEATRACK
-  project are included. Set to NULL to include all projects.
+  subset data for a character vector of project names. Default is NULL.
+
+- exclude_embargoed:
+
+  Boolean. If TRUE, records from embargoed projects are not included.
+  Default is TRUE.
 
 - asTibble:
 

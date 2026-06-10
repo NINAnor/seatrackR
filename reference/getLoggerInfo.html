@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3.95</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3.96</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +59,8 @@
 <span>  colony <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  session <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  individ_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  project <span class="op">=</span> <span class="st">"SEATRACK"</span>,</span>
+<span>  project <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  exclude_embargoed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  asTibble <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -85,7 +86,11 @@
 
 
 <dt id="arg-project">project<a class="anchor" aria-label="anchor" href="#arg-project"></a></dt>
-<dd><p>subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.</p></dd>
+<dd><p>subset data for a character vector of project names. Default is NULL.</p></dd>
+
+
+<dt id="arg-exclude-embargoed">exclude_embargoed<a class="anchor" aria-label="anchor" href="#arg-exclude-embargoed"></a></dt>
+<dd><p>Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.</p></dd>
 
 
 <dt id="arg-astibble">asTibble<a class="anchor" aria-label="anchor" href="#arg-astibble"></a></dt>
