@@ -8,6 +8,8 @@
 #' @param colony subset data for a character vector of colony names (International names)
 #' @param species subset data for a character vector of species
 #' @param yearTracked subset data for a character vector of year_tracked (e.g. 2014_15)
+#' @param project subset data for a character vector of project names. Default is NULL.
+#' @param exclude_embargoed Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.
 #' @param asTibble Boolean. Return result as Tibble instead of lazy query? Tibble is slower, but also here forces the timezone to "UTC".
 #'
 #' @return A Lazy query or optionally a Tibble.
@@ -27,7 +29,9 @@ getRecordings <- function(type = NULL,
                           colony = NULL,
                           species = NULL,
                           yearTracked = NULL,
-                          asTibble = T) {
+                          project = NULL,
+                          exclude_embargoed = TRUE,
+                          asTibble = TRUE) {
   checkCon()
 
   type <- match.arg(type, choices = c("light", "temperature", "activity", "accelerometer"))
@@ -67,6 +71,19 @@ getRecordings <- function(type = NULL,
     yearFilter <- as.character(yearTracked)
     temp <- temp |>
       filter(year_tracked %in% yearFilter)
+  }
+
+  if (!is.null(project)||exclude_embargoed) {
+    allocation <- tbl(con, dbplyr::in_schema("loggers", "allocation"))
+    temp <- temp |> left_join(select(allocation, session_id, project), by = "session_id")
+    if(!is.null(project)) {
+      temp <- temp |>
+        filter(project %in% {{ project }})
+    }
+    if(exclude_embargoed) {
+      temp <- temp |>
+        filter(!grepl("_embargoed", project, fixed = FALSE))
+    }
   }
 
   if (type == "light") {

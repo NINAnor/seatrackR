@@ -25,20 +25,45 @@ listFileArchive <- function() {
 
   curl::handle_setopt(list_files,
     ftp_use_epsv = TRUE,
-    dirlistonly = TRUE,
-    use_ssl = T,
-    ssl_verifyhost = F,
-    ssl_verifypeer = F,
+    dirlistonly = FALSE,
+    use_ssl = FALSE,
+    ssl_verifyhost = FALSE,
+    ssl_verifypeer = FALSE,
     sslversion = 6L
   )
 
   con <- curl::curl(url = dest, "r", handle = list_files)
 
-  filesInStorage <- readLines(con)
+  curl_output <- readLines(con)
   close(con)
 
+  size_date_and_name <- sub("^[[:alnum:][:punct:][:blank:]]{43}", "", curl_output)
+
+  filesInStorage <- do.call(
+    rbind.data.frame,
+    lapply(
+      stringr::str_match_all(size_date_and_name, "^([[:space:][:digit:]]+)[[:space:]]+(.+?[[:space:]].+?[[:space:]].+)[[:space:]]+(.*)$"),
+      function(x) {
+        date_string <- trimws(x[3])
+        has_time <- grepl(":", date_string)
+        if (has_time) {
+          date_format <- "%b %e %H:%M"
+        } else {
+          date_format <- "%b %e  %Y"
+        }
+        date_object <- as.POSIXct(date_string, format = date_format)
+        data.frame(
+          size = trimws(x[2]),
+          date = date_object,
+          filename = trimws(x[4]),
+          stringsAsFactors = FALSE
+        )
+      }
+    )
+  )
+
+  filesInStorage <- filesInStorage[order(filesInStorage$date), ]
   filesInStorage <- as_tibble(filesInStorage)
-  names(filesInStorage) <- "filename"
 
   filesInDatabase <- getFileArchiveSummary()
 

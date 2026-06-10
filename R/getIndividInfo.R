@@ -3,13 +3,15 @@
 #' This is a convenience function that pulls together various info on the files in the individuals.individ_info and individuals.individ_status table and other tables
 #'
 #' @param colony Optional vector of character string of colonies limit the selection to. Available choices are found in "colony_int_name", from getColonies()
+#' @param year_tracked Optional vector of character strings of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.
 #' @param deployment_year Optional integer of years, to limit the selection to the year a logger was deployed.
 #' @param retrieval_year Optional integer of years, to limit the selection to the year a logger was retrieved.
-#' @param year_tracked Optional vector of character strings of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.
 #' @param species Optional vector of character strings of species to limit the selection to. Available choices are found in "species", from getSpecies()
-#' @param sex Optional vector of character strings of sex to limit the selection to.
-#' @param age_at_deployment Optional vector of character strings of age at deployment to limit the selection to. Available choices are "A" for adult and "C" for chick. Default is "A", meaning that by default only individuals that were adults at the time of deployment are included.
 #' @param age Optional vector of character strings of age to limit the selection to.
+#' @param age_at_deployment Optional vector of character strings of age at deployment to limit the selection to. Available choices are "A" for adult and "C" for chick. Default is "A", meaning that by default only individuals that were adults at the time of deployment are included.
+#' @param sex Optional vector of character strings of sex to limit the selection to.
+#' @param project subset data for a character vector of project names. Default is NULL.
+#' @param exclude_embargoed Boolean. If TRUE, records from embaroed projects are not included. Default is TRUE.
 #' @param event_type Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".
 #' @param last_only Logical. If TRUE, only the most recent status info per individual is returned. Default is FALSE.
 #' @param session_id Optional vector of character strings of session_id to limit the selection to.
@@ -29,12 +31,14 @@ getIndividInfo <- function(colony = NULL,
                            age = NULL,
                            age_at_deployment = "A",
                            sex = NULL,
+                           project = NULL,
+                           exclude_embargoed = TRUE,
                            event_type = NULL,
                            last_only = FALSE,
                            session_id = NULL) {
   checkCon()
 
-  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age, age_deployment_class = age_at_deployment, session_id = session_id)
+  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age, age_deployment_class = age_at_deployment, session_id = session_id, project = project)
 
   sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 
@@ -56,6 +60,9 @@ getIndividInfo <- function(colony = NULL,
       age_deployment_class = ifelse(!is.na(age_deployment) & tolower(age_deployment) %in% c("pullus", "chick", "pull", "juvenile"), "C", "A")
     )
 
+  allocation <- tbl(con, dbplyr::in_schema("loggers", "allocation"))
+  sessions <- dplyr::left_join(sessions, select(allocation, session_id, project), by = "session_id", suffix = c("", ".allocation"))
+
   for (i in seq_along(arg_list)) {
     val_name <- names(arg_list)[i]
     value <- arg_list[[i]]
@@ -63,7 +70,10 @@ getIndividInfo <- function(colony = NULL,
       sessions <- dplyr::filter(sessions, !!rlang::sym(val_name) %in% value)
     }
   }
-  sessions <- select(sessions, -age_deployment_class, -age_deployment, -ends_with(".deployment"))
+  if (exclude_embargoed) {
+    sessions <- dplyr::filter(sessions, !grepl("_embargoed", project, fixed = FALSE))
+  }
+  sessions <- select(sessions, -age_deployment_class, -age_deployment, -ends_with(".deployment"), -project)
 
   sessions <- inner_join(sessions, status, by = c("session_id" = "session_id"), suffix = c("", ".y"))
 

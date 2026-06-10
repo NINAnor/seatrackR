@@ -4,9 +4,29 @@
 \alias{getLoggerInfo}
 \title{View the view info table}
 \usage{
-getLoggerInfo(asTibble = T)
+getLoggerInfo(
+  species = NULL,
+  colony = NULL,
+  session = NULL,
+  individ_id = NULL,
+  project = NULL,
+  exclude_embargoed = TRUE,
+  asTibble = TRUE
+)
 }
 \arguments{
+\item{species}{Optional vector of character strings of species to limit the selection to.}
+
+\item{colony}{Optional vector of character strings of colonies limit the selection to.}
+
+\item{session}{Optional vector of character strings of session_id to limit the selection to.}
+
+\item{individ_id}{Optional vector of character strings of individ_id to limit the selection to.}
+
+\item{project}{subset data for a character vector of project names. Default is NULL.}
+
+\item{exclude_embargoed}{Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.}
+
 \item{asTibble}{Boolean. Return result as Tibble instead of Lazy query? Tibble is slower, but also here forces the timezone to "UTC".}
 }
 \value{

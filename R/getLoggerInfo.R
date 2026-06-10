@@ -2,8 +2,13 @@
 #'
 #' This is a convenience function that reads from the view "views.logger_info". Note that there also exists a table "loggers.logger_info" with more limited information.
 #' #'
+#' @param species Optional vector of character strings of species to limit the selection to.
+#' @param colony Optional vector of character strings of colonies limit the selection to.
+#' @param session Optional vector of character strings of session_id to limit the selection to.
+#' @param individ_id Optional vector of character strings of individ_id to limit the selection to.
+#' @param project subset data for a character vector of project names. Default is NULL.
+#' @param exclude_embargoed Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.
 #' @param asTibble Boolean. Return result as Tibble instead of Lazy query? Tibble is slower, but also here forces the timezone to "UTC".
-#'
 #' @return Lazy query or optionally a Tibble.
 #' @export
 #' @examples
@@ -12,10 +17,22 @@
 #' loggerInfo <- getLoggerInfo()
 #' }
 #' @concept logger_info
-getLoggerInfo <- function(asTibble = T) {
+getLoggerInfo <- function(species = NULL, colony = NULL, session = NULL, individ_id = NULL, project = NULL, exclude_embargoed = TRUE, asTibble = TRUE) {
   checkCon()
 
   res <- dplyr::tbl(con, dbplyr::in_schema("views", "logger_info"))
+  arg_list <- list(deployment_species = species, colony = colony, session_id = session, individ_id = individ_id, project = project)
+  for (i in seq_along(arg_list)) {
+    val_name <- names(arg_list)[i]
+    value <- arg_list[[i]]
+    if (!is.null(value)) {
+      res <- dplyr::filter(res, !!rlang::sym(val_name) %in% value)
+    }
+  }
+  if (exclude_embargoed) {
+    res <- dplyr::filter(res, !grepl("_embargoed", project, fixed = FALSE))
+  }
+
 
   if (asTibble) {
     res <- res %>% dplyr::collect()
