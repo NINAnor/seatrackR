@@ -18,7 +18,8 @@
 #' choices can be found in the `year_tracked` column in the result form the `getYears` function.
 #' @param sessionId Character string. Option to limit selection to one or a set of session ids. Default is NULL.
 #' @param individId Character string. Option to limit selection to one or a set of individual ids. Default is NULL.
-#' @param project subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.
+#' @param project subset data for a character vector of project names. Default is NULL.
+#' @param exclude_embargoed Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.
 #' @param loadGeometries Boolean. If True, the returned object is a simple features object with only rows of eqfilter == TRUE. Default = False
 #' @param limit FALSE or Integer. Limit the number of rows returned to this number. Default = False.
 #' @param asTibble Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is a little bit slower, but also here forces the timezone to "UTC".
@@ -63,7 +64,8 @@ getPositions <- function(datatype = "GLS",
                          year = NULL,
                          sessionId = NULL,
                          individId = NULL,
-                         project = "SEATRACK",
+                         project = NULL,
+                         exclude_embargoed = TRUE,
                          loadGeometries = FALSE,
                          asTibble = TRUE,
                          limit = FALSE) {
@@ -127,11 +129,16 @@ getPositions <- function(datatype = "GLS",
     res <- res |> filter(individ_id %in% individId)
   }
 
-  if (!is.null(project)) {
+  if (!is.null(project) || exclude_embargoed) {
     # join to allocation table
     allocation <- tbl(con, dbplyr::in_schema("loggers", "allocation"))
     res <- res |> left_join(select(allocation, session_id, project), by = "session_id")
-    res <- res |> filter(project %in% {{ project }})
+    if (!is.null(project)) {
+      res <- res |> filter(project %in% {{ project }})
+    }
+    if (exclude_embargoed) {
+      res <- res |> filter(!grepl("_embargoed", project, fixed = FALSE))
+    }
     res <- res |> select(-"project")
   }
 

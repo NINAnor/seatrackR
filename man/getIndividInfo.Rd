@@ -13,7 +13,8 @@ getIndividInfo(
   age = NULL,
   age_at_deployment = "A",
   sex = NULL,
-  project = "SEATRACK",
+  project = NULL,
+  exclude_embargoed = TRUE,
   event_type = NULL,
   last_only = FALSE,
   session_id = NULL
@@ -36,7 +37,9 @@ getIndividInfo(
 
 \item{sex}{Optional vector of character strings of sex to limit the selection to.}
 
-\item{project}{subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.}
+\item{project}{subset data for a character vector of project names. Default is NULL.}
+
+\item{exclude_embargoed}{Boolean. If TRUE, records from embaroed projects are not included. Default is TRUE.}
 
 \item{event_type}{Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".}
 

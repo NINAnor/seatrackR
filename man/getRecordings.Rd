@@ -11,7 +11,8 @@ getRecordings(
   colony = NULL,
   species = NULL,
   yearTracked = NULL,
-  project = "SEATRACK",
+  project = NULL,
+  exclude_embargoed = TRUE,
   asTibble = TRUE
 )
 }
@@ -28,7 +29,9 @@ getRecordings(
 
 \item{yearTracked}{subset data for a character vector of year_tracked (e.g. 2014_15)}
 
-\item{project}{subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.}
+\item{project}{subset data for a character vector of project names. Default is NULL.}
+
+\item{exclude_embargoed}{Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.}
 
 \item{asTibble}{Boolean. Return result as Tibble instead of lazy query? Tibble is slower, but also here forces the timezone to "UTC".}
 }

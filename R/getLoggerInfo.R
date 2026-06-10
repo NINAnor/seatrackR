@@ -6,7 +6,8 @@
 #' @param colony Optional vector of character strings of colonies limit the selection to.
 #' @param session Optional vector of character strings of session_id to limit the selection to.
 #' @param individ_id Optional vector of character strings of individ_id to limit the selection to.
-#' @param project subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.
+#' @param project subset data for a character vector of project names. Default is NULL.
+#' @param exclude_embargoed Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.
 #' @param asTibble Boolean. Return result as Tibble instead of Lazy query? Tibble is slower, but also here forces the timezone to "UTC".
 #' @return Lazy query or optionally a Tibble.
 #' @export
@@ -16,7 +17,7 @@
 #' loggerInfo <- getLoggerInfo()
 #' }
 #' @concept logger_info
-getLoggerInfo <- function(species = NULL, colony = NULL, session = NULL, individ_id = NULL, project = "SEATRACK", asTibble = TRUE) {
+getLoggerInfo <- function(species = NULL, colony = NULL, session = NULL, individ_id = NULL, project = NULL, exclude_embargoed = TRUE, asTibble = TRUE) {
   checkCon()
 
   res <- dplyr::tbl(con, dbplyr::in_schema("views", "logger_info"))
@@ -27,6 +28,9 @@ getLoggerInfo <- function(species = NULL, colony = NULL, session = NULL, individ
     if (!is.null(value)) {
       res <- dplyr::filter(res, !!rlang::sym(val_name) %in% value)
     }
+  }
+  if (exclude_embargoed) {
+    res <- dplyr::filter(res, !grepl("_embargoed", project, fixed = FALSE))
   }
 
 

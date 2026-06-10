@@ -9,7 +9,8 @@ getLoggerInfo(
   colony = NULL,
   session = NULL,
   individ_id = NULL,
-  project = "SEATRACK",
+  project = NULL,
+  exclude_embargoed = TRUE,
   asTibble = TRUE
 )
 }
@@ -22,7 +23,9 @@ getLoggerInfo(
 
 \item{individ_id}{Optional vector of character strings of individ_id to limit the selection to.}
 
-\item{project}{subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.}
+\item{project}{subset data for a character vector of project names. Default is NULL.}
+
+\item{exclude_embargoed}{Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.}
 
 \item{asTibble}{Boolean. Return result as Tibble instead of Lazy query? Tibble is slower, but also here forces the timezone to "UTC".}
 }

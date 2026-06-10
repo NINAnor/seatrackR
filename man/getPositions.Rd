@@ -14,7 +14,8 @@ getPositions(
   year = NULL,
   sessionId = NULL,
   individId = NULL,
-  project = "SEATRACK",
+  project = NULL,
+  exclude_embargoed = TRUE,
   loadGeometries = FALSE,
   asTibble = TRUE,
   limit = FALSE
@@ -44,7 +45,9 @@ choices can be found in the \code{year_tracked} column in the result form the \c
 
 \item{individId}{Character string. Option to limit selection to one or a set of individual ids. Default is NULL.}
 
-\item{project}{subset data for a character vector of project names. Default is "SEATRACK", which means that by default only data from the SEATRACK project are included. Set to NULL to include all projects.}
+\item{project}{subset data for a character vector of project names. Default is NULL.}
+
+\item{exclude_embargoed}{Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.}
 
 \item{loadGeometries}{Boolean. If True, the returned object is a simple features object with only rows of eqfilter == TRUE. Default = False}
 
