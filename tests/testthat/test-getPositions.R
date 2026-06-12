@@ -1,6 +1,7 @@
 test_that("getPostions() returns data", {
 
   skip_if_no_test_db()
+  DBI::dbSendStatement(con, "REFRESH MATERIALIZED VIEW positions.postable;")
   pos_data <- getPositions(limit = 10)
 
 expected <- c(
@@ -38,6 +39,8 @@ expected <- c(
     updated_by = "character",
     date_time_downloaded = "POSIXct"
   )
+
+  
 
   # Check column names and order
   expect_identical(names(pos_data), names(expected))
