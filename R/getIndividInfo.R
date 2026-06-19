@@ -70,6 +70,19 @@ getIndividInfo <- function(colony = NULL,
     )
   }
 
+  if (check_db_version() >= 36) {
+    individs2 <- individs %>%
+      dplyr::mutate(id_chr = as.character(id))
+
+    max_date <- status %>%
+      dplyr::mutate(info_id_chr = as.character(info_id)) %>%
+      dplyr::group_by(info_id_chr) %>%
+      dplyr::summarise(latest_info_date = max(status_date))
+
+    individs <- individs2 %>%
+      dplyr::left_join(max_date, by = dplyr::join_by(id_chr == info_id_chr))
+  }
+
   sessions <- left_join(sessions, individs, by = c("individ_id" = "individ_id"), suffix = c("", ".y"))
   sessions <- select(sessions, -dplyr::ends_with(".y"))
 

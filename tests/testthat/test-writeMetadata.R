@@ -103,6 +103,11 @@ test_that("writeMetdata can write data", {
             con,
             "DELETE FROM loggers.logger_info WHERE logger_serial_no LIKE 'testLogger_%'"
         )
+        # Delete remaining individual records
+        DBI::dbExecute(
+            con,
+            "DELETE FROM individuals.individ_info WHERE ring_number LIKE 'TEST_RING_%'"
+        )
     })
 
     sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
@@ -191,11 +196,20 @@ test_that("writeMetdata can write data", {
         # Check that the individual ID is still the same
         filtered_info <- dplyr::filter(info, id == individual_id)%>% dplyr::collect()
         # But the latest ring is stored
-        expect_true(new_ring_shutdown$ring_number == filtered_info$individ_id)
-        
+        expect_true(new_ring_shutdown$ring_number == filtered_info$ring_number)
+        expect_false(paste(new_ring_shutdown$ring_number, new_ring_shutdown$euring_code, sep = "_") == filtered_info$individ_id)
     })
 
     # Shutdowns
+    test_that("Sessions can be shut down", {
+        test_shutdown_data <- test_startup_data[1:2, ]
+        test_shutdown_data$download_date <- test_shutdown_data$shutdown_date <- test_shutdown_data$starttime_gmt + 1
+        test_shutdown_data$download_type <- "Successfully downloaded"
+        test_shutdown_data$shutdown_session <- TRUE
+        test_shutdown_data$intended_species <- NA
+        logger_result <- writeLoggerImport(test_shutdown_data)
+        expect_true(logger_result)
+    })
 
     test_that("Non deployment/retrieval statuses can fall within a session", {
         if(check_db_version() < 41){
@@ -222,10 +236,25 @@ test_that("writeMetdata can write data", {
         expect_true(filtered_info$sex == "female")
     })
 
-    test_that("Non deployment/retrieval statuses can fall outside a session", {})
+    test_that("Non deployment/retrieval statuses can fall outside a session", {
+        outside_status <- test_deployment_data[1, ]
+        outside_status$logger_model_deployed <- NA
+        outside_status$logger_id_deployed <- NA
+        outside_status$sex <- "female"
+        outside_status$sexing_method <- "dna"
+        outside_status$date <- outside_status$date + 4
+        status_results <- writeMetadata(outside_status)
+        expect_true(status_results)
+
+        # check the status exists and is in the correct session
+        filtered_status <- dplyr::filter(status, sex == "female", ring_number == outside_status$ring_number)
+        expect_true(dplyr::tally(filtered_status) %>% dplyr::pull(n) == 1)
+        status_session_id <- dplyr::pull(filtered_status, session_id)
+        expect_true(is.na(status_session_id))
+        # check the info has the latest sex
+        individual_id <- dplyr::distinct(filtered_status, info_id) %>% dplyr::pull(info_id)
+        filtered_info <- dplyr::filter(info, id == individual_id) %>% dplyr::collect()
+        expect_true(filtered_info$sex == "female")
+    })
 })
-# Test shutdown
 
-# Test ring change
-
-# Test non deployment/retrieval status
