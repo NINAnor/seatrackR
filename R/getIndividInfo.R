@@ -133,7 +133,7 @@ getIndividInfo <- function(colony = NULL,
     latest_sex = sex,
     latest_sexing_method = sexing_method,
     latest_age = age,
-    latest_info_date.info,
+    latest_info_date = latest_info_date.info,
     deployment_id,
     retrieval_id
   )
