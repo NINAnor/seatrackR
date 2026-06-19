@@ -19,11 +19,18 @@
 writeMetadata <- function(metadata) {
   checkCon()
 
-  DBI::dbSendQuery(con, "SET search_path TO imports, public")
+  DBI::dbExecute(con, "SET search_path TO imports, public")
+
   DBI::dbWithTransaction(
     con,
     {
-      DBI::dbWriteTable(con, "metadata_import", metadata, append = T, overwrite = F)
+      DBI::dbWriteTable(
+        con,
+        "metadata_import",
+        metadata,
+        append = TRUE,
+        overwrite = FALSE
+      )
     }
   )
 }
