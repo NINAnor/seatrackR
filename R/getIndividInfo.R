@@ -54,7 +54,7 @@ getIndividInfo <- function(colony = NULL,
   status <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_status"))
 
   # Support new way of handling people.
-  if (check_db_version()>=34) {
+  if (check_db_version() >= 34) {
     status_people <- dplyr::tbl(con, dbplyr::in_schema("individuals", "status_people"))
     people <- dplyr::tbl(con, dbplyr::in_schema("metadata", "people"))
 
