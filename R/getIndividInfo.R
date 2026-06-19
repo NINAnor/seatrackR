@@ -38,12 +38,37 @@ getIndividInfo <- function(colony = NULL,
                            session_id = NULL) {
   checkCon()
 
-  arg_list <- list(colony = colony, year_tracked = year_tracked, species = species, age = age, age_deployment_class = age_at_deployment, session_id = session_id, project = project)
+  arg_list <- list(
+    colony = colony,
+    year_tracked = year_tracked,
+    species = species,
+    age = age,
+    age_deployment_class = age_at_deployment,
+    session_id = session_id,
+    project = project
+  )
 
   sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
 
   individs <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_info"))
   status <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_status"))
+
+  # Support new way of handling people.
+  if (!"data_responsible" %in% colnames(status)) {
+    status_people <- dplyr::tbl(con, dbplyr::in_schema("individuals", "status_people"))
+    people <- dplyr::tbl(con, dbplyr::in_schema("metadata", "people"))
+
+    status_people <- dplyr::left_join(status_people, people, by = "person_id")
+    status_people <- dplyr::group_by(status_people, status_id) %>%
+      dbplyr::window_order(person_order) %>%
+      dplyr::summarise(data_responsible = stringr::str_flatten(
+        full_name,
+        collapse = "_"
+      ))
+    status <- dplyr::left_join(status, status_people,
+      by = join_by(id == status_id)
+    )
+  }
 
   sessions <- left_join(sessions, individs, by = c("individ_id" = "individ_id"), suffix = c("", ".y"))
   sessions <- select(sessions, -dplyr::ends_with(".y"))
@@ -76,6 +101,7 @@ getIndividInfo <- function(colony = NULL,
 
   sessions <- dplyr::left_join(sessions, status, by = "session_id", suffix = c(".session", ".status"), multiple = "all")
   sessions <- dplyr::left_join(sessions, individs, by = "individ_id", suffix = c(".session", ".info"), multiple = "all")
+
 
   query <- select(sessions, session_id,
     colony,
@@ -175,7 +201,7 @@ getIndividInfo <- function(colony = NULL,
     ring_number,
     status_date
   )
-  
+
   out <- dplyr::select(out, -id, -logger_fate, -attribute_name)
 
   return_query <- tibble::as_tibble(out)
