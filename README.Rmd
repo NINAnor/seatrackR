@@ -24,7 +24,6 @@ library(badger)
 ```
 `r badge_lifecycle("stable")` 
 `r badge_devel("NINAnor/seatrackR", "blue")`
-`r badge_cran_release("seatrackR")`
 `r badge_github_actions("NINAnor/seatrackR")` 
 `r badge_code_size("NINAnor/seatrackR")`
 <!-- adapt this after creating a release and registering it at zenodo -->

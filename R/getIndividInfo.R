@@ -98,9 +98,9 @@ getIndividInfo <- function(colony = NULL,
   if (exclude_embargoed) {
     sessions <- dplyr::filter(sessions, !grepl("_embargoed", project, fixed = FALSE))
   }
-  sessions <- select(sessions, -age_deployment_class, -age_deployment, -ends_with(".deployment"), -project)
 
-  sessions <- inner_join(sessions, status, by = c("session_id" = "session_id"), suffix = c("", ".y"))
+  sessions <- dplyr::left_join(sessions, status, by = "session_id", suffix = c(".session", ".status"), multiple = "all")
+  sessions <- dplyr::left_join(sessions, individs, by = "individ_id", suffix = c(".session", ".info"), multiple = "all")
 
 
   query <- select(sessions, session_id,
@@ -113,27 +113,27 @@ getIndividInfo <- function(colony = NULL,
     species = species,
     subspecies = subspecies,
     morph = morph,
-    status_age = age,
-    status_sex = sex,
+    status_age = age.status,
+    status_sex = sex.status,
     status_sexing_method = sexing_method,
     status_date,
-    weight,
-    skull = scull,
-    tarsus,
-    wing,
-    breeding_stage,
-    eggs,
-    chicks,
-    hatching_success,
-    breeding_success,
-    breeding_success_criterion,
-    data_responsible = data_responsible,
-    back_on_nest,
-    comment,
-    latest_sex = sex.y,
-    latest_sexing_method = sexing_method.y,
-    latest_age = age.y,
-    latest_info_date,
+    weight = weight.status,
+    skull = scull.status,
+    tarsus = tarsus.status,
+    wing = wing.status,
+    breeding_stage = breeding_stage.status,
+    eggs = eggs.status,
+    chicks = chicks.status,
+    hatching_success = hatching_success.status,
+    breeding_success = breeding_success.status,
+    breeding_success_criterion = breeding_success_criterion.status,
+    data_responsible = data_responsible.status,
+    back_on_nest = back_on_nest.status,
+    comment = comment.status,
+    latest_sex = sex,
+    latest_sexing_method = sexing_method,
+    latest_age = age,
+    latest_info_date = latest_info_date.info,
     deployment_id,
     retrieval_id
   )
@@ -179,10 +179,9 @@ getIndividInfo <- function(colony = NULL,
   events <- dplyr::select(events, -dplyr::starts_with("deployment"), -dplyr::starts_with("retrieval"))
   query <- dplyr::select(query, -retrieval_id, -deployment_id)
 
-  out <- dplyr::inner_join(query, events,
-    by = c(
-      "session_id" = "session_id",
-      "status_date" = "status_date"
+  out <- dplyr::left_join(query, events, by = dplyr::join_by(
+      "session_id" == "session_id",
+      "status_date" == "status_date"
     ),
     suffix = c("", ".y"),
   )
