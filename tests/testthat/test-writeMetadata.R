@@ -117,6 +117,10 @@ test_that("writeMetdata can write data", {
     status <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_status"))
     info <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_info"))
 
+    if (check_db_version() >= 45) {
+        observation <- dplyr::tbl(con, dbplyr::in_schema("individuals", "observation"))
+    }
+
     test_that("writeMetdata can start loggers", {
         logger_result <- writeLoggerImport(test_startup_data)
         expect_true(logger_result)
@@ -142,6 +146,7 @@ test_that("writeMetdata can write data", {
 
     test_that("writeMetdata can retrieve loggers", {
         regular_shutdown <- test_deployment_data[1, ]
+        regular_shutdown$date <- regular_shutdown$date + 10
         regular_shutdown$logger_model_retrieved <- regular_shutdown$logger_model_deployed
         regular_shutdown$logger_model_deployed <- NA
         regular_shutdown$logger_id_retrieved <- regular_shutdown$logger_id_deployed
@@ -159,10 +164,11 @@ test_that("writeMetdata can write data", {
     })
 
     test_that("writeMetdata can retrieve sessions with a ring change", {
-        if(check_db_version() < 41){
+        if(check_db_version() < 45){
             testthat::skip()
         }
         new_ring_shutdown <- test_deployment_data[2, ]
+        new_ring_shutdown$date <- new_ring_shutdown$date + 10
         new_ring_shutdown$logger_model_retrieved <- new_ring_shutdown$logger_model_deployed
         new_ring_shutdown$logger_model_deployed <- NA
         new_ring_shutdown$logger_id_retrieved <- new_ring_shutdown$logger_id_deployed
@@ -203,7 +209,7 @@ test_that("writeMetdata can write data", {
     # Shutdowns
     test_that("Sessions can be shut down", {
         test_shutdown_data <- test_startup_data[1:2, ]
-        test_shutdown_data$download_date <- test_shutdown_data$shutdown_date <- test_shutdown_data$starttime_gmt + 1
+        test_shutdown_data$download_date <- test_shutdown_data$shutdown_date <- test_shutdown_data$starttime_gmt + 11
         test_shutdown_data$download_type <- "Successfully downloaded"
         test_shutdown_data$shutdown_session <- TRUE
         test_shutdown_data$intended_species <- NA
@@ -212,10 +218,11 @@ test_that("writeMetdata can write data", {
     })
 
     test_that("Non deployment/retrieval statuses can fall within a session", {
-        if(check_db_version() < 41){
+        if(check_db_version() < 45){
             testthat::skip()
         }
         regular_status <- test_deployment_data[3, ]
+        regular_status$date <- regular_status$date + 1
         regular_status$logger_model_deployed <- NA
         regular_status$logger_id_deployed <- NA
         regular_status$sex <- "female"
@@ -226,7 +233,12 @@ test_that("writeMetdata can write data", {
         #check the status exists and is in the correct session
         filtered_status <- dplyr::filter(status, sex == "female", ring_number == regular_status$ring_number)
         expect_true(dplyr::tally(filtered_status) %>% dplyr::pull(n) == 1)
-        status_session_id <- dplyr::pull(filtered_status, session_id)
+        status_id <- dplyr::pull(filtered_status, status_id)
+
+        observation <- dplyr::filter(observation, status_id == {{ status_id }})
+        expect_true(dplyr::tally(observation) %>% dplyr::pull(n) == 1)
+        status_session_id <- dplyr::pull(observation, session_id)
+
         deployment_date <- dplyr::filter(sessions, session_id == status_session_id) %>% 
             dplyr::left_join(deployments, by = dplyr::join_by(deployment_id == deployment_id))%>%dplyr::pull(deployment_date)
         expect_true(deployment_date == test_deployment_data[3, ]$date)
@@ -237,19 +249,27 @@ test_that("writeMetdata can write data", {
     })
 
     test_that("Non deployment/retrieval statuses can fall outside a session", {
-        outside_status <- test_deployment_data[1, ]
+        if (check_db_version() < 45) {
+            testthat::skip()
+        }
+        outside_status <- test_deployment_data[2, ]
         outside_status$logger_model_deployed <- NA
         outside_status$logger_id_deployed <- NA
         outside_status$sex <- "female"
         outside_status$sexing_method <- "dna"
-        outside_status$date <- outside_status$date + 4
+        outside_status$date <- outside_status$date + 15
         status_results <- writeMetadata(outside_status)
         expect_true(status_results)
 
         # check the status exists and is in the correct session
         filtered_status <- dplyr::filter(status, sex == "female", ring_number == outside_status$ring_number)
         expect_true(dplyr::tally(filtered_status) %>% dplyr::pull(n) == 1)
-        status_session_id <- dplyr::pull(filtered_status, session_id)
+        status_id <- dplyr::pull(filtered_status, status_id)
+
+        observation <- dplyr::filter(observation, status_id == {{ status_id }})
+        expect_true(dplyr::tally(observation) %>% dplyr::pull(n) == 1)
+        status_session_id <- dplyr::pull(observation, session_id)
+
         expect_true(is.na(status_session_id))
         # check the info has the latest sex
         individual_id <- dplyr::distinct(filtered_status, info_id) %>% dplyr::pull(info_id)

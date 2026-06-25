@@ -321,3 +321,4 @@ new_get_indiv_info <- function(colony = NULL,
 
   return(dplyr::collect(individ_info_view))
 }
+
