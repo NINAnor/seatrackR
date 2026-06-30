@@ -1,10 +1,8 @@
 test_that("getPostions() returns data", {
-
   skip_if_no_test_db()
-  DBI::dbSendStatement(con, "REFRESH MATERIALIZED VIEW positions.postable;")
   pos_data <- getPositions(limit = 10)
 
-expected <- c(
+  expected <- c(
     id = "character",
     date_time = "POSIXct",
     logger_id = "integer",
@@ -40,7 +38,6 @@ expected <- c(
     date_time_downloaded = "POSIXct"
   )
 
-  
 
   # Check column names and order
   expect_identical(names(pos_data), names(expected))
@@ -48,7 +45,6 @@ expected <- c(
   # Check column classes
   actual <- vapply(pos_data, function(x) class(x)[1], character(1))
   expect_identical(actual, expected)
-
 })
 
 # Should also check that the various filters work

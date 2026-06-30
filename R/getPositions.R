@@ -153,8 +153,12 @@ getPositions <- function(datatype = "GLS",
         filter(eqfilter)
     }
 
-    res <- st_read(dsn = con, query = dbplyr::sql_render(res))
-
+    DBI::dbWithTransaction(
+      con,
+      {
+        res <- st_read(dsn = con, query = dbplyr::sql_render(res))
+      }
+    )
     res <- res |>
       mutate(date_time = lubridate::force_tz(date_time,
         tzone = "UTC"
@@ -164,7 +168,12 @@ getPositions <- function(datatype = "GLS",
       select(-geom)
 
     if (asTibble) {
-      res <- res |> dplyr::collect()
+      DBI::dbWithTransaction(
+        con,
+        {
+          res <- res |> dplyr::collect()
+        }
+      )
       res <- res |>
         mutate(date_time = lubridate::force_tz(date_time,
           tzone = "UTC"

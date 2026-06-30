@@ -1,4 +1,4 @@
-test_that("writeMetdata can write data", {
+test_that("Can write data", {
     skip_if_no_test_db()
     set.seed(123)
 
@@ -39,8 +39,6 @@ test_that("writeMetdata can write data", {
         logger_status = rep("individual caught (first deployment)", 5),
         logger_model_retrieved = NA_character_,
         logger_id_retrieved = NA_character_,
-
-
         logger_model_deployed = test_startup_data$logger_model,
         logger_id_deployed = test_startup_data$logger_serial_no,
         species = test_startup_data$intended_species,
@@ -60,8 +58,6 @@ test_that("writeMetdata can write data", {
         breeding_success = NA,
         breeding_success_criterion = NA_character_,
         country = rep("norway", 5),
-
-
         colony = test_startup_data$intended_location,
         colony_latitude = rep(65.202, 5),
         colony_longitude = rep(10.995, 5),
@@ -90,9 +86,61 @@ test_that("writeMetdata can write data", {
         stringsAsFactors = FALSE
     )
 
+
+    n_per_logger <- 100
+
+    test_gls_data <-
+        do.call(
+            rbind,
+            lapply(seq_len(nrow(test_startup_data)), function(i) {
+                startup_date <- test_startup_data$starttime_gmt[i]
+                deployment_date <- test_deployment_data$date[i]
+                logger <- test_startup_data$logger_serial_no[i]
+
+                session_id <- paste(
+                    logger,
+                    format(startup_date, "%Y-%m-%d"),
+                    sep = "_"
+                )
+
+                date_time <- seq(
+                    from = as.POSIXct(deployment_date, tz = "UTC") + 12 * 3600,
+                    by = "12 hours",
+                    length.out = n_per_logger
+                )
+                twl_type <- rep(c(1, 2), length.out = n_per_logger)
+
+                lon_raw <- 12 + cumsum(rnorm(n_per_logger, 0.1, 0.05))
+                lat_raw <- 65 + cumsum(rnorm(n_per_logger, 0.1, 0.05))
+
+                data.frame(
+                    session_id = rep(session_id, n_per_logger),
+                    date_time = date_time,
+                    lon_raw = lon_raw,
+                    lat_raw = lat_raw,
+                    lon = lon_raw,
+                    lat = lat_raw,
+                    eqfilter = NA,
+                    tfirst = date_time - 3600,
+                    tsecond = date_time + 3600,
+                    twl_type = twl_type,
+                    sun = -3.25,
+                    light_threshold = 1,
+                    analyzer = test_startup_data$started_by[i],
+                    stringsAsFactors = FALSE
+                )
+            })
+        )
+
     # Ensure cleanup happens even if test fails
     withr::defer({
         print("Clean up test records")
+
+        DBI::dbExecute(
+            con,
+            "DELETE FROM positions.postable_raw WHERE session_id LIKE 'testLogger_%'"
+        )
+
         # Delete deployment records
         DBI::dbExecute(
             con,
@@ -112,7 +160,6 @@ test_that("writeMetdata can write data", {
             con,
             "DELETE FROM metadata.logger_models WHERE model LIKE 'TEST_MODEL_%'"
         )
-
     })
 
     sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
@@ -180,7 +227,7 @@ test_that("writeMetdata can write data", {
     })
 
     test_that("writeMetdata can retrieve sessions with a ring change", {
-        if(check_db_version() < 45){
+        if (check_db_version() < 45) {
             testthat::skip()
         }
         new_ring_shutdown <- test_deployment_data[2, ]
@@ -191,7 +238,7 @@ test_that("writeMetdata can write data", {
         new_ring_shutdown$logger_id_deployed <- NA
 
         new_ring_shutdown$old_ring_number <- new_ring_shutdown$ring_number
-        new_ring_shutdown$ring_number <- paste0(new_ring_shutdown$ring_number,"_NEW")
+        new_ring_shutdown$ring_number <- paste0(new_ring_shutdown$ring_number, "_NEW")
 
         retrieval_result <- writeMetadata(new_ring_shutdown)
         expect_true(retrieval_result)
@@ -206,17 +253,18 @@ test_that("writeMetdata can write data", {
         expect_true(dplyr::tally(filtered_sessions) %>% pull(n) == 1)
 
         # Check that both rings exist in the status table under the same ID
-        filtered_status <- dplyr::filter(status, 
+        filtered_status <- dplyr::filter(
+            status,
             ring_number %in% c(new_ring_shutdown$old_ring_number, new_ring_shutdown$ring_number)
-            ) 
+        )
         expect_true(dplyr::tally(filtered_status) %>% pull(n) == 2)
-        
-        individual_id <- dplyr::distinct(filtered_status, info_id)%>% dplyr::pull(info_id)
+
+        individual_id <- dplyr::distinct(filtered_status, info_id) %>% dplyr::pull(info_id)
 
         expect_true(length(individual_id) == 1)
-        
+
         # Check that the individual ID is still the same
-        filtered_info <- dplyr::filter(info, id == individual_id)%>% dplyr::collect()
+        filtered_info <- dplyr::filter(info, id == individual_id) %>% dplyr::collect()
         # But the latest ring is stored
         expect_true(new_ring_shutdown$ring_number == filtered_info$ring_number)
         expect_false(paste(new_ring_shutdown$ring_number, new_ring_shutdown$euring_code, sep = "_") == filtered_info$individ_id)
@@ -243,7 +291,7 @@ test_that("writeMetdata can write data", {
     })
 
     test_that("Non deployment/retrieval statuses can fall within a session", {
-        if(check_db_version() < 45){
+        if (check_db_version() < 45) {
             testthat::skip()
         }
         regular_status <- test_deployment_data[3, ]
@@ -255,7 +303,7 @@ test_that("writeMetdata can write data", {
         status_results <- writeMetadata(regular_status)
         expect_true(status_results)
 
-        #check the status exists and is in the correct session
+        # check the status exists and is in the correct session
         filtered_status <- dplyr::filter(status, sex == "female", ring_number == regular_status$ring_number)
         expect_true(dplyr::tally(filtered_status) %>% dplyr::pull(n) == 1)
         status_id <- dplyr::pull(filtered_status, status_id)
@@ -264,12 +312,13 @@ test_that("writeMetdata can write data", {
         expect_true(dplyr::tally(observation) %>% dplyr::pull(n) == 1)
         status_session_id <- dplyr::pull(observation, session_id)
 
-        deployment_date <- dplyr::filter(sessions, session_id == status_session_id) %>% 
-            dplyr::left_join(deployments, by = dplyr::join_by(deployment_id == deployment_id))%>%dplyr::pull(deployment_date)
+        deployment_date <- dplyr::filter(sessions, session_id == status_session_id) %>%
+            dplyr::left_join(deployments, by = dplyr::join_by(deployment_id == deployment_id)) %>%
+            dplyr::pull(deployment_date)
         expect_true(deployment_date == test_deployment_data[3, ]$date)
-        #check the info has the latest sex
-        individual_id <- dplyr::distinct(filtered_status, info_id)%>% dplyr::pull(info_id)
-        filtered_info <- dplyr::filter(info, id == individual_id)%>% dplyr::collect()
+        # check the info has the latest sex
+        individual_id <- dplyr::distinct(filtered_status, info_id) %>% dplyr::pull(info_id)
+        filtered_info <- dplyr::filter(info, id == individual_id) %>% dplyr::collect()
         expect_true(filtered_info$sex == "female")
     })
 
@@ -315,5 +364,14 @@ test_that("writeMetdata can write data", {
 
     # Test a combined retrieval/deployment event?
 
-})
+    # Test pos data writing
 
+    test_that("Can write GLS positions", {
+        pos_list <- lapply(unique(test_gls_data$session_id)[1:2], function(x) {
+            test_gls_data[test_gls_data$session_id == x, ]
+        })
+
+        pos_result <- writePositions("GLS", pos_list)
+        expect_true(pos_result)
+    })
+})

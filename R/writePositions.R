@@ -52,25 +52,29 @@ writePositions <- function(datatype = "GLS",
     "SELECT count(*) FROM positions.",
     source_table
   )
-
-  talbe_colnames <- colnames(res)
+  DBI::dbWithTransaction(
+    con,
+    {
+      table_colnames <- colnames(res)
+    }
+  )
 
   DBI::dbWithTransaction(
     con,
     {
       nRowsBefore <- DBI::dbGetQuery(con, nRow_string)
-      DBI::dbSendQuery(con, "SET search_path TO positions, public")
+      DBI::dbExecute(con, "SET search_path TO positions, public")
 
       for (i in 1:length(positionData)) {
         posdata_i <- positionData[[i]]
 
-        if (!"session_id" %in% posdata_i) {
+        if (!"session_id" %in% colnames(posdata_i)) {
           stop("Uploaded data must have a session_id")
         }
 
         dbWriteTable(con,
           source_table,
-          posdata_i[,names(posdata_i) %in% talbe_colnames],
+          posdata_i[, names(posdata_i) %in% table_colnames],
           row.names = FALSE,
           append = TRUE
         )
@@ -94,9 +98,17 @@ writePositions <- function(datatype = "GLS",
   )
 
   if (refreshView) {
-    DBI::dbSendQuery(con, paste0("REFRESH MATERIALIZED VIEW positions.", view_name))
+    DBI::dbWithTransaction(
+      con,
+      {
+        DBI::dbExecute(
+          con,
+          paste0("REFRESH MATERIALIZED VIEW positions.", view_name)
+        )
+      }
+    )
   }
 
   print(paste0(nRowsImported, " rows imported to positions.", source_table))
-  return()
+  return(TRUE)
 }
