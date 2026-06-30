@@ -53,6 +53,8 @@ writePositions <- function(datatype = "GLS",
     source_table
   )
 
+  talbe_colnames <- colnames(res)
+
   DBI::dbWithTransaction(
     con,
     {
@@ -60,9 +62,15 @@ writePositions <- function(datatype = "GLS",
       DBI::dbSendQuery(con, "SET search_path TO positions, public")
 
       for (i in 1:length(positionData)) {
+        posdata_i <- positionData[[i]]
+
+        if (!"session_id" %in% posdata_i) {
+          stop("Uploaded data must have a session_id")
+        }
+
         dbWriteTable(con,
           source_table,
-          positionData[[i]],
+          posdata_i[,names(posdata_i) %in% talbe_colnames],
           row.names = FALSE,
           append = TRUE
         )

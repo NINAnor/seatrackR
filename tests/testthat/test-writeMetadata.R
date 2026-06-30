@@ -4,7 +4,7 @@ test_that("writeMetdata can write data", {
 
     test_startup_data <- data.frame(
         logger_serial_no = paste0("testLogger", c(1:5)),
-        logger_model = c("c65", "c65", "c65", "c65", "c65"),
+        logger_model = c("c65", "c65", "c65", "c65", "TEST_MODEL_FOO"),
         producer = rep("Migrate Technology", 5),
         production_year = rep(2013, 5),
         project = rep("seatrack", 5),
@@ -40,7 +40,7 @@ test_that("writeMetdata can write data", {
         logger_model_retrieved = NA_character_,
         logger_id_retrieved = NA_character_,
 
-        # Derived from startup data
+
         logger_model_deployed = test_startup_data$logger_model,
         logger_id_deployed = test_startup_data$logger_serial_no,
         species = test_startup_data$intended_species,
@@ -61,7 +61,7 @@ test_that("writeMetdata can write data", {
         breeding_success_criterion = NA_character_,
         country = rep("norway", 5),
 
-        # Derived from startup data
+
         colony = test_startup_data$intended_location,
         colony_latitude = rep(65.202, 5),
         colony_longitude = rep(10.995, 5),
@@ -108,6 +108,11 @@ test_that("writeMetdata can write data", {
             con,
             "DELETE FROM individuals.individ_info WHERE ring_number LIKE 'TEST_RING_%'"
         )
+        DBI::dbExecute(
+            con,
+            "DELETE FROM metadata.logger_models WHERE model LIKE 'TEST_MODEL_%'"
+        )
+
     })
 
     sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
@@ -116,10 +121,21 @@ test_that("writeMetdata can write data", {
     sessions <- dplyr::left_join(sessions, loggers, by = "logger_id")
     status <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_status"))
     info <- dplyr::tbl(con, dbplyr::in_schema("individuals", "individ_info"))
+    models <- dplyr::tbl(con, dbplyr::in_schema("metadata", "logger_models"))
 
     if (check_db_version() >= 45) {
         observation <- dplyr::tbl(con, dbplyr::in_schema("individuals", "observation"))
     }
+
+    if (check_db_version() >= 51) {
+        sampling_events <- dplyr::tbl(con, dbplyr::in_schema("loggers", "sampling_events"))
+    }
+
+    # Add test model
+    DBI::dbExecute(
+        con,
+        "INSERT INTO metadata.logger_models(producer, model, logger_type) VALUES('Migrate Technology', 'TEST_MODEL_FOO', 'GLS')"
+    )
 
     test_that("writeMetdata can start loggers", {
         logger_result <- writeLoggerImport(test_startup_data)
@@ -145,7 +161,7 @@ test_that("writeMetdata can write data", {
     })
 
     test_that("writeMetdata can retrieve loggers", {
-        regular_shutdown <- test_deployment_data[1, ]
+        regular_shutdown <- test_deployment_data[c(1, 5), ]
         regular_shutdown$date <- regular_shutdown$date + 10
         regular_shutdown$logger_model_retrieved <- regular_shutdown$logger_model_deployed
         regular_shutdown$logger_model_deployed <- NA
@@ -157,10 +173,10 @@ test_that("writeMetdata can write data", {
         # Check if the session is retrieved
         filtered_sessions <- dplyr::filter(
             sessions,
-            logger_serial_no == regular_shutdown$logger_id_retrieved,
+            logger_serial_no %in% regular_shutdown$logger_id_retrieved,
             !is.na(retrieval_id)
         )
-        expect_true(dplyr::tally(filtered_sessions) %>% pull(n) == 1)
+        expect_true(dplyr::tally(filtered_sessions) %>% pull(n) == 2)
     })
 
     test_that("writeMetdata can retrieve sessions with a ring change", {
@@ -215,6 +231,15 @@ test_that("writeMetdata can write data", {
         test_shutdown_data$intended_species <- NA
         logger_result <- writeLoggerImport(test_shutdown_data)
         expect_true(logger_result)
+    })
+
+    test_that("During shutdown, models with no logger_files should fail", {
+        test_shutdown_data <- test_startup_data[5, ]
+        test_shutdown_data$download_date <- test_shutdown_data$shutdown_date <- test_shutdown_data$starttime_gmt + 11
+        test_shutdown_data$download_type <- "Successfully downloaded"
+        test_shutdown_data$shutdown_session <- TRUE
+        test_shutdown_data$intended_species <- NA
+        expect_error(writeLoggerImport(test_shutdown_data))
     })
 
     test_that("Non deployment/retrieval statuses can fall within a session", {
@@ -276,5 +301,19 @@ test_that("writeMetdata can write data", {
         filtered_info <- dplyr::filter(info, id == individual_id) %>% dplyr::collect()
         expect_true(filtered_info$sex == "female")
     })
+    test_that("Sampling information is written", {
+        if (check_db_version() < 51) {
+            testthat::skip()
+        }
+
+        blood_values <- dplyr::filter(status, ring_number %in% test_deployment_data$ring_number) %>%
+            dplyr::left_join(sampling_events, by = "status_id") %>%
+            dplyr::pull(blood_sample)
+
+        expect_true(all(blood_values == "yes, blood was sampled for different reasons - results can/may be accessed by SEATRACK"))
+    })
+
+    # Test a combined retrieval/deployment event?
+
 })
 

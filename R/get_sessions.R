@@ -97,7 +97,7 @@ getSessionInfo <- function(
         sessions <- dplyr::filter(sessions, retrieval_year %in% logger_retrieval_year)
     }
 
-    sessions <- dplyr::left_join(sessions, dplyr::select(startups, session_id, starttime_gmt, started_by, started_where, days_delayed, programmed_gmt_time), by = "session_id")
+    sessions <- dplyr::left_join(sessions, dplyr::select(startups, session_id, starttime_gmt, started_where, days_delayed, programmed_gmt_time), by = "session_id")
     sessions <- dplyr::left_join(sessions, dplyr::select(shutdowns, session_id, download_date, download_type), by = "session_id")
 
     if (!is.null(logger_download_type)) {
@@ -113,7 +113,6 @@ getSessionInfo <- function(
         colony,
         species,
         starttime_gmt,
-        started_by,
         started_where,
         days_delayed,
         programmed_gmt_time,

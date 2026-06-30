@@ -40,7 +40,8 @@ test_that("getLoggerInfo() returns data", {
         expected <- c(expected,
             retrieval_nest_id = "character",
             retrieval_nest_longitude = "numeric",
-            retrieval_nest_latitude = "numeric"
+            retrieval_nest_latitude = "numeric",
+            deployment_type = "character"
         )
     }
 
