@@ -38,6 +38,9 @@ test_that("getPostions() returns data", {
     date_time_downloaded = "POSIXct"
   )
 
+    if (check_db_version() >= 42) {
+      expected["logger_id"] <- "character"
+    }
 
   # Check column names and order
   expect_identical(names(pos_data), names(expected))

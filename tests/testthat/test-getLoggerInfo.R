@@ -43,7 +43,10 @@ test_that("getLoggerInfo() returns data", {
             retrieval_nest_latitude = "numeric",
             deployment_type = "character"
         )
+        expected["logger_id"] <- "character"
     }
+
+
 
     # Check column names and order
     expect_identical(names(logger_info), names(expected))
