@@ -79,7 +79,7 @@ getPositions <- function(datatype = "GLS",
     choices = c("GLS", "IRMA", "GPS")
   )
 
-  if (!limit == F && !is.numeric(limit)) {
+  if (!limit == FALSE && !is.numeric(limit)) {
     stop("limit must be FALSE or a numeric value")
   }
 
@@ -134,7 +134,7 @@ getPositions <- function(datatype = "GLS",
     allocation <- tbl(con, dbplyr::in_schema("loggers", "allocation"))
     res <- res |> left_join(select(allocation, session_id, project), by = "session_id")
     if (!is.null(project)) {
-      res <- res |> filter(project %in% {{ project }})
+      res <- res |> filter(project %in% !!project)
     }
     if (exclude_embargoed) {
       res <- res |> filter(!grepl("_embargoed", project, fixed = FALSE))
@@ -153,7 +153,12 @@ getPositions <- function(datatype = "GLS",
         filter(eqfilter)
     }
 
-    res <- st_read(dsn = con, query = dbplyr::sql_render(res))
+    DBI::dbWithTransaction(
+      con,
+      {
+        res <- st_read(dsn = con, query = dbplyr::sql_render(res))
+      }
+    )
     res <- res |>
       mutate(date_time = lubridate::force_tz(date_time,
         tzone = "UTC"
@@ -163,7 +168,12 @@ getPositions <- function(datatype = "GLS",
       select(-geom)
 
     if (asTibble) {
-      res <- res |> dplyr::collect()
+      DBI::dbWithTransaction(
+        con,
+        {
+          res <- res |> dplyr::collect()
+        }
+      )
       res <- res |>
         mutate(date_time = lubridate::force_tz(date_time,
           tzone = "UTC"

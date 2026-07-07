@@ -137,7 +137,9 @@ getRecordings <- function(type = NULL,
   res <- temp
 
   if (asTibble) {
-    res <- res |> dplyr::collect()
+    DBI::dbWithTransaction(con, {
+      res <- res |> collect()
+    })
 
     # Force timezone on date_time to UTC
     res <- res |>

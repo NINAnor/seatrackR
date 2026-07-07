@@ -42,6 +42,10 @@ test_that("getIndividInfo() returns data", {
         eventType = "character"
     )
 
+    if (check_db_version() >= 46) {
+        expected["logger_id"] <- "character"
+    }
+
     # Check column names and order
     expect_identical(names(individ_info), names(expected))
 

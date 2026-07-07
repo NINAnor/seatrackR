@@ -36,11 +36,22 @@ test_that("getLoggerInfo() returns data", {
         field_status = "character"
     )
 
+    if (check_db_version() >= 42) {
+        expected <- c(expected,
+            retrieval_nest_id = "character",
+            retrieval_nest_longitude = "numeric",
+            retrieval_nest_latitude = "numeric",
+            deployment_type = "character"
+        )
+        expected["logger_id"] <- "character"
+    }
+
+
+
     # Check column names and order
     expect_identical(names(logger_info), names(expected))
 
     # Check column classes
     actual <- vapply(logger_info, function(x) class(x)[1], character(1))
     expect_identical(actual, expected)
-
 })
