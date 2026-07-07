@@ -6,7 +6,7 @@ upstartVersion <- function() {
 
   remote_version <- tryCatch(
     {
-      url <- "https://raw.githubusercontent.com/NINAnor/seatrack-db/master/seatrackR/DESCRIPTION"
+      url <- "https://raw.githubusercontent.com/NINAnor/seatrackR/refs/heads/main/DESCRIPTION"
       x <- readLines(url, warn = FALSE)
       gsub("(Version: )(.*)", "\\2", grep("Version:", x, value = TRUE))
     },
