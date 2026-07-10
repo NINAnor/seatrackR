@@ -16,12 +16,6 @@ getNames <- function(asTibble = FALSE) {
 
   res <- dplyr::tbl(con, dbplyr::in_schema("metadata", "people"))
 
-  res <- res %>%
-    select(person_id,
-      name,
-      abbrev_name = abrev_name
-    )
-
   if (asTibble) {
     res <- res %>% as_tibble()
   }

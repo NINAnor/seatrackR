@@ -1,6 +1,6 @@
 #' Retrieve info on the registered species in the database
 #'
-#'
+#' @param include_subspecies Include subspecies in the output? Boolean
 #'
 #' @return A tibble of the metadata.subspecies table
 #' @export
@@ -9,17 +9,14 @@
 #' getSpecies()
 #' }
 #' @concept metadata
-getSpecies <- function() {
+getSpecies <- function(include_subspecies = FALSE) {
   checkCon()
 
-  species <- dbReadTable(con, DBI::Id(schema = "metadata", table = "subspecies"))
+  if (check_db_version() >= 60 && include_subspecies) {
+    species <- dbReadTable(con, DBI::Id(schema = "metadata", table = "all_species"))
+  } else {
+    species <- dbReadTable(con, DBI::Id(schema = "metadata", table = "species"))
+  }
 
-  out <- as_tibble(species) %>%
-    select(
-      species_name_eng,
-      species_name_latin,
-      sub_species
-    )
-
-  return(out)
+  return(species)
 }

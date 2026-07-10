@@ -73,14 +73,14 @@ getRecordings <- function(type = NULL,
       filter(year_tracked %in% yearFilter)
   }
 
-  if (!is.null(project)||exclude_embargoed) {
+  if (!is.null(project) || exclude_embargoed) {
     allocation <- tbl(con, dbplyr::in_schema("loggers", "allocation"))
     temp <- temp |> left_join(select(allocation, session_id, project), by = "session_id")
-    if(!is.null(project)) {
+    if (!is.null(project)) {
       temp <- temp |>
         filter(project %in% {{ project }})
     }
-    if(exclude_embargoed) {
+    if (exclude_embargoed) {
       temp <- temp |>
         filter(!grepl("_embargoed", project, fixed = FALSE))
     }
