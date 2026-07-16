@@ -35,11 +35,13 @@ getIndividInfo <- function(colony = NULL,
                            exclude_embargoed = TRUE,
                            event_type = NULL,
                            last_only = FALSE,
-                           session_id = NULL) {
+                           session_id = NULL,
+                           as_tibble = TRUE) {
   checkCon()
 
   if (check_db_version() >= 46) {
-    return(new_get_indiv_info(
+
+      query <- new_get_indiv_info(
       colony = colony,
       year_tracked = year_tracked,
       deployment_year = deployment_year,
@@ -53,7 +55,12 @@ getIndividInfo <- function(colony = NULL,
       event_type = event_type,
       last_only = last_only,
       session_id = session_id
-    ))
+    )
+    if(as_tibble){
+      query <- dplyr::collect(query)
+    }
+
+    return(query)
   }
 
   # Old function - can be removed once migration is complete.
@@ -239,9 +246,13 @@ getIndividInfo <- function(colony = NULL,
 
   out <- dplyr::select(out, -id, -logger_fate, -attribute_name)
 
-  return_query <- tibble::as_tibble(out)
+  if(as_tiblble){
+    return_query <- tibble::as_tibble(out)
 
   return(return_query)
+  }else{
+    return(out)
+  }
 }
 
 new_get_indiv_info <- function(colony = NULL,
@@ -268,6 +279,7 @@ new_get_indiv_info <- function(colony = NULL,
     deployment_year = deployment_year,
     retrieval_year = retrieval_year
   )
+
 
   # add deployment age/year for filtering
   individ_info_view <- dplyr::tbl(con, dbplyr::in_schema("views", "individual_info"))
@@ -319,6 +331,6 @@ new_get_indiv_info <- function(colony = NULL,
   # Rename column to match existing schema
   individ_info_view <- dplyr::rename(individ_info_view, eventType = event_type)
 
-  return(dplyr::collect(individ_info_view))
+  return(individ_info_view)
 }
 
