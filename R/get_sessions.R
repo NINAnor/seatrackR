@@ -1,38 +1,126 @@
 #' Retrieve logger session information
 #'
 #' This function retrieves information about logger sessions from the database, allowing for various filters to narrow down the results.
-#' @param logger_ids Optional vector of character strings representing logger serial numbers to filter the sessions.
-#' @param individ_ids Optional vector of character strings representing individual IDs to filter the sessions.
-#' @param logger_deployment_year Optional vector of integers representing the years of logger deployment to filter the sessions.
-#' @param logger_retrieval_year Optional vector of integers representing the years of logger retrieval to filter the sessions.
-#' @param colony_names Optional vector of character strings representing colony names to filter the sessions.
-#' @param species_names Optional vector of character strings representing species names to filter the sessions.
-#' @param logger_year_tracked Optional vector of character strings representing the years tracked by the logger to filter the sessions.
-#' @param logger_active Optional boolean to filter sessions based on whether the logger is currently active.
-#' @param logger_deployed Optional boolean to filter sessions based on whether the logger has been deployed.
-#' @param logger_retrieved Optional boolean to filter sessions based on whether the logger has been retrieved.
-#' @param has_pos_data Optional boolean to filter sessions based on whether they have associated position data.
-#' @param logger_download_type Optional vector of character strings representing the download types of the loggers to filter the sessions.
-#' @param posdata_filename Optional vector of character strings representing position data filenames to filter the sessions (without extension).
-#' @param session_ids Optional vector of character strings representing session IDs to filter the sessions.
-#' @return A tibble containing the filtered logger session information.
+#' @param session_id Optional vector of session IDs to filter by.
+#' @param individ_id Optional vector of individual IDs to filter by.
+#' @param project Optional vector of project names to filter by.
+#' @param logger_serial_no Optional vector of logger serial numbers to filter by.
+#' @param logger_model Optional vector of logger models to filter by.
+#' @param logger_producer Optional vector of logger producers to filter by.
+#' @param logger_type Optional vector of logger types to filter by.
+#' @param active Optional logical indicating whether to filter by active logger sessions.
+#' @param colony Optional vector of colony names to filter by.
+#' @param species Optional vector of species names to filter by.
+#' @param age_deployment_class Optional vector of age deployment classes ("C" or "A") to filter by.
+#' @param sex Optional vector of sexes to filter by.
+#' @param sexing_method Optional vector of sexing methods to filter by.
+#' @param years_tracked Optional vector of years tracked to filter by.
+#' @param logger_start_time Optional vector of logger start times to filter by.
+#' @param logger_start_time_between Optional vector of two dates to filter logger start times between.
+#' @param logging_mode Optional vector of logging modes to filter by.
+#' @param logger_deployed Optional logical indicating whether to filter by deployed loggers.
+#' @param logger_deployment_year Optional vector of deployment years to filter by.
+#' @param logger_deployment_date_between Optional vector of two dates to filter deployment dates between.
+#' @param deployment_logger_status Optional vector of deployment logger statuses to filter by.
+#' @param logger_retrieved Optional logical indicating whether to filter by retrieved loggers.
+#' @param logger_retrieval_year Optional vector of retrieval years to filter by.
+#' @param logger_retrieval_date_between Optional vector of two dates to filter retrieval dates between.
+#' @param retrieval_logger_status Optional vector of retrieval logger statuses to filter by.
+#' @param shutdown_date_between Optional vector of two dates to filter shutdown dates between.
+#' @param download_type Optional vector of download types to filter by.
+#' @param has_positions Optional logical indicating whether to filter by sessions with position data.
+#' @param has_irma Optional logical indicating whether to filter by sessions with IRMA data.
+#' @param embargoed Optional logical indicating whether to include embargoed sessions. Default is FALSE.
+#' @param as_tibble Logical indicating whether to return the result as a tibble.
+#' @return Either a lazy db query or a tibble containing the filtered logger session information.
 #' @export
 #' @concept logger_info
 getSessionInfo <- function(
-  logger_ids = NULL,
-  individ_ids = NULL,
-  logger_deployment_year = NULL,
-  logger_retrieval_year = NULL,
-  colony_names = NULL,
-  species_names = NULL,
-  logger_year_tracked = NULL,
-  logger_active = NULL,
-  logger_deployed = NULL,
-  logger_retrieved = NULL,
-  has_pos_data = NULL,
-  logger_download_type = NULL,
-  posdata_filename = NULL,  session_ids = NULL
+    session_id = NULL,
+    individ_id = NULL,
+    project = NULL,
+    logger_serial_no = NULL,
+    logger_model = NULL,
+    logger_producer = NULL,
+    logger_type = NULL,
+    logger_deployed = NULL,
+    logger_retrieved = NULL,
+    active = NULL,
+    colony = NULL,
+    species = NULL,
+    deployment_age_class = NULL,
+    sex = NULL,
+    sexing_method = NULL,
+    years_tracked = NULL,
+    logger_start_time = NULL,
+    logger_start_time_between = NULL,
+    logging_mode = NULL,
+    logger_deployment_year = NULL,
+    logger_deployment_date_between = NULL,
+    deployment_logger_status = NULL,
+    logger_retrieval_year = NULL,
+    logger_retrieval_date_between = NULL,
+    retrieval_logger_status = NULL,
+    logger_shutdown_date_between = NULL,
+    download_type = NULL,
+    has_positions = NULL,
+    has_irma = NULL,
+    embargoed = FALSE,
+    as_tibble = TRUE
 ) {
+
+      checkCon()
+
+    if (check_db_version() >= 61) {
+        all_args <- as.list(environment())
+        
+        basic_filter_args <- all_args[!names(all_args) %in% c("as_tibble", "logger_start_time_between" ,"logger_deployment_date_between", "logger_retrieval_date_between", "shutdown_date_between")]
+        
+        between_filter_args <- list(
+            logger_start_time = logger_start_time_between,
+            logger_deployment_date = logger_deployment_date_between,
+            logger_retrieval_date = logger_retrieval_date_between,
+            logger_shutdown_date = logger_shutdown_date_between
+        )
+        
+        session_details <- dplyr::tbl(con, dbplyr::in_schema("loggers", "session_details"))
+        session_details <- mutate(session_details, 
+            age_deployment_class = ifelse(!is.na(deployment_age) & tolower(deployment_age) %in% c("pullus", "chick", "pull", "juvenile"), "C", "A"),
+        )
+        
+        for (i in seq_along(basic_filter_args)) {
+            val_name <- names(basic_filter_args)[i]
+            value <- basic_filter_args[[i]]
+            if (!is.null(value)) {
+            session_details <- dplyr::filter(session_details, !!rlang::sym(val_name) %in% value)
+            }
+        }
+
+        for (i in seq_along(between_filter_args)) {
+            val_name <- names(between_filter_args)[i]
+            value <- basic_filter_args[[i]]
+            if (!is.null(value)) {
+                if(length(value) != 2){
+                    stop("Between filter values must be a vector of length 2.")
+                }
+                start_val <- value[1]
+                end_val <- value[2]
+                if(!is.na(end_val) && end_val < start_val){
+                    stop("Second element of between filter values must be NA or greater than first.")
+                }
+
+                session_details <- dplyr::filter(session_details, !!rlang::sym(val_name) >= start_val)
+                if(!is.na(end_val)){
+                   session_details <- dplyr::filter(session_details, !!rlang::sym(val_name) <= end_val) 
+                }
+            }
+        }
+        if(as_tibble){
+            session_details <- dplyr::collect(session_details)
+        }        
+        return(session_details)
+    }
+
     sessions <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logging_session"))
     postable <- dplyr::tbl(con, dbplyr::in_schema("positions", "postable_raw"))
     pos_sessions <- dplyr::distinct(select(postable, session_id))
@@ -124,5 +212,9 @@ getSessionInfo <- function(
         download_type,
         pos_data
     )
-    return(tibble::as_tibble(new_sessions))
+    if(as_tibble){
+        return(tibble::as_tibble(new_sessions))
+    }
+    return(new_sessions)
+    
 }
