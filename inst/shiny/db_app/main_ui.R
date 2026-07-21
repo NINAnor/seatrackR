@@ -24,6 +24,25 @@ main_ui <- function(id) {
       .modal-danger .modal-footer {
         border-top-color: #f5c6cb;
       }
+
+    .table-card {
+        height: 80vh;
+        overflow: hidden;
+    }
+
+    .table-card .card-body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    #table_container {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+    }
+
     ")),
             tags$script(HTML("
       Shiny.addCustomMessageHandler('styleModal', function(cls) {
@@ -31,9 +50,12 @@ main_ui <- function(id) {
       });
     "))
         ),
+        input_dark_mode(id = ns("dark_mode_switch"), mode = NULL),
         div(
             id = ns("splash_screen"),
-            card(card_image(file = system.file(file.path("img", "SEATRACK_logo_landscape.jpg"), package = "seatrackR")),
+            card(
+            card_image(id = ns("placeholder_splash"), file = system.file(file.path("img", "SEATRACK_logo_landscape.jpg"), package = "seatrackR")),
+            uiOutput(ns("splash_image")),
                 class = paste(no_styling_classes, "pt-3 ps-3 pe-3 mb-0"),
                 fillable = FALSE
             ),
@@ -49,7 +71,32 @@ main_ui <- function(id) {
         shinyjs::hidden(
             div(
                 id = ns("main_screen"),
-                query_ui(ns("query_constructor"))
+                query_ui(ns("query_constructor")),
+                navset_card_pill(
+                    id = ns("main_display"),
+                    full_screen = TRUE,
+                    # class = "table-card",
+                    nav_panel(
+                        title = "Logging sessions",
+                        table_display_ui(ns("session_display"))
+                    ),
+                    nav_panel(
+                        title = "Encounters",
+                        encounter_ui(ns("encounter_display"))
+                    ),
+                    nav_panel(
+                        title = "Positions",
+                        p("FOO")
+                    ),
+                    nav_panel(
+                        title = "Recordings",
+                        p("FOO")
+                    )
+                    # card_body(
+                    #     table_display_ui(ns("session_display")),
+                    #     class = "pt-0 table-card"
+                    # )
+                ) # nav tabs go here to display the different outputs
             )
         )
     )

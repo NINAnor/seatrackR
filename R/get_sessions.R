@@ -78,15 +78,15 @@ getSessionInfo <- function(
         
         between_filter_args <- list(
             logger_start_time = logger_start_time_between,
-            logger_deployment_date = logger_deployment_date_between,
-            logger_retrieval_date = logger_retrieval_date_between,
-            logger_shutdown_date = logger_shutdown_date_between
+            deployment_date = logger_deployment_date_between,
+            retrieval_date = logger_retrieval_date_between,
+            shutdown_date = logger_shutdown_date_between
         )
         
         session_details <- dplyr::tbl(con, dbplyr::in_schema("loggers", "session_details"))
         session_details <- mutate(session_details, 
             age_deployment_class = ifelse(!is.na(deployment_age) & tolower(deployment_age) %in% c("pullus", "chick", "pull", "juvenile"), "C", "A"),
-        )
+        )# Move this to the view
         
         for (i in seq_along(basic_filter_args)) {
             val_name <- names(basic_filter_args)[i]
@@ -98,7 +98,7 @@ getSessionInfo <- function(
 
         for (i in seq_along(between_filter_args)) {
             val_name <- names(between_filter_args)[i]
-            value <- basic_filter_args[[i]]
+            value <- between_filter_args[[i]]
             if (!is.null(value)) {
                 if(length(value) != 2){
                     stop("Between filter values must be a vector of length 2.")

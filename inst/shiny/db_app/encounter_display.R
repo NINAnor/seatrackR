@@ -1,69 +1,35 @@
-# UI to select various filters
-query_ui <- function(id) {
+encounter_ui <- function(id) {
     ns <- NS(id)
-    card(
-        id = ns("button_container_card"),
-        uiOutput(ns("button_container_output")),
-        actionButton(ns("show_extra"), "More filters...", class = "btn-secondary btn-sm"),
-        shinyjs::hidden(
-            uiOutput(ns("extra_button_container_output"))
+    tagList(
+        card(
+            id = ns("button_container_card"),
+            uiOutput(ns("button_container_output")),
+            actionButton(ns("clear_filters"), "Clear filters", class = "btn-danger btn-sm")
         ),
-        actionButton(ns("clear_filters"), "Clear filters", class = "btn-danger btn-sm")
+        table_display_ui(ns("data_display"))
     )
 }
 
-
-# Should filter available options
-# Should return a list that can be passed up and used in other functions
-#
-query_server <- function(id, connected, session_info) {
-    ns <- NS(id)
+encounter_server <- function(id, connected, session_info) {
     moduleServer(id, function(input, output, session) {
         apply_filter <- function() {
             if (connected() && !is.null(filter_list())) {
                 print("Applying filter")
-                session_info(do.call(getSessionInfo, filter_list()))
-                # print(dbplyr::sql_render(session_info()))
+                individual_info(do.call(getIndividInfo, filter_list()))
             }
         }
 
-        reset_filters <- function() {
+        reset_filters <- function(new_session_ids = c()) {
             filter_list(
                 list(
-                    session_id = NULL,
-                    individ_id = NULL,
-                    project = NULL,
-                    logger_serial_no = NULL,
-                    logger_model = NULL,
-                    logger_producer = NULL,
-                    logger_type = NULL,
-                    logger_deployed = NULL,
-                    logger_retrieved = NULL,
-                    active = NULL,
-                    colony = NULL,
-                    species = NULL,
-                    deployment_age_class = NULL,
-                    sex = NULL,
-                    sexing_method = NULL,
-                    years_tracked = NULL,
-                    logger_start_time = NULL,
-                    logger_start_time_between = NULL,
-                    logging_mode = NULL,
-                    logger_deployment_year = NULL,
-                    logger_deployment_date_between = NULL,
-                    deployment_logger_status = NULL,
-                    logger_retrieval_year = NULL,
-                    logger_retrieval_date_between = NULL,
-                    retrieval_logger_status = NULL,
-                    logger_shutdown_date_between = NULL,
-                    download_type = NULL,
-                    has_positions = NULL,
-                    has_irma = NULL,
-                    embargoed = FALSE,
-                    as_tibble = FALSE
+                    session_id = new_session_ids,
+                    as_tibble = FALSE,
+                    event_type = NULL,
+                    last_only = FALSE
                 )
             )
         }
+
 
         update_filter_list <- function(new_val, new_key) {
             old_list <- filter_list()
@@ -71,53 +37,32 @@ query_server <- function(id, connected, session_info) {
             filter_list(old_list)
         }
 
+        observeEvent(session_info(), {
+            if (!is.null(session_info)) {
+                sessions <- session_info() %>%
+                    dplyr::distinct(
+                        session_id
+                    ) %>%
+                    pull()
+                session_ids(sessions)
+            }
+        })
+
+        observeEvent(session_ids(), {
+            update_filter_list(session_ids(), "session_id")
+        })
+
         generate_ui <- function() {
             modal_selectors <- list(
-                list(name = "colony"),
-                list(name = "species"),
-                list(name = "sex"),
+                list(name = "event_type", var_name = "eventType"),
                 list(
-                    name = "logger_deployment_date_between",
-                    type = "date_range",
-                    button_name = "Deployment date",
-                    var_name = "deployment_date"
-                ),
-                list(
-                    name = "logger_retrieval_date_between",
-                    type = "date_range",
-                    button_name = "Retrieval date",
-                    var_name = "retrieval_date"
-                ),
-                list(
-                    name = "deployment_age_class",
-                    button_name = "Deployment age",
-                    choice_function = c(Chick = "C", Adult = "A") # Move this to the view
-                ),
-                list(name = "logger_type"),
-                list(name = "project"),
-                list(name = "has_positions"),
-                list(name = "has_irma"),
-                list(name = "logger_serial_no", extra = TRUE, type = "text"),
-                list(name = "individ_id", extra = TRUE, type = "text"),
-                list(name = "logger_model", extra = TRUE),
-                list(name = "producer", extra = TRUE),
-                list(name = "sexing_method", extra = TRUE),
-                list(name = "logging_mode", extra = TRUE),
-                list(name = "deployment_logger_status", extra = TRUE),
-                list(name = "retrieval_logger_status", extra = TRUE),
-                list(name = "download_type", extra = TRUE),
-                list(
-                    name = "logger_shutdown_date_between",
-                    type = "date_range",
-                    button_name = "Shutdown date",
-                    var_name = "shutdown_date",
-                    extra = TRUE
+                    name = "last_only",
+                    button_name = "Last status only?",
+                    label = "Only show last recorded status.",
+                    type = "binary"
                 )
             )
 
-
-            # list(name = "logger_model"),
-            # list(name = "sexing_method"),
 
             all_ui_list <- lapply(seq_along(modal_selectors), function(i) {
                 modal_selector <- modal_selectors[[i]]
@@ -165,9 +110,15 @@ query_server <- function(id, connected, session_info) {
                     name_string <- tolower(modal_selector$button_name)
                 }
 
+                if (is.null(modal_selector$label)) {
+                    label_string <- name_string
+                } else {
+                    label_string <- modal_selector$label
+                }
+
                 if (is.null(modal_selector$choice_function)) {
                     get_vals_from_db <- function() {
-                        vals <- session_info() %>%
+                        vals <- individual_info() %>%
                             dplyr::distinct(
                                 pick(var_name)
                             ) %>%
@@ -191,27 +142,20 @@ query_server <- function(id, connected, session_info) {
                             date_range_modal_input(
                                 start = function() {
                                     if (is.null(filter_list()[[filter_name]])) {
-                                        db_min <- min(session_info() %>% pull(var_name), na.rm = TRUE)
-                                        if(is.infinite(db_min)){
-                                            db_min <- as.Date("2000-01-01")
-                                        }
-                                        return(db_min)
+                                        return(min(session_info() %>% pull(var_name), na.rm = TRUE))
                                     }
                                     return(filter_list()[[filter_name]][1])
                                 },
                                 end = function() {
                                     if (is.null(filter_list()[[filter_name]])) {
-                                        db_max <- max(session_info() %>% pull(var_name), na.rm = TRUE)
-                                        if(is.infinite(db_max)){
-                                            db_max <- NULL
-                                        }
-                                        return(db_max)
+                                        return(max(session_info() %>% pull(var_name), na.rm = TRUE))
                                     }
                                     return(filter_list()[[filter_name]][2])
                                 }
                             ),
                         binary =
                             binary_modal_input(
+                                label = label_string,
                                 value = function() filter_list()[[filter_name]]
                             ),
                         text = search_input(
@@ -240,18 +184,6 @@ query_server <- function(id, connected, session_info) {
             }
         }
 
-        filter_list <- reactiveVal(NULL)
-        reset_signal <- reactiveVal(FALSE)
-
-        reset_filters()
-        server_list <- generate_ui()
-
-        observeEvent(connected(), {
-            if (connected() && is.null(session_info())) {
-                apply_filter()
-            }
-        })
-
 
         observeEvent(filter_list(), {
             apply_filter()
@@ -259,18 +191,9 @@ query_server <- function(id, connected, session_info) {
 
         observeEvent(input$clear_filters, {
             print("Reset all filters")
-            reset_filters()
+            reset_filters(session_ids())
             reset_signal(TRUE)
         })
-
-        extras_shown <- reactiveVal(FALSE)
-        observeEvent(input$show_extra, {
-            shinyjs::toggleElement(id = "extra_button_container_output", anim = FALSE)
-            updateActionButton(inputId = "show_extra", label = ifelse(extras_shown(), "Show more filters", "Hide extra filters"))
-            extras_shown(!extras_shown())
-        })
-
-
 
         observeEvent(reset_signal(), {
             if (reset_signal()) {
@@ -278,6 +201,19 @@ query_server <- function(id, connected, session_info) {
             }
         })
 
+        session_ids <- reactiveVal(c())
+        filter_list <- reactiveVal(NULL)
+        reset_signal <- reactiveVal(FALSE)
+        individual_info <- reactiveVal(NULL)
 
+        reset_filters()
+        server_list <- generate_ui()
+        table_display <- table_display_server("data_display", individual_info,
+            order_by = "status_date"
+        )
+
+        observeEvent(table_display, {
+            print(table_display)
+        })
     })
 }
