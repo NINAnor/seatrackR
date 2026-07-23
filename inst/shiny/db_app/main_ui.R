@@ -25,23 +25,6 @@ main_ui <- function(id) {
         border-top-color: #f5c6cb;
       }
 
-    .table-card {
-        height: 80vh;
-        overflow: hidden;
-    }
-
-    .table-card .card-body {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    #table_container {
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow: hidden;
-    }
 
     ")),
             tags$script(HTML("
@@ -75,10 +58,9 @@ main_ui <- function(id) {
                 navset_card_pill(
                     id = ns("main_display"),
                     full_screen = TRUE,
-                    # class = "table-card",
                     nav_panel(
                         title = "Logging sessions",
-                        table_display_ui(ns("session_display"))
+                        session_ui(ns("session_display"))
                     ),
                     nav_panel(
                         title = "Encounters",
@@ -86,16 +68,12 @@ main_ui <- function(id) {
                     ),
                     nav_panel(
                         title = "Positions",
-                        p("FOO")
+                        position_ui(ns("position_display"))
                     ),
                     nav_panel(
                         title = "Recordings",
                         p("FOO")
                     )
-                    # card_body(
-                    #     table_display_ui(ns("session_display")),
-                    #     class = "pt-0 table-card"
-                    # )
                 ) # nav tabs go here to display the different outputs
             )
         )

@@ -49,9 +49,9 @@ connect_db_server <- function(id, busy = reactiveVal(FALSE), test = FALSE, on_bu
                     app_settings_list$db_username <- input$username
                     app_settings(app_settings_list)
                     if (!test) {
-                        seatrackR::connectSeatrack(input$username, input$password)
+                        seatrackR::connectSeatrack(input$username, input$password, save_credentials = FALSE)
                     } else {
-                        seatrackR::connectSeatrack(input$username, input$password, host = "localhost", "seatrack_test")
+                        seatrackR::connectSeatrack(input$username, input$password, host = "localhost", "seatrack_test", save_credentials = FALSE)
                     }
                     removeModal()
 

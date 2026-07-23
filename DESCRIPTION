@@ -1,6 +1,6 @@
 Package: seatrackR
 Title: Interface functions for the Seatrack database
-Version: 0.0.4
+Version: 0.0.5
 Authors@R: c(person(given = "Jens", 
                     family = "Åström", 
                     email = "jens.astrom@nina.no", 
@@ -14,11 +14,15 @@ Description: R utility functions for interaction with the seatrack database.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Suggests: 
     R.rsp,
     NinaR,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    leaflet,
+    leaflet.extra
+    shiny
+    bslib
+    shinyjs
 Imports:
     DBI,
     RPostgres,
@@ -55,3 +59,4 @@ Remotes:
 LazyData: true
 URL: https://ninanor.github.io/seatrackR/
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

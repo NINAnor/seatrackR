@@ -4,8 +4,8 @@ query_ui <- function(id) {
     card(
         id = ns("button_container_card"),
         uiOutput(ns("button_container_output")),
-        actionButton(ns("show_extra"), "More filters...", class = "btn-secondary btn-sm"),
         shinyjs::hidden(
+            actionButton(ns("show_extra"), "More filters...", class = "btn-secondary btn-sm"),
             uiOutput(ns("extra_button_container_output"))
         ),
         actionButton(ns("clear_filters"), "Clear filters", class = "btn-danger btn-sm")
@@ -16,52 +16,14 @@ query_ui <- function(id) {
 # Should filter available options
 # Should return a list that can be passed up and used in other functions
 #
-query_server <- function(id, connected, session_info) {
+query_server <- function(id, source_data, choice_data = NULL, modal_selectors = list(), default_filters = function() {
+                             list()
+                         }) {
     ns <- NS(id)
     moduleServer(id, function(input, output, session) {
-        apply_filter <- function() {
-            if (connected() && !is.null(filter_list())) {
-                print("Applying filter")
-                session_info(do.call(getSessionInfo, filter_list()))
-                # print(dbplyr::sql_render(session_info()))
-            }
-        }
-
         reset_filters <- function() {
             filter_list(
-                list(
-                    session_id = NULL,
-                    individ_id = NULL,
-                    project = NULL,
-                    logger_serial_no = NULL,
-                    logger_model = NULL,
-                    logger_producer = NULL,
-                    logger_type = NULL,
-                    logger_deployed = NULL,
-                    logger_retrieved = NULL,
-                    active = NULL,
-                    colony = NULL,
-                    species = NULL,
-                    deployment_age_class = NULL,
-                    sex = NULL,
-                    sexing_method = NULL,
-                    years_tracked = NULL,
-                    logger_start_time = NULL,
-                    logger_start_time_between = NULL,
-                    logging_mode = NULL,
-                    logger_deployment_year = NULL,
-                    logger_deployment_date_between = NULL,
-                    deployment_logger_status = NULL,
-                    logger_retrieval_year = NULL,
-                    logger_retrieval_date_between = NULL,
-                    retrieval_logger_status = NULL,
-                    logger_shutdown_date_between = NULL,
-                    download_type = NULL,
-                    has_positions = NULL,
-                    has_irma = NULL,
-                    embargoed = FALSE,
-                    as_tibble = FALSE
-                )
+                default_filters()
             )
         }
 
@@ -72,53 +34,6 @@ query_server <- function(id, connected, session_info) {
         }
 
         generate_ui <- function() {
-            modal_selectors <- list(
-                list(name = "colony"),
-                list(name = "species"),
-                list(name = "sex"),
-                list(
-                    name = "logger_deployment_date_between",
-                    type = "date_range",
-                    button_name = "Deployment date",
-                    var_name = "deployment_date"
-                ),
-                list(
-                    name = "logger_retrieval_date_between",
-                    type = "date_range",
-                    button_name = "Retrieval date",
-                    var_name = "retrieval_date"
-                ),
-                list(
-                    name = "deployment_age_class",
-                    button_name = "Deployment age",
-                    choice_function = c(Chick = "C", Adult = "A") # Move this to the view
-                ),
-                list(name = "logger_type"),
-                list(name = "project"),
-                list(name = "has_positions"),
-                list(name = "has_irma"),
-                list(name = "logger_serial_no", extra = TRUE, type = "text"),
-                list(name = "individ_id", extra = TRUE, type = "text"),
-                list(name = "logger_model", extra = TRUE),
-                list(name = "producer", extra = TRUE),
-                list(name = "sexing_method", extra = TRUE),
-                list(name = "logging_mode", extra = TRUE),
-                list(name = "deployment_logger_status", extra = TRUE),
-                list(name = "retrieval_logger_status", extra = TRUE),
-                list(name = "download_type", extra = TRUE),
-                list(
-                    name = "logger_shutdown_date_between",
-                    type = "date_range",
-                    button_name = "Shutdown date",
-                    var_name = "shutdown_date",
-                    extra = TRUE
-                )
-            )
-
-
-            # list(name = "logger_model"),
-            # list(name = "sexing_method"),
-
             all_ui_list <- lapply(seq_along(modal_selectors), function(i) {
                 modal_selector <- modal_selectors[[i]]
 
@@ -147,6 +62,9 @@ query_server <- function(id, connected, session_info) {
                     ui_list <- c(ui_list, ui_element)
                 }
             }
+            if (length(extra_ui_list) > 0) {
+                shinyjs::showElement(id = "show_extra", anim = FALSE)
+            }
 
             lapply(seq_along(modal_selectors), function(i) {
                 modal_selector <- modal_selectors[[i]]
@@ -165,9 +83,15 @@ query_server <- function(id, connected, session_info) {
                     name_string <- tolower(modal_selector$button_name)
                 }
 
+                if (is.null(modal_selector$label)) {
+                    label_string <- name_string
+                } else {
+                    label_string <- modal_selector$label
+                }
+
                 if (is.null(modal_selector$choice_function)) {
                     get_vals_from_db <- function() {
-                        vals <- session_info() %>%
+                        vals <- source_data() %>%
                             dplyr::distinct(
                                 pick(var_name)
                             ) %>%
@@ -191,8 +115,8 @@ query_server <- function(id, connected, session_info) {
                             date_range_modal_input(
                                 start = function() {
                                     if (is.null(filter_list()[[filter_name]])) {
-                                        db_min <- min(session_info() %>% pull(var_name), na.rm = TRUE)
-                                        if(is.infinite(db_min)){
+                                        db_min <- min(source_data() %>% pull(var_name), na.rm = TRUE)
+                                        if (is.infinite(db_min)) {
                                             db_min <- as.Date("2000-01-01")
                                         }
                                         return(db_min)
@@ -201,8 +125,8 @@ query_server <- function(id, connected, session_info) {
                                 },
                                 end = function() {
                                     if (is.null(filter_list()[[filter_name]])) {
-                                        db_max <- max(session_info() %>% pull(var_name), na.rm = TRUE)
-                                        if(is.infinite(db_max)){
+                                        db_max <- max(source_data() %>% pull(var_name), na.rm = TRUE)
+                                        if (is.infinite(db_max)) {
                                             db_max <- NULL
                                         }
                                         return(db_max)
@@ -212,6 +136,7 @@ query_server <- function(id, connected, session_info) {
                             ),
                         binary =
                             binary_modal_input(
+                                label = label_string,
                                 value = function() filter_list()[[filter_name]]
                             ),
                         text = search_input(
@@ -225,8 +150,7 @@ query_server <- function(id, connected, session_info) {
                     input_adapter = adapter,
                     on_close = function(choices) {
                         update_filter_list(choices, filter_name)
-                    },
-                    reset_signal <- reset_signal
+                    }, reset_signal = reset_signal
                 )
             })
 
@@ -240,25 +164,14 @@ query_server <- function(id, connected, session_info) {
             }
         }
 
-        filter_list <- reactiveVal(NULL)
+        filter_list <- reactiveVal(default_filters())
         reset_signal <- reactiveVal(FALSE)
 
         reset_filters()
         server_list <- generate_ui()
 
-        observeEvent(connected(), {
-            if (connected() && is.null(session_info())) {
-                apply_filter()
-            }
-        })
-
-
-        observeEvent(filter_list(), {
-            apply_filter()
-        })
 
         observeEvent(input$clear_filters, {
-            print("Reset all filters")
             reset_filters()
             reset_signal(TRUE)
         })
@@ -271,13 +184,12 @@ query_server <- function(id, connected, session_info) {
         })
 
 
-
         observeEvent(reset_signal(), {
             if (reset_signal()) {
                 reset_signal(FALSE)
             }
         })
 
-
+        return(list(filters = reactive(filter_list())))
     })
 }

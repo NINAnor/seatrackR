@@ -148,7 +148,7 @@ input_modal_server <- function(id, input_adapter, on_close = function(chosen) {}
             }
         }
 
-        print(paste("Starting server", id))
+        # print(paste("Starting server", id))
         observeEvent(input$open_button, {
             showModal(
                 modalDialog(

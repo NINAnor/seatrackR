@@ -1,3 +1,52 @@
+table_display_css <- function() {
+    tags$head(
+        tags$style(HTML("
+            .table-header {
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                background: inherit;
+                padding-top: 16px;
+                padding-bottom: 5px;
+            }
+
+            .table-scroll-top {
+                overflow-x: auto;
+                overflow-y: hidden;
+                height: 16px;
+            }
+
+            .table-scroll-top-inner {
+                height: 100%;
+            }
+
+            .table-container {
+                overflow: hidden;
+                position:relative
+            }
+
+            .table-loading-overlay {
+                display: none;
+                position: absolute;
+                inset: 0;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+
+            .table-loading-overlay.active {
+                display: flex;
+            }
+
+            .table-loading-overlay .loading-text {
+                background: rgba(255,255,255,0.85);
+                padding: 10px 20px;
+                border-radius: 5px;
+            }
+        "))
+    )
+}
+
 table_display_ui <- function(id) {
     ns <- NS(id)
 
@@ -5,26 +54,7 @@ table_display_ui <- function(id) {
         div(
             id = ns("table_header"),
             class = "table-header",
-            fluidRow(
-                column(
-                    4,
-                    selectInput(
-                        ns("page_size"),
-                        "Rows per page",
-                        choices = c(25, 50, 100, 250, 500),
-                        selected = 50
-                    )
-                ),
-                column(
-                    8,
-                    div(
-                        style = "margin-top:25px",
-                        actionButton(ns("prev_button"), "<< Previous"),
-                        actionButton(ns("next_button"), "Next >>"),
-                        textOutput(ns("status"), inline = TRUE)
-                    )
-                )
-            ),
+            pagination_controls_ui(ns("pagination")),
             div(
                 id = ns("table_scroll_top"),
                 class = "table-scroll-top",
@@ -33,90 +63,24 @@ table_display_ui <- function(id) {
         ),
         div(
             id = ns("table_container"),
+            class = "table-container",
+            div(
+                id = ns("loading_overlay"),
+                class = "table-loading-overlay",
+                div(class = "loading-text", "Fetching data...")
+            ),
             DT::DTOutput(ns("table"))
         ),
-        tags$head(
-            tags$style(HTML("
-                .table-header {
-                    position: sticky;
-                    top: 0;
-                    z-index: 100;
-                    background: inherit;
-                    padding-bottom: 5px;
-                    padding-top: 16px;
-                }
-
-                .table-scroll-top {
-                    overflow-x: auto;
-                    overflow-y: hidden;
-                    height: 16px;
-                }
-
-                .table-scroll-top-inner {
-                    height: 1px;
-                }
-
-                #table_container {
-                    overflow: hidden;
-                }
-            "))
-        )
+        table_display_css()
     )
 }
 
-table_display_server <- function(id, query, order_by = NULL) {
+table_display_server <- function(id, paged) {
     moduleServer(id, function(input, output, session) {
-        page <- reactiveVal(1)
-
-        n_rows <- reactive({
-            q <- query()
-
-            if (is.null(q)) {
-                return(0)
-            }
-
-            q %>%
-                summarise(n = n()) %>%
-                collect() %>%
-                pull(n)
-        })
-
-        observeEvent(query(), {
-            page(1)
-        })
-
-        observeEvent(input$next_button, {
-            max_page <- ceiling(n_rows() / as.numeric(input$page_size))
-
-            if (page() < max_page) {
-                page(page() + 1)
-            }
-        })
-
-        observeEvent(input$prev_button, {
-            if (page() > 1) {
-                page(page() - 1)
-            }
-        })
-
-
-        current_data <- reactive({
-            q <- query()
-            if (is.null(q)) {
-                return(data.frame())
-            }
-
-            start <- (page() - 1) * as.numeric(input$page_size)
-            offset <- (page() - 1) * as.numeric(input$page_size)
-            sql <- dbplyr::sql_render(q)
-
-            sql <- glue::glue("{sql} ORDER BY {ifelse(!is.null(order_by), order_by, colnames(q[1]))} LIMIT {input$page_size} OFFSET {offset}")
-
-            dbGetQuery(con, sql)
-        })
+        pagination_controls_server("pagination", paged)
 
         output$table <- DT::renderDT({
-            data <- current_data()
+            data <- paged$data()
 
             if (nrow(data) == 0) {
                 return(
@@ -133,13 +97,13 @@ table_display_server <- function(id, query, order_by = NULL) {
             }
 
             DT::datatable(
-                current_data(),
+                data,
                 rownames = FALSE,
                 style = "auto",
                 options = list(
                     scrollX = TRUE,
                     scrollY = "60vh",
-                    scrollCOllapse = TRUE,
+                    scrollCollapse = TRUE,
                     autoWidth = TRUE,
                     paging = FALSE,
                     searching = FALSE,
@@ -159,29 +123,28 @@ table_display_server <- function(id, query, order_by = NULL) {
                 ),
                 callback = DT::JS(sprintf(
                     "
-            table.on('init.dt', function() {
+          table.on('init.dt', function() {
 
-        var body = $('#%s .dataTables_scrollBody');
-        var top = $('#%s');
+            var body = $('#%s .dataTables_scrollBody');
+            var top = $('#%s');
+            var inner = top.find('.table-scroll-top-inner');
 
-        var inner = top.find('.table-scroll-top-inner');
+            function resizeTopScrollbar() {
+              inner.width(body[0].scrollWidth);
+            }
 
-        function resizeTopScrollbar() {
-            inner.width(body[0].scrollWidth);
-        }
+            resizeTopScrollbar()
 
-        resizeTopScrollbar();
+            top.on('scroll', function() {
+                body.scrollLeft(top.scrollLeft())
+            })
 
-        top.on('scroll', function() {
-            body.scrollLeft(top.scrollLeft());
-        });
+            body.on('scroll', function() {
+                top.scrollLeft(body.scrollLeft())
+            })
 
-        body.on('scroll', function() {
-            top.scrollLeft(body.scrollLeft());
-        });
-
-    });
-        ",
+          });
+          ",
                     session$ns("table"),
                     session$ns("table_scroll_top")
                 ))
@@ -190,14 +153,17 @@ table_display_server <- function(id, query, order_by = NULL) {
 
         output$status <- renderText({
             glue::glue(
-                "Page {page()} of {ceiling(n_rows() / as.numeric(input$page_size))} ({n_rows()} rows)",
+                "Page {paged$pagination$page()} of {paged$pagination$page_count()} ({paged$pagination$n_rows()} rows)"
             )
         })
 
-        return(list(
-            data = current_data,
-            page = page,
-            n_rows = n_rows
-        ))
+        observe({
+            if (paged$loading()) {
+                shinyjs::show("loading_overlay")
+            } else {
+                shinyjs::hide("loading_overlay")
+            }
+        })
+
     })
 }
