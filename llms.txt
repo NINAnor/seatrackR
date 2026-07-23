@@ -28,6 +28,13 @@ devtools::install_github("NINAnor/seatrackR")
 
 # Package index
 
+## Shiny app
+
+Use the seatrackR shiny interface
+
+- [`run_app()`](https://ninanor.github.io/seatrackR/reference/run_app.md)
+  : Run the seatrackR Shiny app
+
 ## Positions
 
 Functions for reading and writing positional data to the database.
@@ -143,6 +150,10 @@ General functions related to the SEATRACK database.
   : changeSeatrackPassword
 - [`checkSeatrackRVersion()`](https://ninanor.github.io/seatrackR/reference/checkSeatrackRVersion.md)
   : checkSeatrackRVersion
+- [`check_db_version()`](https://ninanor.github.io/seatrackR/reference/check_db_version.md)
+  : Check the version of the database Checks the version of the database
+  by querying the flyway_schema_history table. If the table does not
+  exist, it returns 0.
 - [`deleteRecords()`](https://ninanor.github.io/seatrackR/reference/deleteRecords.md)
   : Delete records from the database, based on subselection criteria
 - [`refreshViews()`](https://ninanor.github.io/seatrackR/reference/refreshViews.md)

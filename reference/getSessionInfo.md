@@ -7,95 +7,171 @@ database, allowing for various filters to narrow down the results.
 
 ``` r
 getSessionInfo(
-  logger_ids = NULL,
-  individ_ids = NULL,
-  logger_deployment_year = NULL,
-  logger_retrieval_year = NULL,
-  colony_names = NULL,
-  species_names = NULL,
-  logger_year_tracked = NULL,
-  logger_active = NULL,
+  session_id = NULL,
+  individ_id = NULL,
+  project = NULL,
+  logger_serial_no = NULL,
+  logger_model = NULL,
+  logger_producer = NULL,
+  logger_type = NULL,
   logger_deployed = NULL,
   logger_retrieved = NULL,
-  has_pos_data = NULL,
-  logger_download_type = NULL,
-  posdata_filename = NULL,
-  session_ids = NULL
+  active = NULL,
+  colony = NULL,
+  species = NULL,
+  deployment_age_class = NULL,
+  sex = NULL,
+  sexing_method = NULL,
+  years_tracked = NULL,
+  logger_start_time = NULL,
+  logger_start_time_between = NULL,
+  logging_mode = NULL,
+  logger_deployment_year = NULL,
+  logger_deployment_date_between = NULL,
+  deployment_logger_status = NULL,
+  logger_retrieval_year = NULL,
+  logger_retrieval_date_between = NULL,
+  retrieval_logger_status = NULL,
+  logger_shutdown_date_between = NULL,
+  download_type = NULL,
+  has_positions = NULL,
+  has_irma = NULL,
+  embargoed = FALSE,
+  as_tibble = TRUE
 )
 ```
 
 ## Arguments
 
-- logger_ids:
+- session_id:
 
-  Optional vector of character strings representing logger serial
-  numbers to filter the sessions.
+  Optional vector of session IDs to filter by.
 
-- individ_ids:
+- individ_id:
 
-  Optional vector of character strings representing individual IDs to
-  filter the sessions.
+  Optional vector of individual IDs to filter by.
 
-- logger_deployment_year:
+- project:
 
-  Optional vector of integers representing the years of logger
-  deployment to filter the sessions.
+  Optional vector of project names to filter by.
 
-- logger_retrieval_year:
+- logger_serial_no:
 
-  Optional vector of integers representing the years of logger retrieval
-  to filter the sessions.
+  Optional vector of logger serial numbers to filter by.
 
-- colony_names:
+- logger_model:
 
-  Optional vector of character strings representing colony names to
-  filter the sessions.
+  Optional vector of logger models to filter by.
 
-- species_names:
+- logger_producer:
 
-  Optional vector of character strings representing species names to
-  filter the sessions.
+  Optional vector of logger producers to filter by.
 
-- logger_year_tracked:
+- logger_type:
 
-  Optional vector of character strings representing the years tracked by
-  the logger to filter the sessions.
-
-- logger_active:
-
-  Optional boolean to filter sessions based on whether the logger is
-  currently active.
+  Optional vector of logger types to filter by.
 
 - logger_deployed:
 
-  Optional boolean to filter sessions based on whether the logger has
-  been deployed.
+  Optional logical indicating whether to filter by deployed loggers.
 
 - logger_retrieved:
 
-  Optional boolean to filter sessions based on whether the logger has
-  been retrieved.
+  Optional logical indicating whether to filter by retrieved loggers.
 
-- has_pos_data:
+- active:
 
-  Optional boolean to filter sessions based on whether they have
-  associated position data.
+  Optional logical indicating whether to filter by active logger
+  sessions.
 
-- logger_download_type:
+- colony:
 
-  Optional vector of character strings representing the download types
-  of the loggers to filter the sessions.
+  Optional vector of colony names to filter by.
 
-- posdata_filename:
+- species:
 
-  Optional vector of character strings representing position data
-  filenames to filter the sessions (without extension).
+  Optional vector of species names to filter by.
 
-- session_ids:
+- deployment_age_class:
 
-  Optional vector of character strings representing session IDs to
-  filter the sessions.
+  Optional vector of age deployment classes ("C" or "A") to filter by.
+
+- sex:
+
+  Optional vector of sexes to filter by.
+
+- sexing_method:
+
+  Optional vector of sexing methods to filter by.
+
+- years_tracked:
+
+  Optional vector of years tracked to filter by.
+
+- logger_start_time:
+
+  Optional vector of logger start times to filter by.
+
+- logger_start_time_between:
+
+  Optional vector of two dates to filter logger start times between.
+
+- logging_mode:
+
+  Optional vector of logging modes to filter by.
+
+- logger_deployment_year:
+
+  Optional vector of deployment years to filter by.
+
+- logger_deployment_date_between:
+
+  Optional vector of two dates to filter deployment dates between.
+
+- deployment_logger_status:
+
+  Optional vector of deployment logger statuses to filter by.
+
+- logger_retrieval_year:
+
+  Optional vector of retrieval years to filter by.
+
+- logger_retrieval_date_between:
+
+  Optional vector of two dates to filter retrieval dates between.
+
+- retrieval_logger_status:
+
+  Optional vector of retrieval logger statuses to filter by.
+
+- logger_shutdown_date_between:
+
+  Optional vector of two dates to filter shutdown dates between.
+
+- download_type:
+
+  Optional vector of download types to filter by.
+
+- has_positions:
+
+  Optional logical indicating whether to filter by sessions with
+  position data.
+
+- has_irma:
+
+  Optional logical indicating whether to filter by sessions with IRMA
+  data.
+
+- embargoed:
+
+  Optional logical indicating whether to include embargoed sessions.
+  Default is FALSE.
+
+- as_tibble:
+
+  Logical indicating whether to return the result as a tibble.
 
 ## Value
 
-A tibble containing the filtered logger session information.
+Either a lazy db query or a tibble containing the filtered logger
+session information.

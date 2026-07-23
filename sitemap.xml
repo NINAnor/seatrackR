@@ -17,7 +17,9 @@
 <url><loc>https://ninanor.github.io/seatrackR/reference/changeSeatrackPassword.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/checkMetadata.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/checkSeatrackRVersion.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/reference/check_db_version.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/connectSeatrack.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/reference/connect_to_test_database.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/deleteActivity.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/deleteFiles.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/deletePositions.html</loc></url>
@@ -43,6 +45,7 @@
 <url><loc>https://ninanor.github.io/seatrackR/reference/loadPosdata.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/pruneRecordings.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/refreshViews.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/reference/run_app.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/sampleLoggerImport.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/sampleLoggerModels.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/sampleLoggerShutdown.html</loc></url>
@@ -52,6 +55,7 @@
 <url><loc>https://ninanor.github.io/seatrackR/reference/schema_dict.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/set_credentials_renviron.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/sfGmapPlot.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/reference/skip_if_no_test_db.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/uploadFiles.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/viewDatabaseModel.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/writeIndividInfo.html</loc></url>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,8 @@
 <span>  exclude_embargoed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  event_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  last_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  session_id <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  session_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  as_tibble <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -122,6 +123,10 @@
 
 <dt id="arg-session-id">session_id<a class="anchor" aria-label="anchor" href="#arg-session-id"></a></dt>
 <dd><p>Optional vector of character strings of session_id to limit the selection to.</p></dd>
+
+
+<dt id="arg-as-tibble">as_tibble<a class="anchor" aria-label="anchor" href="#arg-as-tibble"></a></dt>
+<dd><p>Logical. If TRUE, the output is returned as a tibble. If FALSE, the output is returned as a lazy query object. Default is TRUE.</p></dd>
 
 </dl></div>
     <div class="section level2">

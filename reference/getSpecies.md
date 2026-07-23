@@ -5,8 +5,14 @@ Retrieve info on the registered species in the database
 ## Usage
 
 ``` r
-getSpecies()
+getSpecies(include_subspecies = FALSE)
 ```
+
+## Arguments
+
+- include_subspecies:
+
+  Include subspecies in the output? Boolean
 
 ## Value
 

@@ -9,6 +9,7 @@ get_responsible(
   session = NULL,
   species = NULL,
   colony = NULL,
+  by_year = TRUE,
   return_string = TRUE
 )
 ```
@@ -26,6 +27,10 @@ get_responsible(
 - colony:
 
   Optional vector of colony names to filter by.
+
+- by_year:
+
+  Logical indicating whether to group results by year. Default is TRUE.
 
 - return_string:
 

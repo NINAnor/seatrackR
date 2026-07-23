@@ -20,7 +20,8 @@ getIndividInfo(
   exclude_embargoed = TRUE,
   event_type = NULL,
   last_only = FALSE,
-  session_id = NULL
+  session_id = NULL,
+  as_tibble = TRUE
 )
 ```
 
@@ -91,6 +92,11 @@ getIndividInfo(
 
   Optional vector of character strings of session_id to limit the
   selection to.
+
+- as_tibble:
+
+  Logical. If TRUE, the output is returned as a tibble. If FALSE, the
+  output is returned as a lazy query object. Default is TRUE.
 
 ## Value
 

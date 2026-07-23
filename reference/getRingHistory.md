@@ -13,7 +13,7 @@ getRingHistory(asTibble = FALSE)
 
 - asTibble:
 
-  Return result as tibble? Boolean.
+  Return result as tibble rather than a lazy query? Boolean.
 
 ## Value
 

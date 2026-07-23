@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,20 +52,37 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getSessionInfo</span><span class="op">(</span></span>
-<span>  logger_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  individ_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  logger_deployment_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  logger_retrieval_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colony_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  species_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  logger_year_tracked <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  logger_active <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  session_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  individ_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  project <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_serial_no <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_producer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  logger_deployed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  logger_retrieved <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  has_pos_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  logger_download_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  posdata_filename <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  session_ids <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  active <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colony <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  species <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  deployment_age_class <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sex <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sexing_method <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  years_tracked <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_start_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_start_time_between <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logging_mode <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_deployment_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_deployment_date_between <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  deployment_logger_status <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_retrieval_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_retrieval_date_between <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  retrieval_logger_status <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  logger_shutdown_date_between <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  download_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  has_positions <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  has_irma <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  embargoed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  as_tibble <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -73,65 +90,133 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-logger-ids">logger_ids<a class="anchor" aria-label="anchor" href="#arg-logger-ids"></a></dt>
-<dd><p>Optional vector of character strings representing logger serial numbers to filter the sessions.</p></dd>
+<dl><dt id="arg-session-id">session_id<a class="anchor" aria-label="anchor" href="#arg-session-id"></a></dt>
+<dd><p>Optional vector of session IDs to filter by.</p></dd>
 
 
-<dt id="arg-individ-ids">individ_ids<a class="anchor" aria-label="anchor" href="#arg-individ-ids"></a></dt>
-<dd><p>Optional vector of character strings representing individual IDs to filter the sessions.</p></dd>
+<dt id="arg-individ-id">individ_id<a class="anchor" aria-label="anchor" href="#arg-individ-id"></a></dt>
+<dd><p>Optional vector of individual IDs to filter by.</p></dd>
 
 
-<dt id="arg-logger-deployment-year">logger_deployment_year<a class="anchor" aria-label="anchor" href="#arg-logger-deployment-year"></a></dt>
-<dd><p>Optional vector of integers representing the years of logger deployment to filter the sessions.</p></dd>
+<dt id="arg-project">project<a class="anchor" aria-label="anchor" href="#arg-project"></a></dt>
+<dd><p>Optional vector of project names to filter by.</p></dd>
 
 
-<dt id="arg-logger-retrieval-year">logger_retrieval_year<a class="anchor" aria-label="anchor" href="#arg-logger-retrieval-year"></a></dt>
-<dd><p>Optional vector of integers representing the years of logger retrieval to filter the sessions.</p></dd>
+<dt id="arg-logger-serial-no">logger_serial_no<a class="anchor" aria-label="anchor" href="#arg-logger-serial-no"></a></dt>
+<dd><p>Optional vector of logger serial numbers to filter by.</p></dd>
 
 
-<dt id="arg-colony-names">colony_names<a class="anchor" aria-label="anchor" href="#arg-colony-names"></a></dt>
-<dd><p>Optional vector of character strings representing colony names to filter the sessions.</p></dd>
+<dt id="arg-logger-model">logger_model<a class="anchor" aria-label="anchor" href="#arg-logger-model"></a></dt>
+<dd><p>Optional vector of logger models to filter by.</p></dd>
 
 
-<dt id="arg-species-names">species_names<a class="anchor" aria-label="anchor" href="#arg-species-names"></a></dt>
-<dd><p>Optional vector of character strings representing species names to filter the sessions.</p></dd>
+<dt id="arg-logger-producer">logger_producer<a class="anchor" aria-label="anchor" href="#arg-logger-producer"></a></dt>
+<dd><p>Optional vector of logger producers to filter by.</p></dd>
 
 
-<dt id="arg-logger-year-tracked">logger_year_tracked<a class="anchor" aria-label="anchor" href="#arg-logger-year-tracked"></a></dt>
-<dd><p>Optional vector of character strings representing the years tracked by the logger to filter the sessions.</p></dd>
-
-
-<dt id="arg-logger-active">logger_active<a class="anchor" aria-label="anchor" href="#arg-logger-active"></a></dt>
-<dd><p>Optional boolean to filter sessions based on whether the logger is currently active.</p></dd>
+<dt id="arg-logger-type">logger_type<a class="anchor" aria-label="anchor" href="#arg-logger-type"></a></dt>
+<dd><p>Optional vector of logger types to filter by.</p></dd>
 
 
 <dt id="arg-logger-deployed">logger_deployed<a class="anchor" aria-label="anchor" href="#arg-logger-deployed"></a></dt>
-<dd><p>Optional boolean to filter sessions based on whether the logger has been deployed.</p></dd>
+<dd><p>Optional logical indicating whether to filter by deployed loggers.</p></dd>
 
 
 <dt id="arg-logger-retrieved">logger_retrieved<a class="anchor" aria-label="anchor" href="#arg-logger-retrieved"></a></dt>
-<dd><p>Optional boolean to filter sessions based on whether the logger has been retrieved.</p></dd>
+<dd><p>Optional logical indicating whether to filter by retrieved loggers.</p></dd>
 
 
-<dt id="arg-has-pos-data">has_pos_data<a class="anchor" aria-label="anchor" href="#arg-has-pos-data"></a></dt>
-<dd><p>Optional boolean to filter sessions based on whether they have associated position data.</p></dd>
+<dt id="arg-active">active<a class="anchor" aria-label="anchor" href="#arg-active"></a></dt>
+<dd><p>Optional logical indicating whether to filter by active logger sessions.</p></dd>
 
 
-<dt id="arg-logger-download-type">logger_download_type<a class="anchor" aria-label="anchor" href="#arg-logger-download-type"></a></dt>
-<dd><p>Optional vector of character strings representing the download types of the loggers to filter the sessions.</p></dd>
+<dt id="arg-colony">colony<a class="anchor" aria-label="anchor" href="#arg-colony"></a></dt>
+<dd><p>Optional vector of colony names to filter by.</p></dd>
 
 
-<dt id="arg-posdata-filename">posdata_filename<a class="anchor" aria-label="anchor" href="#arg-posdata-filename"></a></dt>
-<dd><p>Optional vector of character strings representing position data filenames to filter the sessions (without extension).</p></dd>
+<dt id="arg-species">species<a class="anchor" aria-label="anchor" href="#arg-species"></a></dt>
+<dd><p>Optional vector of species names to filter by.</p></dd>
 
 
-<dt id="arg-session-ids">session_ids<a class="anchor" aria-label="anchor" href="#arg-session-ids"></a></dt>
-<dd><p>Optional vector of character strings representing session IDs to filter the sessions.</p></dd>
+<dt id="arg-deployment-age-class">deployment_age_class<a class="anchor" aria-label="anchor" href="#arg-deployment-age-class"></a></dt>
+<dd><p>Optional vector of age deployment classes ("C" or "A") to filter by.</p></dd>
+
+
+<dt id="arg-sex">sex<a class="anchor" aria-label="anchor" href="#arg-sex"></a></dt>
+<dd><p>Optional vector of sexes to filter by.</p></dd>
+
+
+<dt id="arg-sexing-method">sexing_method<a class="anchor" aria-label="anchor" href="#arg-sexing-method"></a></dt>
+<dd><p>Optional vector of sexing methods to filter by.</p></dd>
+
+
+<dt id="arg-years-tracked">years_tracked<a class="anchor" aria-label="anchor" href="#arg-years-tracked"></a></dt>
+<dd><p>Optional vector of years tracked to filter by.</p></dd>
+
+
+<dt id="arg-logger-start-time">logger_start_time<a class="anchor" aria-label="anchor" href="#arg-logger-start-time"></a></dt>
+<dd><p>Optional vector of logger start times to filter by.</p></dd>
+
+
+<dt id="arg-logger-start-time-between">logger_start_time_between<a class="anchor" aria-label="anchor" href="#arg-logger-start-time-between"></a></dt>
+<dd><p>Optional vector of two dates to filter logger start times between.</p></dd>
+
+
+<dt id="arg-logging-mode">logging_mode<a class="anchor" aria-label="anchor" href="#arg-logging-mode"></a></dt>
+<dd><p>Optional vector of logging modes to filter by.</p></dd>
+
+
+<dt id="arg-logger-deployment-year">logger_deployment_year<a class="anchor" aria-label="anchor" href="#arg-logger-deployment-year"></a></dt>
+<dd><p>Optional vector of deployment years to filter by.</p></dd>
+
+
+<dt id="arg-logger-deployment-date-between">logger_deployment_date_between<a class="anchor" aria-label="anchor" href="#arg-logger-deployment-date-between"></a></dt>
+<dd><p>Optional vector of two dates to filter deployment dates between.</p></dd>
+
+
+<dt id="arg-deployment-logger-status">deployment_logger_status<a class="anchor" aria-label="anchor" href="#arg-deployment-logger-status"></a></dt>
+<dd><p>Optional vector of deployment logger statuses to filter by.</p></dd>
+
+
+<dt id="arg-logger-retrieval-year">logger_retrieval_year<a class="anchor" aria-label="anchor" href="#arg-logger-retrieval-year"></a></dt>
+<dd><p>Optional vector of retrieval years to filter by.</p></dd>
+
+
+<dt id="arg-logger-retrieval-date-between">logger_retrieval_date_between<a class="anchor" aria-label="anchor" href="#arg-logger-retrieval-date-between"></a></dt>
+<dd><p>Optional vector of two dates to filter retrieval dates between.</p></dd>
+
+
+<dt id="arg-retrieval-logger-status">retrieval_logger_status<a class="anchor" aria-label="anchor" href="#arg-retrieval-logger-status"></a></dt>
+<dd><p>Optional vector of retrieval logger statuses to filter by.</p></dd>
+
+
+<dt id="arg-logger-shutdown-date-between">logger_shutdown_date_between<a class="anchor" aria-label="anchor" href="#arg-logger-shutdown-date-between"></a></dt>
+<dd><p>Optional vector of two dates to filter shutdown dates between.</p></dd>
+
+
+<dt id="arg-download-type">download_type<a class="anchor" aria-label="anchor" href="#arg-download-type"></a></dt>
+<dd><p>Optional vector of download types to filter by.</p></dd>
+
+
+<dt id="arg-has-positions">has_positions<a class="anchor" aria-label="anchor" href="#arg-has-positions"></a></dt>
+<dd><p>Optional logical indicating whether to filter by sessions with position data.</p></dd>
+
+
+<dt id="arg-has-irma">has_irma<a class="anchor" aria-label="anchor" href="#arg-has-irma"></a></dt>
+<dd><p>Optional logical indicating whether to filter by sessions with IRMA data.</p></dd>
+
+
+<dt id="arg-embargoed">embargoed<a class="anchor" aria-label="anchor" href="#arg-embargoed"></a></dt>
+<dd><p>Optional logical indicating whether to include embargoed sessions. Default is FALSE.</p></dd>
+
+
+<dt id="arg-as-tibble">as_tibble<a class="anchor" aria-label="anchor" href="#arg-as-tibble"></a></dt>
+<dd><p>Logical indicating whether to return the result as a tibble.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A tibble containing the filtered logger session information.</p>
+    <p>Either a lazy db query or a tibble containing the filtered logger session information.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

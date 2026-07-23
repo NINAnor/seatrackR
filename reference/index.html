@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,6 +44,22 @@
     </div>
 
     <div class="section level2">
+      <h2 id="shiny-app">Shiny app<a class="anchor" aria-label="anchor" href="#shiny-app"></a></h2>
+
+      <div class="section-desc"><p>Use the seatrackR shiny interface</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="run_app.html">run_app()</a></code>
+
+        </dt>
+        <dd>Run the seatrackR Shiny app</dd>
+      </dl></div><div class="section level2">
       <h2 id="positions">Positions<a class="anchor" aria-label="anchor" href="#positions"></a></h2>
 
       <div class="section-desc"><p>Functions for reading and writing positional data to the database.</p></div>
@@ -349,6 +365,13 @@
 
         </dt>
         <dd>checkSeatrackRVersion</dd>
+
+        <dt>
+
+          <code><a href="check_db_version.html">check_db_version()</a></code>
+
+        </dt>
+        <dd>Check the version of the database Checks the version of the database by querying the flyway_schema_history table. If the table does not exist, it returns 0.</dd>
 
         <dt>
 

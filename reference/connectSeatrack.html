@@ -11,7 +11,7 @@ After this, credentials will be loaded automatically."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +63,8 @@ After this, credentials will be loaded automatically.</p>
 <span>  host <span class="op">=</span> <span class="st">"seatrack.nina.no"</span>,</span>
 <span>  dbname <span class="op">=</span> <span class="st">"seatrack"</span>,</span>
 <span>  bigint <span class="op">=</span> <span class="st">"integer"</span>,</span>
+<span>  save_credentials <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  global <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -91,6 +93,14 @@ After this, credentials will be loaded automatically.</p>
 
 <dt id="arg-bigint">bigint<a class="anchor" aria-label="anchor" href="#arg-bigint"></a></dt>
 <dd><p>Character. How to handle big integers. Default is "integer". Other options are "numeric" and "character".</p></dd>
+
+
+<dt id="arg-save-credentials">save_credentials<a class="anchor" aria-label="anchor" href="#arg-save-credentials"></a></dt>
+<dd><p>Boolean. If TRUE, credentials will be saved to .Renviron for future use. Default is TRUE.</p></dd>
+
+
+<dt id="arg-global">global<a class="anchor" aria-label="anchor" href="#arg-global"></a></dt>
+<dd><p>Boolean. If TRUE, the connection object will be assigned to the global environment. If FALSE, the connection object will be returned. Default is TRUE.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

@@ -12,7 +12,7 @@ text, as this defeats the purpose.
 ## Usage
 
 ``` r
-set_credentials_renviron(user_name = NULL, password = NULL)
+set_credentials_renviron(user_name = NULL, password = NULL, save = TRUE)
 ```
 
 ## Arguments
@@ -27,11 +27,16 @@ set_credentials_renviron(user_name = NULL, password = NULL)
   Password to access the seatrack database If not provided, user will be
   prompted.
 
+- save:
+
+  Boolean. If TRUE, credentials will be saved to .Renviron for future
+  use. Default is TRUE.
+
 ## Examples
 
 ``` r
  if (FALSE) { # \dontrun{
  set_credentials_renviron() # will prompt
- set_credentials_renviron("foo","bar") #only do this in the console
+ set_credentials_renviron("foo","bar") # only do this in the console
 } # }
 ```
