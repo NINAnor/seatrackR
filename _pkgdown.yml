@@ -46,6 +46,9 @@ navbar:
           text: Population maps reference
           href: articles/population_maps.html
 reference:
+- title: Shiny app
+  desc: Use the seatrackR shiny interface
+  contents: has_concept("shiny")
 - title: Positions
   desc: Functions for reading and writing positional data to the database.
   contents: has_concept("positions")

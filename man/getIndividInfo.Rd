@@ -47,6 +47,8 @@ getIndividInfo(
 \item{last_only}{Logical. If TRUE, only the most recent status info per individual is returned. Default is FALSE.}
 
 \item{session_id}{Optional vector of character strings of session_id to limit the selection to.}
+
+\item{as_tibble}{Logical. If TRUE, the output is returned as a tibble. If FALSE, the output is returned as a lazy query object. Default is TRUE.}
 }
 \value{
 Data frame.

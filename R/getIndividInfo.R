@@ -15,6 +15,7 @@
 #' @param event_type Optional vector of character strings of event types to limit the selection to. Available choices are "Deployment" and "Retrieval".
 #' @param last_only Logical. If TRUE, only the most recent status info per individual is returned. Default is FALSE.
 #' @param session_id Optional vector of character strings of session_id to limit the selection to.
+#' @param as_tibble Logical. If TRUE, the output is returned as a tibble. If FALSE, the output is returned as a lazy query object. Default is TRUE.
 #' @return Data frame.
 #' @export
 #' @examples

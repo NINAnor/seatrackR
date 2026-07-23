@@ -11,7 +11,7 @@
 #' @param active Optional logical indicating whether to filter by active logger sessions.
 #' @param colony Optional vector of colony names to filter by.
 #' @param species Optional vector of species names to filter by.
-#' @param age_deployment_class Optional vector of age deployment classes ("C" or "A") to filter by.
+#' @param deployment_age_class Optional vector of age deployment classes ("C" or "A") to filter by.
 #' @param sex Optional vector of sexes to filter by.
 #' @param sexing_method Optional vector of sexing methods to filter by.
 #' @param years_tracked Optional vector of years tracked to filter by.
@@ -26,7 +26,7 @@
 #' @param logger_retrieval_year Optional vector of retrieval years to filter by.
 #' @param logger_retrieval_date_between Optional vector of two dates to filter retrieval dates between.
 #' @param retrieval_logger_status Optional vector of retrieval logger statuses to filter by.
-#' @param shutdown_date_between Optional vector of two dates to filter shutdown dates between.
+#' @param logger_shutdown_date_between Optional vector of two dates to filter shutdown dates between.
 #' @param download_type Optional vector of download types to filter by.
 #' @param has_positions Optional logical indicating whether to filter by sessions with position data.
 #' @param has_irma Optional logical indicating whether to filter by sessions with IRMA data.

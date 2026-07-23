@@ -18,11 +18,15 @@ Suggests:
     R.rsp,
     NinaR,
     testthat (>= 3.0.0),
-    leaflet,
-    leaflet.extra
-    shiny
-    bslib
-    shinyjs
+    withr,
+    knitr,
+    rmarkdown,
+    yaml,
+    styler,
+    badger,
+    formatR,
+    pkgdown,
+    nanonext
 Imports:
     DBI,
     RPostgres,
@@ -38,17 +42,17 @@ Imports:
     httr,
     sf,
     rlang,
-    rmarkdown,
-    knitr,
-    zip,
-    arrow,
-    yaml,
-    maps,
-    terra,
     glue,
-    ncdf4,
     getPass,
-    git2r
+    git2r,
+    stringr,
+    leaflet,
+    leaflet.extras,
+    shiny,
+    shinyjs,
+    bslib,
+    future,
+    promises
 Depends:
     R (>= 4.1)
 VignetteBuilder: 
@@ -60,3 +64,4 @@ LazyData: true
 URL: https://ninanor.github.io/seatrackR/
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
+RoxygenNote: 8.0.0

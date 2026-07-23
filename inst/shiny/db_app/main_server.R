@@ -30,7 +30,7 @@ main_server <- function(id) {
             if (input$dark_mode_switch == "light") {
                 card_path <- system.file(file.path("img", "SEATRACK_logo_landscape.jpg"), package = "seatrackR")
             } else {
-                card_path <- system.file(file.path("img", "SEATRACK logo landscape - inverted.png"), package = "seatrackR")
+                card_path <- system.file(file.path("img", "SEATRACK_logo_landscape_inverted.png"), package = "seatrackR")
             }
             shinyjs::hideElement("placeholder_splash")
             card_image(file = card_path)

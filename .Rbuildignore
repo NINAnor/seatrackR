@@ -18,3 +18,5 @@ scaffolding.R
 get_netcdf_meta.R
 precompile_vignettes.R
 ^.devcontainer$
+^cache$
+^requested_data_packages$

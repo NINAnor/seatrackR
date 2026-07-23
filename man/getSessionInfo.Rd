@@ -63,6 +63,8 @@ getSessionInfo(
 
 \item{species}{Optional vector of species names to filter by.}
 
+\item{deployment_age_class}{Optional vector of age deployment classes ("C" or "A") to filter by.}
+
 \item{sex}{Optional vector of sexes to filter by.}
 
 \item{sexing_method}{Optional vector of sexing methods to filter by.}
@@ -87,6 +89,8 @@ getSessionInfo(
 
 \item{retrieval_logger_status}{Optional vector of retrieval logger statuses to filter by.}
 
+\item{logger_shutdown_date_between}{Optional vector of two dates to filter shutdown dates between.}
+
 \item{download_type}{Optional vector of download types to filter by.}
 
 \item{has_positions}{Optional logical indicating whether to filter by sessions with position data.}
@@ -96,10 +100,6 @@ getSessionInfo(
 \item{embargoed}{Optional logical indicating whether to include embargoed sessions. Default is FALSE.}
 
 \item{as_tibble}{Logical indicating whether to return the result as a tibble.}
-
-\item{age_deployment_class}{Optional vector of age deployment classes ("C" or "A") to filter by.}
-
-\item{shutdown_date_between}{Optional vector of two dates to filter shutdown dates between.}
 }
 \value{
 Either a lazy db query or a tibble containing the filtered logger session information.
