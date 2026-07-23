@@ -76,7 +76,7 @@ getPositions <- function(datatype = "GLS",
   selectAge <- age_deployment_class
 
   datatype <- match.arg(datatype,
-    choices = c("GLS", "IRMA", "GPS")
+    choices <- c("GLS", "IRMA", "GPS", "GPS-GSM")
   )
 
   if (!limit == FALSE && !is.numeric(limit)) {

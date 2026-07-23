@@ -17,7 +17,8 @@ getIndividInfo(
   exclude_embargoed = TRUE,
   event_type = NULL,
   last_only = FALSE,
-  session_id = NULL
+  session_id = NULL,
+  as_tibble = TRUE
 )
 }
 \arguments{

@@ -29,7 +29,7 @@
 #' }
 #'
 #' @export
-#' @keyword internal
+#' @keywords internal
 connect_to_test_database <- function(
     username = "postgres",
     password = "postgres",
@@ -74,7 +74,7 @@ connect_to_test_database <- function(
 #' }
 #'
 #' @export
-#' @keyword internal
+#' @keywords internal
 skip_if_no_test_db <- function(message = "Test database not available") {
   con <- connect_to_test_database()
   

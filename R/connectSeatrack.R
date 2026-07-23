@@ -10,6 +10,8 @@
 #' @param host Character. The host of the database. For testing purposes. There should be no need for the user to change this.
 #' @param dbname Character. Name of database, for testing purposes. Default is "seatrack" which is the production database.
 #' @param bigint Character. How to handle big integers. Default is "integer". Other options are "numeric" and "character".
+#' @param save_credentials Boolean. If TRUE, credentials will be saved to .Renviron for future use. Default is TRUE.
+#' @param global Boolean. If TRUE, the connection object will be assigned to the global environment. If FALSE, the connection object will be returned. Default is TRUE.
 #' @param ... Additional arguments passed to DBI::dbConnect()
 #' @return Assigns a connection object to the global variable `con`.
 #' @import DBI
@@ -20,19 +22,9 @@ connectSeatrack <- function(Username = NULL,
                             host = "seatrack.nina.no",
                             dbname = "seatrack",
                             bigint = "integer",
+                            save_credentials = TRUE,
+                            global = TRUE,
                             ...) {
-  if (!requireNamespace("DBI", quietly = TRUE)) {
-    stop("Pkg needed for this function to work. Please install it using devtools::install_github(\"rstats-db/DBI\") ",
-      call. = FALSE
-    )
-  }
-
-
-  if (!requireNamespace("RPostgres", quietly = TRUE)) {
-    stop("Pkg needed for this function to work. Please install it using devtools::install_github(\"rstats-db/RPostgres\") ",
-      call. = FALSE
-    )
-  }
 
   if (is.null(Username)) {
     Username <- Sys.getenv("SEATRACK_DB_USER", NA)
@@ -40,6 +32,7 @@ connectSeatrack <- function(Username = NULL,
       Username <- NULL
     }
   }
+
   if (is.null(Password)) {
     Password <- Sys.getenv("SEATRACK_DB_PWD", NA)
     if (is.na(Password)) {
@@ -48,7 +41,7 @@ connectSeatrack <- function(Username = NULL,
   }
 
 
-  set_credentials_renviron(Username, Password)
+  set_credentials_renviron(Username, Password, save = save_credentials)
 
   Username <- Sys.getenv("SEATRACK_DB_USER", NA)
   Password <- Sys.getenv("SEATRACK_DB_PWD", NA)
@@ -62,12 +55,14 @@ connectSeatrack <- function(Username = NULL,
     bigint = bigint,
     ...
   )
+  if(global){
+    assign("con", tmp, .GlobalEnv)
+    assign(".pass", Password, envir = passEnv)
+  }else{
+    return(tmp)
+  }
 
-  assign("con", tmp, .GlobalEnv)
-  assign(".pass", Password, envir = passEnv)
 
-  # Set the timezone to correspond to the database timezone
-  Sys.setenv(TZ = "Europe/Oslo")
 }
 
 #' @export

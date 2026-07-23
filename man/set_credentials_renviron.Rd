@@ -4,12 +4,14 @@
 \alias{set_credentials_renviron}
 \title{Set up SEATRACK DB credentials for this project}
 \usage{
-set_credentials_renviron(user_name = NULL, password = NULL)
+set_credentials_renviron(user_name = NULL, password = NULL, save = TRUE)
 }
 \arguments{
 \item{user_name}{Username to access the seatrack database. If not provided, user will be prompted.}
 
 \item{password}{Password to access the seatrack database If not provided, user will be prompted.}
+
+\item{save}{Boolean. If TRUE, credentials will be saved to .Renviron for future use. Default is TRUE.}
 }
 \description{
 This function will store credentials to access the seatrack database in a .Renviron file,
@@ -21,7 +23,7 @@ While the option is there to directly put your credentials in as arguments, do N
 \examples{
  \dontrun{
  set_credentials_renviron() # will prompt
- set_credentials_renviron("foo","bar") #only do this in the console
+ set_credentials_renviron("foo","bar") # only do this in the console
 }
 }
 \concept{db_connection}

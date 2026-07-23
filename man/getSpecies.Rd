@@ -4,7 +4,10 @@
 \alias{getSpecies}
 \title{Retrieve info on the registered species in the database}
 \usage{
-getSpecies()
+getSpecies(include_subspecies = FALSE)
+}
+\arguments{
+\item{include_subspecies}{Include subspecies in the output? Boolean}
 }
 \value{
 A tibble of the metadata.subspecies table

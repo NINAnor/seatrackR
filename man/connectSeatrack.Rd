@@ -11,6 +11,8 @@ connectSeatrack(
   host = "seatrack.nina.no",
   dbname = "seatrack",
   bigint = "integer",
+  save_credentials = TRUE,
+  global = TRUE,
   ...
 )
 
@@ -26,6 +28,10 @@ disconnectSeatrack()
 \item{dbname}{Character. Name of database, for testing purposes. Default is "seatrack" which is the production database.}
 
 \item{bigint}{Character. How to handle big integers. Default is "integer". Other options are "numeric" and "character".}
+
+\item{save_credentials}{Boolean. If TRUE, credentials will be saved to .Renviron for future use. Default is TRUE.}
+
+\item{global}{Boolean. If TRUE, the connection object will be assigned to the global environment. If FALSE, the connection object will be returned. Default is TRUE.}
 
 \item{...}{Additional arguments passed to DBI::dbConnect()}
 }

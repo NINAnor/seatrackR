@@ -8,15 +8,16 @@
 #'
 #' @param user_name Username to access the seatrack database. If not provided, user will be prompted.
 #' @param password Password to access the seatrack database If not provided, user will be prompted.
+#' @param save Boolean. If TRUE, credentials will be saved to .Renviron for future use. Default is TRUE.
 #'
 #' @examples
 #'  \dontrun{
 #'  set_credentials_renviron() # will prompt
-#'  set_credentials_renviron("foo","bar") #only do this in the console
+#'  set_credentials_renviron("foo","bar") # only do this in the console
 #' }
 #' @export
 #' @concept db_connection
-set_credentials_renviron <- function(user_name = NULL, password = NULL) {
+set_credentials_renviron <- function(user_name = NULL, password = NULL, save = TRUE) {
     if (is.null(user_name)) {
         user_name <- readline("Enter your username:")
     }
@@ -31,11 +32,13 @@ set_credentials_renviron <- function(user_name = NULL, password = NULL) {
     }
     if (Sys.getenv("SEATRACK_DB_USER", "") != user_name ||
         Sys.getenv("SEATRACK_DB_PWD", "") != password) {
-        environ_lines <- environ_lines[!grepl("SEATRACK_DB_USER", environ_lines, fixed = TRUE)]
-        environ_lines <- environ_lines[!grepl("SEATRACK_DB_PWD", environ_lines, fixed = TRUE)]
-        environ_lines <- c(environ_lines, paste0("SEATRACK_DB_USER = '", user_name, "'"), paste0("SEATRACK_DB_PWD = '", password, "'"))
-        writeLines(unique(environ_lines), ".Renviron")
-        print("Wrote credentials to .Renviron")
+        if(save){
+            environ_lines <- environ_lines[!grepl("SEATRACK_DB_USER", environ_lines, fixed = TRUE)]
+            environ_lines <- environ_lines[!grepl("SEATRACK_DB_PWD", environ_lines, fixed = TRUE)]
+            environ_lines <- c(environ_lines, paste0("SEATRACK_DB_USER = '", user_name, "'"), paste0("SEATRACK_DB_PWD = '", password, "'"))
+            writeLines(unique(environ_lines), ".Renviron")
+            print("Wrote credentials to .Renviron")
+        }
 
         # immediately set the env var so R does not have to be restarted
         Sys.setenv(SEATRACK_DB_USER = user_name)
@@ -54,7 +57,7 @@ set_credentials_renviron <- function(user_name = NULL, password = NULL) {
             return()
         }
     }
-    if (!".Renviron" %in% git_ignore_lines) {
+    if (save && !".Renviron" %in% git_ignore_lines) {
         print("Adding .Renviron to .gitignore")
         git_ignore_lines <- c(git_ignore_lines, ".Renviron")
         writeLines(unique(git_ignore_lines), ".gitignore")

@@ -8,6 +8,7 @@ get_responsible(
   session = NULL,
   species = NULL,
   colony = NULL,
+  by_year = TRUE,
   return_string = TRUE
 )
 }
@@ -17,6 +18,8 @@ get_responsible(
 \item{species}{Optional vector of species names to filter by.}
 
 \item{colony}{Optional vector of colony names to filter by.}
+
+\item{by_year}{Logical indicating whether to group results by year. Default is TRUE.}
 
 \item{return_string}{Logical indicating whether to return responsible as a formatted string. Default is TRUE.}
 }

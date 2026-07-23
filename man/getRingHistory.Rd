@@ -7,7 +7,7 @@
 getRingHistory(asTibble = FALSE)
 }
 \arguments{
-\item{asTibble}{Return result as tibble? Boolean.}
+\item{asTibble}{Return result as tibble rather than a lazy query? Boolean.}
 }
 \value{
 Lazy query, or optionally a tibble
