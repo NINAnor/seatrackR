@@ -14,6 +14,8 @@ source(system.file(file.path("shiny", "shared_modules", "display_map.R"), packag
 source(system.file(file.path("shiny", "shared_modules", "pagination_controls.R"), package = "seatrackR"))
 source(system.file(file.path("shiny", "shared_modules", "paginated_query.R"), package = "seatrackR"))
 source(system.file(file.path("shiny", "shared_modules", "query_constructor.R"), package = "seatrackR"))
+source(system.file(file.path("shiny", "shared_modules", "export_data.R"), package = "seatrackR"))
+
 
 library(future)
 library(promises)

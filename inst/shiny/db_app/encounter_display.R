@@ -8,7 +8,8 @@ encounter_ui <- function(id) {
             nav_panel(title = "Map", tagList(
                 pagination_controls_ui(ns("pagination")),
                 map_display_ui(ns("map"))
-            ))
+            )),
+            nav_panel(title = "Export", export_data_ui(ns("export")))
         )
     )
 }
@@ -88,6 +89,7 @@ encounter_server <- function(id, connected, session_info) {
             paged = paged
         )
 
+        export_data_server("export", session_info, con, "encounter_export.csv")
         pagination_controls_server("pagination", paged)
 
 

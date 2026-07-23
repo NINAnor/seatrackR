@@ -72,7 +72,7 @@ main_ui <- function(id) {
                     ),
                     nav_panel(
                         title = "Recordings",
-                        p("FOO")
+                        p("To do")
                     )
                 ) # nav tabs go here to display the different outputs
             )
