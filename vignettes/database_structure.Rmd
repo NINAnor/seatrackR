@@ -1,0 +1,25 @@
+---
+title: "Database structure"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Database structure}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style>
+/* img {
+  max-width: none !important;
+  width: auto !important;
+} */
+.db_diagram { 
+  background-color: #343a40;
+  max-width: none !important;
+  width: max-content !important; }
+</style>
+
+::: {.db_diagram}
+```{r, echo = FALSE, class.extra="db_diagram"}
+knitr::include_graphics("../man/figures/seatrackModel.png")
+```
+:::

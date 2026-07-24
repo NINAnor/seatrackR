@@ -18,6 +18,9 @@ navbar:
     articles:
       text: Articles
       menu:
+        Database structure:
+          text: Database diagram and description
+          href: articles/database_structure.html
         Retrieve standard data from Seatrack:
           text: Retrieve standard data from Seatrack
           href: articles/Data_extraction.html

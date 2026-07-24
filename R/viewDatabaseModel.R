@@ -10,8 +10,8 @@
 #' viewDatabaseModel()
 #' }
 #' @concept general_db
-viewDatabaseModel <- function(type = c("png", "svg")) {
-  type <- match.arg(type, c("png", "svg"))
+viewDatabaseModel <- function(type = c("png")) {
+  type <- match.arg(type, c("png"))
 
   browseURL(system.file("img", paste0("seatrackModel.", type), package = "seatrackR"))
 }

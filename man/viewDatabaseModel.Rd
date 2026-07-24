@@ -4,7 +4,7 @@
 \alias{viewDatabaseModel}
 \title{View the database structure in a browser}
 \usage{
-viewDatabaseModel(type = c("png", "svg"))
+viewDatabaseModel(type = c("png"))
 }
 \arguments{
 \item{type}{Open the database model in either "png" or "svg".}
