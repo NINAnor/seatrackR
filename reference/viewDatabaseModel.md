@@ -5,7 +5,7 @@ Zoom in with the browser to see the details
 ## Usage
 
 ``` r
-viewDatabaseModel(type = c("png", "svg"))
+viewDatabaseModel(type = c("png"))
 ```
 
 ## Arguments

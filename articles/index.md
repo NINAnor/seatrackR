@@ -4,6 +4,8 @@
 
 - [Retrieve standard data from
   Seatrack](https://ninanor.github.io/seatrackR/articles/Data_extraction.md):
+- [Database
+  structure](https://ninanor.github.io/seatrackR/articles/database_structure.md):
 - [GLS positional data
   reference](https://ninanor.github.io/seatrackR/articles/GLS_positional_data.md):
 - [Immersion data
