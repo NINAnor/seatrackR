@@ -20,9 +20,7 @@ get_responsible <- function(session = NULL, species = NULL, colony = NULL, by_ye
     if (length(session) == 0) session <- NULL
 
     arg_list <- list(
-        species = species,
-        colony = colony,
-        session_id <- session
+        species = species, colony = colony, session_id = session
     )
 
     if (check_db_version() >= 50) {
