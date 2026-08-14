@@ -22,7 +22,7 @@ get_responsible <- function(session = NULL, species = NULL, colony = NULL, by_ye
     arg_list <- list(
         species = species,
         colony = colony,
-        session = session
+        session_id <- session
     )
 
     if (check_db_version() >= 50) {
@@ -30,8 +30,22 @@ get_responsible <- function(session = NULL, species = NULL, colony = NULL, by_ye
         for (i in seq_along(arg_list)) {
             val_name <- names(arg_list)[i]
             value <- arg_list[[i]]
+
             if (!is.null(value)) {
-                sessions <- dplyr::filter(sessions, !!rlang::sym(val_name) %in% value)
+                lookup <- tibble::tibble(
+                    !!rlang::sym(val_name) := unique(value)
+                )
+
+                sessions <- dplyr::inner_join(
+                    sessions,
+                    dplyr::copy_to(
+                        con,
+                        lookup,
+                        temporary = TRUE,
+                        overwrite = TRUE
+                    ),
+                    by = val_name
+                )
             }
         }
         people <- dplyr::tbl(con, dbplyr::in_schema("metadata", "people"))
