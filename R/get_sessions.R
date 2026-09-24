@@ -127,8 +127,8 @@ getSessionInfo <- function(
     pos_sessions <- dplyr::mutate(pos_sessions, pos_data = TRUE)
     sessions <- dplyr::left_join(sessions, pos_sessions, by = "session_id")
     sessions <- dplyr::mutate(sessions, pos_data = !is.na(pos_data))
-    if (!is.null(session_ids)) {
-        sessions <- dplyr::filter(sessions, session_id %in% session_ids)
+    if (!is.null(session_id)) {
+        sessions <- dplyr::filter(sessions, session_id %in% !!session_id)
     }
     if (!is.null(has_pos_data)) {
         sessions <- dplyr::filter(sessions, pos_data == has_pos_data)
