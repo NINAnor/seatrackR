@@ -31,6 +31,8 @@ Functions for reading and writing positional data to the database.
   [`checkLoggers()`](https://ninanor.github.io/seatrackR/reference/checkMetadata.md)
   [`checkNames()`](https://ninanor.github.io/seatrackR/reference/checkMetadata.md)
   : checkMetadata before import
+- [`checkPeople()`](https://ninanor.github.io/seatrackR/reference/checkPeople.md)
+  : Check People String
 - [`getColonies()`](https://ninanor.github.io/seatrackR/reference/getColonies.md)
   : Retrieve info on the registered colonies and locations within
   colonies in the database
