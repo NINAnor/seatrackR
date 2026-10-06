@@ -30,12 +30,12 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
+<li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/Intro_presentation.html">SEATRACK data infrastructure</a></li>
-    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting started with seatrackR</a></li>
-    <li><a class="dropdown-item" href="../articles/advanced_topics.html">Extending seatrackR queries</a></li>
+<li><a class="dropdown-item" href="../articles/1_Intro_presentation.html">SEATRACK data infrastructure</a></li>
+    <li><a class="dropdown-item" href="../articles/2_getting_started.html">Getting started with seatrackR</a></li>
+    <li><a class="dropdown-item" href="../articles/3_advanced_topics.html">Extending seatrackR queries</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -336,12 +336,12 @@ colony.</p>
 <pre><code><span><span class="co">## # A tibble: 6 × 33</span></span>
 <span><span class="co">##   id                   date_time           logger_id logger_model year_tracked session_id individ_id</span></span>
 <span><span class="co">##   &lt;chr&gt;                &lt;dttm&gt;              &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     </span></span>
-<span><span class="co">## 1 8dcc7d8a-be38-11f0-… 2013-05-11 23:05:00 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
-<span><span class="co">## 2 8dcc76fa-be38-11f0-… 2013-05-06 23:08:52 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
-<span><span class="co">## 3 8dcc783a-be38-11f0-… 2013-05-07 11:15:07 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
-<span><span class="co">## 4 8dcc7902-be38-11f0-… 2013-05-07 23:01:22 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
-<span><span class="co">## 5 8dcc79c0-be38-11f0-… 2013-05-08 10:59:30 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
-<span><span class="co">## 6 8dcc7a7e-be38-11f0-… 2013-05-09 11:22:39 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 1 8dcc76fa-be38-11f0-… 2013-05-06 23:08:52 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 2 8dcc8ece-be38-11f0-… 2013-09-22 23:47:56 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 3 8dcc8f8c-be38-11f0-… 2013-09-23 11:24:56 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 4 8dcc904a-be38-11f0-… 2013-09-23 23:37:26 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 5 8dcc9108-be38-11f0-… 2013-09-24 11:40:27 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 6 8dcc91c6-be38-11f0-… 2013-09-24 23:29:27 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
 <span><span class="co">## # ℹ 26 more variables: deployment_date &lt;date&gt;, retrieval_date &lt;date&gt;, ring_number &lt;chr&gt;,</span></span>
 <span><span class="co">## #   country_code &lt;chr&gt;, species &lt;chr&gt;, colony &lt;chr&gt;, lon_raw &lt;dbl&gt;, lat_raw &lt;dbl&gt;, lon &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   lat &lt;dbl&gt;, eqfilter &lt;lgl&gt;, sex &lt;chr&gt;, age_deployment &lt;chr&gt;, col_lon &lt;dbl&gt;, col_lat &lt;dbl&gt;,</span></span>
@@ -362,7 +362,7 @@ function.</p>
 <pre><code><span><span class="co">## # A tibble: 6 × 33</span></span>
 <span><span class="co">##   id                   date_time           logger_id logger_model year_tracked session_id individ_id</span></span>
 <span><span class="co">##   &lt;chr&gt;                &lt;dttm&gt;              &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     </span></span>
-<span><span class="co">## 1 22b013aa-5df6-11f1-… 2024-08-17 23:12:58 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
+<span><span class="co">## 1 22afd5e8-5df6-11f1-… 2024-07-27 11:27:07 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
 <span><span class="co">## 2 22afffaa-5df6-11f1-… 2024-08-05 10:59:22 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
 <span><span class="co">## 3 22b0007c-5df6-11f1-… 2024-08-06 11:21:48 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
 <span><span class="co">## 4 22b00216-5df6-11f1-… 2024-08-06 23:29:06 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
