@@ -8,9 +8,9 @@ main_dir <- "vignettes"
 article_path <- main_dir
 dir.create(article_path, recursive = TRUE, showWarnings = FALSE)
 
-curr_menu <- pkgdown_dict$navbar$components$articles$menu <- list()
+# curr_menu <- pkgdown_dict$navbar$components$articles$menu <- list()
 
-# pkgdown_dict$navbar$components$articles$menu <- list()
+pkgdown_dict$navbar$components$articles$menu <- list()
 all_vignettes <- list.files(src_dir, ".orig")
 for (vignette in all_vignettes) {
     print(vignette)
@@ -25,8 +25,8 @@ for (vignette in all_vignettes) {
         file.copy("figure", article_path, recursive = TRUE)
     }
     # This breaks the ordering.
-    # title <- metadata$title
-    # pkgdown_dict$navbar$components$articles$menu[[title]] <- list(text = title, href = paste0("articles/", gsub("Rmd", "html", new_name)))
+    title <- metadata$title
+    pkgdown_dict$navbar$components$articles$menu[[title]] <- list(text = title, href = paste0("articles/", gsub("Rmd", "html", new_name)))
 }
 
 data_ref_path <- main_dir
@@ -41,7 +41,7 @@ file.copy(system.file("yaml", "output_schema.yaml", package = "seatrackR"),
     overwrite = TRUE
 )
 
-curr_menu <- pkgdown_dict$navbar$components$data_ref$menu <- list()
+# curr_menu <- pkgdown_dict$navbar$components$data_ref$menu <- list()
 # Generate individual references from yaml
 schema_dict <- seatrackR::schema_dict
 for (key in names(schema_dict$datasets)) {

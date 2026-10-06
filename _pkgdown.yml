@@ -20,13 +20,13 @@ navbar:
       menu:
         SEATRACK data infrastructure:
           text: SEATRACK data infrastructure
-          href: articles/Intro_presentation.html
+          href: articles/1_Intro_presentation.html
         Getting started with seatrackR:
           text: Getting started with seatrackR
-          href: articles/getting_started.html
+          href: articles/2_getting_started.html
         Extending seatrackR queries:
           text: Extending seatrackR queries
-          href: articles/advanced_topics.html
+          href: articles/3_advanced_topics.html
     data_ref:
       text: Data reference
       menu:
