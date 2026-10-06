@@ -1,21 +1,3 @@
-#' deleteFiles
-#'
-#' Delete files on the FTP-server.
-#'
-#'
-#' @param files Character list of filenames to delete.
-#' @param force Optionally override confirmation
-#' @param ... Optional additional parameters passed to the httr configuration.
-#' @return Status messages on the actions taken for each file.
-#' @export
-#' @examples
-#' \dontrun{
-#'
-#' deleteFiles(files = c("test.txt", "test_file2.txt"), originFolder = "temp")
-#' }
-#' @concept files
-## Use httr::with_options(...,
-# DELETE())
 deleteFiles <- function(files = NULL,
                         force = FALSE,
                         ...) {

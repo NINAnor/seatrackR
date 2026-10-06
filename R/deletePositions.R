@@ -1,26 +1,3 @@
-#' deletePositions
-#'
-#' Delete position data from either positions.postable_raw, positions.gps_raw, or positions.irma_raw, based on session_ids, and optionally refresh views.
-#'
-#' @param datatype "GLS", "IRMA", or "GPS".
-#' @param session_ids_to_delete Character string (or vector of character trings), specifying which session_ids to remove data from.
-#' @param idempotent Should it silently ignore sessions that are not present?
-#' @param refreshView Should the materialized position views be refreshed after the deletion? Defaults to TRUE.
-#'
-#' @return Message with affected rows
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#'
-#' deletePositions(
-#'   datatype = "GLS",
-#'   session_ids_to_delete = c("60171_2022-06-30", "63170_2022-06-30"),
-#'   refreshView = TRUE
-#' )
-#' }
-#' @concept positions
 deletePositions <- function(datatype = "GLS",
                             session_ids_to_delete,
                             idempotent = TRUE,
