@@ -10,8 +10,7 @@
 <!-- badges: start -->
 
 [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![](https://img.shields.io/badge/devel%20version-0.0.3.2-blue.svg)](https://github.com/NINAnor/seatrackR)
-[![](https://www.r-pkg.org/badges/version/seatrackR)](https://cran.r-project.org/package=seatrackR)
+[![](https://img.shields.io/badge/devel%20version-0.0.6-blue.svg)](https://github.com/NINAnor/seatrackR)
 [![R build
 status](https://github.com/NINAnor/seatrackR/workflows/R-CMD-check/badge.svg)](https://github.com/NINAnor/seatrackR/actions)
 [![](https://img.shields.io/github/languages/code-size/NINAnor/seatrackR.svg)](https://github.com/NINAnor/seatrackR)
@@ -21,25 +20,28 @@ status](https://github.com/NINAnor/seatrackR/workflows/R-CMD-check/badge.svg)](h
 
 ## seatrackR - R package for utilizing the seatrack database
 
-Code to manage and interact with the seatrack database.
+Code to manage and interact with the [seatrack
+database](https://ninanor.github.io/seatrackR/articles/Intro_presentation.html).
 
 Main functionality:
 
-- Connect to the database (seatrackConnect())
-- Retrieve data (individ info, logger info, GLS-, IRMA-, GPS-positions,
-  recordings, file archive list, active logging session list)
-- Check the consistency of new data with current database, before
-  inserts.
-- Insert data into the database. (“metadata” fieldsheets, GLS-, IRMA-,
-  and GPS-positions)
+- Connect to the database\]
+- Retrieve data
+- Import data into the database.
 - Interact with the FTP file archive (list files, upload, download,
   delete)
 
-Take a look at the vignettes for a guide to what is available
-`help(package = "seatrackR")`.
+Take a look at the
+[Reference](https://ninanor.github.io/seatrackR/reference/index.html)
+for a guide to what is available.
 
 ## Installation
 
-Install the package by:
+Install the package using:
 
-    devtools::install_github("NINAnor/seatrackR")
+    pak::pkg_install("NINAnor/seatrackR")
+
+For detailed instructions on how to install and use this package, see
+the [seatrackR: Getting
+started](https://ninanor.github.io/seatrackR/articles/getting_started.html)
+vignette.
