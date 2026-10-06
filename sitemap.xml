@@ -1,11 +1,11 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://ninanor.github.io/seatrackR/404.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/articles/1_Intro_presentation.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/articles/2_getting_started.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/articles/3_advanced_topics.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/GLS_positional_data.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/IRMA_positional_data.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/articles/Intro_presentation.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/articles/advanced_topics.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/database_structure.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/articles/getting_started.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/immersion_data.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/index.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/individual_data.html</loc></url>
