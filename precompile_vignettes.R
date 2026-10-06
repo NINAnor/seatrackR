@@ -24,8 +24,9 @@ for (vignette in all_vignettes) {
         dest <- file.path(article_path, "figure")
         file.copy("figure", article_path, recursive = TRUE)
     }
-    title <- metadata$title
-    pkgdown_dict$navbar$components$articles$menu[[title]] <- list(text = title, href = paste0("articles/", gsub("Rmd", "html", new_name)))
+    # This breaks the ordering.
+    # title <- metadata$title
+    # pkgdown_dict$navbar$components$articles$menu[[title]] <- list(text = title, href = paste0("articles/", gsub("Rmd", "html", new_name)))
 }
 
 data_ref_path <- main_dir

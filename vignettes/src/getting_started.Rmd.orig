@@ -10,7 +10,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, echo=FALSE}
+```{r setup, echo=FALSE, message=FALSE}
 options(width = 100)
 library(seatrackR)
 library(magick)
@@ -291,7 +291,7 @@ You can start this app using the function:
 run_app()
 ```
 
-```{r, screenshot, echo = FALSE, fig.cap = "", figure_width = 1022/38, figure_height = 720/38, dpi = 150, fig.retina = 2, out.width = "100%"}
+```{r, screenshot, echo = FALSE, fig.cap = "", fig.width = 1022/38, fig.height = 720/38, dpi = 150, fig.retina = 2, out.width = "100%", message = FALSE}
 # knitr::include_graphics(system.file(file.path("man", "figures", "seatrackModel.png"), package = "seatrackR"))
 # This is a bit of a hack to make sure the image is included in the precompiled vignette/website.
 img <- image_read(system.file(file.path("img", "app_screenshot.png"), package = "seatrackR")) #
@@ -299,8 +299,8 @@ raster <- as.raster(img)
 myplot <- ggplot() + geom_point() + xlim(0, 1) + ylim(0, 1)
 myplot + annotation_raster(raster, 0, 1, 0, 1) +
 theme_void() +
-  #scale_x_continuous(expand = c(0, 0)) +
-  #scale_y_continuous(expand = c(0, 0)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
   labs(x = NULL, y = NULL) +
   theme(
     plot.margin = margin(0, 0, 0, 0, "cm")

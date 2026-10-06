@@ -11,11 +11,6 @@ vignette: >
 ---
 
 
-```
-## Linking to ImageMagick 6.9.13.29
-## Enabled features: cairo, freetype, fftw, ghostscript, heic, lcms, pango, raw, rsvg, webp
-## Disabled features: fontconfig, x11
-```
 
 This article will show you how to use the seatrackR data package to connect to the SEATRACK database and use some basic functions to fetch data. 
 
@@ -360,7 +355,7 @@ head(filtered_puffin_positions)
 ## # A tibble: 6 × 33
 ##   id                   date_time           logger_id logger_model year_tracked session_id individ_id
 ##   <chr>                <dttm>              <chr>     <chr>        <chr>        <chr>      <chr>     
-## 1 22b013aa-5df6-11f1-… 2024-08-17 23:12:58 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
+## 1 22afffaa-5df6-11f1-… 2024-08-05 10:59:22 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
 ## 2 22afd5e8-5df6-11f1-… 2024-07-27 11:27:07 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
 ## 3 22aff172-5df6-11f1-… 2024-07-27 23:12:25 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
 ## 4 22aff320-5df6-11f1-… 2024-07-28 11:09:42 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
