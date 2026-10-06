@@ -2,18 +2,22 @@
 
 ### All vignettes
 
-- [Retrieve standard data from
-  Seatrack](https://ninanor.github.io/seatrackR/articles/Data_extraction.md):
+- [Extending seatrackR
+  queries](https://ninanor.github.io/seatrackR/articles/advanced_topics.md):
 - [Database
   structure](https://ninanor.github.io/seatrackR/articles/database_structure.md):
+- [Getting started with
+  seatrackR](https://ninanor.github.io/seatrackR/articles/getting_started.md):
 - [GLS positional data
   reference](https://ninanor.github.io/seatrackR/articles/GLS_positional_data.md):
 - [Immersion data
   reference](https://ninanor.github.io/seatrackR/articles/immersion_data.md):
 - [Individual data
   reference](https://ninanor.github.io/seatrackR/articles/individual_data.md):
-- [The Seatrack database and
-  R](https://ninanor.github.io/seatrackR/articles/Intro_presentation.md):
+- [SEATRACK data
+  infrastructure](https://ninanor.github.io/seatrackR/articles/Intro_presentation.md):
+- [IRMA positional data
+  reference](https://ninanor.github.io/seatrackR/articles/IRMA_positional_data.md):
 - [Light data
   reference](https://ninanor.github.io/seatrackR/articles/light_data.md):
 - [Population maps

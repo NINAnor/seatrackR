@@ -7,30 +7,19 @@ Use the seatrackR shiny interface
 - [`run_app()`](https://ninanor.github.io/seatrackR/reference/run_app.md)
   : Run the seatrackR Shiny app
 
-## Positions
+## Database Connections
 
-Functions for reading and writing positional data to the database.
+Functions for connecting to and disconnecting from the Seatrack
+database.
 
-- [`deletePositions()`](https://ninanor.github.io/seatrackR/reference/deletePositions.md)
-  : deletePositions
-- [`getPositions()`](https://ninanor.github.io/seatrackR/reference/getPositions.md)
-  : Get position data from the database. Either "GLS" data (default),
-  "IRMA" data, or "GPS" data.
-- [`getYears()`](https://ninanor.github.io/seatrackR/reference/getYears.md)
-  : Retrieve info on the years where we have position data
-- [`loadPosdata()`](https://ninanor.github.io/seatrackR/reference/loadPosdata.md)
-  : Load posdata files into R.
-- [`writePositions()`](https://ninanor.github.io/seatrackR/reference/writePositions.md)
-  : Update the positions.postable
+- [`connectSeatrack()`](https://ninanor.github.io/seatrackR/reference/connectSeatrack.md)
+  [`disconnectSeatrack()`](https://ninanor.github.io/seatrackR/reference/connectSeatrack.md)
+  : Connect to seatrack database
+- [`set_credentials_renviron()`](https://ninanor.github.io/seatrackR/reference/set_credentials_renviron.md)
+  : Set up SEATRACK DB credentials for this project
 
 ## Metadata
 
-- [`checkMetadata()`](https://ninanor.github.io/seatrackR/reference/checkMetadata.md)
-  [`checkRetrievedMatchDeployed()`](https://ninanor.github.io/seatrackR/reference/checkMetadata.md)
-  [`checkOpenSession()`](https://ninanor.github.io/seatrackR/reference/checkMetadata.md)
-  [`checkLoggers()`](https://ninanor.github.io/seatrackR/reference/checkMetadata.md)
-  [`checkNames()`](https://ninanor.github.io/seatrackR/reference/checkMetadata.md)
-  : checkMetadata before import
 - [`checkPeople()`](https://ninanor.github.io/seatrackR/reference/checkPeople.md)
   : Check People String
 - [`getColonies()`](https://ninanor.github.io/seatrackR/reference/getColonies.md)
@@ -48,42 +37,10 @@ Functions for reading and writing positional data to the database.
   : Retrieve info on the registered species in the database
 - [`get_responsible()`](https://ninanor.github.io/seatrackR/reference/get_responsible.md)
   : Get responsible species and colony
-- [`writeIndividInfo()`](https://ninanor.github.io/seatrackR/reference/writeIndividInfo.md)
-  : Update the individ_info table
-- [`writeMetadata()`](https://ninanor.github.io/seatrackR/reference/writeMetadata.md)
-  : Import metadata
-- [`writeRingHistory()`](https://ninanor.github.io/seatrackR/reference/writeRingHistory.md)
-  : Update the ring history table
-
-## Database Connections
-
-Functions for connecting to and disconnecting from the Seatrack
-database.
-
-- [`connectSeatrack()`](https://ninanor.github.io/seatrackR/reference/connectSeatrack.md)
-  [`disconnectSeatrack()`](https://ninanor.github.io/seatrackR/reference/connectSeatrack.md)
-  : Connect to seatrack database
-- [`set_credentials_renviron()`](https://ninanor.github.io/seatrackR/reference/set_credentials_renviron.md)
-  : Set up SEATRACK DB credentials for this project
-
-## activity
-
-Functions for reading and writing activity data to the database.
-
-- [`deleteActivity()`](https://ninanor.github.io/seatrackR/reference/deleteActivity.md)
-  : Delete activity data from the database, based on subselection
-  criteria
-- [`getRecordings()`](https://ninanor.github.io/seatrackR/reference/getRecordings.md)
-  : Read logger recordings data
-- [`pruneRecordings()`](https://ninanor.github.io/seatrackR/reference/pruneRecordings.md)
-  : pruneRecordings Prune activity, light and temperature recording data
-  that
-- [`writeRecordings()`](https://ninanor.github.io/seatrackR/reference/writeRecordings.md)
-  : Update light, temperature or activity data
 
 ## logger_info
 
-Functions for reading and writing logger information to the database.
+Functions for reading logger information from the database.
 
 - [`getActiveSessions()`](https://ninanor.github.io/seatrackR/reference/getActiveSessions.md)
   : View the active logger sessions
@@ -91,8 +48,28 @@ Functions for reading and writing logger information to the database.
   : View the view info table
 - [`getSessionInfo()`](https://ninanor.github.io/seatrackR/reference/getSessionInfo.md)
   : Retrieve logger session information
-- [`writeLoggerImport()`](https://ninanor.github.io/seatrackR/reference/writeLoggerImport.md)
-  : Update the logger info table
+
+## Positions
+
+Functions for reading positional data from the database.
+
+- [`deletePositions()`](https://ninanor.github.io/seatrackR/reference/deletePositions.md)
+  : deletePositions
+- [`getPositions()`](https://ninanor.github.io/seatrackR/reference/getPositions.md)
+  : Get position data from the database. Either "GLS" data (default),
+  "IRMA" data, or "GPS" data.
+- [`getYears()`](https://ninanor.github.io/seatrackR/reference/getYears.md)
+  : Retrieve info on the years where we have position data
+
+## Recordings
+
+Functions for reading “recording” data from the database.
+
+- [`deleteActivity()`](https://ninanor.github.io/seatrackR/reference/deleteActivity.md)
+  : Delete activity data from the database, based on subselection
+  criteria
+- [`getRecordings()`](https://ninanor.github.io/seatrackR/reference/getRecordings.md)
+  : Read logger recordings data
 
 ## Files
 
@@ -112,6 +89,21 @@ FTP server.
 - [`uploadFiles()`](https://ninanor.github.io/seatrackR/reference/uploadFiles.md)
   : Write files to the file archive
 
+## Database import functions
+
+Functions to write to database import tables
+
+- [`refreshViews()`](https://ninanor.github.io/seatrackR/reference/refreshViews.md)
+  : Manually update the the materialized views in the database
+- [`writeLoggerImport()`](https://ninanor.github.io/seatrackR/reference/writeLoggerImport.md)
+  : Update the logger info table
+- [`writeMetadata()`](https://ninanor.github.io/seatrackR/reference/writeMetadata.md)
+  : Import metadata
+- [`writePositions()`](https://ninanor.github.io/seatrackR/reference/writePositions.md)
+  : Update the positions.postable
+- [`writeRecordings()`](https://ninanor.github.io/seatrackR/reference/writeRecordings.md)
+  : Update light, temperature or activity data
+
 ## Utility functions
 
 Various utility functions included in the package.
@@ -130,8 +122,6 @@ General functions related to the SEATRACK database.
   exist, it returns 0.
 - [`deleteRecords()`](https://ninanor.github.io/seatrackR/reference/deleteRecords.md)
   : Delete records from the database, based on subselection criteria
-- [`refreshViews()`](https://ninanor.github.io/seatrackR/reference/refreshViews.md)
-  : Manually update the the materialized views in the database
 - [`viewDatabaseModel()`](https://ninanor.github.io/seatrackR/reference/viewDatabaseModel.md)
   : View the database structure in a browser
 
@@ -157,9 +147,6 @@ Example datasets included in the package.
 ### Plotting functions
 
 Shortcuts for plotting SEATRACK data.
-
-- [`sfGmapPlot()`](https://ninanor.github.io/seatrackR/reference/sfGmapPlot.md)
-  : sfGmapPlot
 
 ### Database conversion functions
 

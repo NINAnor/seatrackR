@@ -2,16 +2,18 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
-  Data_extraction: Data_extraction.html
+  advanced_topics: advanced_topics.html
   database_structure: database_structure.html
+  getting_started: getting_started.html
   GLS_positional_data: GLS_positional_data.html
   immersion_data: immersion_data.html
   individual_data: individual_data.html
   Intro_presentation: Intro_presentation.html
+  IRMA_positional_data: IRMA_positional_data.html
   light_data: light_data.html
   population_maps: population_maps.html
   temperature_data: temperature_data.html
-last_built: 2026-09-24T08:47Z
+last_built: 2026-10-06T09:26Z
 urls:
   reference: https://ninanor.github.io/seatrackR/reference
   article: https://ninanor.github.io/seatrackR/articles

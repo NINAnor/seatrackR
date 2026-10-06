@@ -2,6 +2,8 @@
 
 This function either reads from the metadata.colony or the
 metadata.location table, depending on the parameter allLocations. If
+loadGeometries is set to TRUE, the function will return an sf object
+with the geometries of the colonies or locations.
 
 ## Usage
 
@@ -13,13 +15,13 @@ getColonies(allLocations = FALSE, loadGeometries = FALSE)
 
 - allLocations:
 
-  True, False. Should all locations within colonies be loaded. Default =
-  False.
+  Boolean. Should all locations within colonies be loaded. Default =
+  FALSE
 
 - loadGeometries:
 
-  True, False. Should the geometries be loaded as an sf object. Default
-  = False.
+  Boolean. Should the geometries be loaded as an sf object. Default =
+  FALSE
 
 ## Value
 

@@ -1,6 +1,8 @@
 # Update the logger info table
 
-This is a convenience function that writes to the "loggers.logger_info"
+This is a convenience function that writes to the "logger_import" table
+in the schema `imports`. It is used to update the logger info table with
+new logger information.
 
 ## Usage
 

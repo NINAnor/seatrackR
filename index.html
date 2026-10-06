@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,9 +35,9 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/database_structure.html">Database diagram and description</a></li>
-    <li><a class="dropdown-item" href="articles/Data_extraction.html">Retrieve standard data from Seatrack</a></li>
-    <li><a class="dropdown-item" href="articles/Intro_presentation.html">The Seatrack database and R</a></li>
+<li><a class="dropdown-item" href="articles/Intro_presentation.html">SEATRACK data infrastructure</a></li>
+    <li><a class="dropdown-item" href="articles/getting_started.html">Getting started with seatrackR</a></li>
+    <li><a class="dropdown-item" href="articles/advanced_topics.html">Extending seatrackR queries</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -49,6 +49,7 @@
     <li><a class="dropdown-item" href="articles/temperature_data.html">Temperature data reference</a></li>
     <li><a class="dropdown-item" href="articles/individual_data.html">Individual data reference</a></li>
     <li><a class="dropdown-item" href="articles/population_maps.html">Population maps reference</a></li>
+    <li><a class="dropdown-item" href="articles/IRMA_positional_data.html">IRMA positional data reference</a></li>
   </ul>
 </li>
       </ul>
@@ -76,10 +77,9 @@
 <p>Code to manage and interact with the seatrack database.</p>
 <p>Main functionality:</p>
 <ul>
-<li>Connect to the database (seatrackConnect())</li>
-<li>Retrieve data (individ info, logger info, GLS-, IRMA-, GPS-positions, recordings, file archive list, active logging session list)</li>
-<li>Check the consistency of new data with current database, before inserts.</li>
-<li>Insert data into the database. (“metadata” fieldsheets, GLS-, IRMA-, and GPS-positions)</li>
+<li>Connect to the database</li>
+<li>Retrieve data</li>
+<li>Import data into the database.</li>
 <li>Interact with the FTP file archive (list files, upload, download, delete)</li>
 </ul>
 <p>Take a look at the Articles for a guide to what is available.</p>
@@ -87,8 +87,9 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Install the package by:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"NINAnor/seatrackR"</span>)</span></code></pre></div>
+<p>Install the package using:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"NINAnor/seatrackR"</span>)</span></code></pre></div>
+<p>For detailed instructions on how to install and use this package, see the seatrackR: Getting started vignette.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
@@ -119,7 +120,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg"></a></li>
-<li><a href="https://github.com/NINAnor/seatrackR" class="external-link"><img src="https://img.shields.io/badge/devel%20version-0.0.5-blue.svg"></a></li>
+<li><a href="https://github.com/NINAnor/seatrackR" class="external-link"><img src="https://img.shields.io/badge/devel%20version-0.0.6-blue.svg"></a></li>
 <li><a href="https://github.com/NINAnor/seatrackR/actions" class="external-link"><img src="https://github.com/NINAnor/seatrackR/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 <li><a href="https://github.com/NINAnor/seatrackR" class="external-link"><img src="https://img.shields.io/github/languages/code-size/NINAnor/seatrackR.svg"></a></li>
 </ul>

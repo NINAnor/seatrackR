@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,9 +18,9 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/database_structure.html">Database diagram and description</a></li>
-    <li><a class="dropdown-item" href="../articles/Data_extraction.html">Retrieve standard data from Seatrack</a></li>
-    <li><a class="dropdown-item" href="../articles/Intro_presentation.html">The Seatrack database and R</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Intro_presentation.html">SEATRACK data infrastructure</a></li>
+    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting started with seatrackR</a></li>
+    <li><a class="dropdown-item" href="../articles/advanced_topics.html">Extending seatrackR queries</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-data-reference" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Data reference</button>
@@ -30,6 +30,7 @@
     <li><a class="dropdown-item" href="../articles/temperature_data.html">Temperature data reference</a></li>
     <li><a class="dropdown-item" href="../articles/individual_data.html">Individual data reference</a></li>
     <li><a class="dropdown-item" href="../articles/population_maps.html">Population maps reference</a></li>
+    <li><a class="dropdown-item" href="../articles/IRMA_positional_data.html">IRMA positional data reference</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -91,7 +92,7 @@
 <span class="r-in"><span>  <span class="st">"posdata_FULGLA_eynhallow_2007"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">toImport</span> <span class="op">&lt;-</span> <span class="fu"><a href="loadPosdata.html">loadPosdata</a></span><span class="op">(</span><span class="va">files</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">toImport</span> <span class="op">&lt;-</span> <span class="fu">loadPosdata</span><span class="op">(</span><span class="va">files</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">toImport</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

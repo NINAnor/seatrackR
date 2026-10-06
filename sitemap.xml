@@ -1,9 +1,11 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://ninanor.github.io/seatrackR/404.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/articles/Data_extraction.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/GLS_positional_data.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/articles/IRMA_positional_data.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/Intro_presentation.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/articles/advanced_topics.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/database_structure.html</loc></url>
+<url><loc>https://ninanor.github.io/seatrackR/articles/getting_started.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/immersion_data.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/index.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/articles/individual_data.html</loc></url>
@@ -16,7 +18,6 @@
 <url><loc>https://ninanor.github.io/seatrackR/reference/R_value_to_db_value.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/R_vector_to_db_values.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/changeSeatrackPassword.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/reference/checkMetadata.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/checkPeople.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/checkSeatrackRVersion.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/check_db_version.html</loc></url>
@@ -44,8 +45,6 @@
 <url><loc>https://ninanor.github.io/seatrackR/reference/index.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/listFileArchive.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/loadFile.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/reference/loadPosdata.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/reference/pruneRecordings.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/refreshViews.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/run_app.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/sampleLoggerImport.html</loc></url>
@@ -56,15 +55,12 @@
 <url><loc>https://ninanor.github.io/seatrackR/reference/sampleRingHistory.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/schema_dict.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/set_credentials_renviron.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/reference/sfGmapPlot.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/skip_if_no_test_db.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/uploadFiles.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/viewDatabaseModel.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/reference/writeIndividInfo.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/writeLoggerImport.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/writeMetadata.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/writePositions.html</loc></url>
 <url><loc>https://ninanor.github.io/seatrackR/reference/writeRecordings.html</loc></url>
-<url><loc>https://ninanor.github.io/seatrackR/reference/writeRingHistory.html</loc></url>
 </urlset>
 

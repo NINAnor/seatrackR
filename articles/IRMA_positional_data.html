@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Temperature data reference • seatrackR</title>
+<title>IRMA positional data reference • seatrackR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Temperature data reference">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="IRMA positional data reference">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -68,57 +68,138 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Temperature data reference</h1>
+      <h1>IRMA positional data reference</h1>
             <h3 data-toc-skip class="subtitle">Generated from <a href="https://github.com/NINAnor/seatrackR/blob/development/inst/yaml/output_schema.yaml" class="external-link">output_schema.yaml</a>
 </h3>
             
       
 
-      <div class="d-none name"><code>temperature_data.Rmd</code></div>
+      <div class="d-none name"><code>IRMA_positional_data.Rmd</code></div>
     </div>
 
     
     
-<p>Temperature data recorded every 8 hours when wet</p>
+<p>Processed GLS data with missing locatations interpolated based on the
+Informed Random Movement Algorithm (IRMA)</p>
 <ul>
+<li>
+<h4 id="id"><strong>id</strong></h4>
+<p><em>type: string</em></p>
+<p>Unique ID of position</p>
+</li>
+<li>
+<h4 id="date_time"><strong>date_time</strong></h4>
+<p><em>type: Date time at which position was recorded</em></p>
+</li>
+<li>
+<h4 id="logger_id"><strong>logger_id</strong></h4>
+<p><em>type: integer</em></p>
+<p>Unique internal identfier of the logger</p>
+</li>
+<li>
+<h4 id="logger_model"><strong>logger_model</strong></h4>
+<p><em>type: string</em></p>
+<p>GLS logger model (e.g., c65, mk4083, etc.).</p>
+</li>
+<li>
+<h4 id="year_tracked"><strong>year_tracked</strong></h4>
+<p><em>type: string</em></p>
+<p>Duration that the individual was instrumented with a logger
+(e.g. 2015_17).</p>
+</li>
 <li>
 <h4 id="session_id"><strong>session_id</strong></h4>
 <p><em>type: string</em></p>
-<p>Unique ID of the logger deployment session during which this record
-was made.</p>
+<p>Unique ID for the logger deployment session during which this data
+was recorded.</p>
 </li>
 <li>
 <h4 id="individ_id"><strong>individ_id</strong></h4>
 <p><em>type: string</em></p>
-<p>Unique ID of individual.</p>
+<p>Unique ID for each individual.</p>
 </li>
 <li>
-<h4 id="date_time"><strong>date_time</strong></h4>
-<p><em>type: datetime</em></p>
-<p>Date and time of each record in GMT.</p>
+<h4 id="deployment_date"><strong>deployment_date</strong></h4>
+<p><em>type: date</em></p>
+<p>Date when the logger was deployed.</p>
 </li>
 <li>
-<h4 id="wet_temp_min"><strong>wet_temp_min</strong></h4>
+<h4 id="retrieval_date"><strong>retrieval_date</strong></h4>
+<p><em>type: date</em></p>
+<p>Date when the logger was retrieved.</p>
+</li>
+<li>
+<h4 id="ring_number"><strong>ring_number</strong></h4>
+<p><em>type: string</em></p>
+<p>Metal ID ring number.</p>
+</li>
+<li>
+<h4 id="country_code"><strong>country_code</strong></h4>
+<p><em>type: string</em></p>
+<p>Country/local code for metal ring.</p>
+</li>
+<li>
+<h4 id="species"><strong>species</strong></h4>
+<p><em>type: string</em></p>
+<p>English name of the species.</p>
+</li>
+<li>
+<h4 id="colony"><strong>colony</strong></h4>
+<p><em>type: string</em></p>
+<p>Name of the colony where the logger was deployed and retrieved. Note
+that a SEATRACK colony name can cover several locations</p>
+</li>
+<li>
+<h4 id="col_lon"><strong>col_lon</strong></h4>
 <p><em>type: float</em></p>
-<p>Minimum temperature recorded in degrees Celsius (sampled when
-continuously wet for ≥20 min).</p>
+<p>Longitude of the colony.</p>
 </li>
 <li>
-<h4 id="wet_temp_max"><strong>wet_temp_max</strong></h4>
+<h4 id="col_lat"><strong>col_lat</strong></h4>
 <p><em>type: float</em></p>
-<p>Maximum temperature recorded in degrees Celsius (sampled when
-continuously wet for ≥20 min).</p>
+<p>Latitude of the colony.</p>
 </li>
 <li>
-<h4 id="wet_temp_mean"><strong>wet_temp_mean</strong></h4>
+<h4 id="loc_type"><strong>loc_type</strong></h4>
+<p><em>type: string</em></p>
+<p>Either GLS or IRMA, indicates whether this point is part of the
+original GLS positional data or generated by IRMA.</p>
+</li>
+<li>
+<h4 id="lon"><strong>lon</strong></h4>
 <p><em>type: float</em></p>
-<p>Mean temperature recorded in degrees Celsius (sampled when
-continuously wet for ≥20 min).</p>
+<p>Longitude of position</p>
 </li>
 <li>
-<h4 id="num_samples"><strong>num_samples</strong></h4>
+<h4 id="lat"><strong>lat</strong></h4>
+<p><em>type: float</em></p>
+<p>Latitude of positon</p>
+</li>
+<li>
+<h4 id="sex"><strong>sex</strong></h4>
+<p><em>type: string</em></p>
+<p>Recorded sex at trapping event.</p>
+</li>
+<li>
+<h4 id="age_deployment"><strong>age_deployment</strong></h4>
+<p><em>type: string</em></p>
+<p>Age of the bird at the time of deployment.</p>
+</li>
+<li>
+<h4 id="age_class_irma"><strong>age_class_irma</strong></h4>
+<p><em>type: string</em></p>
+<p>age_deployment reclassifed to be either “A” for an adult or “C”
+otherwise.</p>
+</li>
+<li>
+<h4 id="data_responsible"><strong>data_responsible</strong></h4>
+<p><em>type: string</em></p>
+<p>Data owner or responsible person.</p>
+</li>
+<li>
+<h4 id="data_version"><strong>data_version</strong></h4>
 <p><em>type: integer</em></p>
-<p>Number of samples recorded in the last 8 hours</p>
+<p>Version of the processing script used.</p>
 </li>
 </ul></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

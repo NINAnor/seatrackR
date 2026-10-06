@@ -1,7 +1,7 @@
 # Read logger recordings data
 
-This is a convenience function that reads from the "activity" tables
-temperature, activity, and light in the schema Recordings
+This is a convenience function that reads from the "recordings" tables
+temperature, activity, and light in the schema `recordings`
 
 ## Usage
 
