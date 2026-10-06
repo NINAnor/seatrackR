@@ -53,8 +53,6 @@ Functions for reading logger information from the database.
 
 Functions for reading positional data from the database.
 
-- [`deletePositions()`](https://ninanor.github.io/seatrackR/reference/deletePositions.md)
-  : deletePositions
 - [`getPositions()`](https://ninanor.github.io/seatrackR/reference/getPositions.md)
   : Get position data from the database. Either "GLS" data (default),
   "IRMA" data, or "GPS" data.
@@ -76,8 +74,6 @@ Functions for reading “recording” data from the database.
 Functions for reading and writing file information to the database and
 FTP server.
 
-- [`deleteFiles()`](https://ninanor.github.io/seatrackR/reference/deleteFiles.md)
-  : deleteFiles
 - [`downloadFiles()`](https://ninanor.github.io/seatrackR/reference/downloadFiles.md)
   : Download files from the file archive
 - [`getFileArchiveSummary()`](https://ninanor.github.io/seatrackR/reference/getFileArchiveSummary.md)
@@ -120,8 +116,6 @@ General functions related to the SEATRACK database.
   : Check the version of the database Checks the version of the database
   by querying the flyway_schema_history table. If the table does not
   exist, it returns 0.
-- [`deleteRecords()`](https://ninanor.github.io/seatrackR/reference/deleteRecords.md)
-  : Delete records from the database, based on subselection criteria
 - [`viewDatabaseModel()`](https://ninanor.github.io/seatrackR/reference/viewDatabaseModel.md)
   : View the database structure in a browser
 
