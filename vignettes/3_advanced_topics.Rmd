@@ -12,7 +12,7 @@ vignette: >
 
 
 
-The functions provided by seatrackR join and fetch data from a number of tables and can be filtered in a number of way, depending on the function. However, you may want to make a query that is not covered in any existing function. This article covers a number of ways you can make more ada
+The functions provided by seatrackR join and fetch data from a number of tables and can be filtered in a number of way, depending on the function. However, you may want to make a query that is not covered in any existing function. This article covers a number of ways you can go beyond the provided functions.
 
 # R packages
 As well as seatrackR, you will require the following packages to be loaded:

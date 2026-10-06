@@ -10,7 +10,7 @@ dir.create(article_path, recursive = TRUE, showWarnings = FALSE)
 
 curr_menu <- pkgdown_dict$navbar$components$articles$menu <- list()
 
-pkgdown_dict$navbar$components$articles$menu <- list()
+# pkgdown_dict$navbar$components$articles$menu <- list()
 all_vignettes <- list.files(src_dir, ".orig")
 for (vignette in all_vignettes) {
     print(vignette)
