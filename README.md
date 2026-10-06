@@ -25,7 +25,7 @@ database](https://ninanor.github.io/seatrackR/articles/Intro_presentation.html).
 
 Main functionality:
 
-- Connect to the database\]
+- Connect to the database
 - Retrieve data
 - Import data into the database.
 - Interact with the FTP file archive (list files, upload, download,

@@ -38,7 +38,7 @@ Code to manage and interact with the [seatrack database](https://ninanor.github.
 
 Main functionality:
 
-*  Connect to the database]
+*  Connect to the database
 *  Retrieve data
 *  Import data into the database.
 *  Interact with the FTP file archive (list files, upload, download, delete)
