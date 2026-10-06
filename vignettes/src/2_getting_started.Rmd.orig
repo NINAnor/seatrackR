@@ -61,12 +61,14 @@ If this produces no errors, you are succesfully connected to the database.
 
 ## Credential management
 
-By default, using this function will store your credentials in your project .renviron file.
-This means you will not need to type in your credentials next time you connect. Any scripts run in this project can simply call the function.
+By default, using this function will store your credentials in your project/working directory .renviron file.
+This means you will not need to type in your credentials next time you connect within that project/working directory. Any scripts run in this project can simply call the function.
 
 ```{r, connect_dummy3, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
 connectSeatrack()
 ```
+
+If you start a new project or working directory, you will need to register your credentials again.
 
 If you have input your credentials wrongly, you can update  the stored credentials  by calling `connectSeatrack()` with arguments:
 
@@ -95,6 +97,13 @@ changeSeatrackPassword("my_super_secure_new_password")
 print("Wrote credentials to .Renviron")
 print("Password succesfully changed, you have been reconnected.")
 ```
+
+Your stored credentials will then be updated allowing you to connect using:
+
+```{r, password_change_connect_dummy, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+connectSeatrack()
+```
+
 
 # Some key functions
 

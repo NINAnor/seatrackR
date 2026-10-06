@@ -19,7 +19,11 @@ changeSeatrackPassword <- function(password = NULL, save_credentials = TRUE) {
   checkCon()
 
   if (is.null(password)) {
-    password <- getPass::getPass(msg = "Enter new password:")
+    password <- getPass::getPass(msg = "Enter new password:", noblank = TRUE)
+  }
+  if (is.null(password)) {
+    print("Password will not be changed")
+    return()
   }
 
   current_user <- DBI::dbGetQuery(con, "SELECT current_user")

@@ -16,7 +16,7 @@ vignette: >
   width: 200% !important; }
 </style>
 
-```{r setup, echo=FALSE}
+```{r setup, echo=FALSE, message = FALSE}
 options(width = 100)
 library(seatrackR)
 library(magick)
