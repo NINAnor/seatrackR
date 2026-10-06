@@ -1,10 +1,10 @@
 #' Retrieve info on the registered colonies and locations within colonies in the database
 #'
 #' This function either reads from the metadata.colony or the metadata.location table, depending on the parameter allLocations.
-#' If
+#' If loadGeometries is set to TRUE, the function will return an sf object with the geometries of the colonies or locations.
 #'
-#' @param allLocations True, False. Should all locations within colonies be loaded. Default = False.
-#' @param loadGeometries True, False. Should the geometries be loaded as an sf object. Default = False.
+#' @param allLocations Boolean. Should all locations within colonies be loaded. Default = FALSE
+#' @param loadGeometries Boolean. Should the geometries be loaded as an sf object. Default = FALSE
 #'
 #' @return A tibble of the metadata.colony or metadata.location table with or without sf geometry.
 #' @export

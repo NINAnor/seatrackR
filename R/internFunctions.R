@@ -114,24 +114,24 @@ passEnv <- new.env()
 # }
 
 
-reakHavoc <- function() {
-  checkCon()
+# reakHavoc <- function() {
+#   checkCon()
 
-  answer <- menu(c("Yes (1)", "No (2)"), title = "You are about to delete all logger records!!! Are you sure?")
+#   answer <- menu(c("Yes (1)", "No (2)"), title = "You are about to delete all logger records!!! Are you sure?")
 
-  havoc1 <- "TRUNCATE TABLE loggers.logger_info RESTART IDENTITY CASCADE;"
-  havoc2 <- "TRUNCATE TABLE individuals.individ_info RESTART IDENTITY CASCADE;"
+#   havoc1 <- "TRUNCATE TABLE loggers.logger_info RESTART IDENTITY CASCADE;"
+#   havoc2 <- "TRUNCATE TABLE individuals.individ_info RESTART IDENTITY CASCADE;"
 
 
 
-  if (answer == 1) {
-    dbSendStatement(con, havoc1)
-    dbSendStatement(con, havoc2)
-    return("Things are gone, database should be clean!")
-  } else {
-    return("Nothing")
-  }
-}
+#   if (answer == 1) {
+#     dbSendStatement(con, havoc1)
+#     dbSendStatement(con, havoc2)
+#     return("Things are gone, database should be clean!")
+#   } else {
+#     return("Nothing")
+#   }
+# }
 
 
 ## Error handling from stackoverflow user Martin Morgan, Q: 4948361

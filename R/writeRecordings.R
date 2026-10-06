@@ -13,7 +13,7 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' writeRecordings(lightData = sampleLightData)
 #' }
-#' @concept activity
+#' @concept data_import
 writeRecordings <- function(lightData = NULL,
                             activityData = NULL,
                             temperatureData = NULL,

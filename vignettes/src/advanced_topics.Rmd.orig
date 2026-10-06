@@ -1,0 +1,193 @@
+---
+title: "Extending seatrackR queries"
+subtitle: "Using seatrackR and R to make more complex queries"
+author: "Julian Evans"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extending seatrackR queries}
+  %\VignetteEngine{R.rsp::asis}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, echo=FALSE}
+options(width = 100)
+library(seatrackR)
+connectSeatrack()
+```
+
+The functions provided by seatrackR join and fetch data from a number of tables and can be filtered in a number of way, depending on the function. However, you may want to make a query that is not covered in any existing function. This article covers a number of ways you can make more ada
+
+# R packages
+As well as seatrackR, you will require the following packages to be loaded:
+```{r, package_examples, warn = FALSE, message = FALSE}
+library(DBI)
+library(dplyr)
+library(dbplyr)
+```
+
+These let us work directly with the database tables.
+
+# Working with lazy queries
+
+Several seatrackR functions have the argument `asTibble`. By default this is `TRUE`, meaning that all the data requested will be collected from the database and downloaded into R as a local object. If you set this argument to `FALSE`, the function will instead return a lazy query.
+
+```{r, lazy_return}
+lazy_result <- getSessionInfo(
+    colony = "Røst",
+    species = "Atlantic puffin",
+    logger_type = "GLS",
+    has_positions = TRUE,
+    as_tibble = FALSE
+)
+class(lazy_result)
+```
+
+Inspecting the class of the returned object, we can see that it is `tbl_PqConnection` and `tbl_lazy`. This means the data is not actually local to your R environment. If you try something like:
+
+```{r, lazy_error, eval = FALSE}
+puffin_2024 <- lazy_result[lazy_result$deployment_year == 2024, ] # Filter the results to just 2024
+unique_session_ids <- unique(puffin_2024$session_id) # Get unique session IDs
+n_session <- length(unique_session_ids) # Count the number of session IDs
+```
+
+You will get an error. We need to use the functions provided by `dbplyr` and `dplyr` to work with lazy data. These packages translate your R code into SQL queries behind the scenes. For example:
+
+```{r, distinct}
+puffin_2024 <- filter(lazy_result, deployment_year == 2024) # Filter the results to just 2024
+unique_session_ids <- distinct(puffin_2024, session_id)
+n_session <- count(unique_session_ids)
+```
+
+Note that this is still considered a table and is still lazy. We haven't actually got the data yet. For a single variable, we can use the `pull` function:
+
+```{r, pull}
+n_session_local <- pull(n_session, n) # the count variable in n_sessions is n.
+print(n_session_local)
+```
+
+This returns a vector (in this case a vector of length 1)
+
+For a whole table, we can use `collect`.
+
+```{r, collect}
+puffin_2024_local <- collect(puffin_2024)
+print(puffin_2024_local)
+```
+
+Ideally, we keep a query lazy as long as possible. This saves us from downloading uneccesary data.
+
+# Directly accessing tables
+
+While the functions provided by seatrackR act as interfaces to a number of tables and views, you may sometimes want to access a raw table directly.
+
+## IMPORTANT NOTE
+
+While we make sure that database views and the seatrackR functions connected to them will always be backwards compatible after a database migration, we cannot guarantee the future stability of raw tables. Column names may change, columns may be removed or tables might be moved. **Writing code that relies on accessing the raw tables is therefore done entirely at your own risk.** If you need advice on this, please contact Julian.
+
+## Checking table availability 
+
+If you are uncertain about the exact name of a table, you can check the tables in a schema first:
+
+```{r, check_schema}
+# con is a globabl object created by connectSeatrack(). 
+# We specify we are using this connection in all these functions.
+dbListObjects(con, Id(schema = "metadata"))
+```
+
+If you are uncertain about what schema are available, you can refer to the database description or use this command
+
+```{r, list_schema}
+all_objects <- dbListObjects(con)# List all top level database objects
+all_objects[all_objects$is_prefix, ]# Limit to only schema prefixes
+```
+
+## Connecting to a table
+
+When you know which table you want to access, you can use the `tbl` command to make a connection.
+For example, here we connect to the `logger_models` table in the `metadata` schema.
+
+```{r, get_models}
+logger_models <- tbl(con, in_schema("metadata", "logger_models"))
+# OR (for less typing)
+logger_models <- tbl(con, I("metadata.logger_models"))
+```
+
+## Example of querying several tables
+
+logger_models will be a lazy query. We can use this for filters and joins. Here is an example of a join 
+
+```{r, example}
+# Connect to table of all loggers
+logger_info <- tbl(con, I("loggers.logger_info")) 
+
+# Join logger_info to logger models, see below for a detailed explanation
+logger_info_filtered <- left_join(
+    logger_info, 
+    logger_models, 
+    by = join_by(logger_model == model), 
+    suffix = c("", ".y")
+    ) %>%
+    filter( # filter by only GLS and production year
+        logger_type == "GLS",
+        production_year == 2024
+    ) %>%
+    select( # restrict to a few columns
+        logger_model, logger_serial_no, producer
+    ) %>%
+    collect() # download the resulting table
+head(logger_info_filtered)
+```
+
+
+
+Going through some aspects of this step by step:
+
+* Here I am using pipes `%>%` to pass the result of one function as the first argument of the next. This can be useful when performing a series of operations like this, but using too many can make your code hard to read/debug. 
+
+* Consider which sections of query you might want to reuse later. For example, I could store the lazy query as an object after the join was completed
+```{r, example_stop, eval = FALSE}
+logger_info_joined <- left_join(
+    logger_info, 
+    logger_models, 
+    by = join_by(logger_model == model), 
+    suffix = c("", ".y")
+    )
+```
+This would let me use the joined tables again later, filtering them differently or performing some other operation.
+
+* A left join means that in cases where no match is found, there will be NAs in the added columns. In this example, if a logger model did not exist in `logger_models`, we would get NAs for added columns. *(This is actually impossible because a model has to exist in the database before it can be added to the `logger_info` table)*
+
+* `by = join_by(logger_model == model)` - This argument tells the function that we want to join the two tables using the column `logger_model` in `logger_info` and `model` in `logger_models`.
+
+* By default, `left_join` will add suffixes of `.x` and `.y` to columns with the same names in the tho tables being joined. So by default in the resulting joined table, we would have `producer.x` and `producer.y`. The `producer` column would no longer exist. In this example we give a custom `suffix` argument of `c("", ".y")`. This means the first occurence of this column name receives no suffix, so `producer` still exists and only `producer.y` is added. We could then drop the extra columns with:
+```{r, example_drop_y, eval = FALSE}
+select(-ends_with(".y"))
+```
+
+However, we could also avoid this by pre-selecting the columns we want from both tables to ensure this no overlap!
+
+* As above, do as much as you can before collecting or pulling the data. Operations done on the database will be much faster than downloading large amount of data into R.
+
+# Writing SQL queries
+
+While `dbplyr` can perform most SQL queries, there are a few functions it can't carry out. Additionally, if you are comfortable with SQL, you may want the convenience of writing queries in SQL but having the data returned directly into R.
+
+Sending an SQL statement through R is relatively simple using the DBI library.
+
+```{r, sql_example}
+# As above, we use the con object
+lotek_loggers <- dbGetQuery(con, "SELECT * FROM loggers.logger_info WHERE producer = 'Lotek' LIMIT 5")
+print(lotek_loggers)
+```
+
+Note that this is NOT returning a lazy query, but rather a standard R dataframe.
+
+# Is your query something others could use?
+
+If you have written some code that carries out a useful set of joins and filters, perhaps this is something that others might also benefit from? Consider contributing this to the `seatrackR` package as a re-usable function. 
+
+Additionally, if a set of joins and filters is being performed particularly frequently, we can consider adding it as a database view.
+
+Please contact Julian if you are interested.
+

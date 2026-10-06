@@ -29,4 +29,4 @@ connectSeatrack(Username = "testreader", Password = "testreader")
 writeRecordings(lightData = sampleLightData)
 }
 }
-\concept{activity}
+\concept{data_import}

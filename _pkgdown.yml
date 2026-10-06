@@ -18,15 +18,15 @@ navbar:
     articles:
       text: Articles
       menu:
-        Database structure:
-          text: Database diagram and description
-          href: articles/database_structure.html
-        Retrieve standard data from Seatrack:
-          text: Retrieve standard data from Seatrack
-          href: articles/Data_extraction.html
-        The Seatrack database and R:
-          text: The Seatrack database and R
+        SEATRACK data infrastructure:
+          text: SEATRACK data infrastructure
           href: articles/Intro_presentation.html
+        Getting started with seatrackR:
+          text: Getting started with seatrackR
+          href: articles/getting_started.html
+        Extending seatrackR queries:
+          text: Extending seatrackR queries
+          href: articles/advanced_topics.html
     data_ref:
       text: Data reference
       menu:
@@ -48,29 +48,35 @@ navbar:
         Population maps reference:
           text: Population maps reference
           href: articles/population_maps.html
+        IRMA positional data reference:
+          text: IRMA positional data reference
+          href: articles/IRMA_positional_data.html
 reference:
 - title: Shiny app
   desc: Use the seatrackR shiny interface
   contents: has_concept("shiny")
-- title: Positions
-  desc: Functions for reading and writing positional data to the database.
-  contents: has_concept("positions")
-- title: Metadata
-- desc: Functions for reading and writing metadata to the database.
-  contents: has_concept("metadata")
 - title: Database Connections
   desc: Functions for connecting to and disconnecting from the Seatrack database.
   contents: has_concept("db_connection")
-- title: activity
-  desc: Functions for reading and writing activity data to the database.
-  contents: has_concept("activity")
+- title: Metadata
+- desc: Functions for reading metadata from the database.
+  contents: has_concept("metadata")
 - title: logger_info
-  desc: Functions for reading and writing logger information to the database.
+  desc: Functions for reading logger information from the database.
   contents: has_concept("logger_info")
+- title: Positions
+  desc: Functions for reading positional data from the database.
+  contents: has_concept("positions")
+- title: Recordings
+  desc: Functions for reading "recording" data from the database.
+  contents: has_concept("activity")
 - title: Files
   desc: Functions for reading and writing file information to the database and FTP
     server.
   contents: has_concept("files")
+- title: Database import functions
+  desc: Functions to write to database import tables
+  contents: has_concept("data_import")
 - title: Utility functions
   desc: Various utility functions included in the package.
 - subtitle: General Database Functions

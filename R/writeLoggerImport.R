@@ -1,6 +1,6 @@
 #' Update the logger info table
 #'
-#' This is a convenience function that writes to the "loggers.logger_info"
+#' This is a convenience function that writes to the "logger_import" table in the schema `imports`. It is used to update the logger info table with new logger information.
 #'
 #' @param loggerImport A named vector or data frame that fits the logger_info table in schema loggers
 #' @param append Logical, default True. If True, the line(s) is appended to the end of the table.
@@ -13,7 +13,7 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' writeLoggerImport(sampleLoggerImport)
 #' }
-#' @concept logger_info
+#' @concept data_import
 writeLoggerImport <- function(loggerImport,
                               append = T,
                               overwrite = FALSE) {

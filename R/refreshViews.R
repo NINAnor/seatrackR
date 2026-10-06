@@ -16,7 +16,7 @@
 #' connectSeatrack(Username = "testreader", Password = "testreader")
 #' refreshViews()
 #' }
-#' @concept general_db
+#' @concept data_import
 refreshViews <- function(all = TRUE,
                          onlySummaryTables = FALSE,
                          onlyGLS = FALSE,

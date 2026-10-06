@@ -26,4 +26,4 @@ connectSeatrack(Username = "testreader", Password = "testreader")
 writeMetadata(sampleMetadata)
 }
 }
-\concept{metadata}
+\concept{data_import}

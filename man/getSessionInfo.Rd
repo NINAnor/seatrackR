@@ -24,13 +24,13 @@ getSessionInfo(
   logger_start_time = NULL,
   logger_start_time_between = NULL,
   logging_mode = NULL,
-  logger_deployment_year = NULL,
-  logger_deployment_date_between = NULL,
+  deployment_year = NULL,
+  deployment_date_between = NULL,
   deployment_logger_status = NULL,
-  logger_retrieval_year = NULL,
-  logger_retrieval_date_between = NULL,
+  retrieval_year = NULL,
+  retrieval_date_between = NULL,
   retrieval_logger_status = NULL,
-  logger_shutdown_date_between = NULL,
+  shutdown_date_between = NULL,
   download_type = NULL,
   has_positions = NULL,
   has_irma = NULL,
@@ -77,19 +77,19 @@ getSessionInfo(
 
 \item{logging_mode}{Optional vector of logging modes to filter by.}
 
-\item{logger_deployment_year}{Optional vector of deployment years to filter by.}
+\item{deployment_year}{Optional vector of deployment years to filter by.}
 
-\item{logger_deployment_date_between}{Optional vector of two dates to filter deployment dates between.}
+\item{deployment_date_between}{Optional vector of two dates to filter deployment dates between.}
 
 \item{deployment_logger_status}{Optional vector of deployment logger statuses to filter by.}
 
-\item{logger_retrieval_year}{Optional vector of retrieval years to filter by.}
+\item{retrieval_year}{Optional vector of retrieval years to filter by.}
 
-\item{logger_retrieval_date_between}{Optional vector of two dates to filter retrieval dates between.}
+\item{retrieval_date_between}{Optional vector of two dates to filter retrieval dates between.}
 
 \item{retrieval_logger_status}{Optional vector of retrieval logger statuses to filter by.}
 
-\item{logger_shutdown_date_between}{Optional vector of two dates to filter shutdown dates between.}
+\item{shutdown_date_between}{Optional vector of two dates to filter shutdown dates between.}
 
 \item{download_type}{Optional vector of download types to filter by.}
 
@@ -105,6 +105,7 @@ getSessionInfo(
 Either a lazy db query or a tibble containing the filtered logger session information.
 }
 \description{
-This function retrieves information about logger sessions from the database, allowing for various filters to narrow down the results.
+This function retrieves information about logger sessions from the database view \code{logger.session_details}.
+It provides comprehensive filtering argument to narrow down the results.
 }
 \concept{logger_info}

@@ -1,0 +1,311 @@
+---
+title: "Getting started with seatrackR"
+subtitle: "Installing, connecting and functions"
+author: "Julian Evans"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started}
+  %\VignetteEngine{R.rsp::asis}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, echo=FALSE}
+options(width = 100)
+library(seatrackR)
+library(magick)
+connectSeatrack()
+```
+
+This article will show you how to use the seatrackR data package to connect to the SEATRACK database and use some basic functions to fetch data. 
+
+# Installing seatrackR
+
+seatrackR must be installed from github. We reccomend using the `pak` package for this.
+
+```{r, install_dummy, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+pak::pkg_install("NINAnor/seatrackR")
+```
+
+You can also use the older devtools::install_github function:
+
+```{r, install_dummy2, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+devtools::install_github("NINAnor/seatrackR")
+```
+
+Once installed, you can load the package with
+
+```{r, install_dummy3, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+library(seatrackR)
+```
+
+# Connecting to the SEATRACK database.
+
+You can connect to the SEATRACK database using the `connectSeatrack()` function.
+
+The first time you need to connect, you'll need to enter your credentials. This should be done in the **R console not an R script**. This is to prevent credentials being leaked.
+
+You can either write your username and credentials as arguments in the function:
+
+```{r, connect_dummy1, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+connectSeatrack("my_username", "my_password")
+```
+
+Or you can call the function bare, with no arguments, which will then give you an interactive prompt in the console:
+
+```{r, connect_dummy2, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+connectSeatrack()
+```
+
+If this produces no errors, you are succesfully connected to the database. 
+
+## Credential management
+
+By default, using this function will store your credentials in your project .renviron file.
+This means you will not need to type in your credentials next time you connect. Any scripts run in this project can simply call the function.
+
+```{r, connect_dummy3, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+connectSeatrack()
+```
+
+If you have input your credentials wrongly, you can update  the stored credentials  by calling `connectSeatrack()` with arguments:
+
+```{r, connect_dummy4, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+connectSeatrack("my_username", "my_password")
+```
+
+or you can use the underlying function for saving credentials, `set_credentials_renviron()`:
+
+```{r, connect_dummy5, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+set_credentials_renviron() # With no arguments, will prompt interactively.
+# OR
+set_credentials_renviron("my_username", "my_password")
+```
+
+## Changing your password
+
+If this is your first time connecting, you will have been assigned a temporary password by the administrator. You can change this using `changeSeatrackPassword()`. Again, this should **never be stored in a script.** Run it only in the console. By default, this function will automatically update your stored credentials for this project.
+
+```{r, password_change_dummy, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+changeSeatrackPassword() # With no arguments, will prompt interactively.
+# OR
+changeSeatrackPassword("my_super_secure_new_password")
+```
+```{r, fake_password_change, echo=FALSE, message=FALSE}
+print("Wrote credentials to .Renviron")
+print("Password succesfully changed, you have been reconnected.")
+```
+
+# Some key functions
+
+Having connected to the database, you can now use the package functions to download some data.
+
+## Explore metadata
+
+### Colonies/locations
+
+We can view all available SEATRACK colonies using 
+
+```{r, get_colonies}
+all_colonies <- getColonies()
+head(all_colonies)
+```
+
+We can also get all locations, which can be finer scale areas within/attached to SEATRACK colonies.
+
+```{r, get_locations}
+all_locations <- getColonies(allLocations = TRUE)
+head(all_locations)
+```
+
+**NOTE:** 
+*Currently, the vast majority of locations are still 1 to 1 with colonies. This will be developed futher in future.*
+
+*Note that while all tables actually connect to the `locations` table, there is currently some inconsistency in the language used for compatability reasons. This means tables have `colony` columns that actually link to the `location_name` column in the `locations` table.  This will also be fixed in future.*
+
+*If in doubt, check the locations for a colony.*
+
+```{r, check_locations}
+selected_locations <- all_locations$location_name[all_locations$colony_int_name == "Røst"]
+```
+
+### Species/Subspecies
+
+We can view all available species within the database:
+
+```{r, get_species}
+all_species <- getSpecies()
+head(all_species)
+```
+
+Note that not all of these are official SEATRACK species (e.g. Black guillemot is in the database, but not an official species). You can filter to just the SEATRACK species:
+
+```{r, get_species_2}
+SEATRACK_species <- all_species[all_species$seatrack_species, ]
+head(SEATRACK_species)
+```
+
+You can also view all subspecies
+
+```{r, get_species_3}
+all_subspecies <- getSpecies(include_subspecies = TRUE)
+head(all_subspecies)
+```
+
+## getSessionInfo
+
+The function with the most comprehensive metadata filtering available is `getSessionInfo()`. This function combines a number of the database tables to create a human readable information about each logging session, with one row per session. 
+
+it is highly reccomended to call this with some filtering applied, as otherwise the table returned will be extremely large and take a long time to return.
+
+In this example, we filter by year of deployment, colony, species, logger type and whether a logging session has positions in the database.
+
+```{r get_session_info_1}
+filtered_sessions <- getSessionInfo(
+    deployment_year = 2024,
+    colony = "Røst",
+    species = "Atlantic puffin",
+    logger_type = "GLS",
+    has_positions = TRUE
+)
+
+
+print(nrow(filtered_sessions)) # How much data was returned?
+
+head(filtered_sessions) # Show the first rows
+```
+
+See the function documentation for all possible filters.
+
+This table contains a comprehensive set of information about each logging session, including when the logger was started, deployed, retrieved and shut down. it also includes important information about the individual the logger was deployed on, include species, sex and age class (at time of deployment).
+
+## Getting positional data
+
+We can use the `getPositions()` to return positional data. This function can also filter by attributes such as species or colony.
+
+```{r get_positions_1}
+puffin_positions <- getPositions(species = "Atlantic puffin", colony = "Røst")
+
+print(nrow(puffin_positions)) # How much data was returned?
+
+head(puffin_positions)
+```
+
+To use the more comprehensive filters from `getSessionInfo`, we can pass the `session_id` from our result from `getSessionInfo` query to this function.
+
+```{r get_positions_2}
+filtered_puffin_positions <- getPositions(sessionId = filtered_sessions$session_id)
+
+print(nrow(filtered_puffin_positions)) # How much data was returned?
+
+head(filtered_puffin_positions)
+```
+
+We can use this to make a quick map:
+```{r, plot_positions, message=FALSE}
+library(ggplot2)
+library(sf)
+library(basemaps)
+library(dplyr)
+
+# use the sf library to convert our data to a spatial dataframe
+puffin_sdf <- sf::st_as_sf(filtered_puffin_positions, coords = c("lon", "lat"), crs = 4326)
+# Filter this data to only include non-equinox data
+puffin_sdf <- puffin_sdf[puffin_sdf$eqfilter == 1, ]
+
+# Transform to use web mercator as this is what the basemap wants
+puffin_sdf <- st_transform(puffin_sdf, 3857)
+bbox <- sf::st_bbox(puffin_sdf, crs = 3857)
+
+# Create lines from points 
+line_sf <- puffin_sdf %>%
+  group_by(session_id) %>%
+  summarise(do_union = FALSE) %>%
+  st_cast("LINESTRING")
+
+
+basemap_ggplot(
+    ext = bbox,
+    map_service = "esri",
+    map_type = "world_ocean_base"
+) +
+geom_sf(
+    data = puffin_sdf,
+    aes(colour = session_id),
+    size = 1
+) +
+geom_sf(
+    data = line_sf,
+    aes(colour = session_id),
+    size = 1
+) +
+coord_sf(expand = FALSE) +
+theme_light() +
+theme(legend.position = "bottom")
+
+```
+
+## Getting recording data
+
+Recording data can be obtained in a similar way using `getRecordings`. Type can be `activity` (immersion), `temperature` or `light`. As with `getPositions` there are some basic filters available:
+
+```{r, recording_example}
+
+puffin_temp <- getRecordings(type = "temperature", species = "Atlantic puffin", colony = "Røst")
+
+print(nrow(puffin_temp)) # How much data was returned?
+
+head(puffin_temp)
+
+```
+
+For more comprehensive filtering, you can again pass the `session_id`s.
+
+```{r, recording_example_2}
+
+filtered_puffin_activity <- getRecordings(type = "activity", sessionId = filtered_sessions$session_id)
+
+print(nrow(filtered_puffin_activity)) # How much data was returned?
+
+head(filtered_puffin_activity)
+
+```
+
+# Reporting bugs and requesting features
+
+If you run into a problem or have something you feel would be a valuable addition to the package, please raise a [github issue](https://github.com/NINAnor/seatrackR/issues)
+
+This includes mentioning if you feel aspects of the package are inadequately/incorrectly documented. Refining and documenting this package is a work in progress, and feedback is very helpful.
+
+# Contributing
+
+If you have a piece of code that you feel others would benefit from, consider contributing to the package. Please contact Julian if you are interested.
+
+# Shiny app
+
+The package has a graphical user interface, allowing the browsing and exporting of data.
+
+You can start this app using the function:
+
+```{r, run_app_dummy, echo=TRUE, echo=TRUE, eval = FALSE, message=FALSE}
+run_app()
+```
+
+```{r, screenshot, echo = FALSE, fig.cap = "", figure_width = 1022/38, figure_height = 720/38, dpi = 150, fig.retina = 2, out.width = "100%"}
+# knitr::include_graphics(system.file(file.path("man", "figures", "seatrackModel.png"), package = "seatrackR"))
+# This is a bit of a hack to make sure the image is included in the precompiled vignette/website.
+img <- image_read(system.file(file.path("img", "app_screenshot.png"), package = "seatrackR")) #
+raster <- as.raster(img)
+myplot <- ggplot() + geom_point() + xlim(0, 1) + ylim(0, 1)
+myplot + annotation_raster(raster, 0, 1, 0, 1) +
+theme_void() +
+  #scale_x_continuous(expand = c(0, 0)) +
+  #scale_y_continuous(expand = c(0, 0)) +
+  labs(x = NULL, y = NULL) +
+  theme(
+    plot.margin = margin(0, 0, 0, 0, "cm")
+  )
+
+```
+
+Note that this is currently a work in progress. Please note any problems/ideas on the [github issues](https://github.com/NINAnor/seatrackR/issues) page.

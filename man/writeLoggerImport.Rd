@@ -17,7 +17,7 @@ writeLoggerImport(loggerImport, append = T, overwrite = FALSE)
 Data frame.
 }
 \description{
-This is a convenience function that writes to the "loggers.logger_info"
+This is a convenience function that writes to the "logger_import" table in the schema \code{imports}. It is used to update the logger info table with new logger information.
 }
 \examples{
 \dontrun{
@@ -25,4 +25,4 @@ connectSeatrack(Username = "testreader", Password = "testreader")
 writeLoggerImport(sampleLoggerImport)
 }
 }
-\concept{logger_info}
+\concept{data_import}

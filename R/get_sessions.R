@@ -1,6 +1,7 @@
 #' Retrieve logger session information
 #'
-#' This function retrieves information about logger sessions from the database, allowing for various filters to narrow down the results.
+#' This function retrieves information about logger sessions from the database view `logger.session_details`.
+#' It provides comprehensive filtering argument to narrow down the results.
 #' @param session_id Optional vector of session IDs to filter by.
 #' @param individ_id Optional vector of individual IDs to filter by.
 #' @param project Optional vector of project names to filter by.
@@ -19,14 +20,14 @@
 #' @param logger_start_time_between Optional vector of two dates to filter logger start times between.
 #' @param logging_mode Optional vector of logging modes to filter by.
 #' @param logger_deployed Optional logical indicating whether to filter by deployed loggers.
-#' @param logger_deployment_year Optional vector of deployment years to filter by.
-#' @param logger_deployment_date_between Optional vector of two dates to filter deployment dates between.
+#' @param deployment_year Optional vector of deployment years to filter by.
+#' @param deployment_date_between Optional vector of two dates to filter deployment dates between.
 #' @param deployment_logger_status Optional vector of deployment logger statuses to filter by.
 #' @param logger_retrieved Optional logical indicating whether to filter by retrieved loggers.
-#' @param logger_retrieval_year Optional vector of retrieval years to filter by.
-#' @param logger_retrieval_date_between Optional vector of two dates to filter retrieval dates between.
+#' @param retrieval_year Optional vector of retrieval years to filter by.
+#' @param retrieval_date_between Optional vector of two dates to filter retrieval dates between.
 #' @param retrieval_logger_status Optional vector of retrieval logger statuses to filter by.
-#' @param logger_shutdown_date_between Optional vector of two dates to filter shutdown dates between.
+#' @param shutdown_date_between Optional vector of two dates to filter shutdown dates between.
 #' @param download_type Optional vector of download types to filter by.
 #' @param has_positions Optional logical indicating whether to filter by sessions with position data.
 #' @param has_irma Optional logical indicating whether to filter by sessions with IRMA data.
@@ -55,13 +56,13 @@ getSessionInfo <- function(
     logger_start_time = NULL,
     logger_start_time_between = NULL,
     logging_mode = NULL,
-    logger_deployment_year = NULL,
-    logger_deployment_date_between = NULL,
+    deployment_year = NULL,
+    deployment_date_between = NULL,
     deployment_logger_status = NULL,
-    logger_retrieval_year = NULL,
-    logger_retrieval_date_between = NULL,
+    retrieval_year = NULL,
+    retrieval_date_between = NULL,
     retrieval_logger_status = NULL,
-    logger_shutdown_date_between = NULL,
+    shutdown_date_between = NULL,
     download_type = NULL,
     has_positions = NULL,
     has_irma = NULL,
@@ -78,9 +79,9 @@ getSessionInfo <- function(
         
         between_filter_args <- list(
             logger_start_time = logger_start_time_between,
-            deployment_date = logger_deployment_date_between,
-            retrieval_date = logger_retrieval_date_between,
-            shutdown_date = logger_shutdown_date_between
+            deployment_date = deployment_date_between,
+            retrieval_date = retrieval_date_between,
+            shutdown_date = shutdown_date_between
         )
         
         session_details <- dplyr::tbl(con, dbplyr::in_schema("loggers", "session_details"))

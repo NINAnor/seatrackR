@@ -27,7 +27,7 @@
 #'
 #' writePositions(toImport)
 #' }
-#' @concept positions
+#' @concept data_import
 writePositions <- function(datatype = "GLS",
                            positionData,
                            refreshView = TRUE) {

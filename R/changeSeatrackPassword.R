@@ -1,10 +1,11 @@
 #' changeSeatrackPassword
 #'
-#' Changes the password for a user in the Seatrack database. Since the passwords for the file archive are fetched from the database,
+#' Changes the password for a user in the SEATRACK database. Since the passwords for the file archive are fetched from the database,
 #' this also affects the file archive.
 #'
 #'
-#' @param password Your new password (character string).
+#' @param password A string representing the new password. If NULL, the user will be prompted to enter a new password.
+#' @param save_credentials Boolean. If TRUE, credentials will be saved to .Renviron for future use. Default is TRUE.
 #'
 #' @return Null
 #' @export
@@ -14,8 +15,12 @@
 #' }
 #'
 #' @concept general_db
-changeSeatrackPassword <- function(password = NULL) {
+changeSeatrackPassword <- function(password = NULL, save_credentials = TRUE) {
   checkCon()
+
+  if (is.null(password)) {
+    password <- getPass::getPass(msg = "Enter new password:")
+  }
 
   current_user <- DBI::dbGetQuery(con, "SELECT current_user")
 
@@ -25,5 +30,14 @@ changeSeatrackPassword <- function(password = NULL) {
 
   disconnectSeatrack()
 
-  return("Password changed, you need to connect again using connectSeatrack()")
+  if (save_credentials) {
+    set_credentials_renviron(current_user, password)
+
+    connectSeatrack()
+
+    print("Password succesfully changed, you have been reconnected.")
+  } else {
+    print("Password succesfully changed, you have been disconnected.")
+  }
+
 }

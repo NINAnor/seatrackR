@@ -15,7 +15,7 @@ vignette: >
 .db_diagram { 
   background-color: #343a40;
   max-width: none !important;
-  width: max-content !important; }
+  width: 200% !important; }
 </style>
 
 ::: {.db_diagram}

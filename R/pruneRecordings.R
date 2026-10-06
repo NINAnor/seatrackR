@@ -1,20 +1,3 @@
-#' pruneRecordings Prune activity, light and temperature recording data that
-#'
-#' Delete activity, light and temperature recording data that is lacking an existing session_id in the loggers.logger_session table. #'
-#' @param pruneLight Prune light table (slow). Boolean
-#' @param pruneActivity Prune activity table (slow). Boolean
-#' @param pruneTemperature Prune temperature table. Boolean
-#' @param force Override the confirmation menu
-#'
-#' @return Status message
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' pruneRecords()
-#' }
-#'
-#' @concept activity
 pruneRecordings <- function(
     pruneLight = TRUE,
     pruneActivity = TRUE,

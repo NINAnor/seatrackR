@@ -6,6 +6,7 @@ library(NinaR)
 library(yaml)
 library(rmarkdown)
 library(knitr)
+library(magick)
 
 install_cellar <- function(path = ".") {
     cellar <- renv:::renv_paths_cellar()

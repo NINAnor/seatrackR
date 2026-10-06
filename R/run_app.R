@@ -17,6 +17,7 @@
 #' @import bslib
 #' @import leaflet
 #' @import leaflet.extras
+#' @import DT
 run_app <- function(settings_path = file.path(getwd(), "seatrackR_app"), test = FALSE) {
     # settings_path
 

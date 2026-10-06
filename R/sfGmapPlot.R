@@ -1,32 +1,3 @@
-#' sfGmapPlot
-#'
-#' Plotting function to overlay sf objects on a ggmap
-#'
-#'
-#'
-#' @param sf a simple features object
-#' @param maptype type of map for ggmap to fetch
-#' @param color Plotting color of SF object
-#' @param zoom The zoom level of the plot
-#'
-#' @export
-#' @examples
-#' \dontrun{
-#'
-#' connectSeatrack("testreader", "testreader")
-#' hornoya <- getPosdata(
-#'   selectColony = "Hornøya",
-#'   selectYear = "2015_16",
-#'   loadGeometries = T
-#' )
-#'
-#' sub <- hornoya[1:500, ]
-#'
-#' sfGmapPlot(sub,
-#'   zoom = 3
-#' )
-#' }
-#' @concept plotting
 sfGmapPlot <- function(sf,
                        maptype = c(
                          "terrain", "terrain-background", "satellite",

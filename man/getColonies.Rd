@@ -7,16 +7,16 @@
 getColonies(allLocations = FALSE, loadGeometries = FALSE)
 }
 \arguments{
-\item{allLocations}{True, False. Should all locations within colonies be loaded. Default = False.}
+\item{allLocations}{Boolean. Should all locations within colonies be loaded. Default = FALSE}
 
-\item{loadGeometries}{True, False. Should the geometries be loaded as an sf object. Default = False.}
+\item{loadGeometries}{Boolean. Should the geometries be loaded as an sf object. Default = FALSE}
 }
 \value{
 A tibble of the metadata.colony or metadata.location table with or without sf geometry.
 }
 \description{
 This function either reads from the metadata.colony or the metadata.location table, depending on the parameter allLocations.
-If
+If loadGeometries is set to TRUE, the function will return an sf object with the geometries of the colonies or locations.
 }
 \examples{
 \dontrun{

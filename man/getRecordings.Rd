@@ -39,7 +39,7 @@ getRecordings(
 A Lazy query or optionally a Tibble.
 }
 \description{
-This is a convenience function that reads from the "activity" tables temperature, activity, and light in the schema Recordings
+This is a convenience function that reads from the "recordings" tables temperature, activity, and light in the schema \code{recordings}
 }
 \examples{
 \dontrun{
