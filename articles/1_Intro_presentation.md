@@ -90,7 +90,7 @@ This diagram shows most of the important tables in the database.
       - Also writes to tables in the `individuals` schema, see below.
   5.  *Registering the end of a logging session:*
       - Writes information about the end of session (date shutdown,
-        logger status) to the `startup` table.
+        logger status) to the `shutdown` table.
       - If a logger is registered with a succesful download status,
         writes expected files/filenames to the `file_archive` table.
       - Writes information about the logging session to the
