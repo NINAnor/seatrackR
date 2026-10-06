@@ -82,9 +82,6 @@ Evans</h4>
 
     
     
-<pre><code><span><span class="co">## Linking to ImageMagick 6.9.13.29</span></span>
-<span><span class="co">## Enabled features: cairo, freetype, fftw, ghostscript, heic, lcms, pango, raw, rsvg, webp</span></span>
-<span><span class="co">## Disabled features: fontconfig, x11</span></span></code></pre>
 <p>This article will show you how to use the seatrackR data package to
 connect to the SEATRACK database and use some basic functions to fetch
 data.</p>
@@ -93,13 +90,13 @@ data.</p>
 </h2>
 <p>seatrackR must be installed from github. We reccomend using the
 <code>pak</code> package for this.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"NINAnor/seatrackR"</span><span class="op">)</span></span></code></pre></div>
 <p>You can also use the older devtools::install_github function:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"NINAnor/seatrackR"</span><span class="op">)</span></span></code></pre></div>
 <p>Once installed, you can load the package with</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ninanor.github.io/seatrackR/">seatrackR</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -112,11 +109,11 @@ credentials. This should be done in the <strong>R console not an R
 script</strong>. This is to prevent credentials being leaked.</p>
 <p>You can either write your username and credentials as arguments in
 the function:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/connectSeatrack.html">connectSeatrack</a></span><span class="op">(</span><span class="st">"my_username"</span>, <span class="st">"my_password"</span><span class="op">)</span></span></code></pre></div>
 <p>Or you can call the function bare, with no arguments, which will then
 give you an interactive prompt in the console:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/connectSeatrack.html">connectSeatrack</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>If this produces no errors, you are succesfully connected to the
 database.</p>
@@ -127,16 +124,16 @@ database.</p>
 project .renviron file. This means you will not need to type in your
 credentials next time you connect. Any scripts run in this project can
 simply call the function.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/connectSeatrack.html">connectSeatrack</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>If you have input your credentials wrongly, you can update the stored
 credentials by calling <code><a href="../reference/connectSeatrack.html">connectSeatrack()</a></code> with
 arguments:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/connectSeatrack.html">connectSeatrack</a></span><span class="op">(</span><span class="st">"my_username"</span>, <span class="st">"my_password"</span><span class="op">)</span></span></code></pre></div>
 <p>or you can use the underlying function for saving credentials,
 <code><a href="../reference/set_credentials_renviron.html">set_credentials_renviron()</a></code>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_credentials_renviron.html">set_credentials_renviron</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># With no arguments, will prompt interactively.</span></span>
 <span><span class="co"># OR</span></span>
 <span><span class="fu"><a href="../reference/set_credentials_renviron.html">set_credentials_renviron</a></span><span class="op">(</span><span class="st">"my_username"</span>, <span class="st">"my_password"</span><span class="op">)</span></span></code></pre></div>
@@ -150,7 +147,7 @@ temporary password by the administrator. You can change this using
 be stored in a script.</strong> Run it only in the console. By default,
 this function will automatically update your stored credentials for this
 project.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/changeSeatrackPassword.html">changeSeatrackPassword</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># With no arguments, will prompt interactively.</span></span>
 <span><span class="co"># OR</span></span>
 <span><span class="fu"><a href="../reference/changeSeatrackPassword.html">changeSeatrackPassword</a></span><span class="op">(</span><span class="st">"my_super_secure_new_password"</span><span class="op">)</span></span></code></pre></div>
@@ -170,7 +167,7 @@ functions to download some data.</p>
 <h4 id="colonieslocations">Colonies/locations<a class="anchor" aria-label="anchor" href="#colonieslocations"></a>
 </h4>
 <p>We can view all available SEATRACK colonies using</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_colonies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getColonies.html">getColonies</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">all_colonies</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                                     id      lat       lon colony_int_name colony_nat_name lme_id</span></span>
@@ -189,7 +186,7 @@ functions to download some data.</p>
 <span><span class="co">## 6    &lt;NA&gt;       hopen</span></span></code></pre>
 <p>We can also get all locations, which can be finer scale areas
 within/attached to SEATRACK colonies.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_locations</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getColonies.html">getColonies</a></span><span class="op">(</span>allLocations <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">all_locations</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                                     id   location_name colony_int_name    lat     lon</span></span>
@@ -209,14 +206,14 @@ the language used for compatability reasons. This means tables have
 <code>location_name</code> column in the <code>locations</code> table.
 This will also be fixed in future.</em></p>
 <p><em>If in doubt, check the locations for a colony.</em></p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">selected_locations</span> <span class="op">&lt;-</span> <span class="va">all_locations</span><span class="op">$</span><span class="va">location_name</span><span class="op">[</span><span class="va">all_locations</span><span class="op">$</span><span class="va">colony_int_name</span> <span class="op">==</span> <span class="st">"Røst"</span><span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="speciessubspecies">Species/Subspecies<a class="anchor" aria-label="anchor" href="#speciessubspecies"></a>
 </h4>
 <p>We can view all available species within the database:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_species</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getSpecies.html">getSpecies</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">all_species</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                                     id       species_name_eng species_name_latin</span></span>
@@ -236,7 +233,7 @@ This will also be fixed in future.</em></p>
 <p>Note that not all of these are official SEATRACK species (e.g. Black
 guillemot is in the database, but not an official species). You can
 filter to just the SEATRACK species:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SEATRACK_species</span> <span class="op">&lt;-</span> <span class="va">all_species</span><span class="op">[</span><span class="va">all_species</span><span class="op">$</span><span class="va">seatrack_species</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">SEATRACK_species</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                                     id       species_name_eng species_name_latin</span></span>
@@ -254,7 +251,7 @@ filter to just the SEATRACK species:</p>
 <span><span class="co">## 5                  BLKW                   RITRI             TRUE</span></span>
 <span><span class="co">## 6                  NOFU                   FUGLA             TRUE</span></span></code></pre>
 <p>You can also view all subspecies</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_subspecies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getSpecies.html">getSpecies</a></span><span class="op">(</span>include_subspecies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">all_subspecies</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                                     id       species_name_eng species_name_latin</span></span>
@@ -286,7 +283,7 @@ time to return.</p>
 <p>In this example, we filter by year of deployment, colony, species,
 logger type and whether a logging session has positions in the
 database.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">filtered_sessions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getSessionInfo.html">getSessionInfo</a></span><span class="op">(</span></span>
 <span>    deployment_year <span class="op">=</span> <span class="fl">2024</span>,</span>
 <span>    colony <span class="op">=</span> <span class="st">"Røst"</span>,</span>
@@ -298,7 +295,7 @@ database.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">filtered_sessions</span><span class="op">)</span><span class="op">)</span> <span class="co"># How much data was returned?</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 6</span></span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">filtered_sessions</span><span class="op">)</span> <span class="co"># Show the first rows</span></span></code></pre></div>
 <pre><code><span><span class="co">## # A tibble: 6 × 33</span></span>
 <span><span class="co">##   session_id   individ_id project logger_serial_no logger_model producer logger_type logger_deployed</span></span>
@@ -329,12 +326,12 @@ class (at time of deployment).</p>
 <p>We can use the <code><a href="../reference/getPositions.html">getPositions()</a></code> to return positional data.
 This function can also filter by attributes such as species or
 colony.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">puffin_positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPositions.html">getPositions</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Atlantic puffin"</span>, colony <span class="op">=</span> <span class="st">"Røst"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">puffin_positions</span><span class="op">)</span><span class="op">)</span> <span class="co"># How much data was returned?</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 136571</span></span></code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">puffin_positions</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## # A tibble: 6 × 33</span></span>
 <span><span class="co">##   id                   date_time           logger_id logger_model year_tracked session_id individ_id</span></span>
@@ -355,17 +352,17 @@ colony.</p>
 <code>getSessionInfo</code>, we can pass the <code>session_id</code>
 from our result from <code>getSessionInfo</code> query to this
 function.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">filtered_puffin_positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPositions.html">getPositions</a></span><span class="op">(</span>sessionId <span class="op">=</span> <span class="va">filtered_sessions</span><span class="op">$</span><span class="va">session_id</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">filtered_puffin_positions</span><span class="op">)</span><span class="op">)</span> <span class="co"># How much data was returned?</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 2822</span></span></code></pre>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">filtered_puffin_positions</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## # A tibble: 6 × 33</span></span>
 <span><span class="co">##   id                   date_time           logger_id logger_model year_tracked session_id individ_id</span></span>
 <span><span class="co">##   &lt;chr&gt;                &lt;dttm&gt;              &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     </span></span>
-<span><span class="co">## 1 22b013aa-5df6-11f1-… 2024-08-17 23:12:58 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
+<span><span class="co">## 1 22afffaa-5df6-11f1-… 2024-08-05 10:59:22 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
 <span><span class="co">## 2 22afd5e8-5df6-11f1-… 2024-07-27 11:27:07 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
 <span><span class="co">## 3 22aff172-5df6-11f1-… 2024-07-27 23:12:25 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
 <span><span class="co">## 4 22aff320-5df6-11f1-… 2024-07-28 11:09:42 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
@@ -378,7 +375,7 @@ function.</p>
 <span><span class="co">## #   analyzer &lt;chr&gt;, data_responsible &lt;chr&gt;, data_version &lt;int&gt;, last_updated &lt;date&gt;,</span></span>
 <span><span class="co">## #   updated_by &lt;chr&gt;, date_time_downloaded &lt;dttm&gt;</span></span></code></pre>
 <p>We can use this to make a quick map:</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jakob.schwalb-willmann.de/basemaps/" class="external-link">basemaps</a></span><span class="op">)</span></span>
@@ -430,12 +427,12 @@ function.</p>
 <code>getRecordings</code>. Type can be <code>activity</code>
 (immersion), <code>temperature</code> or <code>light</code>. As with
 <code>getPositions</code> there are some basic filters available:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">puffin_temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getRecordings.html">getRecordings</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"temperature"</span>, species <span class="op">=</span> <span class="st">"Atlantic puffin"</span>, colony <span class="op">=</span> <span class="st">"Røst"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">puffin_temp</span><span class="op">)</span><span class="op">)</span> <span class="co"># How much data was returned?</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 96606</span></span></code></pre>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">puffin_temp</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## # A tibble: 6 × 7</span></span>
 <span><span class="co">##   session_id      individ_id date_time           wet_temp_min wet_temp_max wet_temp_mean num_samples</span></span>
@@ -448,12 +445,12 @@ function.</p>
 <span><span class="co">## 6 BE413_2017-04-… NOS_51205… 2017-05-15 15:14:29         6            6.38          6.86          22</span></span></code></pre>
 <p>For more comprehensive filtering, you can again pass the
 <code>session_id</code>s.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">filtered_puffin_activity</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getRecordings.html">getRecordings</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"activity"</span>, sessionId <span class="op">=</span> <span class="va">filtered_sessions</span><span class="op">$</span><span class="va">session_id</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">filtered_puffin_activity</span><span class="op">)</span><span class="op">)</span> <span class="co"># How much data was returned?</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 300484</span></span></code></pre>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">filtered_puffin_activity</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## # A tibble: 6 × 5</span></span>
 <span><span class="co">##   session_id       individ_id  date_time           conductivity std_conductivity</span></span>
@@ -488,7 +485,7 @@ interested.</p>
 <p>The package has a graphical user interface, allowing the browsing and
 exporting of data.</p>
 <p>You can start this app using the function:</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figure/screenshot-1.png" width="100%"></p>
 <p>Note that this is currently a work in progress. Please note any
