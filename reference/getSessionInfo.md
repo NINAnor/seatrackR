@@ -38,7 +38,8 @@ getSessionInfo(
   has_positions = NULL,
   has_irma = NULL,
   embargoed = FALSE,
-  as_tibble = TRUE
+  as_tibble = TRUE,
+  include_sample_info = FALSE
 )
 ```
 
@@ -171,6 +172,11 @@ getSessionInfo(
 - as_tibble:
 
   Logical indicating whether to return the result as a tibble.
+
+- include_sample_info:
+
+  Optional logical indicating whether to include sample information
+  (blood, feathers etc.) in the results. Default is FALSE.
 
 ## Value
 

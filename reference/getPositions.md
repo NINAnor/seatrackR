@@ -31,8 +31,8 @@ getPositions(
 
 - datatype:
 
-  "GLS", "IRMA", or "GPS". Which type of position data to fetch. Default
-  is "GLS".
+  "GLS", "IRMA","GPS" or "GPS-GSM". Which type of position data to
+  fetch. Default is "GLS".
 
 - species:
 
