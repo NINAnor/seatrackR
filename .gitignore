@@ -50,3 +50,4 @@ requested_data_packages/
 /doc/
 /Meta/
 .devcontainer
+.vscode/

@@ -86,7 +86,8 @@ getPositions <- function(datatype = "GLS",
   source_table <- dplyr::case_when(
     datatype == "GLS" ~ "postable",
     datatype == "IRMA" ~ "irma",
-    datatype == "GPS" ~ "gps"
+    datatype == "GPS" ~ "gps",
+    datatype == "GPS-GSM" ~ "gps_gsm"
   )
 
   res <- tbl(con, dbplyr::in_schema("positions", source_table))
