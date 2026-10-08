@@ -35,7 +35,8 @@ getSessionInfo(
   has_positions = NULL,
   has_irma = NULL,
   embargoed = FALSE,
-  as_tibble = TRUE
+  as_tibble = TRUE,
+  include_sample_info = FALSE
 )
 }
 \arguments{
@@ -100,6 +101,8 @@ getSessionInfo(
 \item{embargoed}{Optional logical indicating whether to include embargoed sessions. Default is FALSE.}
 
 \item{as_tibble}{Logical indicating whether to return the result as a tibble.}
+
+\item{include_sample_info}{Optional logical indicating whether to include sample information (blood, feathers etc.) in the results. Default is FALSE.}
 }
 \value{
 Either a lazy db query or a tibble containing the filtered logger session information.

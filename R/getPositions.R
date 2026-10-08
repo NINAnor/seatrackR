@@ -2,7 +2,7 @@
 #'
 #' This is a convenience function that reads position data from the database. The default datatype is "GLS", which reads data from "positions.postable", which is the primary table position table in the DB. Optionally you can fetch "IRMA" data, which is IRMA processed position data, or "GPS" data.
 #'
-#' @param datatype "GLS", "IRMA", or "GPS". Which type of position data to fetch. Default is "GLS".
+#' @param datatype "GLS", "IRMA","GPS" or "GPS-GSM". Which type of position data to fetch. Default is "GLS".
 #' @param sessionId Character string of session ids to limit the selection to.
 #' @param individId Character string of individ ids to limit the selection to.
 #' @param species Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
@@ -92,7 +92,6 @@ getPositions <- function(datatype = "GLS",
 
   res <- tbl(con, dbplyr::in_schema("positions", source_table))
 
-
   if (!is.null(species)) {
     res <- res |> filter(species %in% selectSpecies)
   }
@@ -138,7 +137,7 @@ getPositions <- function(datatype = "GLS",
       res <- res |> filter(project %in% !!project)
     }
     if (exclude_embargoed) {
-      res <- res |> filter(!grepl("_embargoed", project, fixed = FALSE))
+      res <- res |> filter(is.na(project) | !grepl("_embargoed", project, fixed = FALSE))
     }
     res <- res |> select(-"project")
   }

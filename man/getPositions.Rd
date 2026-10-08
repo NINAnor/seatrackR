@@ -22,7 +22,7 @@ getPositions(
 )
 }
 \arguments{
-\item{datatype}{"GLS", "IRMA", or "GPS". Which type of position data to fetch. Default is "GLS".}
+\item{datatype}{"GLS", "IRMA","GPS" or "GPS-GSM". Which type of position data to fetch. Default is "GLS".}
 
 \item{species}{Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
 The available choices can be seen in the column \code{species_name_eng} in the result from the function \code{getSpecies()}.}
