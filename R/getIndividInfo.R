@@ -138,7 +138,7 @@ getIndividInfo <- function(colony = NULL,
     }
   }
   if (exclude_embargoed) {
-    sessions <- dplyr::filter(sessions, !grepl("_embargoed", project, fixed = FALSE))
+    sessions <- dplyr::filter(sessions, is.na(project) | !grepl("_embargoed", project, fixed = FALSE))
   }
 
   sessions <- dplyr::left_join(sessions, status, by = "session_id", suffix = c(".session", ".status"), multiple = "all")
@@ -316,7 +316,7 @@ new_get_indiv_info <- function(colony = NULL,
     }
   }
   if (exclude_embargoed) {
-    individ_info_view <- dplyr::filter(individ_info_view, !grepl("_embargoed", project, fixed = FALSE))
+    individ_info_view <- dplyr::filter(individ_info_view, is.na(project) | !grepl("_embargoed", project, fixed = FALSE))
   }
 
   # Drop columns that were added for filtering (for now)

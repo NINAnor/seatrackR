@@ -82,7 +82,7 @@ getRecordings <- function(type = NULL,
     }
     if (exclude_embargoed) {
       temp <- temp |>
-        filter(!grepl("_embargoed", project, fixed = FALSE))
+        filter(is.na(project), !grepl("_embargoed", project, fixed = FALSE))
     }
   }
 

@@ -30,7 +30,7 @@ getLoggerInfo <- function(species = NULL, colony = NULL, session = NULL, individ
     }
   }
   if (exclude_embargoed) {
-    res <- dplyr::filter(res, !grepl("_embargoed", project, fixed = FALSE))
+    res <- dplyr::filter(res, is.na(project) | !grepl("_embargoed", project, fixed = FALSE))
   }
 
 
