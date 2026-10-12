@@ -130,14 +130,6 @@ head(all_locations)
 **NOTE:** 
 *Currently, the vast majority of locations are still 1 to 1 with colonies. This will be developed futher in future.*
 
-*Note that while all tables actually connect to the `locations` table, there is currently some inconsistency in the language used for compatability reasons. This means tables have `colony` columns that actually link to the `location_name` column in the `locations` table.  This will also be fixed in future.*
-
-*If in doubt, check the locations for a colony.*
-
-```{r, check_locations}
-selected_locations <- all_locations$location_name[all_locations$colony_int_name == "Røst"]
-```
-
 ### Species/Subspecies
 
 We can view all available species within the database:

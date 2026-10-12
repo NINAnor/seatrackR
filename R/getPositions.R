@@ -9,6 +9,7 @@
 #' The available choices can be seen in the column `species_name_eng` in the result from the function `getSpecies()`.
 #' @param colony Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
 #' choices can be seen in the column `colony_int_name` in the result from the function `getColonies()`.
+#' @param location Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
 #' @param age_deployment_class Character string. Option to limit selection to one or a set of age classes. Default is NULL.
 #' @param dataResponsible Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
 #' must conform to the name nomenclature used in the postable. Default is NULL. The available
@@ -58,6 +59,7 @@
 getPositions <- function(datatype = "GLS",
                          species = NULL,
                          colony = NULL,
+                         location = NULL,
                          age_deployment_class = NULL,
                          dataResponsible = NULL,
                          ringnumber = NULL,
@@ -71,8 +73,10 @@ getPositions <- function(datatype = "GLS",
                          limit = FALSE) {
   checkCon()
 
+  #rewrite to be less repetitive
   selectSpecies <- species
   selectColony <- colony
+  selectLocation <- location
   selectAge <- age_deployment_class
 
   datatype <- match.arg(datatype,
@@ -92,12 +96,18 @@ getPositions <- function(datatype = "GLS",
 
   res <- tbl(con, dbplyr::in_schema("positions", source_table))
 
+  # Check if we need a refresh
+
   if (!is.null(species)) {
     res <- res |> filter(species %in% selectSpecies)
   }
 
   if (!is.null(colony)) {
     res <- res |> filter(colony %in% selectColony)
+  }
+
+  if (!is.null(location)) {
+    res <- res |> filter(location %in% selectLocation)
   }
 
   if (!is.null(selectAge)) {

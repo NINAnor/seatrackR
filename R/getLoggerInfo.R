@@ -1,9 +1,10 @@
 #' View the view info table
 #'
-#' This is a convenience function that reads from the view "views.logger_info". Note that there also exists a table "loggers.logger_info" with more limited information.
+#' This is a convenience function that reads from the view "loggers.logger_status. Note that there also exists a table "loggers.logger_info" with more limited information.
 #' #'
 #' @param species Optional vector of character strings of species to limit the selection to.
 #' @param colony Optional vector of character strings of colonies limit the selection to.
+#' @param location Optional vector of character strings of locations limit the selection to.
 #' @param session Optional vector of character strings of session_id to limit the selection to.
 #' @param individ_id Optional vector of character strings of individ_id to limit the selection to.
 #' @param project subset data for a character vector of project names. Default is NULL.
@@ -17,11 +18,11 @@
 #' loggerInfo <- getLoggerInfo()
 #' }
 #' @concept logger_info
-getLoggerInfo <- function(species = NULL, colony = NULL, session = NULL, individ_id = NULL, project = NULL, exclude_embargoed = TRUE, asTibble = TRUE) {
+getLoggerInfo <- function(species = NULL, colony = NULL, location = NULL, session = NULL, individ_id = NULL, project = NULL, exclude_embargoed = TRUE, asTibble = TRUE) {
   checkCon()
 
-  res <- dplyr::tbl(con, dbplyr::in_schema("views", "logger_info"))
-  arg_list <- list(deployment_species = species, colony = colony, session_id = session, individ_id = individ_id, project = project)
+  res <- dplyr::tbl(con, dbplyr::in_schema("loggers", "logger_status"))
+  arg_list <- list(deployment_species = species, colony = colony, location = location, session_id = session, individ_id = individ_id, project = project)
   for (i in seq_along(arg_list)) {
     val_name <- names(arg_list)[i]
     value <- arg_list[[i]]
@@ -40,7 +41,7 @@ getLoggerInfo <- function(species = NULL, colony = NULL, session = NULL, individ
       {
         res <- res %>% dplyr::collect()
 
-        # Forze timezone to be UTC
+        # Force timezone to be UTC - is this needed?
         res <- res %>%
           mutate(
             starttime_gmt = lubridate::force_tz(starttime_gmt,

@@ -14,6 +14,7 @@ getIndividInfo(
   age_at_deployment = "A",
   sex = NULL,
   project = NULL,
+  location = NULL,
   exclude_embargoed = TRUE,
   event_type = NULL,
   last_only = FALSE,
@@ -22,7 +23,7 @@ getIndividInfo(
 )
 }
 \arguments{
-\item{colony}{Optional vector of character string of colonies limit the selection to. Available choices are found in "colony_int_name", from getColonies()}
+\item{colony}{Optional vector of character string of colonies. Available choices are found in "colony_int_name", from getColonies()}
 
 \item{year_tracked}{Optional vector of character strings of year_tracked to limit the selection to. This has the form "2020_21", see getYears for available choices.}
 
@@ -39,6 +40,8 @@ getIndividInfo(
 \item{sex}{Optional vector of character strings of sex to limit the selection to.}
 
 \item{project}{subset data for a character vector of project names. Default is NULL.}
+
+\item{location}{Optional vector of character string of locations. Available choices are found in "location_name", from getColonies(allLocations = TRUE)}
 
 \item{exclude_embargoed}{Boolean. If TRUE, records from embaroed projects are not included. Default is TRUE.}
 

@@ -6,6 +6,7 @@
 #' @param sessionId subset data for a character vector of session ids
 #' @param individId subset data for a character vector of individual ids
 #' @param colony subset data for a character vector of colony names (International names)
+#' @param colony subset data for a character vector of location names
 #' @param species subset data for a character vector of species
 #' @param yearTracked subset data for a character vector of year_tracked (e.g. 2014_15)
 #' @param project subset data for a character vector of project names. Default is NULL.
@@ -27,6 +28,7 @@ getRecordings <- function(type = NULL,
                           sessionId = NULL,
                           individId = NULL,
                           colony = NULL,
+                          location = NULL,
                           species = NULL,
                           yearTracked = NULL,
                           project = NULL,

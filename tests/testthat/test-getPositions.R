@@ -1,5 +1,13 @@
 test_that("getPostions() returns data", {
   skip_if_no_test_db()
+
+  source_table <- "postable"
+  test <- DBI::dbGetQuery(con, glue::glue_sql("SELECT ispopulated FROM pg_matviews WHERE matviewname = 'positions.{`source_table`}';", .con = con))
+  if(nrow(test)==0){
+    print(glue::glue("Materialized view: {source_table} unpopulated. Populating now."))
+    DBI::dbExecute(con, glue::glue_sql("REFRESH MATERIALIZED VIEW positions.{`source_table`}", .con = con))
+  }
+
   pos_data <- getPositions(limit = 10)
 
   expected <- c(
@@ -16,6 +24,7 @@ test_that("getPostions() returns data", {
     country_code = "character",
     species = "character",
     colony = "character",
+    location = "character",
     lon_raw = "numeric",
     lat_raw = "numeric",
     lon = "numeric",

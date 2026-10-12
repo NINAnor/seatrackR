@@ -5,6 +5,7 @@ test_that("getIndividInfo() returns data", {
     expected <- c(
         session_id = "character",
         colony = "character",
+        location = "character",
         year_tracked = "character",
         individ_id = "character",
         ring_number = "character",
@@ -39,7 +40,11 @@ test_that("getIndividInfo() returns data", {
         nest_id = "character",
         nest_latitude = "numeric",
         nest_longitude = "numeric",
-        eventType = "character"
+        eventType = "character",
+        age_deployment_class = "character",
+        deployment_year = "numeric",
+        retrieval_year = "numeric",
+        project = "character"
     )
 
     if (check_db_version() >= 46) {

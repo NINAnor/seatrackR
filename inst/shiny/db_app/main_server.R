@@ -100,6 +100,7 @@ main_server <- function(id) {
                     logger_retrieved = NULL,
                     active = NULL,
                     colony = NULL,
+                    location = NULL,
                     species = NULL,
                     deployment_age_class = NULL,
                     sex = NULL,

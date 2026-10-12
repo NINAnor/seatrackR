@@ -9,6 +9,7 @@ getRecordings(
   sessionId = NULL,
   individId = NULL,
   colony = NULL,
+  location = NULL,
   species = NULL,
   yearTracked = NULL,
   project = NULL,
@@ -23,7 +24,7 @@ getRecordings(
 
 \item{individId}{subset data for a character vector of individual ids}
 
-\item{colony}{subset data for a character vector of colony names (International names)}
+\item{colony}{subset data for a character vector of location names}
 
 \item{species}{subset data for a character vector of species}
 

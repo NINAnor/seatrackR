@@ -8,6 +8,7 @@ getPositions(
   datatype = "GLS",
   species = NULL,
   colony = NULL,
+  location = NULL,
   age_deployment_class = NULL,
   dataResponsible = NULL,
   ringnumber = NULL,
@@ -29,6 +30,8 @@ The available choices can be seen in the column \code{species_name_eng} in the r
 
 \item{colony}{Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
 choices can be seen in the column \code{colony_int_name} in the result from the function \code{getColonies()}.}
+
+\item{location}{Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available}
 
 \item{age_deployment_class}{Character string. Option to limit selection to one or a set of age classes. Default is NULL.}
 

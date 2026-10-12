@@ -7,6 +7,7 @@
 getLoggerInfo(
   species = NULL,
   colony = NULL,
+  location = NULL,
   session = NULL,
   individ_id = NULL,
   project = NULL,
@@ -18,6 +19,8 @@ getLoggerInfo(
 \item{species}{Optional vector of character strings of species to limit the selection to.}
 
 \item{colony}{Optional vector of character strings of colonies limit the selection to.}
+
+\item{location}{Optional vector of character strings of locations limit the selection to.}
 
 \item{session}{Optional vector of character strings of session_id to limit the selection to.}
 
@@ -33,7 +36,7 @@ getLoggerInfo(
 Lazy query or optionally a Tibble.
 }
 \description{
-This is a convenience function that reads from the view "views.logger_info". Note that there also exists a table "loggers.logger_info" with more limited information.
+This is a convenience function that reads from the view "loggers.logger_status. Note that there also exists a table "loggers.logger_info" with more limited information.
 #'
 }
 \examples{

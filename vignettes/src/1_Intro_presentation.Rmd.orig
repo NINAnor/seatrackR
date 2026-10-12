@@ -142,8 +142,8 @@ There are a number of convenient views that combine information:
 - `loggers.session_details`: provides a comprehensive overview of a logging session, including the deployment and retrieval events and what data types are available.
 - `positions.postable`, `positions.gps`, `positions.gps_gsm`: include both positions and extra metadata about an individual/logging session.
 - `recordings.accelerometer`, `recordings.temperature`, `recordings.light`, `recordings.activity`: include both recording data and extra metadata about an individual/logging session.
-- `views.individual_info`: combines individual statuses with individual information and logging session information.
-- `views.logger_info`: Combines summary of a logger start, allocation, deployment, retrieval and shutdown.
+- `individuals.full_status`: combines individual statuses with individual information and logging session information.
+- `loggers.logger_status`: Combines summary of a logger start, allocation, deployment, retrieval and shutdown.
 - `individuals.ring_changes`: Summary table of individuals who have had multiple ring numbers.
 
 There is scope for adding additional views as neccesary.

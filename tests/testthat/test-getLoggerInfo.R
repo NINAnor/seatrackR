@@ -25,6 +25,7 @@ test_that("getLoggerInfo() returns data", {
         intended_deployer = "character",
         deployment_species = "character",
         colony = "character",
+        location = "character",
         nest_id = "character",
         nest_longitude = "numeric",
         nest_latitude = "numeric",

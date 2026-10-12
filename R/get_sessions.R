@@ -11,6 +11,7 @@
 #' @param logger_type Optional vector of logger types to filter by.
 #' @param active Optional logical indicating whether to filter by active logger sessions.
 #' @param colony Optional vector of colony names to filter by.
+#' @param location Optional vector of location names to filter by.
 #' @param species Optional vector of species names to filter by.
 #' @param deployment_age_class Optional vector of age deployment classes ("C" or "A") to filter by.
 #' @param sex Optional vector of sexes to filter by.
@@ -49,6 +50,7 @@ getSessionInfo <- function(
   logger_retrieved = NULL,
   active = NULL,
   colony = NULL,
+  location = NULL,
   species = NULL,
   deployment_age_class = NULL,
   sex = NULL,

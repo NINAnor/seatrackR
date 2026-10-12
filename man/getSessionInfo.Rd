@@ -16,6 +16,7 @@ getSessionInfo(
   logger_retrieved = NULL,
   active = NULL,
   colony = NULL,
+  location = NULL,
   species = NULL,
   deployment_age_class = NULL,
   sex = NULL,
@@ -61,6 +62,8 @@ getSessionInfo(
 \item{active}{Optional logical indicating whether to filter by active logger sessions.}
 
 \item{colony}{Optional vector of colony names to filter by.}
+
+\item{location}{Optional vector of location names to filter by.}
 
 \item{species}{Optional vector of species names to filter by.}
 
