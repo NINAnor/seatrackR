@@ -145,13 +145,13 @@ head(all_colonies)
     ## 4 43e4779a-5eb3-11ee-a646-005056b165f3 54.54000  -8.39000     Donegal Bay     Donegal Bay      6
     ## 5 b806e594-8645-11ef-847f-005056b165f3 48.74972 -69.03519       Île Laval       Île Laval      5
     ## 6 518444e2-296a-11f0-9d0f-005056b165f3 76.66500  25.34500           Hopen           Hopen     54
-    ##   country   safe_name
-    ## 1    <NA>   groningen
-    ## 2    <NA>     faxafli
-    ## 3    <NA>    bornholm
-    ## 4    <NA> donegal_bay
-    ## 5    <NA>    le_laval
-    ## 6    <NA>       hopen
+    ##       country   safe_name
+    ## 1 Netherlands   groningen
+    ## 2     Iceland     faxafli
+    ## 3     Denmark    bornholm
+    ## 4     Ireland donegal_bay
+    ## 5      Canada    le_laval
+    ## 6      Norway       hopen
 
 We can also get all locations, which can be finer scale areas
 within/attached to SEATRACK colonies.
@@ -172,19 +172,6 @@ head(all_locations)
 
 **NOTE:** *Currently, the vast majority of locations are still 1 to 1
 with colonies. This will be developed futher in future.*
-
-*Note that while all tables actually connect to the `locations` table,
-there is currently some inconsistency in the language used for
-compatability reasons. This means tables have `colony` columns that
-actually link to the `location_name` column in the `locations` table.
-This will also be fixed in future.*
-
-*If in doubt, check the locations for a colony.*
-
-``` r
-
-selected_locations <- all_locations$location_name[all_locations$colony_int_name == "Røst"]
-```
 
 #### Species/Subspecies
 
@@ -295,22 +282,22 @@ print(nrow(filtered_sessions)) # How much data was returned?
 head(filtered_sessions) # Show the first rows
 ```
 
-    ## # A tibble: 6 × 33
+    ## # A tibble: 6 × 34
     ##   session_id   individ_id project logger_serial_no logger_model producer logger_type logger_deployed
     ##   <chr>        <chr>      <chr>   <chr>            <chr>        <chr>    <pq_lggr_>  <lgl>          
     ## 1 G0106_2024-… NOO_MA204… SEATRA… G0106            mk4083       Lotek    GLS         TRUE           
     ## 2 G0109_2024-… NOS_51205… SEATRA… G0109            mk4083       Lotek    GLS         TRUE           
     ## 3 C9697_2024-… NOO_MA284… SEATRA… C9697            mk4083       Lotek    GLS         TRUE           
-    ## 4 G0102_2024-… NOO_MA284… SEATRA… G0102            mk4083       Lotek    GLS         TRUE           
-    ## 5 G0095_2024-… NOS_51208… SEATRA… G0095            mk4083       Lotek    GLS         TRUE           
-    ## 6 G0110_2024-… NOS_51205… SEATRA… G0110            mk4083       Lotek    GLS         TRUE           
-    ## # ℹ 25 more variables: logger_retrieved <lgl>, active <lgl>, colony <chr>, species <chr>,
-    ## #   age <chr>, sex <chr>, sexing_method <chr>, years_tracked <chr>, logger_start_time <dttm>,
-    ## #   logger_start_year <int>, logging_mode <chr>, deployment_date <date>, deployment_year <int>,
-    ## #   deployment_logger_status <chr>, deployment_age <chr>, retrieval_date <date>,
-    ## #   retrieval_year <int>, retrieval_logger_status <chr>, shutdown_date <date>, shutdown_year <int>,
-    ## #   download_type <chr>, has_positions <lgl>, has_irma <lgl>, embargoed <lgl>,
-    ## #   age_deployment_class <chr>
+    ## 4 G0095_2024-… NOS_51208… SEATRA… G0095            mk4083       Lotek    GLS         TRUE           
+    ## 5 G0110_2024-… NOS_51205… SEATRA… G0110            mk4083       Lotek    GLS         TRUE           
+    ## 6 G0102_2024-… NOO_MA284… SEATRA… G0102            mk4083       Lotek    GLS         TRUE           
+    ## # ℹ 26 more variables: logger_retrieved <lgl>, active <lgl>, colony <chr>, location <chr>,
+    ## #   species <chr>, age <chr>, sex <chr>, sexing_method <chr>, years_tracked <chr>,
+    ## #   logger_start_time <dttm>, logger_start_year <int>, logging_mode <chr>, deployment_date <date>,
+    ## #   deployment_year <int>, deployment_logger_status <chr>, deployment_age <chr>,
+    ## #   retrieval_date <date>, retrieval_year <int>, retrieval_logger_status <chr>,
+    ## #   shutdown_date <date>, shutdown_year <int>, download_type <chr>, has_positions <lgl>,
+    ## #   has_irma <lgl>, embargoed <lgl>, age_deployment_class <chr>
 
 See the function documentation for all possible filters.
 
@@ -341,19 +328,19 @@ print(nrow(puffin_positions)) # How much data was returned?
 head(puffin_positions)
 ```
 
-    ## # A tibble: 6 × 33
+    ## # A tibble: 6 × 34
     ##   id                   date_time           logger_id logger_model year_tracked session_id individ_id
     ##   <chr>                <dttm>              <chr>     <chr>        <chr>        <chr>      <chr>     
-    ## 1 8dcc7d8a-be38-11f0-… 2013-05-11 23:05:00 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
-    ## 2 8dcc7e52-be38-11f0-… 2013-05-14 23:07:42 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
-    ## 3 8dcc7f10-be38-11f0-… 2013-05-15 23:29:19 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
-    ## 4 8dcc7fce-be38-11f0-… 2013-05-16 11:23:51 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
-    ## 5 8dcc8096-be38-11f0-… 2013-05-16 23:22:25 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
-    ## 6 8dcc8154-be38-11f0-… 2013-05-17 11:17:06 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
-    ## # ℹ 26 more variables: deployment_date <date>, retrieval_date <date>, ring_number <chr>,
-    ## #   country_code <chr>, species <chr>, colony <chr>, lon_raw <dbl>, lat_raw <dbl>, lon <dbl>,
-    ## #   lat <dbl>, eqfilter <lgl>, sex <chr>, age_deployment <chr>, col_lon <dbl>, col_lat <dbl>,
-    ## #   tfirst <dttm>, tsecond <dttm>, twl_type <int>, sun <dbl>, light_threshold <int>,
+    ## 1 8dcc8096-be38-11f0-… 2013-05-16 23:22:25 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
+    ## 2 8dcc8154-be38-11f0-… 2013-05-17 11:17:06 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
+    ## 3 8dcc8276-be38-11f0-… 2013-05-17 23:16:45 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
+    ## 4 8dcc8334-be38-11f0-… 2013-09-12 22:59:42 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
+    ## 5 8dcc83f2-be38-11f0-… 2013-09-13 10:42:12 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
+    ## 6 8dcc84b0-be38-11f0-… 2013-09-13 23:12:49 V923009   mk4083       2013_15      V923009_2… NOO_MA203…
+    ## # ℹ 27 more variables: deployment_date <date>, retrieval_date <date>, ring_number <chr>,
+    ## #   country_code <chr>, species <chr>, colony <chr>, location <chr>, lon_raw <dbl>, lat_raw <dbl>,
+    ## #   lon <dbl>, lat <dbl>, eqfilter <lgl>, sex <chr>, age_deployment <chr>, col_lon <dbl>,
+    ## #   col_lat <dbl>, tfirst <dttm>, tsecond <dttm>, twl_type <int>, sun <dbl>, light_threshold <int>,
     ## #   analyzer <chr>, data_responsible <chr>, data_version <int>, last_updated <date>,
     ## #   updated_by <chr>, date_time_downloaded <dttm>
 
@@ -375,19 +362,19 @@ print(nrow(filtered_puffin_positions)) # How much data was returned?
 head(filtered_puffin_positions)
 ```
 
-    ## # A tibble: 6 × 33
+    ## # A tibble: 6 × 34
     ##   id                   date_time           logger_id logger_model year_tracked session_id individ_id
     ##   <chr>                <dttm>              <chr>     <chr>        <chr>        <chr>      <chr>     
-    ## 1 22afd5e8-5df6-11f1-… 2024-07-27 11:27:07 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
-    ## 2 22afffaa-5df6-11f1-… 2024-08-05 10:59:22 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
-    ## 3 22b0007c-5df6-11f1-… 2024-08-06 11:21:48 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
-    ## 4 22b00216-5df6-11f1-… 2024-08-06 23:29:06 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
-    ## 5 22b0037e-5df6-11f1-… 2024-08-07 11:19:06 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
-    ## 6 22b0046e-5df6-11f1-… 2024-08-07 23:31:44 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
-    ## # ℹ 26 more variables: deployment_date <date>, retrieval_date <date>, ring_number <chr>,
-    ## #   country_code <chr>, species <chr>, colony <chr>, lon_raw <dbl>, lat_raw <dbl>, lon <dbl>,
-    ## #   lat <dbl>, eqfilter <lgl>, sex <chr>, age_deployment <chr>, col_lon <dbl>, col_lat <dbl>,
-    ## #   tfirst <dttm>, tsecond <dttm>, twl_type <int>, sun <dbl>, light_threshold <int>,
+    ## 1 22b01706-5df6-11f1-… 2024-08-20 11:28:11 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
+    ## 2 22b0054a-5df6-11f1-… 2024-08-08 11:17:13 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
+    ## 3 22b00626-5df6-11f1-… 2024-08-08 23:17:27 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
+    ## 4 22b00702-5df6-11f1-… 2024-08-09 11:05:16 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
+    ## 5 22b007e8-5df6-11f1-… 2024-08-10 11:25:25 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
+    ## 6 22b008c4-5df6-11f1-… 2024-08-10 23:36:27 C9697     mk4083       2024_25      C9697_202… NOO_MA284…
+    ## # ℹ 27 more variables: deployment_date <date>, retrieval_date <date>, ring_number <chr>,
+    ## #   country_code <chr>, species <chr>, colony <chr>, location <chr>, lon_raw <dbl>, lat_raw <dbl>,
+    ## #   lon <dbl>, lat <dbl>, eqfilter <lgl>, sex <chr>, age_deployment <chr>, col_lon <dbl>,
+    ## #   col_lat <dbl>, tfirst <dttm>, tsecond <dttm>, twl_type <int>, sun <dbl>, light_threshold <int>,
     ## #   analyzer <chr>, data_responsible <chr>, data_version <int>, last_updated <date>,
     ## #   updated_by <chr>, date_time_downloaded <dttm>
 

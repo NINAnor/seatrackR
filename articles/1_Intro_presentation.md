@@ -141,10 +141,10 @@ data types are available. - `positions.postable`, `positions.gps`,
 individual/logging session. - `recordings.accelerometer`,
 `recordings.temperature`, `recordings.light`, `recordings.activity`:
 include both recording data and extra metadata about an
-individual/logging session. - `views.individual_info`: combines
+individual/logging session. - `individuals.full_status`: combines
 individual statuses with individual information and logging session
-information. - `views.logger_info`: Combines summary of a logger start,
-allocation, deployment, retrieval and shutdown. -
+information. - `loggers.logger_status`: Combines summary of a logger
+start, allocation, deployment, retrieval and shutdown. -
 `individuals.ring_changes`: Summary table of individuals who have had
 multiple ring numbers.
 
@@ -199,20 +199,20 @@ function to get some data
   head(logger_data)
 ```
 
-    ## # A tibble: 6 × 35
+    ## # A tibble: 6 × 36
     ##   logger_serial_no logger_id starttime_gmt       logging_mode producer logger_model production_year
     ##   <chr>            <chr>     <dttm>              <chr>        <chr>    <chr>                  <int>
     ## 1 L280-0664        L280-0664 2017-01-01 00:01:00 <NA>         Lotek    LAT                     2017
-    ## 2 1150             1150      2009-01-01 00:00:00 <NA>         Lotek    L250A                   2009
-    ## 3 1166             1166      2010-01-01 00:00:00 <NA>         Lotek    L250A                   2009
-    ## 4 1166             1166      2009-01-01 00:00:00 <NA>         Lotek    L250A                   2009
-    ## 5 1172             1172      2009-01-01 00:00:00 <NA>         Lotek    L250A                   2009
-    ## 6 1185             1185      2010-01-01 00:00:00 <NA>         Lotek    L250A                   2009
-    ## # ℹ 28 more variables: session_id <chr>, project <chr>, deployment_date <date>,
+    ## 2 1107             1107      NA                  <NA>         Lotek    LAT                     2009
+    ## 3 1158             1158      NA                  <NA>         Lotek    LAT                     2009
+    ## 4 1161             1161      NA                  <NA>         Lotek    LAT                     2009
+    ## 5 1181             1181      NA                  <NA>         Lotek    LAT                     2009
+    ## 6 1183             1183      NA                  <NA>         Lotek    LAT                     2009
+    ## # ℹ 29 more variables: session_id <chr>, project <chr>, deployment_date <date>,
     ## #   retrieval_date <date>, retrieval_type <chr>, started_by <chr>, started_where <chr>,
     ## #   days_delayed <int>, programmed_gmt_time <dttm>, individ_id <chr>, intended_species <chr>,
     ## #   intended_location <chr>, intended_deployer <chr>, deployment_species <chr>, colony <chr>,
-    ## #   nest_id <chr>, nest_longitude <dbl>, nest_latitude <dbl>, download_type <chr>,
+    ## #   location <chr>, nest_id <chr>, nest_longitude <dbl>, nest_latitude <dbl>, download_type <chr>,
     ## #   download_date <date>, shutdown_date <date>, downloaded_by <chr>, decomissioned <lgl>,
     ## #   field_status <chr>, retrieval_nest_id <chr>, retrieval_nest_longitude <dbl>, …
 

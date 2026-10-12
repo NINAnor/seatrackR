@@ -36,6 +36,11 @@ getRecordings(
 
 - colony:
 
+  subset data for a character vector of colony names (International
+  names)
+
+- location:
+
   subset data for a character vector of location names
 
 - species:

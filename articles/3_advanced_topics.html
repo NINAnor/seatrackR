@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.61</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.62</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@ make more complex queries</h3>
                         <h4 data-toc-skip class="author">Julian
 Evans</h4>
             
-            <h4 data-toc-skip class="date">2026-10-06</h4>
+            <h4 data-toc-skip class="date">2026-10-12</h4>
       
 
       <div class="d-none name"><code>3_advanced_topics.Rmd</code></div>
@@ -144,22 +144,22 @@ haven’t actually got the data yet. For a single variable, we can use the
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">puffin_2024_local</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="va">puffin_2024</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">puffin_2024_local</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## # A tibble: 6 × 33</span></span>
+<pre><code><span><span class="co">## # A tibble: 6 × 34</span></span>
 <span><span class="co">##   session_id   individ_id project logger_serial_no logger_model producer logger_type logger_deployed</span></span>
 <span><span class="co">##   &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;            &lt;chr&gt;        &lt;chr&gt;    &lt;pq_lggr_&gt;  &lt;lgl&gt;          </span></span>
 <span><span class="co">## 1 G0106_2024-… NOO_MA204… SEATRA… G0106            mk4083       Lotek    GLS         TRUE           </span></span>
 <span><span class="co">## 2 G0109_2024-… NOS_51205… SEATRA… G0109            mk4083       Lotek    GLS         TRUE           </span></span>
 <span><span class="co">## 3 C9697_2024-… NOO_MA284… SEATRA… C9697            mk4083       Lotek    GLS         TRUE           </span></span>
-<span><span class="co">## 4 G0102_2024-… NOO_MA284… SEATRA… G0102            mk4083       Lotek    GLS         TRUE           </span></span>
-<span><span class="co">## 5 G0095_2024-… NOS_51208… SEATRA… G0095            mk4083       Lotek    GLS         TRUE           </span></span>
-<span><span class="co">## 6 G0110_2024-… NOS_51205… SEATRA… G0110            mk4083       Lotek    GLS         TRUE           </span></span>
-<span><span class="co">## # ℹ 25 more variables: logger_retrieved &lt;lgl&gt;, active &lt;lgl&gt;, colony &lt;chr&gt;, species &lt;chr&gt;,</span></span>
-<span><span class="co">## #   age &lt;chr&gt;, sex &lt;chr&gt;, sexing_method &lt;chr&gt;, years_tracked &lt;chr&gt;, logger_start_time &lt;dttm&gt;,</span></span>
-<span><span class="co">## #   logger_start_year &lt;int&gt;, logging_mode &lt;chr&gt;, deployment_date &lt;date&gt;, deployment_year &lt;int&gt;,</span></span>
-<span><span class="co">## #   deployment_logger_status &lt;chr&gt;, deployment_age &lt;chr&gt;, retrieval_date &lt;date&gt;,</span></span>
-<span><span class="co">## #   retrieval_year &lt;int&gt;, retrieval_logger_status &lt;chr&gt;, shutdown_date &lt;date&gt;, shutdown_year &lt;int&gt;,</span></span>
-<span><span class="co">## #   download_type &lt;chr&gt;, has_positions &lt;lgl&gt;, has_irma &lt;lgl&gt;, embargoed &lt;lgl&gt;,</span></span>
-<span><span class="co">## #   age_deployment_class &lt;chr&gt;</span></span></code></pre>
+<span><span class="co">## 4 G0095_2024-… NOS_51208… SEATRA… G0095            mk4083       Lotek    GLS         TRUE           </span></span>
+<span><span class="co">## 5 G0110_2024-… NOS_51205… SEATRA… G0110            mk4083       Lotek    GLS         TRUE           </span></span>
+<span><span class="co">## 6 G0102_2024-… NOO_MA284… SEATRA… G0102            mk4083       Lotek    GLS         TRUE           </span></span>
+<span><span class="co">## # ℹ 26 more variables: logger_retrieved &lt;lgl&gt;, active &lt;lgl&gt;, colony &lt;chr&gt;, location &lt;chr&gt;,</span></span>
+<span><span class="co">## #   species &lt;chr&gt;, age &lt;chr&gt;, sex &lt;chr&gt;, sexing_method &lt;chr&gt;, years_tracked &lt;chr&gt;,</span></span>
+<span><span class="co">## #   logger_start_time &lt;dttm&gt;, logger_start_year &lt;int&gt;, logging_mode &lt;chr&gt;, deployment_date &lt;date&gt;,</span></span>
+<span><span class="co">## #   deployment_year &lt;int&gt;, deployment_logger_status &lt;chr&gt;, deployment_age &lt;chr&gt;,</span></span>
+<span><span class="co">## #   retrieval_date &lt;date&gt;, retrieval_year &lt;int&gt;, retrieval_logger_status &lt;chr&gt;,</span></span>
+<span><span class="co">## #   shutdown_date &lt;date&gt;, shutdown_year &lt;int&gt;, download_type &lt;chr&gt;, has_positions &lt;lgl&gt;,</span></span>
+<span><span class="co">## #   has_irma &lt;lgl&gt;, embargoed &lt;lgl&gt;, age_deployment_class &lt;chr&gt;</span></span></code></pre>
 <p>Ideally, we keep a query lazy as long as possible. This saves us from
 downloading uneccesary data.</p>
 </div>

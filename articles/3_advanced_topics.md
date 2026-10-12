@@ -85,22 +85,22 @@ puffin_2024_local <- collect(puffin_2024)
 print(puffin_2024_local)
 ```
 
-    ## # A tibble: 6 × 33
+    ## # A tibble: 6 × 34
     ##   session_id   individ_id project logger_serial_no logger_model producer logger_type logger_deployed
     ##   <chr>        <chr>      <chr>   <chr>            <chr>        <chr>    <pq_lggr_>  <lgl>          
     ## 1 G0106_2024-… NOO_MA204… SEATRA… G0106            mk4083       Lotek    GLS         TRUE           
     ## 2 G0109_2024-… NOS_51205… SEATRA… G0109            mk4083       Lotek    GLS         TRUE           
     ## 3 C9697_2024-… NOO_MA284… SEATRA… C9697            mk4083       Lotek    GLS         TRUE           
-    ## 4 G0102_2024-… NOO_MA284… SEATRA… G0102            mk4083       Lotek    GLS         TRUE           
-    ## 5 G0095_2024-… NOS_51208… SEATRA… G0095            mk4083       Lotek    GLS         TRUE           
-    ## 6 G0110_2024-… NOS_51205… SEATRA… G0110            mk4083       Lotek    GLS         TRUE           
-    ## # ℹ 25 more variables: logger_retrieved <lgl>, active <lgl>, colony <chr>, species <chr>,
-    ## #   age <chr>, sex <chr>, sexing_method <chr>, years_tracked <chr>, logger_start_time <dttm>,
-    ## #   logger_start_year <int>, logging_mode <chr>, deployment_date <date>, deployment_year <int>,
-    ## #   deployment_logger_status <chr>, deployment_age <chr>, retrieval_date <date>,
-    ## #   retrieval_year <int>, retrieval_logger_status <chr>, shutdown_date <date>, shutdown_year <int>,
-    ## #   download_type <chr>, has_positions <lgl>, has_irma <lgl>, embargoed <lgl>,
-    ## #   age_deployment_class <chr>
+    ## 4 G0095_2024-… NOS_51208… SEATRA… G0095            mk4083       Lotek    GLS         TRUE           
+    ## 5 G0110_2024-… NOS_51205… SEATRA… G0110            mk4083       Lotek    GLS         TRUE           
+    ## 6 G0102_2024-… NOO_MA284… SEATRA… G0102            mk4083       Lotek    GLS         TRUE           
+    ## # ℹ 26 more variables: logger_retrieved <lgl>, active <lgl>, colony <chr>, location <chr>,
+    ## #   species <chr>, age <chr>, sex <chr>, sexing_method <chr>, years_tracked <chr>,
+    ## #   logger_start_time <dttm>, logger_start_year <int>, logging_mode <chr>, deployment_date <date>,
+    ## #   deployment_year <int>, deployment_logger_status <chr>, deployment_age <chr>,
+    ## #   retrieval_date <date>, retrieval_year <int>, retrieval_logger_status <chr>,
+    ## #   shutdown_date <date>, shutdown_year <int>, download_type <chr>, has_positions <lgl>,
+    ## #   has_irma <lgl>, embargoed <lgl>, age_deployment_class <chr>
 
 Ideally, we keep a query lazy as long as possible. This saves us from
 downloading uneccesary data.

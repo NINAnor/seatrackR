@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.61</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.62</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
                         <h4 data-toc-skip class="author">Julian Evans,
 Jens Åström</h4>
             
-            <h4 data-toc-skip class="date">2026-10-06</h4>
+            <h4 data-toc-skip class="date">2026-10-12</h4>
       
 
       <div class="d-none name"><code>1_Intro_presentation.Rmd</code></div>
@@ -301,9 +301,9 @@ positions and extra metadata about an individual/logging session. -
 <code>recordings.temperature</code>, <code>recordings.light</code>,
 <code>recordings.activity</code>: include both recording data and extra
 metadata about an individual/logging session. -
-<code>views.individual_info</code>: combines individual statuses with
+<code>individuals.full_status</code>: combines individual statuses with
 individual information and logging session information. -
-<code>views.logger_info</code>: Combines summary of a logger start,
+<code>loggers.logger_status</code>: Combines summary of a logger start,
 allocation, deployment, retrieval and shutdown. -
 <code>individuals.ring_changes</code>: Summary table of individuals who
 have had multiple ring numbers.</p>
@@ -422,20 +422,20 @@ function to get some data</p>
 <span>  <span class="va">logger_data</span> <span class="op">&lt;-</span> <span class="fu">seatrackR</span><span class="fu">::</span><span class="fu"><a href="../reference/getLoggerInfo.html">getLoggerInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="va">logger_data</span> <span class="op">&lt;-</span> <span class="va">logger_data</span><span class="op">[</span><span class="va">logger_data</span><span class="op">$</span><span class="va">producer</span> <span class="op">==</span> <span class="st">"Lotek"</span>,<span class="op">]</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">logger_data</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## # A tibble: 6 × 35</span></span>
+<pre><code><span><span class="co">## # A tibble: 6 × 36</span></span>
 <span><span class="co">##   logger_serial_no logger_id starttime_gmt       logging_mode producer logger_model production_year</span></span>
 <span><span class="co">##   &lt;chr&gt;            &lt;chr&gt;     &lt;dttm&gt;              &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;                  &lt;int&gt;</span></span>
 <span><span class="co">## 1 L280-0664        L280-0664 2017-01-01 00:01:00 &lt;NA&gt;         Lotek    LAT                     2017</span></span>
-<span><span class="co">## 2 1150             1150      2009-01-01 00:00:00 &lt;NA&gt;         Lotek    L250A                   2009</span></span>
-<span><span class="co">## 3 1166             1166      2010-01-01 00:00:00 &lt;NA&gt;         Lotek    L250A                   2009</span></span>
-<span><span class="co">## 4 1166             1166      2009-01-01 00:00:00 &lt;NA&gt;         Lotek    L250A                   2009</span></span>
-<span><span class="co">## 5 1172             1172      2009-01-01 00:00:00 &lt;NA&gt;         Lotek    L250A                   2009</span></span>
-<span><span class="co">## 6 1185             1185      2010-01-01 00:00:00 &lt;NA&gt;         Lotek    L250A                   2009</span></span>
-<span><span class="co">## # ℹ 28 more variables: session_id &lt;chr&gt;, project &lt;chr&gt;, deployment_date &lt;date&gt;,</span></span>
+<span><span class="co">## 2 1107             1107      NA                  &lt;NA&gt;         Lotek    LAT                     2009</span></span>
+<span><span class="co">## 3 1158             1158      NA                  &lt;NA&gt;         Lotek    LAT                     2009</span></span>
+<span><span class="co">## 4 1161             1161      NA                  &lt;NA&gt;         Lotek    LAT                     2009</span></span>
+<span><span class="co">## 5 1181             1181      NA                  &lt;NA&gt;         Lotek    LAT                     2009</span></span>
+<span><span class="co">## 6 1183             1183      NA                  &lt;NA&gt;         Lotek    LAT                     2009</span></span>
+<span><span class="co">## # ℹ 29 more variables: session_id &lt;chr&gt;, project &lt;chr&gt;, deployment_date &lt;date&gt;,</span></span>
 <span><span class="co">## #   retrieval_date &lt;date&gt;, retrieval_type &lt;chr&gt;, started_by &lt;chr&gt;, started_where &lt;chr&gt;,</span></span>
 <span><span class="co">## #   days_delayed &lt;int&gt;, programmed_gmt_time &lt;dttm&gt;, individ_id &lt;chr&gt;, intended_species &lt;chr&gt;,</span></span>
 <span><span class="co">## #   intended_location &lt;chr&gt;, intended_deployer &lt;chr&gt;, deployment_species &lt;chr&gt;, colony &lt;chr&gt;,</span></span>
-<span><span class="co">## #   nest_id &lt;chr&gt;, nest_longitude &lt;dbl&gt;, nest_latitude &lt;dbl&gt;, download_type &lt;chr&gt;,</span></span>
+<span><span class="co">## #   location &lt;chr&gt;, nest_id &lt;chr&gt;, nest_longitude &lt;dbl&gt;, nest_latitude &lt;dbl&gt;, download_type &lt;chr&gt;,</span></span>
 <span><span class="co">## #   download_date &lt;date&gt;, shutdown_date &lt;date&gt;, downloaded_by &lt;chr&gt;, decomissioned &lt;lgl&gt;,</span></span>
 <span><span class="co">## #   field_status &lt;chr&gt;, retrieval_nest_id &lt;chr&gt;, retrieval_nest_longitude &lt;dbl&gt;, …</span></span></code></pre>
 <p>For detailed instructions on how to install and use this package, see
