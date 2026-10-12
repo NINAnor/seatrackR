@@ -6,7 +6,7 @@
 #' @param sessionId subset data for a character vector of session ids
 #' @param individId subset data for a character vector of individual ids
 #' @param colony subset data for a character vector of colony names (International names)
-#' @param colony subset data for a character vector of location names
+#' @param location subset data for a character vector of location names
 #' @param species subset data for a character vector of species
 #' @param yearTracked subset data for a character vector of year_tracked (e.g. 2014_15)
 #' @param project subset data for a character vector of project names. Default is NULL.
@@ -63,6 +63,12 @@ getRecordings <- function(type = NULL,
       filter(colony %in% colonyFilter)
   }
 
+  if (!is.null(colony)) {
+    locationFiler <- as.character(location)
+    temp <- temp |>
+      filter(location %in% locationFiler)
+  }
+
   if (!is.null(species)) {
     speciesFilter <- as.character(species)
     temp <- temp |>
@@ -75,6 +81,7 @@ getRecordings <- function(type = NULL,
       filter(year_tracked %in% yearFilter)
   }
 
+  browser()
   if (!is.null(project) || exclude_embargoed) {
     allocation <- tbl(con, dbplyr::in_schema("loggers", "allocation"))
     temp <- temp |> left_join(select(allocation, session_id, project), by = "session_id")
@@ -84,7 +91,7 @@ getRecordings <- function(type = NULL,
     }
     if (exclude_embargoed) {
       temp <- temp |>
-        filter(is.na(project), !grepl("_embargoed", project, fixed = FALSE))
+        filter(is.na(project) | !grepl("_embargoed", project, fixed = FALSE))
     }
   }
 
