@@ -1,7 +1,7 @@
 # View the view info table
 
 This is a convenience function that reads from the view
-"views.logger_info". Note that there also exists a table
+"loggers.logger_status. Note that there also exists a table
 "loggers.logger_info" with more limited information. \#'
 
 ## Usage
@@ -10,6 +10,7 @@ This is a convenience function that reads from the view
 getLoggerInfo(
   species = NULL,
   colony = NULL,
+  location = NULL,
   session = NULL,
   individ_id = NULL,
   project = NULL,
@@ -28,6 +29,11 @@ getLoggerInfo(
 - colony:
 
   Optional vector of character strings of colonies limit the selection
+  to.
+
+- location:
+
+  Optional vector of character strings of locations limit the selection
   to.
 
 - session:

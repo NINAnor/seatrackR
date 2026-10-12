@@ -19,6 +19,7 @@ getSessionInfo(
   logger_retrieved = NULL,
   active = NULL,
   colony = NULL,
+  location = NULL,
   species = NULL,
   deployment_age_class = NULL,
   sex = NULL,
@@ -89,6 +90,10 @@ getSessionInfo(
 - colony:
 
   Optional vector of colony names to filter by.
+
+- location:
+
+  Optional vector of location names to filter by.
 
 - species:
 

@@ -11,6 +11,7 @@ getRecordings(
   sessionId = NULL,
   individId = NULL,
   colony = NULL,
+  location = NULL,
   species = NULL,
   yearTracked = NULL,
   project = NULL,
@@ -35,8 +36,7 @@ getRecordings(
 
 - colony:
 
-  subset data for a character vector of colony names (International
-  names)
+  subset data for a character vector of location names
 
 - species:
 

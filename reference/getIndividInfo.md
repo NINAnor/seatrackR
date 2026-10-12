@@ -17,6 +17,7 @@ getIndividInfo(
   age_at_deployment = "A",
   sex = NULL,
   project = NULL,
+  location = NULL,
   exclude_embargoed = TRUE,
   event_type = NULL,
   last_only = FALSE,
@@ -29,9 +30,8 @@ getIndividInfo(
 
 - colony:
 
-  Optional vector of character string of colonies limit the selection
-  to. Available choices are found in "colony_int_name", from
-  getColonies()
+  Optional vector of character string of colonies. Available choices are
+  found in "colony_int_name", from getColonies()
 
 - year_tracked:
 
@@ -72,6 +72,11 @@ getIndividInfo(
 - project:
 
   subset data for a character vector of project names. Default is NULL.
+
+- location:
+
+  Optional vector of character string of locations. Available choices
+  are found in "location_name", from getColonies(allLocations = TRUE)
 
 - exclude_embargoed:
 
