@@ -24,7 +24,9 @@ getRecordings(
 
 \item{individId}{subset data for a character vector of individual ids}
 
-\item{colony}{subset data for a character vector of location names}
+\item{colony}{subset data for a character vector of colony names (International names)}
+
+\item{location}{subset data for a character vector of location names}
 
 \item{species}{subset data for a character vector of species}
 

@@ -63,7 +63,7 @@ getRecordings <- function(type = NULL,
       filter(colony %in% colonyFilter)
   }
 
-  if (!is.null(colony)) {
+  if (!is.null(location)) {
     locationFiler <- as.character(location)
     temp <- temp |>
       filter(location %in% locationFiler)
@@ -81,7 +81,6 @@ getRecordings <- function(type = NULL,
       filter(year_tracked %in% yearFilter)
   }
 
-  browser()
   if (!is.null(project) || exclude_embargoed) {
     allocation <- tbl(con, dbplyr::in_schema("loggers", "allocation"))
     temp <- temp |> left_join(select(allocation, session_id, project), by = "session_id")

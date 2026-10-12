@@ -94,8 +94,7 @@ getSessionInfo <- function(
     )
 
     source_table <- dplyr::case_when(
-        include_sample_info ~ "session_sample_details",
-        .default <- "session_details"
+        include_sample_info ~ "session_sample_details", .default = "session_details"
     )
 
     session_details <- dplyr::tbl(con, dbplyr::in_schema("loggers", source_table))
@@ -130,6 +129,7 @@ getSessionInfo <- function(
             }
         }
     }
+
     if (as_tibble) {
         session_details <- dplyr::collect(session_details)
     }
