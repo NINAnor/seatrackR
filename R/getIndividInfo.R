@@ -96,19 +96,19 @@ new_get_indiv_info <- function(colony = NULL,
 
 
   # add deployment age/year for filtering
-  individ_info_view <- dplyr::tbl(con, dbplyr::in_schema("individuals", "full_status"))
+  db_individ_info_view <- dplyr::tbl(con, dbplyr::in_schema("individuals", "full_status"))
 
-  deployments <- individ_info_view %>%
+  deployments <- db_individ_info_view %>%
     dplyr::filter(event_type == "deployment") %>%
     mutate(
       age_deployment_class = ifelse(!is.na(status_age) & tolower(status_age) %in% c("pullus", "chick", "pull", "juvenile"), "C", "A"),
       deployment_year = lubridate::year(status_date)
     )
 
-  individ_info_view <- dplyr::left_join(individ_info_view, select(deployments, session_id, age_deployment_class, deployment_year), by = "session_id")
+  individ_info_view <- dplyr::left_join(db_individ_info_view, select(deployments, session_id, age_deployment_class, deployment_year), by = "session_id")
 
   # add retrieval info
-  retrievals <- individ_info_view %>%
+  retrievals <- db_individ_info_view %>%
     dplyr::filter(event_type == "retrieval") %>%
     mutate(
       retrieval_year = lubridate::year(status_date)
