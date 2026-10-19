@@ -58,7 +58,7 @@ getPositions(
 - age_deployment_class:
 
   Character string. Option to limit selection to one or a set of age
-  classes. Default is NULL.
+  classes, "A" or "C". Default is NULL.
 
 - dataResponsible:
 

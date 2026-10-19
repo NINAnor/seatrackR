@@ -1,0 +1,150 @@
+# GPS GSM positional data reference
+
+Positional data from GLS loggers including locations and metadata.
+
+- #### **id**
+
+  *type: string*
+
+  Unique ID of logging session during which record was made.
+
+- #### **date_time**
+
+  *type: datetime*
+
+  Date and time of the calculated position in GMT.
+
+- #### **logger_id**
+
+  *type: string*
+
+  Unique internal database ID of logger.
+
+- #### **logger_model**
+
+  *type: string*
+
+  GLS logger model (e.g., c65, mk4083, etc.).
+
+- #### **session_id**
+
+  *type: string*
+
+  Unique ID for each time a logger was deployed.
+
+- #### **individ_id**
+
+  *type: string*
+
+  Unique ID for each individual.
+
+- #### **deployment_date**
+
+  *type: date*
+
+  Date when the logger was deployed.
+
+- #### **retrieval_date**
+
+  *type: date*
+
+  Date when the logger was retrieved.
+
+- #### **ring_number**
+
+  *type: string*
+
+  Metal ID ring number.
+
+- #### **country_code**
+
+  *type: string*
+
+  Country/local code for metal ring.
+
+- #### **species**
+
+  *type: string*
+
+  English name of the species (e.g., “Black-legged kittiwake”).
+
+- #### **colony**
+
+  *type: string*
+
+  Name of the colony where the logger was deployed and retrieved. Note
+  that a SEATRACK colony name can cover several locations
+
+- #### **location**
+
+  *type: string*
+
+  Name of the location where the logger was deployed and retrieved. Note
+  that a SEATRACK colony name can cover several locations
+
+- #### **lon**
+
+  *type: float*
+
+  Averaged longitude coordinate after moving average.
+
+- #### **lat**
+
+  *type: float*
+
+  Averaged latitude coordinate after moving average.
+
+- #### **eqfilter**
+
+  *type: boolean*
+
+  Filter identifying periods with unreliable latitudes during equinox
+  (TRUE = reliable, FALSE = unreliable).
+
+- #### **sex**
+
+  *type: string*
+
+  Recorded sex at trapping event.
+
+- #### **age_deployment**
+
+  *type: string*
+
+  Age of the bird at the time of deployment.
+
+- #### **col_lon**
+
+  *type: float*
+
+  Longitude of the colony.
+
+- #### **col_lat**
+
+  *type: float*
+
+  Latitude of the colony.
+
+- #### **data_responsible**
+
+  *type: string*
+
+  Data owner or responsible person.
+
+- #### **last_updated**
+
+  *type: date*
+
+  Date when the record was last updated.
+
+- #### **updated_by**
+
+  *type: string*
+
+  Person who last updated the record.
+
+- #### **date_time_downloaded**
+
+  *type: datetime*
+
+  Date and time when this data was downloaed from the database.

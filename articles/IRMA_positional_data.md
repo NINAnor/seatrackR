@@ -11,7 +11,9 @@ Informed Random Movement Algorithm (IRMA)
 
 - #### **date_time**
 
-  *type: Date time at which position was recorded*
+  *type: datetime*
+
+  Date time at which position was recorded
 
 - #### **logger_id**
 
@@ -140,6 +142,6 @@ Informed Random Movement Algorithm (IRMA)
 
 - #### **data_version**
 
-  *type: integer*
+  *type: float*
 
   Version of the processing script used.

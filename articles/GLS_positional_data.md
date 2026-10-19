@@ -66,7 +66,7 @@ Positional data from GLS loggers including locations and metadata.
 
 - #### **country_code**
 
-  *type:*
+  *type: string*
 
   Country/local code for metal ring.
 

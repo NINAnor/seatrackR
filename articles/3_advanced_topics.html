@@ -48,6 +48,8 @@
     <li><a class="dropdown-item" href="../articles/individual_data.html">Individual data reference</a></li>
     <li><a class="dropdown-item" href="../articles/population_maps.html">Population maps reference</a></li>
     <li><a class="dropdown-item" href="../articles/IRMA_positional_data.html">IRMA positional data reference</a></li>
+    <li><a class="dropdown-item" href="../articles/GPS_GSM_positional_data.html">GPS GSM positional data reference</a></li>
+    <li><a class="dropdown-item" href="../articles/logger_info.html">Logger info reference</a></li>
   </ul>
 </li>
       </ul>
@@ -74,7 +76,7 @@ make more complex queries</h3>
                         <h4 data-toc-skip class="author">Julian
 Evans</h4>
             
-            <h4 data-toc-skip class="date">2026-10-12</h4>
+            <h4 data-toc-skip class="date">2026-10-19</h4>
       
 
       <div class="d-none name"><code>3_advanced_topics.Rmd</code></div>
@@ -197,23 +199,23 @@ the tables in a schema first:</p>
 <span><span class="co">## 5           &lt;Id&gt; "metadata"."euring_codes"     FALSE</span></span>
 <span><span class="co">## 6           &lt;Id&gt; "metadata"."import_types"     FALSE</span></span>
 <span><span class="co">## 7               &lt;Id&gt; "metadata"."location"     FALSE</span></span>
-<span><span class="co">## 8            &lt;Id&gt; "metadata"."logger_fate"     FALSE</span></span>
-<span><span class="co">## 9           &lt;Id&gt; "metadata"."logger_files"     FALSE</span></span>
-<span><span class="co">## 10         &lt;Id&gt; "metadata"."logger_models"     FALSE</span></span>
-<span><span class="co">## 11      &lt;Id&gt; "metadata"."logger_producers"     FALSE</span></span>
-<span><span class="co">## 12         &lt;Id&gt; "metadata"."logger_status"     FALSE</span></span>
-<span><span class="co">## 13         &lt;Id&gt; "metadata"."logging_modes"     FALSE</span></span>
-<span><span class="co">## 14        &lt;Id&gt; "metadata"."mounting_types"     FALSE</span></span>
-<span><span class="co">## 15                &lt;Id&gt; "metadata"."people"     FALSE</span></span>
-<span><span class="co">## 16            &lt;Id&gt; "metadata"."people_old"     FALSE</span></span>
-<span><span class="co">## 17               &lt;Id&gt; "metadata"."project"     FALSE</span></span>
-<span><span class="co">## 18        &lt;Id&gt; "metadata"."project_people"     FALSE</span></span>
-<span><span class="co">## 19 &lt;Id&gt; "metadata"."seapop_species_colony"     FALSE</span></span>
-<span><span class="co">## 20                   &lt;Id&gt; "metadata"."sex"     FALSE</span></span>
-<span><span class="co">## 21         &lt;Id&gt; "metadata"."sexing_method"     FALSE</span></span>
-<span><span class="co">## 22               &lt;Id&gt; "metadata"."species"     FALSE</span></span>
-<span><span class="co">## 23            &lt;Id&gt; "metadata"."subspecies"     FALSE</span></span>
-<span><span class="co">## 24           &lt;Id&gt; "metadata"."all_species"     FALSE</span></span></code></pre>
+<span><span class="co">## 8           &lt;Id&gt; "metadata"."logger_files"     FALSE</span></span>
+<span><span class="co">## 9          &lt;Id&gt; "metadata"."logger_models"     FALSE</span></span>
+<span><span class="co">## 10      &lt;Id&gt; "metadata"."logger_producers"     FALSE</span></span>
+<span><span class="co">## 11         &lt;Id&gt; "metadata"."logger_status"     FALSE</span></span>
+<span><span class="co">## 12         &lt;Id&gt; "metadata"."logging_modes"     FALSE</span></span>
+<span><span class="co">## 13        &lt;Id&gt; "metadata"."mounting_types"     FALSE</span></span>
+<span><span class="co">## 14                &lt;Id&gt; "metadata"."people"     FALSE</span></span>
+<span><span class="co">## 15            &lt;Id&gt; "metadata"."people_old"     FALSE</span></span>
+<span><span class="co">## 16               &lt;Id&gt; "metadata"."project"     FALSE</span></span>
+<span><span class="co">## 17        &lt;Id&gt; "metadata"."project_people"     FALSE</span></span>
+<span><span class="co">## 18 &lt;Id&gt; "metadata"."seapop_species_colony"     FALSE</span></span>
+<span><span class="co">## 19                   &lt;Id&gt; "metadata"."sex"     FALSE</span></span>
+<span><span class="co">## 20         &lt;Id&gt; "metadata"."sexing_method"     FALSE</span></span>
+<span><span class="co">## 21               &lt;Id&gt; "metadata"."species"     FALSE</span></span>
+<span><span class="co">## 22            &lt;Id&gt; "metadata"."subspecies"     FALSE</span></span>
+<span><span class="co">## 23           &lt;Id&gt; "metadata"."all_species"     FALSE</span></span>
+<span><span class="co">## 24        &lt;Id&gt; "metadata"."colony_details"     FALSE</span></span></code></pre>
 <p>If you are uncertain about what schema are available, you can refer
 to the database description or use this command</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">

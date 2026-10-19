@@ -141,23 +141,23 @@ dbListObjects(con, Id(schema = "metadata"))
     ## 5           <Id> "metadata"."euring_codes"     FALSE
     ## 6           <Id> "metadata"."import_types"     FALSE
     ## 7               <Id> "metadata"."location"     FALSE
-    ## 8            <Id> "metadata"."logger_fate"     FALSE
-    ## 9           <Id> "metadata"."logger_files"     FALSE
-    ## 10         <Id> "metadata"."logger_models"     FALSE
-    ## 11      <Id> "metadata"."logger_producers"     FALSE
-    ## 12         <Id> "metadata"."logger_status"     FALSE
-    ## 13         <Id> "metadata"."logging_modes"     FALSE
-    ## 14        <Id> "metadata"."mounting_types"     FALSE
-    ## 15                <Id> "metadata"."people"     FALSE
-    ## 16            <Id> "metadata"."people_old"     FALSE
-    ## 17               <Id> "metadata"."project"     FALSE
-    ## 18        <Id> "metadata"."project_people"     FALSE
-    ## 19 <Id> "metadata"."seapop_species_colony"     FALSE
-    ## 20                   <Id> "metadata"."sex"     FALSE
-    ## 21         <Id> "metadata"."sexing_method"     FALSE
-    ## 22               <Id> "metadata"."species"     FALSE
-    ## 23            <Id> "metadata"."subspecies"     FALSE
-    ## 24           <Id> "metadata"."all_species"     FALSE
+    ## 8           <Id> "metadata"."logger_files"     FALSE
+    ## 9          <Id> "metadata"."logger_models"     FALSE
+    ## 10      <Id> "metadata"."logger_producers"     FALSE
+    ## 11         <Id> "metadata"."logger_status"     FALSE
+    ## 12         <Id> "metadata"."logging_modes"     FALSE
+    ## 13        <Id> "metadata"."mounting_types"     FALSE
+    ## 14                <Id> "metadata"."people"     FALSE
+    ## 15            <Id> "metadata"."people_old"     FALSE
+    ## 16               <Id> "metadata"."project"     FALSE
+    ## 17        <Id> "metadata"."project_people"     FALSE
+    ## 18 <Id> "metadata"."seapop_species_colony"     FALSE
+    ## 19                   <Id> "metadata"."sex"     FALSE
+    ## 20         <Id> "metadata"."sexing_method"     FALSE
+    ## 21               <Id> "metadata"."species"     FALSE
+    ## 22            <Id> "metadata"."subspecies"     FALSE
+    ## 23           <Id> "metadata"."all_species"     FALSE
+    ## 24        <Id> "metadata"."colony_details"     FALSE
 
 If you are uncertain about what schema are available, you can refer to
 the database description or use this command

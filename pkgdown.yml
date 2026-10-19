@@ -7,13 +7,15 @@ articles:
   3_advanced_topics: 3_advanced_topics.html
   database_structure: database_structure.html
   GLS_positional_data: GLS_positional_data.html
+  GPS_GSM_positional_data: GPS_GSM_positional_data.html
   immersion_data: immersion_data.html
   individual_data: individual_data.html
   IRMA_positional_data: IRMA_positional_data.html
   light_data: light_data.html
+  logger_info: logger_info.html
   population_maps: population_maps.html
   temperature_data: temperature_data.html
-last_built: 2026-10-14T12:17Z
+last_built: 2026-10-19T07:31Z
 urls:
   reference: https://ninanor.github.io/seatrackR/reference
   article: https://ninanor.github.io/seatrackR/articles

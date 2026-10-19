@@ -48,6 +48,8 @@
     <li><a class="dropdown-item" href="../articles/individual_data.html">Individual data reference</a></li>
     <li><a class="dropdown-item" href="../articles/population_maps.html">Population maps reference</a></li>
     <li><a class="dropdown-item" href="../articles/IRMA_positional_data.html">IRMA positional data reference</a></li>
+    <li><a class="dropdown-item" href="../articles/GPS_GSM_positional_data.html">GPS GSM positional data reference</a></li>
+    <li><a class="dropdown-item" href="../articles/logger_info.html">Logger info reference</a></li>
   </ul>
 </li>
       </ul>
@@ -74,7 +76,7 @@ and functions</h3>
                         <h4 data-toc-skip class="author">Julian
 Evans</h4>
             
-            <h4 data-toc-skip class="date">2026-10-12</h4>
+            <h4 data-toc-skip class="date">2026-10-19</h4>
       
 
       <div class="d-none name"><code>2_getting_started.Rmd</code></div>
@@ -177,20 +179,20 @@ functions to download some data.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_colonies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getColonies.html">getColonies</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">all_colonies</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##                                     id      lat       lon colony_int_name colony_nat_name lme_id</span></span>
-<span><span class="co">## 1 a0755af6-5eae-11ee-a646-005056b165f3 53.41200   6.51600       Groningen       Groningen     NA</span></span>
-<span><span class="co">## 2 b7c23d4e-0bf0-11e8-82b0-005056b165f3 64.22476 -21.86463        Faxaflói        Faxaflói     51</span></span>
-<span><span class="co">## 3 a38de81c-5ea8-11ee-a646-005056b165f3 55.20000  15.00000        Bornholm        Bornholm      1</span></span>
-<span><span class="co">## 4 43e4779a-5eb3-11ee-a646-005056b165f3 54.54000  -8.39000     Donegal Bay     Donegal Bay      6</span></span>
-<span><span class="co">## 5 b806e594-8645-11ef-847f-005056b165f3 48.74972 -69.03519       Île Laval       Île Laval      5</span></span>
-<span><span class="co">## 6 518444e2-296a-11f0-9d0f-005056b165f3 76.66500  25.34500           Hopen           Hopen     54</span></span>
-<span><span class="co">##       country   safe_name</span></span>
-<span><span class="co">## 1 Netherlands   groningen</span></span>
-<span><span class="co">## 2     Iceland     faxafli</span></span>
-<span><span class="co">## 3     Denmark    bornholm</span></span>
-<span><span class="co">## 4     Ireland donegal_bay</span></span>
-<span><span class="co">## 5      Canada    le_laval</span></span>
-<span><span class="co">## 6      Norway       hopen</span></span></code></pre>
+<pre><code><span><span class="co">##                                     id      lat        lon    colony_int_name</span></span>
+<span><span class="co">## 1 d4b16cea-c6d6-11f1-9298-005056b165f3 55.61700    1.65600      Farne Islands</span></span>
+<span><span class="co">## 2 db2ebfea-5ea7-11ee-a646-005056b165f3 50.19600  -63.22100 Betchouanes Island</span></span>
+<span><span class="co">## 3 e961371e-2434-11f1-ba00-005056b165f3 67.25000 -100.25000        Karrak Lake</span></span>
+<span><span class="co">## 4 8277ae8e-c7a4-11f1-a536-005056b165f3 80.69118   20.70308           Sjuøyane</span></span>
+<span><span class="co">## 5 bb94ba42-296a-11f0-9d0f-005056b165f3 60.42000  -68.13000     Akpatok Island</span></span>
+<span><span class="co">## 6 b7bfe436-0bf0-11e8-82b0-005056b165f3 79.58500   18.45900        Alkefjellet</span></span>
+<span><span class="co">##                  colony_nat_name lme_id       country          safe_name</span></span>
+<span><span class="co">## 1                  Farne Islands      3 Great Britain      farne_islands</span></span>
+<span><span class="co">## 2 Ile à Calculot des Betchouanes      5        Canada betchouanes_island</span></span>
+<span><span class="co">## 3                    Karrak Lake     63        Canada        karrak_lake</span></span>
+<span><span class="co">## 4                       Sjuøyane     54        Norway          sjuoeyane</span></span>
+<span><span class="co">## 5                 Akpatok Island     62        Canada     akpatok_island</span></span>
+<span><span class="co">## 6                    Alkefjellet     54        Norway        alkefjellet</span></span></code></pre>
 <p>We can also get all locations, which can be finer scale areas
 within/attached to SEATRACK colonies.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -204,7 +206,7 @@ within/attached to SEATRACK colonies.</p>
 <span><span class="co">## 5 e5ccedf4-9f17-11e9-8410-005056b165f3       Rockabill       Rockabill 53.601  -6.003</span></span>
 <span><span class="co">## 6 e5cdfbc2-9f17-11e9-8410-005056b165f3 Treshnish Isles Treshnish Isles 56.500  -6.400</span></span></code></pre>
 <p><strong>NOTE:</strong> <em>Currently, the vast majority of locations
-are still 1 to 1 with colonies. This will be developed futher in
+are still 1 to 1 with colonies. This will be developed further in
 future.</em></p>
 </div>
 <div class="section level4">
@@ -334,12 +336,12 @@ colony.</p>
 <pre><code><span><span class="co">## # A tibble: 6 × 34</span></span>
 <span><span class="co">##   id                   date_time           logger_id logger_model year_tracked session_id individ_id</span></span>
 <span><span class="co">##   &lt;chr&gt;                &lt;dttm&gt;              &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     </span></span>
-<span><span class="co">## 1 8dcc8096-be38-11f0-… 2013-05-16 23:22:25 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
-<span><span class="co">## 2 8dcc8154-be38-11f0-… 2013-05-17 11:17:06 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
-<span><span class="co">## 3 8dcc8276-be38-11f0-… 2013-05-17 23:16:45 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
-<span><span class="co">## 4 8dcc8334-be38-11f0-… 2013-09-12 22:59:42 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
-<span><span class="co">## 5 8dcc83f2-be38-11f0-… 2013-09-13 10:42:12 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
-<span><span class="co">## 6 8dcc84b0-be38-11f0-… 2013-09-13 23:12:49 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 1 8dcc91c6-be38-11f0-… 2013-09-24 23:29:27 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 2 8dcc8096-be38-11f0-… 2013-05-16 23:22:25 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 3 8dcc8154-be38-11f0-… 2013-05-17 11:17:06 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 4 8dcc8276-be38-11f0-… 2013-05-17 23:16:45 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 5 8dcc8334-be38-11f0-… 2013-09-12 22:59:42 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
+<span><span class="co">## 6 8dcc83f2-be38-11f0-… 2013-09-13 10:42:12 V923009   mk4083       2013_15      V923009_2… NOO_MA203…</span></span>
 <span><span class="co">## # ℹ 27 more variables: deployment_date &lt;date&gt;, retrieval_date &lt;date&gt;, ring_number &lt;chr&gt;,</span></span>
 <span><span class="co">## #   country_code &lt;chr&gt;, species &lt;chr&gt;, colony &lt;chr&gt;, location &lt;chr&gt;, lon_raw &lt;dbl&gt;, lat_raw &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   lon &lt;dbl&gt;, lat &lt;dbl&gt;, eqfilter &lt;lgl&gt;, sex &lt;chr&gt;, age_deployment &lt;chr&gt;, col_lon &lt;dbl&gt;,</span></span>
@@ -360,12 +362,12 @@ function.</p>
 <pre><code><span><span class="co">## # A tibble: 6 × 34</span></span>
 <span><span class="co">##   id                   date_time           logger_id logger_model year_tracked session_id individ_id</span></span>
 <span><span class="co">##   &lt;chr&gt;                &lt;dttm&gt;              &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     </span></span>
-<span><span class="co">## 1 22b01706-5df6-11f1-… 2024-08-20 11:28:11 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
-<span><span class="co">## 2 22b0054a-5df6-11f1-… 2024-08-08 11:17:13 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
-<span><span class="co">## 3 22b00626-5df6-11f1-… 2024-08-08 23:17:27 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
-<span><span class="co">## 4 22b00702-5df6-11f1-… 2024-08-09 11:05:16 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
-<span><span class="co">## 5 22b007e8-5df6-11f1-… 2024-08-10 11:25:25 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
-<span><span class="co">## 6 22b008c4-5df6-11f1-… 2024-08-10 23:36:27 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
+<span><span class="co">## 1 22b0054a-5df6-11f1-… 2024-08-08 11:17:13 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
+<span><span class="co">## 2 22b01706-5df6-11f1-… 2024-08-20 11:28:11 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
+<span><span class="co">## 3 22b017d8-5df6-11f1-… 2024-08-20 23:40:02 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
+<span><span class="co">## 4 22b018b4-5df6-11f1-… 2024-08-21 11:32:15 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
+<span><span class="co">## 5 22b01990-5df6-11f1-… 2024-08-21 23:30:50 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
+<span><span class="co">## 6 22b01a62-5df6-11f1-… 2024-08-22 11:30:50 C9697     mk4083       2024_25      C9697_202… NOO_MA284…</span></span>
 <span><span class="co">## # ℹ 27 more variables: deployment_date &lt;date&gt;, retrieval_date &lt;date&gt;, ring_number &lt;chr&gt;,</span></span>
 <span><span class="co">## #   country_code &lt;chr&gt;, species &lt;chr&gt;, colony &lt;chr&gt;, location &lt;chr&gt;, lon_raw &lt;dbl&gt;, lat_raw &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   lon &lt;dbl&gt;, lat &lt;dbl&gt;, eqfilter &lt;lgl&gt;, sex &lt;chr&gt;, age_deployment &lt;chr&gt;, col_lon &lt;dbl&gt;,</span></span>

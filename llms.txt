@@ -200,6 +200,8 @@ Functions to prepare R data for queries
   structure](https://ninanor.github.io/seatrackR/articles/database_structure.md):
 - [GLS positional data
   reference](https://ninanor.github.io/seatrackR/articles/GLS_positional_data.md):
+- [GPS GSM positional data
+  reference](https://ninanor.github.io/seatrackR/articles/GPS_GSM_positional_data.md):
 - [Immersion data
   reference](https://ninanor.github.io/seatrackR/articles/immersion_data.md):
 - [Individual data
@@ -208,6 +210,8 @@ Functions to prepare R data for queries
   reference](https://ninanor.github.io/seatrackR/articles/IRMA_positional_data.md):
 - [Light data
   reference](https://ninanor.github.io/seatrackR/articles/light_data.md):
+- [Logger info
+  reference](https://ninanor.github.io/seatrackR/articles/logger_info.md):
 - [Population maps
   reference](https://ninanor.github.io/seatrackR/articles/population_maps.md):
 - [Temperature data
