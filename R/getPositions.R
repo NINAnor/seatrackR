@@ -10,7 +10,7 @@
 #' @param colony Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
 #' choices can be seen in the column `colony_int_name` in the result from the function `getColonies()`.
 #' @param location Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
-#' @param age_deployment_class Character string. Option to limit selection to one or a set of age classes. Default is NULL.
+#' @param age_deployment_class Character string. Option to limit selection to one or a set of age classes, "A" or "C". Default is NULL.
 #' @param dataResponsible Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
 #' must conform to the name nomenclature used in the postable. Default is NULL. The available
 #' choices can be seen in the column `name` in the result from the function `getNames()`.

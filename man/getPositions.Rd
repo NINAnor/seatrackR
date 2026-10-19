@@ -33,7 +33,7 @@ choices can be seen in the column \code{colony_int_name} in the result from the 
 
 \item{location}{Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available}
 
-\item{age_deployment_class}{Character string. Option to limit selection to one or a set of age classes. Default is NULL.}
+\item{age_deployment_class}{Character string. Option to limit selection to one or a set of age classes, "A" or "C". Default is NULL.}
 
 \item{dataResponsible}{Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
 must conform to the name nomenclature used in the postable. Default is NULL. The available

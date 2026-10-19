@@ -1,4 +1,79 @@
 datasets:
+  GPS_GSM_positional_data:
+    description: Positional data from GLS loggers including locations and metadata.
+    columns:
+      - name: id
+        description: Unique ID of logging session during which record was made.
+        type: string
+      - name: date_time
+        description: Date and time of the calculated position in GMT.
+        type: datetime
+      - name: logger_id
+        description: Unique internal database ID of logger. 
+        type: string
+      - name: logger_model
+        description: GLS logger model (e.g., c65, mk4083, etc.).
+        type: string
+      - name: session_id
+        description: Unique ID for each time a logger was deployed.
+        type: string
+      - name: individ_id
+        description: Unique ID for each individual.
+        type: string
+      - name: deployment_date
+        description: Date when the logger was deployed.
+        type: date
+      - name: retrieval_date
+        description: Date when the logger was retrieved.
+        type: date
+      - name: ring_number
+        type: string
+        description: Metal ID ring number.
+      - name: country_code
+        type: string
+        description: Country/local code for metal ring.
+      - name: species
+        description: English name of the species (e.g., "Black-legged kittiwake").
+        type: string
+      - name: colony
+        description: Name of the colony where the logger was deployed and retrieved. Note that a SEATRACK colony name can cover several locations
+        type: string
+      - name: location
+        description: Name of the location where the logger was deployed and retrieved. Note that a SEATRACK colony name can cover several locations
+        type: string
+      - name: lon
+        description: Averaged longitude coordinate after moving average.
+        type: float
+      - name: lat
+        description: Averaged latitude coordinate after moving average.
+        type: float
+      - name: eqfilter
+        description:  Filter identifying periods with unreliable latitudes during equinox (TRUE = reliable, FALSE = unreliable).
+        type: boolean
+      - name: sex
+        description: Recorded sex at trapping event.
+        type: string
+      - name: age_deployment
+        description: Age of the bird at the time of deployment.
+        type: string
+      - name: col_lon
+        description: Longitude of the colony.
+        type: float
+      - name: col_lat
+        description: Latitude of the colony.
+        type: float
+      - name: data_responsible
+        description: Data owner or responsible person.
+        type: string
+      - name: last_updated
+        description: Date when the record was last updated.
+        type: date
+      - name: updated_by
+        description: Person who last updated the record.
+        type: string
+      - name: date_time_downloaded
+        description: Date and time when this data was downloaed from the database.
+        type: datetime
   GLS_positional_data:
     description: Positional data from GLS loggers including locations and metadata.
     columns:
@@ -32,6 +107,7 @@ datasets:
       - name: ring_number
         description: Metal ID ring number.
       - name: country_code
+        type: string
         description: Country/local code for metal ring.
       - name: species
         description: English name of the species (e.g., "Black-legged kittiwake").
@@ -182,8 +258,8 @@ datasets:
         description: Metal ID ring number.
         type: string
       - name: country_code
-        description: Country/local code for metal ring.
         type: string
+        description: Country/local code for metal ring.
       - name: colour_ring
         description: Code and colour for plastic ring.
         type: string
@@ -354,8 +430,8 @@ datasets:
         type: string
         description: Unique ID of position
       - name: date_time
-        type: Date time at which position was recorded
-        description:
+        type: datetime
+        description: Date time at which position was recorded
       - name: logger_id
         type: integer
         description: Unique internal identfier of the logger
@@ -419,5 +495,108 @@ datasets:
       - name: data_version
         description: Version of the processing script used.
         type: float
-
-
+  logger_info:
+    description: Information about logging session
+    columns:
+      - name: logger_serial_no
+        description: Logger serial number.
+        type: string
+      - name: logger_id
+        description: Unique internal database ID of logger.
+        type: string
+      - name: starttime_gmt
+        description: Date time at which logger began recording data.
+        type: datetime      
+      - name: logging_mode
+        description: Mode in which logger was set to record.
+        type: string
+      - name: producer
+        description: Logger manufacturer.
+        type: string
+      - name: logger_model
+        description: Logger model.
+        type: string
+      - name: production_year
+        description: Year in which logger was manufactured.
+        type: integer
+      - name: session_id
+        description: Unique ID for each time a logger was deployed.
+        type: string
+      - name: project
+        description: Name of the project that this session was part of.
+        type: string
+      - name: deployment_date
+        description: Date when the logger was deployed.
+        type: date
+      - name: retrieval_date
+        description: Date when the logger was retrieved.
+        type: date
+      - name: started_by
+        description: Name of person who started this logger.
+        type: string
+      - name: started_where
+        description: Location logger was started, e.g. 'Tromsø'.
+        type: string
+      - name: days_delayed
+        description: Number of days logger was delayed before it started recording data.
+        type: integer
+      - name: programmed_gmt_time
+        description: Date time at which logger was programmed. If a logger was programmed with a delay, `starttime_gmt` will be this date time + `days_delayed`.
+        type: integer
+      - name: individ_id
+        type: string
+        description: Unique ID for each individual.
+      - name: intended_species
+        type: string
+        description: English name of the planned deployment species.
+      - name: intended_location
+        type: string
+        description: Planned deployment location.
+      - name: intended_deployer
+        type: string
+        description: Planned deployer.
+      - name: deployment_species
+        type: string
+        description: English name of the species on which the logger was deployed.
+      - name: colony
+        description: Name of the colony where the logger was deployed and retrieved. Note that a SEATRACK colony name can cover several locations
+        type: string
+      - name: location
+        description: Name of the location where the logger was deployed and retrieved. Note that a SEATRACK colony name can cover several locations
+        type: string
+      - name: nest_id
+        type: string
+        description: Identifier for the nest of the individual on which logger was deployed.
+      - name: nest_latitude
+        type: float
+        description: Latitude of the nest of the individual on which logger was deployed.
+      - name: nest_longitude
+        type: float
+        description: Longitude of the nest of the individual on which logger was deployed.
+      - name: download_type
+        description: Logger data download status. 
+        type: string
+      - name: download_date
+        description: Date logger data was downloaded.
+        type: date
+      - name: shutdown_date
+        description: Date logger was shutdown.
+        type: date
+      - name: decomissioned
+        description: Not used.
+        type: NA
+      - name: field_status
+        description: Not used.
+        type: NA
+      - name: nest_id
+        type: string
+        description: Identifier for the nest of the individual from which logger was retrieved.
+      - name: nest_latitude
+        type: float
+        description: Latitude of the nest of the individual from which logger was retrieved.
+      - name: nest_longitude
+        type: float
+        description: Longitude of the nest of the individual from which logger was retrieved.
+      - name: deployment_type
+        type: string
+        description: Type of logger deployment (first deployment of logger, recapture and logger swapped, etc.).

@@ -18,9 +18,9 @@ Processed GLS data with missing locatations interpolated based on the Informed R
   Unique ID of position 
 
 - #### **date_time** 
- *type: Date time at which position was recorded* 
+ *type: datetime* 
 
-   
+  Date time at which position was recorded 
 
 - #### **logger_id** 
  *type: integer* 
@@ -123,6 +123,6 @@ Processed GLS data with missing locatations interpolated based on the Informed R
   Data owner or responsible person. 
 
 - #### **data_version** 
- *type: integer* 
+ *type: float* 
 
   Version of the processing script used. 

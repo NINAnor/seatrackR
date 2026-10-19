@@ -2,7 +2,7 @@
 title: "SEATRACK data infrastructure"
 subtitle: "A short introduction"
 author: "Julian Evans, Jens Åström"
-date: "2026-10-12"
+date: "2026-10-19"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SEATRACK data infrastructure}

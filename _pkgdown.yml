@@ -51,6 +51,12 @@ navbar:
         IRMA positional data reference:
           text: IRMA positional data reference
           href: articles/IRMA_positional_data.html
+        GPS GSM positional data reference:
+          text: GPS GSM positional data reference
+          href: articles/GPS_GSM_positional_data.html
+        Logger info reference:
+          text: Logger info reference
+          href: articles/logger_info.html
 reference:
 - title: Shiny app
   desc: Use the seatrackR shiny interface
