@@ -166,7 +166,7 @@ getPositions <- function(datatype = "GLS",
     DBI::dbWithTransaction(
       con,
       {
-        res <- st_read(dsn = con, query = dbplyr::sql_render(res))
+        res <- sf::st_read(dsn = con, query = dbplyr::sql_render(res))
       }
     )
     res <- res |>
