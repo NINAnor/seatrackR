@@ -29,16 +29,21 @@
 #' @param retrieval_date_between Optional vector of two dates to filter retrieval dates between.
 #' @param retrieval_logger_status Optional vector of retrieval logger statuses to filter by.
 #' @param shutdown_date_between Optional vector of two dates to filter shutdown dates between.
+#' @param dates_deployed_overlap Optional vector of two dates to filter sessions to any loggers that were deployed during that time period. This is an overlap filter, meaning that any session that overlaps with the specified date range will be included.
 #' @param download_type Optional vector of download types to filter by.
 #' @param has_positions Optional logical indicating whether to filter by sessions with position data.
 #' @param has_irma Optional logical indicating whether to filter by sessions with IRMA data.
 #' @param embargoed Optional logical indicating whether to include embargoed sessions. Default is FALSE.
+#' @param lme_area Character string. Option to limit selection to one or a set of LME areas. Default is NULL. The available
+#' choices can be seen in the column `name` in the result from the function `getLMEAreas()`.
+#' @param polygons Optional sf object with polygons to filter sessions by spatial intersection. Default is NULL.
 #' @param include_sample_info Optional logical indicating whether to include sample information (blood, feathers etc.) in the results. Default is FALSE.
 #' @param as_tibble Logical indicating whether to return the result as a tibble.
 #' @return Either a lazy db query or a tibble containing the filtered logger session information.
 #' @export
 #' @concept logger_info
-getSessionInfo <- function(
+#' @aliases getSessionInfo
+get_session_info <- function(
   session_id = NULL,
   individ_id = NULL,
   project = NULL,
@@ -66,10 +71,13 @@ getSessionInfo <- function(
   retrieval_date_between = NULL,
   retrieval_logger_status = NULL,
   shutdown_date_between = NULL,
+  dates_deployed_overlap = NULL,
   download_type = NULL,
   has_positions = NULL,
   has_irma = NULL,
   embargoed = FALSE,
+  lme_area = NULL,
+  polygons = NULL,
   as_tibble = TRUE,
   include_sample_info = FALSE
 ) {
@@ -83,7 +91,10 @@ getSessionInfo <- function(
         "logger_start_time_between",
         "logger_deployment_date_between",
         "logger_retrieval_date_between",
-        "shutdown_date_between"
+        "shutdown_date_between",
+        "dates_deployed_overlap",
+        "lme_area",
+        "polygons"
     )]
 
     between_filter_args <- list(
@@ -93,8 +104,17 @@ getSessionInfo <- function(
         shutdown_date = shutdown_date_between
     )
 
+    intersection_filter_args <- list(
+        dates_deployed_overlap = list(
+            value = dates_deployed_overlap,
+            start_date = "deployment_date",
+            end_date = "retrieval_date"
+        )
+    )
+
     source_table <- dplyr::case_when(
-        include_sample_info ~ "session_sample_details", .default = "session_details"
+        include_sample_info ~ "session_sample_details",
+        .default = "session_details"
     )
 
     session_details <- dplyr::tbl(con, dbplyr::in_schema("loggers", source_table))
@@ -130,8 +150,65 @@ getSessionInfo <- function(
         }
     }
 
+    for (i in seq_along(intersection_filter_args)) {
+        arg_i <- intersection_filter_args[[i]]
+        value <- arg_i$value
+        val_names <- c(arg_i$start_date, arg_i$end_date)
+        if (!is.null(value)) {
+            if (length(value) != 2) {
+                stop("Overlap filter values must be a vector of length 2.")
+            }
+            start_val <- value[1]
+            end_val <- value[2]
+            start_val_name <- val_names[1]
+            end_val_name <- val_names[2]
+            # x_start <= y_end && y_start <= x_end
+            session_details <- dplyr::filter(session_details, (is.na(!!rlang::sym(end_val_name)) | start_val <= !!rlang::sym(end_val_name)) & !!rlang::sym(start_val_name) <= end_val)
+        }
+    }
+
+    # Spatial intersection
+    if (!is.null(lme_area) || !is.null(polygons)) {
+        print("Filtering sessions by spatial intersection with LME areas or provided polygons. This may take some time for large datasets.")
+        # Find all positions for these sessions
+        session_data_types <- dplyr::distinct(session_details, session_id, logger_type)
+        all_data_types <- distinct(session_data_types, logger_type) %>% pull(logger_type)
+
+        all_session_ids <- c()
+        for (data_type in all_data_types) {
+            data_type_session_ids <- dplyr::filter(session_data_types, logger_type == data_type) %>% pull(session_id)
+            session_id_chunks <- split(
+                data_type_session_ids,
+                ceiling(seq_along(data_type_session_ids) / 100)
+            )
+            print(paste0("Processing ", length(session_id_chunks), " chunks of session IDs for data type: ", data_type))
+            for (i in seq_along(session_id_chunks)) {
+                session_id_chunk <- session_id_chunks[[i]]
+                print(paste0("Processing chunk ", i, " of ", length(session_id_chunks), " for data type: ", data_type))
+                loc_table <- get_positions(
+                    datatype = data_type,
+                    species = species,
+                    colony = colony,
+                    location = location,
+                    session_id = session_id_chunk,
+                    individ_id = individ_id,
+                    project = project,
+                    lme_area = lme_area,
+                    polygons = polygons,
+                    loadGeometries = FALSE,
+                    as_tibble = FALSE
+                )
+                all_session_ids <- c(all_session_ids, dplyr::distinct(loc_table, session_id) %>% pull(session_id))
+            }
+        }
+        print(paste0("Found ", length(all_session_ids), " sessions with positions in the specified LME areas or polygons."))
+        session_details <- dplyr::filter(session_details, session_id %in% !!all_session_ids)
+    }
+
     if (as_tibble) {
         session_details <- dplyr::collect(session_details)
     }
     return(session_details)
 }
+
+getSessionInfo <- get_session_info

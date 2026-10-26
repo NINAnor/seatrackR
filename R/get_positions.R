@@ -3,23 +3,24 @@
 #' This is a convenience function that reads position data from the database. The default datatype is "GLS", which reads data from "positions.postable", which is the primary table position table in the DB. Optionally you can fetch "IRMA" data, which is IRMA processed position data, or "GPS" data.
 #'
 #' @param datatype "GLS", "IRMA","GPS" or "GPS-GSM". Which type of position data to fetch. Default is "GLS".
-#' @param sessionId Character string of session ids to limit the selection to.
-#' @param individId Character string of individ ids to limit the selection to.
 #' @param species Character string. Option to limit selection to one or a set of species.Default is NULL, indicating all species.
 #' The available choices can be seen in the column `species_name_eng` in the result from the function `getSpecies()`.
 #' @param colony Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
 #' choices can be seen in the column `colony_int_name` in the result from the function `getColonies()`.
 #' @param location Character string. Option to limit selection to one or a set of colonies. Default is NULL. The available
 #' @param age_deployment_class Character string. Option to limit selection to one or a set of age classes, "A" or "C". Default is NULL.
-#' @param dataResponsible Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
+#' @param data_repsonsible Character string. Option to limit selection to one or a set of names of data responsible persons. Note that this
 #' must conform to the name nomenclature used in the postable. Default is NULL. The available
 #' choices can be seen in the column `name` in the result from the function `getNames()`.
-#' @param ringnumber Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.
+#' @param ring_number Character string. Option to limit selection to one or a set of ring numbers. Default is NULL.
 #' @param year Character string. Option to limit selection to one or more years that the logging sessions span. The availablle
 #' choices can be found in the `year_tracked` column in the result form the `getYears` function.
-#' @param sessionId Character string. Option to limit selection to one or a set of session ids. Default is NULL.
-#' @param individId Character string. Option to limit selection to one or a set of individual ids. Default is NULL.
+#' @param session_id Character string. Option to limit selection to one or a set of session ids. Default is NULL.
+#' @param individ_id Character string. Option to limit selection to one or a set of individual ids. Default is NULL.
 #' @param project subset data for a character vector of project names. Default is NULL.
+#' @param lme_area Character string. Option to limit selection to one or a set of LME areas. Default is NULL. The available
+#' choices can be seen in the column `name` in the result from the function `getLMEAreas()`.
+#' @param polygons An sf object with polygons. If provided, only positions within the polygons will be returned. Default is NULL.
 #' @param exclude_embargoed Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.
 #' @param loadGeometries Boolean. If True, the returned object is a simple features object with only rows of eqfilter == TRUE. Default = False
 #' @param limit FALSE or Integer. Limit the number of rows returned to this number. Default = False.
@@ -54,32 +55,61 @@
 #' }
 #' @export
 #' @concept positions
-
-
-getPositions <- function(datatype = "GLS",
+#' @aliases getPositions
+get_positions <- function(datatype = "GLS",
                          species = NULL,
                          colony = NULL,
                          location = NULL,
                          age_deployment_class = NULL,
-                         dataResponsible = NULL,
-                         ringnumber = NULL,
+                         data_responsible = NULL,
+                         ring_number = NULL,
                          year = NULL,
-                         sessionId = NULL,
-                         individId = NULL,
+                         session_id = NULL,
+                         individ_id = NULL,
                          project = NULL,
+                         lme_area = NULL,
+                         polygons = NULL,
                          exclude_embargoed = TRUE,
                          loadGeometries = FALSE,
                          asTibble = TRUE,
-                         limit = FALSE) {
+                         limit = FALSE,
+                         ...) {
   checkCon()
 
-  #rewrite to be less repetitive
+  all_args <- as.list(environment())
+  other_args <- list(...)
+  valid_alias <- c(
+    session_id = "sessionId",
+    individId = "individ_id",
+    ring_number = "ringnumber",
+    data_responsible = "dataResponsible"
+  )
+
+  for (i in seq_along(valid_alias)) {
+    if (valid_alias[[i]] %in% names(other_args)) {
+      all_args[[names(valid_alias)[i]]] <- other_args[[valid_alias[[i]]]]
+    }
+  }
+
+  basic_filter_args <- all_args[!names(all_args) %in% c(
+    "age_deployment_class",
+    "datatype",
+    "project",
+    "lme_area",
+    "polygons",
+    "exclude_embargoed",
+    "loadGeometries",
+    "as_tibble",
+    "limit"
+  )]
+
+  # rewrite to be less repetitive
   selectSpecies <- species
   selectColony <- colony
   selectLocation <- location
-  selectAge <- age_deployment_class
 
-  datatype <- match.arg(datatype,
+  datatype <- match.arg(
+    datatype,
     choices <- c("GLS", "IRMA", "GPS", "GPS-GSM")
   )
 
@@ -94,50 +124,57 @@ getPositions <- function(datatype = "GLS",
     datatype == "GPS-GSM" ~ "gps_gsm"
   )
 
-  res <- tbl(con, dbplyr::in_schema("positions", source_table))
+  if (!is.null(lme_area)) {
+    res <- dplyr::tbl(con, sql(glue::glue_sql(
+      "SELECT pos.* FROM positions.{`source_table`} pos
+      JOIN areas.lme a
+            ON ST_Contains(a.geom, pos.geom)
+      WHERE a.name IN ({lme_area})
+      ",
+      .con = con
+    )))
+  } else if (!is.null(polygons)) {
+    st_write(
+      obj = polygons,
+      dsn = con,
+      layer = "temp_postable_poly",
+      factorsAsCharacter = FALSE,
+      layer_options = c("TEMPORARY=YES"),
+      delete_layer = TRUE
+    )
 
-  # Check if we need a refresh
-
-  if (!is.null(species)) {
-    res <- res |> filter(species %in% selectSpecies)
+    res <- dplyr::tbl(con, sql(glue::glue_sql(
+      "SELECT pos.* FROM positions.{`source_table`} pos
+        JOIN temp_postable_poly a
+              ON ST_Contains(a.geometry, pos.geom)
+        ",
+      .con = con
+    )))
+  } else {
+    res <- dplyr::tbl(con, dbplyr::in_schema("positions", source_table))
   }
 
-  if (!is.null(colony)) {
-    res <- res |> filter(colony %in% selectColony)
+
+
+  for (i in seq_along(basic_filter_args)) {
+    val_name <- names(basic_filter_args)[i]
+    value <- basic_filter_args[[i]]
+    if (!is.null(value)) {
+      res <- dplyr::filter(res, !!rlang::sym(val_name) %in% value)
+    }
   }
 
-  if (!is.null(location)) {
-    res <- res |> filter(location %in% selectLocation)
-  }
+  # Non-built in filters
 
-  if (!is.null(selectAge)) {
+  if (!is.null(age_deployment_class)) {
     res <- res |>
       mutate(
         age_deployment_class = ifelse(!is.na(age_deployment) & tolower(age_deployment) %in% c("pullus", "chick", "pull", "juvenile"), "C", "A")
       ) %>%
-      filter(age_deployment_class %in% selectAge) %>%
+      filter(age_deployment_class %in% !!age_deployment_class) %>%
       select(-age_deployment_class)
   }
 
-  if (!is.null(dataResponsible)) {
-    res <- res |> filter(data_responsible %in% dataResponsible)
-  }
-
-  if (!is.null(ringnumber)) {
-    res <- res |> filter(ring_number %in% ringnumber)
-  }
-
-  if (!is.null(year)) {
-    res <- res |> filter(year_tracked %in% year)
-  }
-
-  if (!is.null(sessionId)) {
-    res <- res |> filter(session_id %in% sessionId)
-  }
-
-  if (!is.null(individId)) {
-    res <- res |> filter(individ_id %in% individId)
-  }
 
   if (!is.null(project) || exclude_embargoed) {
     # join to allocation table
@@ -151,6 +188,7 @@ getPositions <- function(datatype = "GLS",
     }
     res <- res |> select(-"project")
   }
+
 
   if (!limit == FALSE) {
     res <- res |> head(limit)
@@ -169,10 +207,6 @@ getPositions <- function(datatype = "GLS",
         res <- sf::st_read(dsn = con, query = dbplyr::sql_render(res))
       }
     )
-    res <- res |>
-      mutate(date_time = lubridate::force_tz(date_time,
-        tzone = "UTC"
-      ))
   } else {
     res <- res |>
       select(-geom)
@@ -184,10 +218,6 @@ getPositions <- function(datatype = "GLS",
           res <- res |> dplyr::collect()
         }
       )
-      res <- res |>
-        mutate(date_time = lubridate::force_tz(date_time,
-          tzone = "UTC"
-        ))
     }
   }
 
@@ -195,3 +225,5 @@ getPositions <- function(datatype = "GLS",
     mutate(date_time_downloaded = lubridate::now())
   return(res)
 }
+
+getPositions <- get_positions
