@@ -134,7 +134,7 @@ get_positions <- function(datatype = "GLS",
       .con = con
     )))
   } else if (!is.null(polygons)) {
-    st_write(
+    sf::st_write(
       obj = polygons,
       dsn = con,
       layer = "temp_postable_poly",
