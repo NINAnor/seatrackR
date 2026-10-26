@@ -55,7 +55,7 @@
 #' }
 #' @export
 #' @concept positions
-#' @aliases getPositions
+#' @rdname get_positions
 get_positions <- function(datatype = "GLS",
                          species = NULL,
                          colony = NULL,
@@ -226,4 +226,6 @@ get_positions <- function(datatype = "GLS",
   return(res)
 }
 
+#' @rdname get_positions
+#' @export
 getPositions <- get_positions

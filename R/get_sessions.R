@@ -42,7 +42,7 @@
 #' @return Either a lazy db query or a tibble containing the filtered logger session information.
 #' @export
 #' @concept logger_info
-#' @aliases getSessionInfo
+#' @rdname get_session_info
 get_session_info <- function(
   session_id = NULL,
   individ_id = NULL,
@@ -211,4 +211,6 @@ get_session_info <- function(
     return(session_details)
 }
 
+#' @rdname get_session_info
+#' @export
 getSessionInfo <- get_session_info
