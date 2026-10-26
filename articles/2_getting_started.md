@@ -249,7 +249,7 @@ head(all_subspecies)
 ### getSessionInfo
 
 The function with the most comprehensive metadata filtering available is
-[`getSessionInfo()`](https://ninanor.github.io/seatrackR/reference/getSessionInfo.md).
+[`getSessionInfo()`](https://ninanor.github.io/seatrackR/reference/get_session_info.md).
 This function combines a number of the database tables to create a human
 readable information about each logging session, with one row per
 session.
@@ -310,7 +310,7 @@ class (at time of deployment).
 ### Getting positional data
 
 We can use the
-[`getPositions()`](https://ninanor.github.io/seatrackR/reference/getPositions.md)
+[`getPositions()`](https://ninanor.github.io/seatrackR/reference/get_positions.md)
 to return positional data. This function can also filter by attributes
 such as species or colony.
 

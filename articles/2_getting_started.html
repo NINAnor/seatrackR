@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.62</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.63</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -274,7 +274,7 @@ filter to just the SEATRACK species:</p>
 <h3 id="getsessioninfo">getSessionInfo<a class="anchor" aria-label="anchor" href="#getsessioninfo"></a>
 </h3>
 <p>The function with the most comprehensive metadata filtering available
-is <code><a href="../reference/getSessionInfo.html">getSessionInfo()</a></code>. This function combines a number of the
+is <code><a href="../reference/get_session_info.html">getSessionInfo()</a></code>. This function combines a number of the
 database tables to create a human readable information about each
 logging session, with one row per session.</p>
 <p>it is highly reccomended to call this with some filtering applied, as
@@ -284,7 +284,7 @@ time to return.</p>
 logger type and whether a logging session has positions in the
 database.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">filtered_sessions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getSessionInfo.html">getSessionInfo</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">filtered_sessions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_session_info.html">getSessionInfo</a></span><span class="op">(</span></span>
 <span>    deployment_year <span class="op">=</span> <span class="fl">2024</span>,</span>
 <span>    colony <span class="op">=</span> <span class="st">"Røst"</span>,</span>
 <span>    species <span class="op">=</span> <span class="st">"Atlantic puffin"</span>,</span>
@@ -323,11 +323,11 @@ class (at time of deployment).</p>
 <div class="section level3">
 <h3 id="getting-positional-data">Getting positional data<a class="anchor" aria-label="anchor" href="#getting-positional-data"></a>
 </h3>
-<p>We can use the <code><a href="../reference/getPositions.html">getPositions()</a></code> to return positional data.
+<p>We can use the <code><a href="../reference/get_positions.html">getPositions()</a></code> to return positional data.
 This function can also filter by attributes such as species or
 colony.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">puffin_positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPositions.html">getPositions</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Atlantic puffin"</span>, colony <span class="op">=</span> <span class="st">"Røst"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">puffin_positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_positions.html">getPositions</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Atlantic puffin"</span>, colony <span class="op">=</span> <span class="st">"Røst"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">puffin_positions</span><span class="op">)</span><span class="op">)</span> <span class="co"># How much data was returned?</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 136571</span></span></code></pre>
@@ -353,7 +353,7 @@ colony.</p>
 from our result from <code>getSessionInfo</code> query to this
 function.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">filtered_puffin_positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPositions.html">getPositions</a></span><span class="op">(</span>sessionId <span class="op">=</span> <span class="va">filtered_sessions</span><span class="op">$</span><span class="va">session_id</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">filtered_puffin_positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_positions.html">getPositions</a></span><span class="op">(</span>sessionId <span class="op">=</span> <span class="va">filtered_sessions</span><span class="op">$</span><span class="va">session_id</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">filtered_puffin_positions</span><span class="op">)</span><span class="op">)</span> <span class="co"># How much data was returned?</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 2822</span></span></code></pre>

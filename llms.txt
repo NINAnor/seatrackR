@@ -59,6 +59,8 @@ database.
   colonies in the database
 - [`getIndividInfo()`](https://ninanor.github.io/seatrackR/reference/getIndividInfo.md)
   : Retrieve info on the individuals
+- [`getLMEAreas()`](https://ninanor.github.io/seatrackR/reference/getLMEAreas.md)
+  : Get LME areas
 - [`getLoggerModels()`](https://ninanor.github.io/seatrackR/reference/getLoggerModels.md)
   : Get logger models
 - [`getNames()`](https://ninanor.github.io/seatrackR/reference/getNames.md)
@@ -78,18 +80,18 @@ Functions for reading logger information from the database.
   : View the active logger sessions
 - [`getLoggerInfo()`](https://ninanor.github.io/seatrackR/reference/getLoggerInfo.md)
   : View the view info table
-- [`getSessionInfo()`](https://ninanor.github.io/seatrackR/reference/getSessionInfo.md)
+- [`get_session_info()`](https://ninanor.github.io/seatrackR/reference/get_session_info.md)
   : Retrieve logger session information
 
 ## Positions
 
 Functions for reading positional data from the database.
 
-- [`getPositions()`](https://ninanor.github.io/seatrackR/reference/getPositions.md)
-  : Get position data from the database. Either "GLS" data (default),
-  "IRMA" data, or "GPS" data.
 - [`getYears()`](https://ninanor.github.io/seatrackR/reference/getYears.md)
   : Retrieve info on the years where we have position data
+- [`get_positions()`](https://ninanor.github.io/seatrackR/reference/get_positions.md)
+  : Get position data from the database. Either "GLS" data (default),
+  "IRMA" data, or "GPS" data.
 
 ## Recordings
 
