@@ -49,6 +49,7 @@ Functions for reading logger information from the database.
 - [`getLoggerInfo()`](https://ninanor.github.io/seatrackR/reference/getLoggerInfo.md)
   : View the view info table
 - [`get_session_info()`](https://ninanor.github.io/seatrackR/reference/get_session_info.md)
+  [`getSessionInfo()`](https://ninanor.github.io/seatrackR/reference/get_session_info.md)
   : Retrieve logger session information
 
 ## Positions
@@ -58,6 +59,7 @@ Functions for reading positional data from the database.
 - [`getYears()`](https://ninanor.github.io/seatrackR/reference/getYears.md)
   : Retrieve info on the years where we have position data
 - [`get_positions()`](https://ninanor.github.io/seatrackR/reference/get_positions.md)
+  [`getPositions()`](https://ninanor.github.io/seatrackR/reference/get_positions.md)
   : Get position data from the database. Either "GLS" data (default),
   "IRMA" data, or "GPS" data.
 

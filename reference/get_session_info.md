@@ -45,6 +45,45 @@ get_session_info(
   as_tibble = TRUE,
   include_sample_info = FALSE
 )
+
+getSessionInfo(
+  session_id = NULL,
+  individ_id = NULL,
+  project = NULL,
+  logger_serial_no = NULL,
+  logger_model = NULL,
+  logger_producer = NULL,
+  logger_type = NULL,
+  logger_deployed = NULL,
+  logger_retrieved = NULL,
+  active = NULL,
+  colony = NULL,
+  location = NULL,
+  species = NULL,
+  deployment_age_class = NULL,
+  sex = NULL,
+  sexing_method = NULL,
+  years_tracked = NULL,
+  logger_start_time = NULL,
+  logger_start_time_between = NULL,
+  logging_mode = NULL,
+  deployment_year = NULL,
+  deployment_date_between = NULL,
+  deployment_logger_status = NULL,
+  retrieval_year = NULL,
+  retrieval_date_between = NULL,
+  retrieval_logger_status = NULL,
+  shutdown_date_between = NULL,
+  dates_deployed_overlap = NULL,
+  download_type = NULL,
+  has_positions = NULL,
+  has_irma = NULL,
+  embargoed = FALSE,
+  lme_area = NULL,
+  polygons = NULL,
+  as_tibble = TRUE,
+  include_sample_info = FALSE
+)
 ```
 
 ## Arguments

@@ -29,6 +29,27 @@ get_positions(
   limit = FALSE,
   ...
 )
+
+getPositions(
+  datatype = "GLS",
+  species = NULL,
+  colony = NULL,
+  location = NULL,
+  age_deployment_class = NULL,
+  data_responsible = NULL,
+  ring_number = NULL,
+  year = NULL,
+  session_id = NULL,
+  individ_id = NULL,
+  project = NULL,
+  lme_area = NULL,
+  polygons = NULL,
+  exclude_embargoed = TRUE,
+  loadGeometries = FALSE,
+  asTibble = TRUE,
+  limit = FALSE,
+  ...
+)
 ```
 
 ## Arguments
