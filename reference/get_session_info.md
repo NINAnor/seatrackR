@@ -42,6 +42,7 @@ get_session_info(
   embargoed = FALSE,
   lme_area = NULL,
   polygons = NULL,
+  days_intersection = 14,
   as_tibble = TRUE,
   include_sample_info = FALSE
 )
@@ -81,6 +82,7 @@ getSessionInfo(
   embargoed = FALSE,
   lme_area = NULL,
   polygons = NULL,
+  days_intersection = 14,
   as_tibble = TRUE,
   include_sample_info = FALSE
 )
@@ -234,6 +236,12 @@ getSessionInfo(
 
   Optional sf object with polygons to filter sessions by spatial
   intersection. Default is NULL.
+
+- days_intersection:
+
+  If polygons or lme_area is provided, this parameter specifies the
+  minimum number of days of intersection (non-continuous) required for a
+  session to be included in the results. Default is 14.
 
 - as_tibble:
 

@@ -93,6 +93,7 @@ It provides comprehensive filtering argument to narrow down the results.</p>
 <span>  embargoed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  lme_area <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  polygons <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  days_intersection <span class="op">=</span> <span class="fl">14</span>,</span>
 <span>  as_tibble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_sample_info <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
@@ -132,6 +133,7 @@ It provides comprehensive filtering argument to narrow down the results.</p>
 <span>  embargoed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  lme_area <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  polygons <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  days_intersection <span class="op">=</span> <span class="fl">14</span>,</span>
 <span>  as_tibble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_sample_info <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -276,6 +278,10 @@ choices can be seen in the column <code>name</code> in the result from the funct
 
 <dt id="arg-polygons">polygons<a class="anchor" aria-label="anchor" href="#arg-polygons"></a></dt>
 <dd><p>Optional sf object with polygons to filter sessions by spatial intersection. Default is NULL.</p></dd>
+
+
+<dt id="arg-days-intersection">days_intersection<a class="anchor" aria-label="anchor" href="#arg-days-intersection"></a></dt>
+<dd><p>If polygons or lme_area is provided, this parameter specifies the minimum number of days of intersection (non-continuous) required for a session to be included in the results. Default is 14.</p></dd>
 
 
 <dt id="arg-as-tibble">as_tibble<a class="anchor" aria-label="anchor" href="#arg-as-tibble"></a></dt>
