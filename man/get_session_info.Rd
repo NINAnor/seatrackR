@@ -40,6 +40,7 @@ get_session_info(
   embargoed = FALSE,
   lme_area = NULL,
   polygons = NULL,
+  days_intersection = 14,
   as_tibble = TRUE,
   include_sample_info = FALSE
 )
@@ -79,6 +80,7 @@ getSessionInfo(
   embargoed = FALSE,
   lme_area = NULL,
   polygons = NULL,
+  days_intersection = 14,
   as_tibble = TRUE,
   include_sample_info = FALSE
 )
@@ -152,6 +154,8 @@ getSessionInfo(
 choices can be seen in the column \code{name} in the result from the function \code{getLMEAreas()}.}
 
 \item{polygons}{Optional sf object with polygons to filter sessions by spatial intersection. Default is NULL.}
+
+\item{days_intersection}{If polygons or lme_area is provided, this parameter specifies the minimum number of days of intersection (non-continuous) required for a session to be included in the results. Default is 14.}
 
 \item{as_tibble}{Logical indicating whether to return the result as a tibble.}
 

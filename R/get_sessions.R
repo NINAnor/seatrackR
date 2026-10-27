@@ -37,6 +37,7 @@
 #' @param lme_area Character string. Option to limit selection to one or a set of LME areas. Default is NULL. The available
 #' choices can be seen in the column `name` in the result from the function `getLMEAreas()`.
 #' @param polygons Optional sf object with polygons to filter sessions by spatial intersection. Default is NULL.
+#' @param days_intersection If polygons or lme_area is provided, this parameter specifies the minimum number of days of intersection (non-continuous) required for a session to be included in the results. Default is 14.
 #' @param include_sample_info Optional logical indicating whether to include sample information (blood, feathers etc.) in the results. Default is FALSE.
 #' @param as_tibble Logical indicating whether to return the result as a tibble.
 #' @return Either a lazy db query or a tibble containing the filtered logger session information.
@@ -78,6 +79,7 @@ get_session_info <- function(
   embargoed = FALSE,
   lme_area = NULL,
   polygons = NULL,
+  days_intersection = 14,
   as_tibble = TRUE,
   include_sample_info = FALSE
 ) {
@@ -198,7 +200,13 @@ get_session_info <- function(
                     loadGeometries = FALSE,
                     as_tibble = FALSE
                 )
-                all_session_ids <- c(all_session_ids, dplyr::distinct(loc_table, session_id) %>% pull(session_id))
+                filtered_session_ids <- dplyr::group_by(loc_table, session_id) %>%
+                    dplyr::mutate(date = as.Date(date_time)) %>%
+                    dplyr::summarise(days_intersect = n_distinct(date)) %>%
+                    dplyr::filter(days_intersect >= days_intersection) %>%
+                    dplyr::distinct(session_id) %>%
+                    pull(session_id)
+                all_session_ids <- c(all_session_ids, filtered_session_ids)
             }
         }
         print(paste0("Found ", length(all_session_ids), " sessions with positions in the specified LME areas or polygons."))
