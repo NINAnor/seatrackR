@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">seatrackR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.64</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.65</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,9 +69,10 @@
 <span>  project <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lme_area <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  polygons <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  eqfilter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  exclude_embargoed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  loadGeometries <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  asTibble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as_tibble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  limit <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -90,9 +91,10 @@
 <span>  project <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lme_area <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  polygons <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  eqfilter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  exclude_embargoed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  loadGeometries <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  asTibble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as_tibble <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  limit <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -154,6 +156,10 @@ choices can be seen in the column <code>name</code> in the result from the funct
 <dd><p>An sf object with polygons. If provided, only positions within the polygons will be returned. Default is NULL.</p></dd>
 
 
+<dt id="arg-eqfilter">eqfilter<a class="anchor" aria-label="anchor" href="#arg-eqfilter"></a></dt>
+<dd><p>Boolean. For GLS data, filter our equinox data? If TRUE, only records with eqfilter == TRUE (not during the equinox) are returned. Default is NULL, which means no filtering on equinox is applied.</p></dd>
+
+
 <dt id="arg-exclude-embargoed">exclude_embargoed<a class="anchor" aria-label="anchor" href="#arg-exclude-embargoed"></a></dt>
 <dd><p>Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.</p></dd>
 
@@ -162,7 +168,7 @@ choices can be seen in the column <code>name</code> in the result from the funct
 <dd><p>Boolean. If True, the returned object is a simple features object with only rows of eqfilter == TRUE. Default = False</p></dd>
 
 
-<dt id="arg-astibble">asTibble<a class="anchor" aria-label="anchor" href="#arg-astibble"></a></dt>
+<dt id="arg-as-tibble">as_tibble<a class="anchor" aria-label="anchor" href="#arg-as-tibble"></a></dt>
 <dd><p>Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is a little bit slower, but also here forces the timezone to "UTC".</p></dd>
 
 
