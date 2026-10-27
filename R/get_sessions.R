@@ -198,7 +198,8 @@ get_session_info <- function(
                     lme_area = lme_area,
                     polygons = polygons,
                     loadGeometries = FALSE,
-                    as_tibble = FALSE
+                    as_tibble = FALSE,
+                    eqfilter = TRUE
                 )
                 filtered_session_ids <- dplyr::group_by(loc_table, session_id) %>%
                     dplyr::mutate(date = as.Date(date_time)) %>%

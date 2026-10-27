@@ -21,10 +21,11 @@
 #' @param lme_area Character string. Option to limit selection to one or a set of LME areas. Default is NULL. The available
 #' choices can be seen in the column `name` in the result from the function `getLMEAreas()`.
 #' @param polygons An sf object with polygons. If provided, only positions within the polygons will be returned. Default is NULL.
+#' @param eqfilter Boolean. For GLS data, filter our equinox data? If TRUE, only records with eqfilter == TRUE (not during the equinox) are returned. Default is NULL, which means no filtering on equinox is applied.
 #' @param exclude_embargoed Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.
 #' @param loadGeometries Boolean. If True, the returned object is a simple features object with only rows of eqfilter == TRUE. Default = False
 #' @param limit FALSE or Integer. Limit the number of rows returned to this number. Default = False.
-#' @param asTibble Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is a little bit slower, but also here forces the timezone to "UTC".
+#' @param as_tibble Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is a little bit slower, but also here forces the timezone to "UTC".
 #' @return A lazy query or optionally a tibble of postable records. In the case of loadGeometries = T (default), also of class sf (simple feature) with geometries based on lat lon.
 #' @import dplyr
 #' @export
@@ -69,9 +70,10 @@ get_positions <- function(datatype = "GLS",
                          project = NULL,
                          lme_area = NULL,
                          polygons = NULL,
+                         eqfilter = NULL,
                          exclude_embargoed = TRUE,
                          loadGeometries = FALSE,
-                         asTibble = TRUE,
+                         as_tibble = TRUE,
                          limit = FALSE,
                          ...) {
   checkCon()
@@ -82,7 +84,8 @@ get_positions <- function(datatype = "GLS",
     session_id = "sessionId",
     individId = "individ_id",
     ring_number = "ringnumber",
-    data_responsible = "dataResponsible"
+    data_responsible = "dataResponsible",
+    as_tibble = "asTibble"
   )
 
   for (i in seq_along(valid_alias)) {
@@ -154,12 +157,11 @@ get_positions <- function(datatype = "GLS",
     res <- dplyr::tbl(con, dbplyr::in_schema("positions", source_table))
   }
 
-
-
+  valid_cols <- colnames(res)
   for (i in seq_along(basic_filter_args)) {
     val_name <- names(basic_filter_args)[i]
     value <- basic_filter_args[[i]]
-    if (!is.null(value)) {
+    if (!is.null(value) && val_name %in% valid_cols) {
       res <- dplyr::filter(res, !!rlang::sym(val_name) %in% value)
     }
   }
@@ -196,10 +198,6 @@ get_positions <- function(datatype = "GLS",
 
 
   if (loadGeometries) {
-    if (datatype == "GLS") {
-      res <- res |>
-        filter(eqfilter)
-    }
 
     DBI::dbWithTransaction(
       con,
@@ -211,7 +209,7 @@ get_positions <- function(datatype = "GLS",
     res <- res |>
       select(-geom)
 
-    if (asTibble) {
+    if (as_tibble) {
       DBI::dbWithTransaction(
         con,
         {

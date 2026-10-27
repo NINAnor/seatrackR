@@ -19,9 +19,10 @@ get_positions(
   project = NULL,
   lme_area = NULL,
   polygons = NULL,
+  eqfilter = NULL,
   exclude_embargoed = TRUE,
   loadGeometries = FALSE,
-  asTibble = TRUE,
+  as_tibble = TRUE,
   limit = FALSE,
   ...
 )
@@ -40,9 +41,10 @@ getPositions(
   project = NULL,
   lme_area = NULL,
   polygons = NULL,
+  eqfilter = NULL,
   exclude_embargoed = TRUE,
   loadGeometries = FALSE,
-  asTibble = TRUE,
+  as_tibble = TRUE,
   limit = FALSE,
   ...
 )
@@ -76,11 +78,13 @@ choices can be seen in the column \code{name} in the result from the function \c
 
 \item{polygons}{An sf object with polygons. If provided, only positions within the polygons will be returned. Default is NULL.}
 
+\item{eqfilter}{Boolean. For GLS data, filter our equinox data? If TRUE, only records with eqfilter == TRUE (not during the equinox) are returned. Default is NULL, which means no filtering on equinox is applied.}
+
 \item{exclude_embargoed}{Boolean. If TRUE, records from embargoed projects are not included. Default is TRUE.}
 
 \item{loadGeometries}{Boolean. If True, the returned object is a simple features object with only rows of eqfilter == TRUE. Default = False}
 
-\item{asTibble}{Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is a little bit slower, but also here forces the timezone to "UTC".}
+\item{as_tibble}{Boolean. Should the result be given as a tibble instead of a lazy query? Tibble is a little bit slower, but also here forces the timezone to "UTC".}
 
 \item{limit}{FALSE or Integer. Limit the number of rows returned to this number. Default = False.}
 
